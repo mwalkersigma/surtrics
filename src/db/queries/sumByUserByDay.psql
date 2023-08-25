@@ -1,0 +1,21 @@
+-- Quantity Relisted
+SELECT
+    "user",
+    sum(quantity),
+    to_char(transaction_date,'MM/DD/YYYY'),
+    transaction_type,
+    transaction_reason
+
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+        "user" != 'BSA'
+  AND "user" != 'System'
+  AND transaction_date = '08/16/2023'
+  AND transaction_type = 'Add'
+  And transaction_reason = 'Relisting'
+GROUP BY
+    "user"
+       ,transaction_date
+       ,transaction_type
+       ,transaction_reason

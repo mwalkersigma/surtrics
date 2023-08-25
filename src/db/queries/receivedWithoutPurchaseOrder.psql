@@ -1,0 +1,10 @@
+-- Received without Purchase Order
+SELECT
+    *
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+        "user" != 'BSA'
+  AND "user" != 'System'
+  AND transaction_type = 'Add'
+  AND transaction_reason = 'Add';

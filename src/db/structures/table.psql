@@ -1,0 +1,30 @@
+-- Table: surtrics.surplus_metrics_data
+
+DROP TABLE IF EXISTS surtrics.surplus_metrics_data;
+
+CREATE TABLE IF NOT EXISTS surtrics.surplus_metrics_data
+(
+    id BIGSERIAL,
+    "user" VARCHAR NOT NULL,
+    sku VARCHAR (255),
+    code VARCHAR (255),
+    scanned_code VARCHAR (255),
+    lot_number VARCHAR (255),
+    title VARCHAR (255),
+    quantity integer,
+    quantity_before integer,
+    quantity_after integer,
+    location VARCHAR (255),
+    serial_numbers VARCHAR (255),
+    transaction_type VARCHAR (255),
+    transaction_reason VARCHAR (255),
+    transaction_note VARCHAR (255),
+    transaction_date DATE NOT NULL,
+    context VARCHAR (255),
+    CONSTRAINT surplus_metrics_data_pkey PRIMARY KEY (id)
+)
+
+    TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS surtrics.surplus_metrics_data
+    OWNER to apiinsync;

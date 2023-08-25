@@ -100,7 +100,6 @@ async function getTransactions(){
         .then((data) => JSON.parse(data));
     console.log("frequency: ", frequency)
     frequency = convertFrequencyToSeconds(frequency);
-    let shouldUpdate = false;
     let timeDiff = (new Date(currentTimestamp) - new Date(timeLastUpdated))/1000;
     console.log("timeDiff: ", timeDiff)
     if(timeDiff < frequency){

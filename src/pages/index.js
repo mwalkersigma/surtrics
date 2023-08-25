@@ -1,24 +1,4 @@
 import Head from 'next/head'
-import { Bar } from 'react-chartjs-2';
-import Container from "react-bootstrap/Container";
-import Navbar from "react-bootstrap/Navbar";
-import DataLabels from "chartjs-plugin-datalabels";
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler,
-    LineElement
-} from "chart.js";
-import {useEffect, useRef, useState} from "react";
-
-
-
-
 
 export default function Home() {
 

@@ -81,7 +81,7 @@ function WeeklyView() {
     const intervalRef = useRef(null);
 
     const getTransactions = () => {
-        return fetch("http://localhost:3000/api/views/weeklyView")
+        return fetch(`${window.location.origin}/api/views/weeklyView`)
             .then((response) => response.json())
             .then((data) => setWeekData(data));
     }

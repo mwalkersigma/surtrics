@@ -2,6 +2,7 @@ import {parse} from 'csv-parse';
 import fs from 'fs';
 import {PromisePool} from "@supercharge/promise-pool";
 import Db from "../../../db";
+import convertToDatabase from "../../../modules/utils/convertSkuVaultToDatabaseFormat";
 
 
 
@@ -11,7 +12,7 @@ async function processCSVTransaction(){
     return new Promise((resolve, reject) => {
         let records = [];
 
-        const filePath = "./src/csv/TransactionHistory-8_24_2023 1_10 PM.csv";
+        const filePath = "./src/csv/TransactionHistory-8_29_2023 8_00 AM.csv";
 
         const parser = parse({
             delimiter: ','
@@ -63,28 +64,6 @@ async function processCSVTransaction(){
                 Context:null
             }
         }
-
-        const convertToDatabase = (data) => {
-            return [
-                data['User'],
-                data['Sku'],
-                data['Code'],
-                data['ScannedCode'],
-                data['LotNumber'],
-                data['Title'],
-                data['Quantity'],
-                data['QuantityBefore'],
-                data['QuantityAfter'],
-                data['Location'],
-                data['SerialNumbers'],
-                data['TransactionType'],
-                data['TransactionReason'],
-                data['TransactionNote'],
-                data['TransactionDate'],
-                data['Context']
-            ]
-        }
-
 
         parser.on('readable', function () {
             let record;

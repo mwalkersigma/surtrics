@@ -1,1 +1,0 @@
-DROP TABLE nfs.surtrics.surplus_metrics_data CASCADE;

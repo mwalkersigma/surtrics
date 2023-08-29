@@ -1,29 +1,10 @@
 import Db from "../../db";
 import { PromisePool} from "@supercharge/promise-pool";
 import fs from "fs/promises";
+import convertToDatabase from "../../modules/utils/convertSkuVaultToDatabaseFormat";
 const {SKU_VAULT_TENANT_TOKEN, SKU_VAULT_USER_TOKEN} = process.env;
 // exported 8/24/2023 1:11pm;
 
-const convertToDatabase = (data) => {
-    return [
-        data['User'],
-        data['Sku'],
-        data['Code'],
-        data['ScannedCode'],
-        data['LotNumber'],
-        data['Title'],
-        data['Quantity'],
-        data['QuantityBefore'],
-        data['QuantityAfter'],
-        data['Location'],
-        data['SerialNumbers'],
-        data['TransactionType'],
-        data['TransactionReason'],
-        data['TransactionNote'],
-        data['TransactionDate'],
-        data['Context']
-    ]
-}
 
 const convertFrequencyToSeconds = (frequency) => {
     switch (frequency) {

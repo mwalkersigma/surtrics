@@ -1,30 +1,19 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-    BarElement,
-    CategoryScale,
-    Chart as ChartJS,
-    Filler,
-    Legend,
-    LinearScale,
-    LineElement,
-    Title,
-    Tooltip
-} from "chart.js";
+import {BarElement, CategoryScale, Chart as ChartJS, Filler, Legend, LinearScale, LineElement, Title, Tooltip} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import Container from "react-bootstrap/Container";
 import {Bar} from "react-chartjs-2";
+import getMonday from "../modules/utils/getMonday";
+import useUpdates from "../modules/hooks/useUpdates";
 
 ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler,
-    LineElement,
+    CategoryScale, LinearScale,
+    BarElement, Title,
+    Tooltip, Legend,
+    Filler, LineElement,
     DataLabels
 );
+
 const options = {
     plugins: {
         legend: {
@@ -74,31 +63,21 @@ function colorize(ctx) {
     const goal = 483;
     return increments < goal ? "#d00d0d" : "#00ad11";
 }
-
+function makeWeek(){
+    let monday = getMonday();
+    let week = [];
+    for(let i = 0; i < 5; i++){
+        week.push(monday.toISOString().split("T")[0]);
+        monday.setDate(monday.getDate() + 1);
+    }
+    return week
+}
 
 function WeeklyView() {
-    const [weekData, setWeekData] = useState([])
-    const intervalRef = useRef(null);
-
-    const getTransactions = () => {
-        return fetch(`${window.location.origin}/api/views/weeklyView`)
-            .then((response) => response.json())
-            .then((data) => setWeekData(data));
-    }
-    useEffect(() => {
-        getTransactions()
-            .catch((error) => console.log(error))
-
-        intervalRef.current = setInterval(getTransactions, 1000 * 60)
-
-        return () => clearInterval(intervalRef.current)
-
-    }, [])
-
-
+    const weekData = useUpdates("/api/views/weeklyView");
 
     const data = weekData.length > 0 && {
-        labels: weekData?.map(({transaction_date}) => (transaction_date.split("T")[0])),
+        labels: makeWeek().map((dateString) => (dateString.split("T")[0])),
         datasets: [
             {
                 label: "Days",

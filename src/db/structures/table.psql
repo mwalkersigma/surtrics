@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS surtrics.surplus_metrics_data
     transaction_type VARCHAR (255),
     transaction_reason VARCHAR (255),
     transaction_note VARCHAR (255),
-    transaction_date DATE NOT NULL,
+    transaction_date timestamp NOT NULL,
     context VARCHAR (255),
     CONSTRAINT surplus_metrics_data_pkey PRIMARY KEY (id)
 )

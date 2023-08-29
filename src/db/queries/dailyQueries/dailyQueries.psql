@@ -1,0 +1,12 @@
+SELECT
+    count(*)
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+        transaction_type = 'Add'
+  AND transaction_reason = 'Relisting'
+  AND transaction_date >= '2023-08-28'
+  AND "user" = 'Stephine Roth'
+
+
+

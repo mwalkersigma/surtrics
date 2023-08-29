@@ -1,125 +1,85 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
+    Chart as ChartJS, CategoryScale,
+    LinearScale, PointElement,Title,
+    LineElement, Tooltip, Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import useUpdates from "../modules/hooks/useUpdates";
+import createAdjustedGoal from "../modules/utils/createAdjustedGoals";
 
 ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend
+    CategoryScale, LinearScale,
+    PointElement, LineElement,
+    Title, Tooltip, Legend
 );
 
-function makeHourlyGoal (dailyGoal) {
-    let hrs = 12;
-    let perHour = Math.floor(dailyGoal / hrs);
-    return Array.from({length: hrs}, (_, i) => perHour);
-}
 
-let dailyData = [41,41,20,40]
 
-let createAdjustedGoal = (dailyGoal,dailyData) => {
-    let hourlyAmount = dailyGoal[0];
-    console.log("hourlyAmount : ",hourlyAmount)
-    let hours = dailyData.length;
-    console.log("hours :",hours)
-    let expectedTotal = hourlyAmount * hours;
-    console.log("expected total :",expectedTotal)
-    let actualTotal = dailyData.reduce((a,b) => a + b);
-    console.log("actual total :",actualTotal)
-    let difference = expectedTotal - actualTotal;
-    console.log("difference :",difference)
-    if(difference < 0)return dailyGoal;
-    let remainingHours = dailyGoal.length - dailyData.length;
-    console.log("remaining hours :",remainingHours)
-    let perHour = difference / remainingHours;
-    console.log("per hour :",perHour)
-    let adjustedGoal = dailyGoal.map((hourlyGoal,i) => {
-        if(i >= dailyData.length){
-            return hourlyGoal + perHour;
-        }else{
-            return hourlyGoal;
-        }
-    })
-    return adjustedGoal;
 
-    // let missingFromGoal = 0;
-    // for(let i = 0; i < dailyData.length; i++){
-    //     let leftoverAfterGoal = dailyGoal[i] - dailyData[i] ;
-    //     if(leftoverAfterGoal > 0){
-    //         missingFromGoal += leftoverAfterGoal;
-    //     }else if(leftoverAfterGoal < 0 && missingFromGoal > 0){
-    //         missingFromGoal -= leftoverAfterGoal;
-    //     }
-    // }
-    // console.log(missingFromGoal)
-    // // take the amount missing from the goal and spread it out over the next hours
-    // let remainingHours = dailyGoal.length - dailyData.length;
-    // let perHour = missingFromGoal / remainingHours;
-    // let adjustedGoal = dailyGoal.map((hourlyGoal,i) => {
-    //     if(i >= dailyData.length){
-    //         return hourlyGoal + perHour;
-    //     }else{
-    //         return hourlyGoal;
-    //     }
-    // });
-    // console.log(adjustedGoal)
-    // return adjustedGoal;
-
-}
-;
-const options = {
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'top',
+function LineGraph ({dailyData}) {
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Surplus Metrics Daily View',
+                color: "#000",
+                font: {
+                    size: 30,
+                }
+            },
         },
-        title: {
-            display: true,
-            text: 'Chart.js Line Chart',
-        },
-    },
-    scales:{
-        y:{
-            min:0,
-            max:70,
+        scales:{
+            y:{
+                min:0,
+            }
         }
+    };
+    function makeHourlyGoal (dailyGoal) {
+        let hrs = 12;
+        let perHour = Math.floor(dailyGoal / hrs);
+        return Array.from({length: hrs}, (_, i) => perHour);
     }
-};
-const data = {
-    labels: ['5AM', '6AM', '7AM', '8AM', '9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM'],
-    datasets: [
-        {
-            label: "Goal",
-            data:createAdjustedGoal(makeHourlyGoal(483),dailyData),
-            borderColor: 'rgb(255, 99, 132)',
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        },
-        {
-            label: "Dataset 2",
-            data:dailyData,
-            borderColor: 'rgb(54, 162, 235)',
-            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-        }
-    ]
+    const graphData = {
+        labels: ['6AM', '7AM', '8AM', '9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM','5PM'],
+        datasets: [
+            {
+                label: "Goal",
+                data:createAdjustedGoal(makeHourlyGoal(483),dailyData),
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            },
+            {
+                label: "Increments",
+                data:dailyData,
+                borderColor: 'rgb(54, 162, 235)',
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            }
+        ]
+    }
+    return (
+        <Line data={graphData} title={"Daily View"} options={options} />
+    )
 }
+
+
+const convertDate = (date) => `${date.getFullYear()}-${date.getMonth().length > 1 ? "" : "0"}${date.getMonth() + 1}-${date.getDate()}`
 
 const DailyView = () => {
+    const [date,setDate] = useState(convertDate(new Date()))
+    let dailyData = useUpdates("/api/views/dailyView",{date});
+    if(dailyData.length === 0)return(<Container className={"text-center"}>Loading...</Container>);
+    dailyData = dailyData.map(({count}) => +count);
     return (
         <Container>
-            <Line data={data} title={"Daily View"} options={options} />
+            <Form.Control className={"mb-5"} value={date} onChange={(e)=>setDate(e.target.value)} type="date" />
+            <LineGraph dailyData={dailyData} />
         </Container>
     );
 };

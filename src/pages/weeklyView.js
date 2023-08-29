@@ -1,8 +1,17 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {BarElement, CategoryScale, Chart as ChartJS, Filler, Legend, LinearScale, LineElement, Title, Tooltip} from "chart.js";
+import {  Chart as ChartJS,
+    LinearScale,
+    CategoryScale,
+    BarElement,
+    PointElement,
+    LineElement,
+    Legend,
+    Tooltip,
+    LineController,
+    BarController,Title,Filler} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import Container from "react-bootstrap/Container";
-import {Bar} from "react-chartjs-2";
+import {Chart} from "react-chartjs-2";
 import getMonday from "../modules/utils/getMonday";
 import useUpdates from "../modules/hooks/useUpdates";
 
@@ -11,7 +20,8 @@ ChartJS.register(
     BarElement, Title,
     Tooltip, Legend,
     Filler, LineElement,
-    DataLabels
+    DataLabels,PointElement,
+    BarController, LineController
 );
 
 const options = {
@@ -80,19 +90,34 @@ function WeeklyView() {
         labels: makeWeek().map((dateString) => (dateString.split("T")[0])),
         datasets: [
             {
+                type: "line",
+                label: "Goal",
+                data: [483,483,483,483,483],
+                borderColor: "#5b1fa8",
+                borderWidth: 2,
+                tension: 0.1,
+                borderDash: [0,0],
+                pointRadius: 3,
+                pointBackgroundColor: "#5b1fa8",
+                datalabels: {
+                    display: false
+                }
+            },
+            {
+                type: "bar",
                 label: "Days",
                 data: weekData?.map(({count}) => (count)),
                 backgroundColor: colorize,
                 barThickness: 75,
                 borderRadius: 10,
-            },
+            }
         ]
     };
 
     return (
         <main>
             <Container>
-                {weekData.length > 0 && <Bar data={data} height={150} options={options}/>}
+                {weekData.length > 0 && <Chart data={data} height={150} options={options}/>}
             </Container>
         </main>
     )

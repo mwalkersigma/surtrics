@@ -31,6 +31,7 @@ function NavBar({theme,setTheme}){
                 <Nav>
                     <Navbar.Brand href="#home">Surplus Metrics</Navbar.Brand>
                     <Nav.Link href="/weeklyView">Weekly View</Nav.Link>
+                    <Nav.Link href="/dailyView">Daily View</Nav.Link>
                 </Nav>
                 <NavDropdown className={`text-white`} title=" Theme " id="basic-nav-dropdown">
                     <NavDropdown.Item>
@@ -57,7 +58,6 @@ export default function Layout({ children }) {
         setStoredTheme(theme)
         setDomTheme(theme)
     }
-    console.log(theme)
     return (
         <>
             <NavBar theme={theme} setTheme={handleSetTheme} />

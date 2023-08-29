@@ -1,12 +1,16 @@
 SELECT
-    count(*)
+    count(*),
+    date_trunc('HOUR',transaction_date) as hour
 FROM
     surtrics.surplus_metrics_data
 WHERE
         transaction_type = 'Add'
   AND transaction_reason = 'Relisting'
-  AND transaction_date >= '2023-08-28'
-  AND "user" = 'Stephine Roth'
+  AND DATE(transaction_date) = '2023-08-29'
+GROUP BY
+    hour
+
+
 
 
 

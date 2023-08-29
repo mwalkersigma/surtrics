@@ -1,18 +1,8 @@
 import db from "../../../db";
+import getMonday from "../../../modules/utils/getMonday";
 
 
-function getMonday(){
-    let date = new Date();
-    let day = date.getDay();
-    let diff = date.getDate() - day + (day === 0 ? -6:1);
-    if(day > 0 && day < 6){
-        // returns this monday
-        return new Date(date.setDate(diff));
-    }else{
-        // returns next monday
-        return new Date(date.setDate(diff + 7));
-    }
-}
+
 
 
 async function getIncrements(){
@@ -22,7 +12,7 @@ async function getIncrements(){
     let query = await db.query(`
     SELECT 
         COUNT(*) ,
-        transaction_date
+        DATE(transaction_date)
     FROM 
         surtrics.surplus_metrics_data
     WHERE 
@@ -30,7 +20,7 @@ async function getIncrements(){
         AND transaction_reason = 'Relisting'
         AND transaction_date >= $1
     GROUP BY 
-        transaction_date
+        DATE(transaction_date)
     `,[mondayString])
 
     return query.rows;

@@ -77,10 +77,11 @@ async function processCSVTransaction(){
 
         parser.on('error', function (err) {
             console.error(err)
+            reject(err)
         })
 
         parser.on('close', async () => {
-            let slice = records.splice(0,1);
+            records.splice(0,1);
             await PromisePool
                 .withConcurrency(100)
                 .for(records)

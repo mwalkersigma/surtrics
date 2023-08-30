@@ -1,14 +1,13 @@
-import React, {useEffect, useRef, useState} from 'react';
+// noinspection JSValidateTypes
+
+import React from 'react';
 import {  Chart as ChartJS,
-    LinearScale,
-    CategoryScale,
-    BarElement,
-    PointElement,
-    LineElement,
-    Legend,
-    Tooltip,
-    LineController,
-    BarController,Title,Filler} from "chart.js";
+    LinearScale, CategoryScale,
+    BarElement, PointElement,
+    LineElement, Legend,
+    Tooltip, LineController,
+    BarController,Title,Filler
+} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import Container from "react-bootstrap/Container";
 import {Chart} from "react-chartjs-2";
@@ -30,9 +29,8 @@ const options = {
             position: "top",
             align: "center",
             labels: {
-                boxWidth: 20,
+                boxWidth: 30,
                 usePointStyle: true,
-                pointStyle: "circle",
             },
             title: {
                 text: "Weekly Increments",
@@ -43,20 +41,6 @@ const options = {
                 }
             }
         },
-        scales: {
-            xAxis: {
-                display: false
-            },
-            yAxis: {
-                max: 1
-            }
-        },
-        elements: {
-            bar: {
-                barPercentage: 0.5,
-                categoryPercentage: 0.5,
-            }
-        },
         datalabels: {
             color: "#FFF",
             display: (context) => context.dataset.data[context.dataIndex] > 0,
@@ -64,6 +48,12 @@ const options = {
                 weight: "bold",
             },
             formatter: Math.round
+        }
+    },
+    scales: {
+        y: {
+            min: 0,
+            max: 1000,
         }
     }
 }
@@ -109,7 +99,7 @@ function WeeklyView() {
                 data: weekData?.map(({count}) => (count)),
                 backgroundColor: colorize,
                 barThickness: 75,
-                borderRadius: 10,
+                borderRadius: 10
             }
         ]
     };
@@ -117,7 +107,7 @@ function WeeklyView() {
     return (
         <main>
             <Container>
-                {weekData.length > 0 && <Chart data={data} height={150} options={options}/>}
+                {weekData.length > 0 && <Chart data={data} type={"bar"} height={150} options={options}/>}
             </Container>
         </main>
     )

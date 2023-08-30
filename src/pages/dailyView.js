@@ -38,13 +38,14 @@ function LineGraph ({dailyData}) {
         scales:{
             y:{
                 min:0,
+
             }
         }
     };
     function makeHourlyGoal (dailyGoal) {
         let hrs = 12;
         let perHour = Math.floor(dailyGoal / hrs);
-        return Array.from({length: hrs}, (_, i) => perHour);
+        return Array.from({length: hrs}, () => perHour);
     }
     const graphData = {
         labels: ['6AM', '7AM', '8AM', '9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM','5PM'],
@@ -74,11 +75,14 @@ const convertDate = (date) => `${date.getFullYear()}-${date.getMonth().length > 
 const DailyView = () => {
     const [date,setDate] = useState(convertDate(new Date()))
     let dailyData = useUpdates("/api/views/dailyView",{date});
-    if(dailyData.length === 0)return(<Container className={"text-center"}>Loading...</Container>);
+    if(dailyData.length === 0)return(<Container className={"text-center"}>
+        <Form.Control className={"mb-5"} value={date} onChange={(e)=>setDate(e.target.value)} type="date" />
+        Loading...
+    </Container>);
     dailyData = dailyData.map(({count}) => +count);
     return (
         <Container>
-            <Form.Control className={"mb-5"} value={date} onChange={(e)=>setDate(e.target.value)} type="date" />
+            <Form.Control className={"mb-3"} value={date} onChange={(e)=>setDate(e.target.value)} type="date" />
             <LineGraph dailyData={dailyData} />
         </Container>
     );

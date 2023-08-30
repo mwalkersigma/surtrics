@@ -29,9 +29,11 @@ function NavBar({theme,setTheme}){
             <Container>
                 <Navbar.Toggle />
                 <Nav>
-                    <Navbar.Brand href="#home">Surplus Metrics</Navbar.Brand>
-                    <Nav.Link href="/weeklyView">Weekly View</Nav.Link>
-                    <Nav.Link href="/dailyView">Daily View</Nav.Link>
+                    <Navbar.Brand href="/">Surplus Metrics</Navbar.Brand>
+                    <NavDropdown title={"Graphs"} id="basic-nav-dropdown">
+                        <Nav.Link href="/graphs/weeklyView">Weekly View</Nav.Link>
+                        <Nav.Link href="/graphs/dailyView">Daily View</Nav.Link>
+                    </NavDropdown>
                 </Nav>
                 <NavDropdown className={`text-white`} title=" Theme " id="basic-nav-dropdown">
                     <NavDropdown.Item>

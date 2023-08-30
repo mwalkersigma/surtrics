@@ -11,8 +11,8 @@ import {  Chart as ChartJS,
 import DataLabels from "chartjs-plugin-datalabels";
 import Container from "react-bootstrap/Container";
 import {Chart} from "react-chartjs-2";
-import getMonday from "../modules/utils/getMonday";
-import useUpdates from "../modules/hooks/useUpdates";
+import getMonday from "../../modules/utils/getMonday";
+import useUpdates from "../../modules/hooks/useUpdates";
 
 ChartJS.register(
     CategoryScale, LinearScale,

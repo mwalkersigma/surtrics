@@ -1,25 +1,20 @@
-import React, {useState} from 'react';
+import createAdjustedGoal from "../modules/utils/createAdjustedGoals";
+import {Line} from "react-chartjs-2";
+import React from "react";
 import {
     Chart as ChartJS, CategoryScale,
     LinearScale, PointElement,Title,
     LineElement, Tooltip, Legend,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import useUpdates from "../modules/hooks/useUpdates";
-import createAdjustedGoal from "../modules/utils/createAdjustedGoals";
+import useGoal from "../modules/hooks/useGoal";
 
 ChartJS.register(
     CategoryScale, LinearScale,
     PointElement, LineElement,
     Title, Tooltip, Legend
 );
-
-
-
-
-function LineGraph ({dailyData}) {
+export default function LineGraph ({dailyData}) {
+    const goal = useGoal();
     const options = {
         responsive: true,
         plugins: {
@@ -52,7 +47,7 @@ function LineGraph ({dailyData}) {
         datasets: [
             {
                 label: "Goal",
-                data:createAdjustedGoal(makeHourlyGoal(483),dailyData),
+                data:createAdjustedGoal(makeHourlyGoal(goal || 0),dailyData),
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
             },
@@ -68,24 +63,3 @@ function LineGraph ({dailyData}) {
         <Line data={graphData} title={"Daily View"} options={options} />
     )
 }
-
-
-const convertDate = (date) => `${date.getFullYear()}-${date.getMonth().length > 1 ? "" : "0"}${date.getMonth() + 1}-${date.getDate()}`
-
-const DailyView = () => {
-    const [date,setDate] = useState(convertDate(new Date()))
-    let dailyData = useUpdates("/api/views/dailyView",{date});
-    if(dailyData.length === 0)return(<Container className={"text-center"}>
-        <Form.Control className={"mb-5"} value={date} onChange={(e)=>setDate(e.target.value)} type="date" />
-        Loading...
-    </Container>);
-    dailyData = dailyData.map(({count}) => +count);
-    return (
-        <Container>
-            <Form.Control className={"mb-3"} value={date} onChange={(e)=>setDate(e.target.value)} type="date" />
-            <LineGraph dailyData={dailyData} />
-        </Container>
-    );
-};
-
-export default DailyView;

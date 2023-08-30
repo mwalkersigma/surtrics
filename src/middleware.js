@@ -2,13 +2,26 @@ import {NextResponse} from "next/server";
 
 
 
-function disabledHandler(req) {
-    return new NextResponse({})
+function disabledHandler() {
+    return new NextResponse("Disabled", {
+        status: 403,
+        headers: {
+            "x-middleware": "disabled"
+        }
+    })
 }
 
 
-export function middleware(req) {
 
+
+export function middleware(req) {
+    let {pathname} = req.nextUrl;
+    switch (true) {
+        case pathname.startsWith("/api/disabled"):
+            return disabledHandler(req);
+        default:
+            return NextResponse.next();
+    }
 }
 
 export const config = {

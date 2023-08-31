@@ -16,6 +16,7 @@ SELECT
     transaction_date,
     code,
     "user",
+    quantity,
     count(*)
 FROM
     surtrics.surplus_metrics_data
@@ -28,7 +29,8 @@ WHERE
 GROUP BY
     transaction_date,
     code,
-    "user"
+    "user",
+    quantity
 HAVING
     count(*) > 1;
 

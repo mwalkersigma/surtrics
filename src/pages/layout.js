@@ -1,9 +1,10 @@
-import {useEffect, useState} from "react";
+import {createContext, useEffect, useState} from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import {NavDropdown, Nav} from "react-bootstrap";
 
 let getStoredTheme,setStoredTheme,getPreferredTheme,setDomTheme;
+export const ThemeContext = createContext('light');
 
 if(typeof window !== 'undefined') {
     getStoredTheme = () => localStorage.getItem('theme');
@@ -34,6 +35,7 @@ function NavBar({theme,setTheme}){
                         <Nav.Link href="/graphs/weeklyView">Weekly View</Nav.Link>
                         <Nav.Link href="/graphs/dailyView">Daily View</Nav.Link>
                     </NavDropdown>
+                    <Nav.Link href="/individualView">Individual View</Nav.Link>
                 </Nav>
                 <NavDropdown className={`text-white`} title=" Theme " id="basic-nav-dropdown">
                     <NavDropdown.Item>
@@ -46,6 +48,10 @@ function NavBar({theme,setTheme}){
         </Navbar>
     )
 }
+
+
+
+
 export default function Layout({ children }) {
     const [theme, setTheme] = useState();
     useEffect(() => {
@@ -63,7 +69,9 @@ export default function Layout({ children }) {
     return (
         <>
             <NavBar theme={theme} setTheme={handleSetTheme} />
+            <ThemeContext.Provider value={theme}>
             <div className="main-wrapper" style={{minHeight:"87vh"}}>{children}</div>
+            </ThemeContext.Provider>
         </>
     )
 }

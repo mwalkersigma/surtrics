@@ -1,0 +1,16 @@
+SELECT
+    "user" AS user_id,
+    transaction_type,
+    transaction_reason,
+    COUNT(*) AS count
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+    transaction_date >= CURRENT_DATE
+    AND transaction_date < CURRENT_DATE + INTERVAL '1 day'
+    AND "user" != 'BSA'
+    AND "user" != 'System'
+GROUP BY
+    user_id,
+    transaction_type,
+    transaction_reason

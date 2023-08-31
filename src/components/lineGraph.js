@@ -13,27 +13,45 @@ ChartJS.register(
     PointElement, LineElement,
     Title, Tooltip, Legend
 );
-export default function LineGraph ({dailyData}) {
+export default function LineGraph ({dailyData,theme}) {
+    theme = theme === "dark" ? "#FFF" : "#000";
     const goal = useGoal();
     const options = {
         responsive: true,
         plugins: {
             legend: {
                 position: 'top',
+                color: theme,
+                labels:{
+                    color: theme + "A",
+                }
             },
             title: {
                 display: true,
                 text: 'Surplus Metrics Daily View',
-                color: "#000",
+                color: theme,
                 font: {
                     size: 30,
                 }
             },
         },
         scales:{
-            y:{
-                min:0,
-
+            y: {
+                min: 0,
+                ticks: {
+                    color: theme + "A"
+                },
+                grid: {
+                    color: theme + "3"
+                }
+            },
+            x:{
+                ticks: {
+                    color: theme + "A"
+                },
+                grid: {
+                    color: theme + "3"
+                }
             }
         }
     };

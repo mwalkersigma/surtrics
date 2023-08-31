@@ -1,6 +1,4 @@
-// noinspection JSValidateTypes
-
-import React from 'react';
+import React, {useContext} from 'react';
 import {  Chart as ChartJS,
     LinearScale, CategoryScale,
     BarElement, PointElement,
@@ -13,6 +11,7 @@ import Container from "react-bootstrap/Container";
 import {Chart} from "react-chartjs-2";
 import getMonday from "../../modules/utils/getMonday";
 import useUpdates from "../../modules/hooks/useUpdates";
+import {ThemeContext} from "../layout";
 
 ChartJS.register(
     CategoryScale, LinearScale,
@@ -23,40 +22,7 @@ ChartJS.register(
     BarController, LineController
 );
 
-const options = {
-    plugins: {
-        legend: {
-            position: "top",
-            align: "center",
-            labels: {
-                boxWidth: 30,
-                usePointStyle: true,
-            },
-            title: {
-                text: "Weekly Increments",
-                display: true,
-                color: "#000",
-                font: {
-                    size: 30,
-                }
-            }
-        },
-        datalabels: {
-            color: "#FFF",
-            display: (context) => context.dataset.data[context.dataIndex] > 0,
-            font: {
-                weight: "bold",
-            },
-            formatter: Math.round
-        }
-    },
-    scales: {
-        y: {
-            min: 0,
-            max: 1000,
-        }
-    }
-}
+
 
 function colorize(ctx) {
     const increments = ctx?.parsed?.y;
@@ -73,9 +39,57 @@ function makeWeek(){
     return week
 }
 
-function WeeklyView() {
-    const weekData = useUpdates("/api/views/weeklyView");
-
+function WeeklyChart({weekData,theme}){
+    theme = theme === "dark" ? "#FFF" : "#000";
+    const options = {
+        plugins: {
+            legend: {
+                position: "top",
+                align: "center",
+                labels: {
+                    boxWidth: 30,
+                    usePointStyle: true,
+                    color: theme+"A",
+                },
+                title: {
+                    text: "Weekly Increments",
+                    display: true,
+                    color: theme,
+                    font: {
+                        size: 30,
+                    }
+                }
+            },
+            datalabels: {
+                color: "#FFF",
+                display: (context) => context.dataset.data[context.dataIndex] > 0,
+                font: {
+                    weight: "bold",
+                },
+                formatter: Math.round
+            },
+        },
+        scales: {
+            y: {
+                min: 0,
+                max: 1000,
+                ticks: {
+                    color: theme + "A"
+                },
+                grid: {
+                    color: theme + "3"
+                }
+            },
+            x:{
+                ticks: {
+                    color: theme + "A"
+                },
+                grid: {
+                    color: theme + "3"
+                }
+            }
+        },
+    }
     const data = weekData.length > 0 && {
         labels: makeWeek().map((dateString) => (dateString.split("T")[0])),
         datasets: [
@@ -103,11 +117,18 @@ function WeeklyView() {
             }
         ]
     };
+    return <Chart data={data} type={"bar"} height={150} options={options}/>
+}
 
+
+
+function WeeklyView() {
+    const weekData = useUpdates("/api/views/weeklyView");
+    const theme = useContext(ThemeContext)
     return (
         <main>
             <Container>
-                {weekData.length > 0 && <Chart data={data} type={"bar"} height={150} options={options}/>}
+                {weekData.length > 0 && <WeeklyChart theme={theme} weekData={weekData} />}
             </Container>
         </main>
     )

@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import useUpdates from "../../modules/hooks/useUpdates";
 import LineGraph from "../../components/lineGraph";
+import {ThemeContext} from "../layout";
 
 
 const convertDate = (date) => `${date.getFullYear()}-${date.getMonth().length > 1 ? "" : "0"}${date.getMonth() + 1}-${date.getDate()}`
@@ -11,8 +12,8 @@ const convertDate = (date) => `${date.getFullYear()}-${date.getMonth().length > 
 
 const DailyView = () => {
     const [date,setDate] = useState(convertDate(new Date()))
-
     let dailyData = useUpdates("/api/views/dailyView",{date});
+    const theme = useContext(ThemeContext)
 
     if(dailyData.length === 0)return(
         <Container className={"text-center"}>
@@ -29,7 +30,7 @@ const DailyView = () => {
                 onChange={(e)=>setDate(e.target.value)}
                 type="date"
             />
-            <LineGraph dailyData={dailyData} />
+            <LineGraph dailyData={dailyData} theme={theme} />
         </Container>
     );
 };

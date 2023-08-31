@@ -1,0 +1,38 @@
+
+
+
+.info-card{
+  &.big{
+    font-size: 36px;
+    width: 400px;
+    height: calc(300px + 1rem);
+    margin-bottom: 0;
+    .info{
+      font-size: 72px;
+    }
+    small{
+        font-size: 14px;
+    }
+  }
+  border: 1px solid #000;
+  width: 200px;
+  height: 150px;
+  text-align: center;
+  padding-top: 1%;
+  font-size: 24px;
+  font-family: sans-serif;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  justify-content: space-around;
+  small{
+    font-size: 11px;
+    font-family: sans-serif;
+  }
+  .info{
+    font-family:serif;
+    font-size: 48px;
+    font-weight: bold;
+  }
+}

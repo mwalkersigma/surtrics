@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import useUpdates from "../../modules/hooks/useUpdates";
 import LineGraph from "../../components/lineGraph";
 import {ThemeContext} from "../layout";
+import {Col, Row, Stack} from "react-bootstrap";
 
 
 const convertDate = (date) => `${date.getFullYear()}-${date.getMonth().length > 1 ? "" : "0"}${date.getMonth() + 1}-${date.getDate()}`
@@ -34,5 +35,8 @@ const DailyView = () => {
         </Container>
     );
 };
+
+
+
 
 export default DailyView;

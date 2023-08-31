@@ -13,7 +13,6 @@ const IndividualView = () => {
     const setDate = (date) => {
         setChosenDate(date);
         setChosenUser("Choose a user")
-        console.log(date);
     };
     return (
         <Container>

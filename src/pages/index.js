@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import useUpdates from "../modules/hooks/useUpdates";
 import useGoal from "../modules/hooks/useGoal";
 import formatter from "../modules/utils/numberFormatter";
+import {Bar, Line} from "react-chartjs-2";
 function InfoCard ({title,children,subtitle}) {
     return(
         <div className={"info-card"}>
@@ -33,7 +34,7 @@ export default function Home() {
     //const dailyData = useUpdates("/api/views/dailyView",{date:new Date()});
     const goal = useGoal();
     // data
-
+    if (weekData.length === 0) return <div className={"text-center"}>Loading...</div>
   return (
     <>
       <Head>
@@ -75,6 +76,58 @@ export default function Home() {
                     <InfoCard title={"Hourly Average"}>
                         {formatter(Math.round(weekData.map(({count}) => +count).reduce((a,b)=>a+b,0)/weekData.length/7 || 0))}
                     </InfoCard>
+                </Col>
+                <Col sm={4}>
+                    <BigInfoCard title={"Expected Total"} subtitle={"By end of day"}>
+                        {formatter(goal * (weekData.length))}
+                    </BigInfoCard>
+                </Col>
+            </Row>
+            <Row>
+                <Col sm={4}>
+                    <div
+                        className={"graph-card text-center"}
+                        style={{
+                            border: "1px solid #000",
+                            fontSize: "1.5rem",
+                        }}
+                    >
+                        <p>Weekly Snapshot</p>
+                        <Bar
+                            data={{
+                                labels: weekData.map(({date}) => new Date(date).toISOString().split("T")[0]),
+                                datasets:[
+                                    {
+                                        data:weekData.map(({count}) => +count),
+                                        borderColor: 'rgb(54, 162, 235)',
+                                        backgroundColor: 'rgba(54, 162, 235)',
+                                    }
+                                ]
+                            }}
+                            options={{
+                                plugins: {
+                                    legend: {
+                                        display: false,
+                                    },
+                                    datalabels: {
+                                        color: "#FFF",
+                                    },
+                                },
+                                scales: {
+                                    y:{
+                                        display: false,
+                                        ticks: {
+                                            color: "#FFF"
+                                        }
+                                    },
+                                    x: {
+                                        display: false
+                                    }
+                                },
+                            }}
+                            height={190}
+                        />
+                    </div>
                 </Col>
                 <Col sm={4}>
                     <BigInfoCard title={"Expected Total"} subtitle={"By end of day"}>

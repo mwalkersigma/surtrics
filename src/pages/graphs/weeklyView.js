@@ -1,12 +1,4 @@
 import React, {useContext} from 'react';
-import {  Chart as ChartJS,
-    LinearScale, CategoryScale,
-    BarElement, PointElement,
-    LineElement, Legend,
-    Tooltip, LineController,
-    BarController,Title,Filler
-} from "chart.js";
-import DataLabels from "chartjs-plugin-datalabels";
 import Container from "react-bootstrap/Container";
 import {Chart} from "react-chartjs-2";
 import getMonday from "../../modules/utils/getMonday";
@@ -14,14 +6,7 @@ import useUpdates from "../../modules/hooks/useUpdates";
 import {ThemeContext} from "../layout";
 import useGoal from "../../modules/hooks/useGoal";
 
-ChartJS.register(
-    CategoryScale, LinearScale,
-    BarElement, Title,
-    Tooltip, Legend,
-    Filler, LineElement,
-    DataLabels,PointElement,
-    BarController, LineController
-);
+
 
 
 

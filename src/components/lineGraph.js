@@ -1,24 +1,17 @@
 import createAdjustedGoal from "../modules/utils/createAdjustedGoals";
 import {Line} from "react-chartjs-2";
 import React from "react";
-import {
-    Chart as ChartJS, CategoryScale,
-    LinearScale, PointElement,Title,
-    LineElement, Tooltip, Legend,
-} from 'chart.js';
 import useGoal from "../modules/hooks/useGoal";
 
-ChartJS.register(
-    CategoryScale, LinearScale,
-    PointElement, LineElement,
-    Title, Tooltip, Legend
-);
 export default function LineGraph ({dailyData,theme}) {
     theme = theme === "dark" ? "#FFF" : "#000";
     const goal = useGoal();
     const options = {
         responsive: true,
         plugins: {
+            datalabels:{
+                display: false,
+            },
             legend: {
                 position: 'top',
                 color: theme,

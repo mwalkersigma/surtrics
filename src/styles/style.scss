@@ -4,7 +4,7 @@
 .info-card{
   &.big{
     font-size: 36px;
-    width: 400px;
+    width: calc(400px + 1rem);
     height: calc(300px + 1rem);
     margin-bottom: 0;
     .info{

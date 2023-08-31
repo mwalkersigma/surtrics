@@ -45,8 +45,9 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
         body: JSON.stringify(body),
     })
     let data = await response.json();
-    console.log(data['Transactions'].length)
     if(data['Transactions'].length === 0){
+        console.log("response status: ", response.status)
+        console.log("response statusText: ", response.statusText)
         return false;
     }
     await PromisePool

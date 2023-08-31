@@ -7,6 +7,9 @@ import getMonday from "../../../modules/utils/getMonday";
 
 async function getIncrements(){
     let monday = getMonday();
+    let sunday = new Date(monday);
+    sunday.setDate(sunday.getDate() + 6);
+    let sundayString = sunday.toISOString().split("T")[0];
     // convert monday to yyyy-mm-dd
     let mondayString = monday.toISOString().split("T")[0];
     let query = await db.query(`
@@ -19,9 +22,10 @@ async function getIncrements(){
         transaction_type = 'Add'
         AND transaction_reason = 'Relisting'
         AND transaction_date >= $1
+        AND transaction_date <= $2
     GROUP BY 
         DATE(transaction_date)
-    `,[mondayString])
+    `,[mondayString,sundayString])
 
     return query.rows;
 }

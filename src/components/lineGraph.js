@@ -65,6 +65,12 @@ export default function LineGraph ({dailyData,theme}) {
         datasets: [
             {
                 label: "Goal",
+                data:makeHourlyGoal(goal || 0),
+                borderColor: 'rgb(0,173,17)',
+                backgroundColor: 'rgb(0,173,17)',
+            },
+            {
+                label: "Adjusted Goal",
                 data:createAdjustedGoal(makeHourlyGoal(goal || 0),dailyData),
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',

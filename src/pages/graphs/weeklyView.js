@@ -12,6 +12,7 @@ import {Chart} from "react-chartjs-2";
 import getMonday from "../../modules/utils/getMonday";
 import useUpdates from "../../modules/hooks/useUpdates";
 import {ThemeContext} from "../layout";
+import useGoal from "../../modules/hooks/useGoal";
 
 ChartJS.register(
     CategoryScale, LinearScale,
@@ -24,14 +25,17 @@ ChartJS.register(
 
 
 
-function colorize(ctx) {
-    const increments = ctx?.parsed?.y;
-    const goal = 483;
-    return increments < goal ? "#d00d0d" : "#00ad11";
+function colorize(goal) {
+    return (ctx) => {
+        const increments = ctx?.parsed?.y;
+        const goal = 483;
+        return increments < goal ? "#d00d0d" : "#00ad11";
+    }
 }
 function makeWeek(){
     let monday = getMonday();
     let week = [];
+
     for(let i = 0; i < 5; i++){
         week.push(monday.toISOString().split("T")[0]);
         monday.setDate(monday.getDate() + 1);
@@ -41,6 +45,10 @@ function makeWeek(){
 
 function WeeklyChart({weekData,theme}){
     theme = theme === "dark" ? "#FFF" : "#000";
+    weekData = [...weekData
+        //,{count: '195', date: '2023-09-01T05:00:00.000Z'},{count: '215', date: '2023-09-02T05:00:00.000Z'},{count: '320', date: '2023-09-03T05:00:00.000Z'}
+    ]
+    const goal = useGoal();
     const options = {
         plugins: {
             legend: {
@@ -91,12 +99,12 @@ function WeeklyChart({weekData,theme}){
         },
     }
     const data = weekData.length > 0 && {
-        labels: makeWeek().map((dateString) => (dateString.split("T")[0])),
+        labels: weekData.map(({date}) => (date.split("T")[0])),
         datasets: [
             {
                 type: "line",
                 label: "Goal",
-                data: [483,483,483,483,483],
+                data: Array.from({length: 7}, () => (goal)),
                 borderColor: "#5b1fa8",
                 borderWidth: 2,
                 tension: 0.1,
@@ -111,7 +119,7 @@ function WeeklyChart({weekData,theme}){
                 type: "bar",
                 label: "Days",
                 data: weekData?.map(({count}) => (count)),
-                backgroundColor: colorize,
+                backgroundColor: colorize(goal),
                 barThickness: 75,
                 borderRadius: 10
             }

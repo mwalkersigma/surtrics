@@ -10,16 +10,21 @@ const IndividualView = () => {
     if(!individualData.length > 0) return (<div className={"text-center"}>Loading...</div>);
     individualData = JSON.parse(individualData);
     let users = Object.keys(individualData);
+    const setDate = (date) => {
+        setChosenDate(date);
+        setChosenUser("Choose a user")
+        console.log(date);
+    };
     return (
         <Container>
             <InputGroup>
-                <Form.Select onChange={(e)=>setChosenUser(e.target.value)} className={"mb-4"}>
+                <Form.Select value={chosenUser} onChange={(e)=>setChosenUser(e.target.value)} className={"mb-4"}>
                     <option>Choose a user</option>
                     {users.map((user, index) => <option key={index}>{user}</option>)}
                 </Form.Select>
                 <Form.Control
                     type={"date"}
-                    onChange={(e) => setChosenDate(e.target.value)}
+                    onChange={(e) => setDate(new Date(e.target.value))}
                     className={"mb-4"}
                     defaultValue={date.toISOString().split("T")[0]}
                 />

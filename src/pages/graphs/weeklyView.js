@@ -5,8 +5,27 @@ import getMonday from "../../modules/utils/getMonday";
 import useUpdates from "../../modules/hooks/useUpdates";
 import {ThemeContext} from "../layout";
 import useGoal from "../../modules/hooks/useGoal";
+import {
+    BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
+    LineElement, PointElement,
+    Tooltip
+} from "chart.js";
+import DataLabels from "chartjs-plugin-datalabels";
 
-
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Tooltip,
+    Legend,
+    LineElement,
+    DataLabels,
+    PointElement,
+);
 
 
 

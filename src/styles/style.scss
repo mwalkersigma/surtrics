@@ -15,6 +15,9 @@
     }
   }
   border: 1px solid #000;
+  &.dark{
+    border: 1px solid #FFF;
+  }
   width: 200px;
   height: 150px;
   text-align: center;

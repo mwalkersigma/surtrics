@@ -67,7 +67,7 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
             console.log("INSERTED Record for sku: " , item['Sku'])
         })
 
-    return response;
+    return true;
 }
 async function getTransactions(){
     let pageNumber = 0;

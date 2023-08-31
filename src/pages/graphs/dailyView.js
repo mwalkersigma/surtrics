@@ -6,8 +6,31 @@ import useUpdates from "../../modules/hooks/useUpdates";
 import LineGraph from "../../components/lineGraph";
 import {ThemeContext} from "../layout";
 import {Col, Row, Stack} from "react-bootstrap";
+import {
+    BarController,
+    BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Filler,
+    Legend,
+    LinearScale, LineController,
+    LineElement, PointElement,
+    Title,
+    Tooltip
+} from "chart.js";
+import DataLabels from "chartjs-plugin-datalabels";
 
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    Title,
+    Tooltip,
+    Legend,
+    LineElement,
+    PointElement,
+);
 
+// 5027955491
 const convertDate = (date) => `${date.getFullYear()}-${date.getMonth().length > 1 ? "" : "0"}${date.getMonth() + 1}-${date.getDate()}`
 
 

@@ -1,0 +1,2 @@
+const formatDateWithZeros = (date) => `${date.getFullYear()}-${date.getMonth().length > 1 ? "" : "0"}${date.getMonth() + 1}-${date.getDate().length > 1 ? "" : "0"}${date.getDate()}`
+export default formatDateWithZeros

@@ -1,10 +1,12 @@
 
-
+.graph-card{
+  width:calc(404px + 1rem) ;
+}
 
 .info-card{
   &.big{
     font-size: 36px;
-    width: calc(400px + 1rem);
+    width: calc(404px + 1rem);
     height: calc(300px + 1rem);
     margin-bottom: 0;
     .info{

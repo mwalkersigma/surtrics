@@ -1,24 +1,25 @@
 import React, {useContext, useState} from 'react';
-
-import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import useUpdates from "../../modules/hooks/useUpdates";
 import LineGraph from "../../components/lineGraph";
 import {ThemeContext} from "../layout";
-import {Col, Row, Stack} from "react-bootstrap";
+
+import Container from "react-bootstrap/Container";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
+import InfoCard from "../../components/infoCards/infocard";
 import {
-    BarController,
-    BarElement,
     CategoryScale,
     Chart as ChartJS,
-    Filler,
     Legend,
-    LinearScale, LineController,
+    LinearScale,
     LineElement, PointElement,
     Title,
     Tooltip
 } from "chart.js";
-import DataLabels from "chartjs-plugin-datalabels";
+
+
 
 ChartJS.register(
     CategoryScale,
@@ -30,12 +31,8 @@ ChartJS.register(
     PointElement,
 );
 
-// 5027955491
-const convertDate = (date) => `${date.getFullYear()}-${date.getMonth().length > 1 ? "" : "0"}${date.getMonth() + 1}-${date.getDate()}`
-
-
 const DailyView = () => {
-    const [date,setDate] = useState(convertDate(new Date()))
+    const [date,setDate] = useState(formatDateWithZeros(new Date()))
     let dailyData = useUpdates("/api/views/dailyView",{date});
     const theme = useContext(ThemeContext)
 
@@ -46,6 +43,7 @@ const DailyView = () => {
         </Container>
     );
     dailyData = dailyData.map(({count}) => +count);
+    let margin = "3rem";
     return (
         <Container>
             <Form.Control
@@ -54,7 +52,23 @@ const DailyView = () => {
                 onChange={(e)=>setDate(e.target.value)}
                 type="date"
             />
-            <LineGraph dailyData={dailyData} theme={theme} />
+            <Row>
+                <Col sm={10} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}} >
+                    <LineGraph dailyData={dailyData} theme={theme} />
+                </Col>
+                <Col sm={2}>
+                    <InfoCard style={{marginBottom:margin}}  title={"Total"} theme={theme}>
+                        {dailyData.reduce((a,b) => a + b,0)}
+                    </InfoCard>
+                    <InfoCard style={{marginBottom:margin}} title={"Average"} theme={theme}>
+                        {Math.round(dailyData.reduce((a,b) => a + b,0) / dailyData.length)}
+                    </InfoCard>
+                    <InfoCard style={{marginBottom:0}} title={"Best Hour"} theme={theme}>
+                        {dailyData.reduce((a,b) => a > b ? a : b,0)}
+                    </InfoCard>
+                </Col>
+            </Row>
+
         </Container>
     );
 };

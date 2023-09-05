@@ -14,6 +14,9 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {ThemeContext} from "./layout";
+import makeWeekArray from "../modules/utils/makeWeekArray";
+import InfoCard from "../components/infoCards/infocard";
+import BigInfoCard from "../components/infoCards/bigInfoCards";
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -23,28 +26,8 @@ ChartJS.register(
     LineElement,
 );
 
-function InfoCard ({title,children,subtitle,theme}) {
-    return(
-        <div className={`info-card ${theme}`}>
-            <div>{title}</div>
-            <div className={"info"}>
-                {children}
-            </div>
-            <small>{subtitle}</small>
-        </div>
-    )
-}
-function BigInfoCard ({title,children,subtitle,theme}) {
-    return(
-        <div className={`big info-card ${theme}`}>
-            <div>{title}</div>
-            <div className={"info"}>
-                {children}
-            </div>
-            <small>{subtitle}</small>
-        </div>
-    )
-}
+
+
 
 export default function Home() {
     let date = new Date();
@@ -53,10 +36,13 @@ export default function Home() {
     const weekData = useUpdates("/api/views/weeklyView");
     const dailyData = useUpdates("/api/views/dailyView",{date});
     const goal = useGoal();
+    const hourlyGoal = goal / 7;
+
+    let weekSeed = makeWeekArray([...weekData, {date,count:0}, {date,count:0}]);
 
     if (weekData.length === 0 || dailyData.length === 0 ) return <div className={"text-center"}>Loading...</div>
 
-    const totalIncrements = weekData.map(({count}) => +count).reduce((a,b)=>a+b,0);
+    const totalIncrements = weekSeed.map(({count}) => +count).reduce((a,b)=>a+b,0);
     const totalForToday = dailyData.reduce((a,b) => a + +b.count,0);
 
     const dailyAverage = Math.round(totalIncrements / weekData.length || 0);
@@ -65,7 +51,11 @@ export default function Home() {
     const expectedTotal = goal * weekData.length;
 
     const dailyDifference = weekData.at(-1).count - goal;
-    const totalDifference = totalIncrements - expectedTotal - dailyDifference;
+    const totalDifference = expectedTotal - totalIncrements + dailyDifference;
+
+    const bestDay = Math.max(...weekData.map(({count}) => +count));
+    const bestHour = Math.max(...dailyData.map(({count}) => +count));
+
   return (
     <>
       <Head>
@@ -80,44 +70,45 @@ export default function Home() {
         <Container className={"mt-5"} >
             <Row>
                 <Col sm={2} className={"gap-2"}>
-                    <InfoCard theme={theme} title={"Total Increments"}>
-                        {formatter(totalIncrements)}
-                    </InfoCard>
-                    <InfoCard theme={theme} title={"Daily Average"}>
-                        {formatter(dailyAverage)}
-                    </InfoCard>
-                </Col>
-                <Col sm={2}>
                     <InfoCard theme={theme} title={"Daily Total"} >
                         {(formatter(totalForToday))}
                     </InfoCard>
-                    <InfoCard theme={theme} title={"Daily Difference"} subtitle={"between expected and actual"}>
-                        {formatter(dailyDifference)}
+                    <InfoCard theme={theme} title={"Hourly total"} >
+                        {formatter(dailyData.at(-1)?.count)}
                     </InfoCard>
                 </Col>
                 <Col sm={2}>
-                    <InfoCard theme={theme} title={"Daily Difference"} >
-                        {(formatter(dailyData.at(-1).count - goal))}
-                    </InfoCard>
-                    <InfoCard theme={theme} title={"Daily Goal"}>
-                        {formatter(goal)}
-                    </InfoCard>
-                </Col>
-                <Col sm={2}>
-                    <InfoCard theme={theme} title={"Total Difference"} subtitle={"excluding today"}>
-                        {formatter(totalDifference)}
+                    <InfoCard theme={theme} title={"Daily Average"}>
+                        {formatter(dailyAverage)}
                     </InfoCard>
                     <InfoCard theme={theme} title={"Hourly Average"}>
                         {formatter(hourlyAverage)}
                     </InfoCard>
+
+                </Col>
+                <Col sm={2}>
+                    <InfoCard theme={theme} title={"Daily Goal"}>
+                        {formatter(goal)}
+                    </InfoCard>
+                    <InfoCard theme={theme} title={"Hourly Goal"}>
+                        {formatter(Math.round(hourlyGoal))}
+                    </InfoCard>
+                </Col>
+                <Col sm={2}>
+                    <InfoCard theme={theme} title={"Daily Difference"}>
+                        {formatter(dailyDifference)}
+                    </InfoCard>
+                    <InfoCard theme={theme} title={"Hourly Difference"}>
+                        {formatter(Math.round(hourlyGoal - dailyData.at(-1)?.count))}
+                    </InfoCard>
                 </Col>
                 <Col sm={4}>
-                    <BigInfoCard theme={theme} title={"Planned Total"} subtitle={"By end of day"}>
-                        {formatter(expectedTotal)}
+                    <BigInfoCard theme={theme} title={"Total Increments"}>
+                        {formatter(totalIncrements)}
                     </BigInfoCard>
                 </Col>
             </Row>
-            <Row>
+            <Row className={"pb-3"}>
                 <Col sm={4}>
                     <div
                         className={"graph-card text-center"}
@@ -126,13 +117,13 @@ export default function Home() {
                             fontSize: "1.5rem",
                         }}
                     >
-                        <p>Weekly Snapshot</p>
+                        <p>Daily Snapshot</p>
                         <Bar
                             data={{
-                                labels: weekData.map(({date}) => new Date(date).toISOString().split("T")[0]),
+                                labels:weekSeed.map(({date}) => new Date(date).toISOString().split("T")[0]),
                                 datasets:[
                                     {
-                                        data:weekData.map(({count}) => +count),
+                                        data:weekSeed.map(({count}) => +count),
                                         borderColor: 'rgb(54, 162, 235)',
                                         backgroundColor: 'rgba(54, 162, 235)',
                                     }
@@ -149,13 +140,15 @@ export default function Home() {
                                 },
                                 scales: {
                                     y:{
+                                        min: 0,
+                                        max: goal * 2,
                                         display: false,
                                         ticks: {
                                             color: "#FFF"
                                         }
                                     },
                                     x: {
-                                        display: false
+                                        //display: false
                                     }
                                 },
                             }}
@@ -214,6 +207,34 @@ export default function Home() {
                             height={190}
                         />
                     </div>
+                </Col>
+            </Row>
+            <Row>
+                <Col sm={4}>
+                    <BigInfoCard theme={theme} title={"Best Day"}>
+                        {formatter(bestDay)}
+                    </BigInfoCard>
+                </Col>
+                <Col sm={2} className={"gap-2"}>
+                    <InfoCard theme={theme} title={"Planned Total"} subtitle={"By end of day"}>
+                        {formatter(expectedTotal)}
+                    </InfoCard>
+                    <InfoCard theme={theme} title={"Total Difference"} subtitle={"excluding today"}>
+                       <span className={`${totalDifference > 0 ? "text-danger" : ""}`}>{formatter(totalDifference)}</span>
+                    </InfoCard>
+                </Col>
+                <Col sm={2}>
+                    <InfoCard theme={theme} title={"Best VS Today"} >
+                        {formatter(bestDay - totalForToday)}
+                    </InfoCard>
+                    <InfoCard theme={theme} title={"Best HR VS Now"}>
+                        {formatter(bestHour - dailyData.at(-1)?.count)}
+                    </InfoCard>
+                </Col>
+                <Col sm={4}>
+                    <BigInfoCard theme={theme} title={"Best Hour"}>
+                        {formatter(bestHour)}
+                    </BigInfoCard>
                 </Col>
             </Row>
         </Container>

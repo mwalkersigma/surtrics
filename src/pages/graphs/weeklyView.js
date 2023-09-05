@@ -1,7 +1,6 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {Chart} from "react-chartjs-2";
-import getMonday from "../../modules/utils/getMonday";
 import useUpdates from "../../modules/hooks/useUpdates";
 import {ThemeContext} from "../layout";
 import useGoal from "../../modules/hooks/useGoal";
@@ -15,6 +14,12 @@ import {
     Tooltip
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
+import makeWeekArray from "../../modules/utils/makeWeekArray";
+import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
+import Form from "react-bootstrap/Form";
+import findMonday from "../../modules/utils/findMondayFromDate";
+import {Col, Row} from "react-bootstrap";
+import InfoCard from "../../components/infoCards/infocard";
 
 ChartJS.register(
     CategoryScale,
@@ -29,29 +34,28 @@ ChartJS.register(
 
 
 
+function getWeekString(date) {
+    let monday = findMonday(date);
+    let sunday = new Date(monday);
+    sunday.setDate(sunday.getDate() + 6);
+    return `${formatDateWithZeros(monday)} - ${formatDateWithZeros(sunday)}`;
+}
+
+
+
+
 function colorize(goal) {
     return (ctx) => {
         const increments = ctx?.parsed?.y;
-        const goal = 483;
         return increments < goal ? "#d00d0d" : "#00ad11";
     }
 }
-function makeWeek(){
-    let monday = getMonday();
-    let week = [];
 
-    for(let i = 0; i < 5; i++){
-        week.push(monday.toISOString().split("T")[0]);
-        monday.setDate(monday.getDate() + 1);
-    }
-    return week
-}
 
-function WeeklyChart({weekData,theme}){
+function WeeklyChart({weekData,theme, date}){
+    let monday = findMonday(new Date(date));
     theme = theme === "dark" ? "#FFF" : "#000";
-    weekData = [...weekData
-        //,{count: '195', date: '2023-09-01T05:00:00.000Z'},{count: '215', date: '2023-09-02T05:00:00.000Z'},{count: '320', date: '2023-09-03T05:00:00.000Z'}
-    ]
+    weekData = makeWeekArray(weekData,monday);
     const goal = useGoal();
     const options = {
         plugins: {
@@ -84,7 +88,7 @@ function WeeklyChart({weekData,theme}){
         scales: {
             y: {
                 min: 0,
-                max: 1000,
+                max: goal * 2,
                 ticks: {
                     color: theme + "A"
                 },
@@ -133,14 +137,46 @@ function WeeklyChart({weekData,theme}){
 }
 
 
-
 function WeeklyView() {
-    const weekData = useUpdates("/api/views/weeklyView");
-    const theme = useContext(ThemeContext)
+    const [date,setDate] = useState(formatDateWithZeros(new Date()));
+    const weekData = useUpdates("/api/views/weeklyView",{date});
+    const theme = useContext(ThemeContext);
+    if(weekData.length === 0)return(
+        <Container className={"text-center"}>
+            <Form.Control className={"mb-5"} value={date} onChange={(e)=>setDate(e.target.value)} type="date" />
+            Loading...
+        </Container>
+    );
+    let margin = "3.5rem";
     return (
         <main>
             <Container>
-                {weekData.length > 0 && <WeeklyChart theme={theme} weekData={weekData} />}
+                <Row>
+                    <Form.Control
+                        className={"mb-3"}
+                        value={date}
+                        onChange={(e)=>setDate(e.target.value)}
+                        type="date"
+                    />
+                </Row>
+                Showing data for {getWeekString(new Date(date))}.
+                <div className={"mb-3"} />
+                <Row>
+                    <Col sm={10} className={"p-1"} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
+                        {weekData.length > 0 && <WeeklyChart theme={theme} weekData={weekData} date={date} />}
+                    </Col>
+                    <Col sm={2}>
+                        <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>
+                            {weekData.reduce((acc, {count}) => (acc + +count), 0)}
+                        </InfoCard>
+                        <InfoCard style={{marginBottom:margin}} title={"Average Increments"} theme={theme}>
+                            {Math.round(weekData.reduce((acc, {count}) => (acc + +count), 0) / 5)}
+                        </InfoCard>
+                        <InfoCard style={{marginBottom:0}} title={"Best Day"} theme={theme}>
+                            {weekData.reduce((acc, {count}) => (acc > +count ? acc : +count), 0)}
+                        </InfoCard>
+                    </Col>
+                </Row>
             </Container>
         </main>
     )

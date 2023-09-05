@@ -112,9 +112,9 @@ async function getTransactions(){
         let result = true;
         const currentTimestamp = new Date().toISOString();
         const timeLastUpdated = await getLastUpdatedTime();
-        const shouldUpdate = await isTimeToUpdate(currentTimestamp, timeLastUpdated);
+        const shouldNotUpdate = await isTimeToUpdate(currentTimestamp, timeLastUpdated);
 
-        if(!shouldUpdate){
+        if(shouldNotUpdate){
             console.log("not time to update")
             return "not time to update";
         }

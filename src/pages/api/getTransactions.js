@@ -2,8 +2,6 @@ import Db from "../../db";
 import { PromisePool} from "@supercharge/promise-pool";
 import fs from "fs/promises";
 import convertToDatabase from "../../modules/utils/convertSkuVaultToDatabaseFormat";
-import Logger from "sigma-logger"
-const {log} = Logger;
 const {SKU_VAULT_TENANT_TOKEN, SKU_VAULT_USER_TOKEN} = process.env;
 // exported 8/24/2023 1:11pm;
 
@@ -33,9 +31,9 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
 
 
     try {
-        log("getting transactions between: ", timeLastUpdated, " and ", currentTimestamp)
+        console.log("getting transactions between: ", timeLastUpdated, " and ", currentTimestamp)
     } catch (e) {
-        console.log("error: ", e)
+        console.console.log("error: ", e)
     }
     const body = {
         "ToDate": currentTimestamp,
@@ -53,21 +51,21 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
         },
         body: JSON.stringify(body),
     })
-    log("response: ", response.headers)
+    console.log("response: ", response.headers)
     let data = await response.json();
     if(response.status === 429){
         return response.headers;
     }
     if(data['Transactions'].length === 0){
-        log("response status: ", response.status)
-        log("response statusText: ", response.statusText)
+        console.log("response status: ", response.status)
+        console.log("response statusText: ", response.statusText)
         return false;
     }
     await PromisePool
         .withConcurrency(25)
         .for(data['Transactions'])
         .process(async (item) => {
-            log("Inserting Record for sku: " , item['Sku'])
+            console.log("Inserting Record for sku: " , item['Sku'])
             await Db.query(`
                 INSERT INTO nfs.surtrics.surplus_metrics_data (
                     "user", sku, code, scanned_code, lot_number, title, quantity,
@@ -77,43 +75,50 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
                 )
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
                 convertToDatabase(item))
-            log("INSERTED Record for sku: " , item['Sku'])
+            console.log("INSERTED Record for sku: " , item['Sku'])
         })
 
     return true;
 }
 async function getTransactions(){
-    let pageNumber = 0;
-    let result = true;
-    const currentTimestamp = new Date().toISOString();
-    const {timeLastUpdated} = await fs
-        .readFile("./src/json/timeLastUpdated.json", "utf-8")
-        .then((data) => JSON.parse(data));
+console.log("here")
+    try {
+        let pageNumber = 0;
+        let result = true;
+        const currentTimestamp = new Date().toISOString();
+        const {timeLastUpdated} = await fs
+            .readFile("./src/json/timeLastUpdated.json", "utf-8")
+            .then((data) => JSON.parse(data));
 
-    let {frequency} = await fs
-        .readFile("./src/json/settings.json", "utf-8")
-        .then((data) => JSON.parse(data));
-    log("frequency: ", frequency)
-    frequency = convertFrequencyToSeconds(frequency);
-    let timeDiff = (new Date(currentTimestamp) - new Date(timeLastUpdated))/1000;
-    log("timeDiff: ", timeDiff)
-    if(timeDiff < frequency){
-        return "Not enough time has passed since last update"
-    }
-    log("finished writing timeLastUpdated.json")
-    while(result){
-        result = await processTransaction(pageNumber,currentTimestamp,timeLastUpdated);
-        if(result?.['X-RateLimit-Reset']){
-            await sleep(result['X-RateLimit-Reset'])
+        let {frequency} = await fs
+            .readFile("./src/json/settings.json", "utf-8")
+            .then((data) => JSON.parse(data));
+        console.log("frequency: ", frequency)
+        frequency = convertFrequencyToSeconds(frequency);
+        let timeDiff = (new Date(currentTimestamp) - new Date(timeLastUpdated)) / 1000;
+        console.log("timeDiff: ", timeDiff)
+        if (timeDiff < frequency) {
+            return "Not enough time has passed since last update"
         }
-        pageNumber++;
+        console.log("finished writing timeLastUpdated.json")
+        while (result) {
+            result = await processTransaction(pageNumber, currentTimestamp, timeLastUpdated);
+            if (result?.['X-RateLimit-Reset']) {
+                await sleep(result['X-RateLimit-Reset'])
+            }
+            pageNumber++;
+        }
+        await fs.writeFile("./src/json/timeLastUpdated.json", JSON.stringify({timeLastUpdated: currentTimestamp}))
+        console.log(`Finished inserting into DB ${pageNumber - 1} pages of transactions`)
+        return "update complete";
+    } catch (e) {
+        console.log("error: ", e)
+        return e;
     }
-    await fs.writeFile("./src/json/timeLastUpdated.json", JSON.stringify({timeLastUpdated: currentTimestamp}))
-    log(`Finished inserting into DB ${pageNumber-1} pages of transactions`)
-    return "update complete";
 }
 
 export default function handler (req,res){
+    console.log(`request received to update transactions`)
     return getTransactions()
     .then((message) => {
         res.status(200).json({message});

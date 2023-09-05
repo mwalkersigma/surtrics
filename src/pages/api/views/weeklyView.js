@@ -32,7 +32,7 @@ async function getIncrements(date){
 
 
 export default function handler (req,res) {
-    Logger.log(`req.body: ${req.body} `)
+    Logger.log(`req.body: ${req.body}`)
     let date = new Date();
     if(req.body){
         let body = JSON.parse(req.body) ?? {date: new Date()};

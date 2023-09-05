@@ -54,6 +54,10 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
         body: JSON.stringify(body),
     })
     Logger.log(`response status: ${response.status}`);
+    Logger.log(`response statusText: ${response.statusText}`);
+    Logger.log(`response x-ratelimit-limit': ${response.headers.get('x-ratelimit-limit')}`);
+    Logger.log(`response x-ratelimit-remaining': ${response.headers.get('x-ratelimit-remaining')}`);
+    Logger.log(`response x-ratelimit-reset': ${response.headers.get('x-ratelimit-reset')}`);
 
     let data = await response.json();
     if(response.status === 429){

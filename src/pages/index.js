@@ -57,6 +57,7 @@ export default function Home() {
     const bestDay = Math.max(...weekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
 
+
   return (
     <>
       <Head>

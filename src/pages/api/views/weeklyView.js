@@ -8,10 +8,15 @@ import Logger from "sigma-logger";
 async function getIncrements(date){
     let monday = findMonday(date);
     let sunday = new Date(monday);
-    sunday.setDate(sunday.getDate() + 6);
+
+    sunday.setDate(sunday.getDate() + 7);
+
     let sundayString = sunday.toISOString().split("T")[0];
-    // convert monday to yyyy-mm-dd
     let mondayString = monday.toISOString().split("T")[0];
+
+    console.log("mondayString: ", mondayString)
+    console.log("sundayString: ", sundayString)
+
     let query = await db.query(`
     SELECT 
         COUNT(*),
@@ -26,7 +31,7 @@ async function getIncrements(date){
     GROUP BY 
         DATE(transaction_date)
     `, [mondayString, sundayString])
-
+    console.log("query: ", query.rows)
     return query.rows;
 }
 

@@ -29,12 +29,6 @@ const convertFrequencyToSeconds = (frequency) => {
 
 async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
 
-
-    try {
-        console.log("getting transactions between: ", timeLastUpdated, " and ", currentTimestamp)
-    } catch (e) {
-        console.console.log("error: ", e)
-    }
     const body = {
         "ToDate": currentTimestamp,
         "FromDate": timeLastUpdated,
@@ -80,27 +74,39 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
 
     return true;
 }
+
+async function getLastUpdatedTime(){
+    const {timeLastUpdated} = await fs
+        .readFile("./src/json/timeLastUpdated.json", "utf-8")
+        .then((data) => JSON.parse(data));
+
+    return timeLastUpdated;
+}
+async function isTimeToUpdate(currentTimestamp, timeLastUpdated){
+    let {frequency} = await fs
+        .readFile("./src/json/settings.json", "utf-8")
+        .then((data) => JSON.parse(data));
+    console.log("frequency: ", frequency)
+    frequency = convertFrequencyToSeconds(frequency);
+    let timeDiff = (new Date(currentTimestamp) - new Date(timeLastUpdated)) / 1000;
+
+    console.log("timeDiff: ", timeDiff)
+    return timeDiff < frequency
+}
 async function getTransactions(){
-console.log("here")
     try {
         let pageNumber = 0;
         let result = true;
         const currentTimestamp = new Date().toISOString();
-        const {timeLastUpdated} = await fs
-            .readFile("./src/json/timeLastUpdated.json", "utf-8")
-            .then((data) => JSON.parse(data));
+        const timeLastUpdated = await getLastUpdatedTime();
+        const shouldUpdate = await isTimeToUpdate(currentTimestamp, timeLastUpdated);
 
-        let {frequency} = await fs
-            .readFile("./src/json/settings.json", "utf-8")
-            .then((data) => JSON.parse(data));
-        console.log("frequency: ", frequency)
-        frequency = convertFrequencyToSeconds(frequency);
-        let timeDiff = (new Date(currentTimestamp) - new Date(timeLastUpdated)) / 1000;
-        console.log("timeDiff: ", timeDiff)
-        if (timeDiff < frequency) {
-            return "Not enough time has passed since last update"
+        if(!shouldUpdate){
+            console.log("not time to update")
+            return "not time to update";
         }
-        console.log("finished writing timeLastUpdated.json")
+
+
         while (result) {
             result = await processTransaction(pageNumber, currentTimestamp, timeLastUpdated);
             if (result?.['X-RateLimit-Reset']) {

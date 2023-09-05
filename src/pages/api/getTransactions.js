@@ -31,7 +31,12 @@ const convertFrequencyToSeconds = (frequency) => {
 
 async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
 
-    log("getting transactions between: ", timeLastUpdated, " and ", currentTimestamp)
+
+    try {
+        log("getting transactions between: ", timeLastUpdated, " and ", currentTimestamp)
+    } catch (e) {
+        console.log("error: ", e)
+    }
     const body = {
         "ToDate": currentTimestamp,
         "FromDate": timeLastUpdated,

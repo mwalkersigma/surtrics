@@ -33,7 +33,7 @@ export default function Home() {
     let date = new Date();
     date = date.toISOString().split("T")[0];
     const theme = useContext(ThemeContext)
-    const weekData = useUpdates("/api/views/weeklyView");
+    const weekData = useUpdates("/api/views/weeklyView",{date});
     const dailyData = useUpdates("/api/views/dailyView",{date});
     const goal = useGoal();
     const hourlyGoal = goal / 7;

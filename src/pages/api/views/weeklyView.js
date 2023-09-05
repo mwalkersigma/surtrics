@@ -32,7 +32,7 @@ async function getIncrements(date){
 
 
 export default function handler (req,res) {
-    let body = JSON.parse(req.body);
+    let body = JSON.parse(req.body) ?? {date: new Date()};
     let date = body.date;
     date = new Date(date);
     return getIncrements(date)

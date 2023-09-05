@@ -51,6 +51,7 @@ export default function Home() {
     const expectedTotal = goal * weekData.length;
 
     const dailyDifference = weekData.at(-1).count - goal;
+    const hourlyDifference = Math.round(dailyData.at(-1)?.count - hourlyGoal)
     const totalDifference = expectedTotal - totalIncrements + dailyDifference;
 
     const bestDay = Math.max(...weekData.map(({count}) => +count));
@@ -99,7 +100,7 @@ export default function Home() {
                         {formatter(dailyDifference)}
                     </InfoCard>
                     <InfoCard theme={theme} title={"Hourly Difference"}>
-                        {formatter(Math.round(hourlyGoal - dailyData.at(-1)?.count))}
+                        {formatter(hourlyDifference)}
                     </InfoCard>
                 </Col>
                 <Col sm={4}>

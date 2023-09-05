@@ -2,8 +2,8 @@ import Db from "../../db";
 import { PromisePool} from "@supercharge/promise-pool";
 import fs from "fs/promises";
 import convertToDatabase from "../../modules/utils/convertSkuVaultToDatabaseFormat";
-import logger from "sigma-logger"
-const {log} = logger;
+import Logger from "sigma-logger"
+const {log} = Logger;
 const {SKU_VAULT_TENANT_TOKEN, SKU_VAULT_USER_TOKEN} = process.env;
 // exported 8/24/2023 1:11pm;
 

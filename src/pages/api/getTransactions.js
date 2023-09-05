@@ -2,6 +2,7 @@ import Db from "../../db";
 import { PromisePool} from "@supercharge/promise-pool";
 import fs from "fs/promises";
 import convertToDatabase from "../../modules/utils/convertSkuVaultToDatabaseFormat";
+import Logger from "sigma-logger";
 const {SKU_VAULT_TENANT_TOKEN, SKU_VAULT_USER_TOKEN} = process.env;
 // exported 8/24/2023 1:11pm;
 
@@ -37,6 +38,13 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
         "TenantToken": SKU_VAULT_TENANT_TOKEN,
         "UserToken" : SKU_VAULT_USER_TOKEN,
     }
+    try {
+        Logger.log(`body: ${JSON.stringify(body,null,2)}`);
+    }catch (e) {
+        console.log("error: ", e)
+        console.log("body: ", body)
+    }
+
     const method = "POST";
     let response = await fetch("https://app.skuvault.com/api/inventory/getTransactions", {
         method: method,

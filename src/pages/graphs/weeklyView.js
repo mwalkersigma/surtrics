@@ -55,11 +55,9 @@ function WeeklyChart({weekData,theme, date}){
     let monday = findMonday(new Date(date));
     if(monday.getDay() !== 1){
         monday.setDate(monday.getDate() - monday.getDay() + 1);
-        console.log("monday: ", monday)
     }
     theme = theme === "dark" ? "#FFF" : "#000";
     weekData = makeWeekArray(weekData,monday);
-    console.log("weekData after processing: ", weekData)
     const goal = useGoal();
     const options = {
         plugins: {
@@ -144,7 +142,6 @@ function WeeklyChart({weekData,theme, date}){
 function WeeklyView() {
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
     const weekData = useUpdates("/api/views/weeklyView",{date});
-    console.log("weekData: ", weekData)
     const theme = useContext(ThemeContext);
     if(weekData.length === 0)return(
         <Container className={"text-center"}>

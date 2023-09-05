@@ -39,7 +39,7 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
         "UserToken" : SKU_VAULT_USER_TOKEN,
     }
     try {
-        Logger.log(`body: ${JSON.stringify(body,null,2)}`);
+        Logger.log(`body: ${JSON.stringify({currentTimestamp,timeLastUpdated,pageNumber},null,2)}`);
     }catch (e) {
         console.log("error: ", e)
         console.log("body: ", body)
@@ -53,7 +53,8 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
         },
         body: JSON.stringify(body),
     })
-    console.log("response: ", response.headers)
+    Logger.log(`response status: ${response.status}`);
+
     let data = await response.json();
     if(response.status === 429){
         return response.headers;

@@ -13,6 +13,10 @@ export default function useUpdates(route, init){
                 method: "POST",
                 body: JSON.stringify({date}),
             }
+        }else{
+            console.log("no date")
+            console.log(init);
+            console.log(route);
         }
         const getTransactions = () => fetch(`${window.location.origin}${route}`,options)
             .then((response) => response.json())

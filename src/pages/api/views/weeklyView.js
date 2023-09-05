@@ -1,6 +1,6 @@
 import db from "../../../db";
 import findMonday from "../../../modules/utils/findMondayFromDate";
-
+import Logger from "sigma-logger";
 
 
 
@@ -32,7 +32,7 @@ async function getIncrements(date){
 
 
 export default function handler (req,res) {
-    console.log("req.body: ", req.body)
+    Logger.log(`req.body: ${req.body} `)
     let date = new Date();
     if(req.body){
         let body = JSON.parse(req.body) ?? {date: new Date()};

@@ -17,7 +17,7 @@ stored long term in a table.
 ## Table Structure
 The table structure is as follows:
 
-* Table Name : Surtrics
+* Table Name: Surtrics
 * Columns:
     * user : varchar(255)
     * sku : varchar(255)
@@ -83,17 +83,17 @@ The project would have three main systems.
 
 ## Initial Views
 ###  Weekly
-This view is going to be a bar graph the shows weekly progress for the whole team.
+This view is going to be a bar graph that shows weekly progress for the whole team.
 
 ### Daily
 This view is going to show daily progress for the whole team.
-One proposed features for this view is that is calculates missed goals for the week
+A proposed feature for this view is that it calculates missed goals for the week
 and adds them to the rest of the days evenly.
 
 ### Individual
 This view is going to show the progress of an individual user.
 Some proposed features for this view are:
-show templates approved ( maybe I can get this from the crawler db).
+show templates approved (maybe I can get this from the crawler db).
 AVG per hour
 VS last week (so you can see how you are trending vs last week)
 (for fun extra) Gold Bar that shows all-time best week, and whenever someone beats it, they get a gold bar.

@@ -3,8 +3,8 @@
 
 /*
 Goals are going to be checked once a day,
-they will be set from the admin menu and from there everyday at 5am the system will check if
-the goal has be updated
+they will be set from the admin menu, and from there every day at 5am the system will check if
+the goal has been updated
  */
 
 

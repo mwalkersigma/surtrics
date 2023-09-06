@@ -18,6 +18,7 @@ import {
     Title,
     Tooltip
 } from "chart.js";
+import formatter from "../../modules/utils/numberFormatter";
 
 
 
@@ -58,13 +59,13 @@ const DailyView = () => {
                 </Col>
                 <Col sm={2}>
                     <InfoCard style={{marginBottom:margin}}  title={"Total"} theme={theme}>
-                        {dailyData.reduce((a,b) => a + b,0)}
+                        {formatter(dailyData.reduce((a,b) => a + b,0))}
                     </InfoCard>
                     <InfoCard style={{marginBottom:margin}} title={"Average"} theme={theme}>
-                        {Math.round(dailyData.reduce((a,b) => a + b,0) / dailyData.length)}
+                        {formatter(Math.round(dailyData.reduce((a,b) => a + b,0) / dailyData.length))}
                     </InfoCard>
                     <InfoCard style={{marginBottom:0}} title={"Best Hour"} theme={theme}>
-                        {dailyData.reduce((a,b) => a > b ? a : b,0)}
+                        {formatter(dailyData.reduce((a,b) => a > b ? a : b,0))}
                     </InfoCard>
                 </Col>
             </Row>

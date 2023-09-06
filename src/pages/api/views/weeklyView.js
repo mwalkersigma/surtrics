@@ -13,18 +13,26 @@ async function getIncrements(date){
     let mondayString = monday.toISOString().split("T")[0];
 
     let query = await db.query(`
-    SELECT 
-        COUNT(*),
-        DATE(transaction_date)
-    FROM 
-        surtrics.surplus_metrics_data
-    WHERE 
-        transaction_type = 'Add'
-      AND transaction_reason = 'Relisting'
-      AND transaction_date >= $1
-      AND transaction_date <= $2
-    GROUP BY 
-        DATE(transaction_date)
+        SELECT
+            COUNT(*),
+            DATE(transaction_date)
+        FROM
+            surtrics.surplus_metrics_data
+        WHERE
+            transaction_date >= $1
+          AND transaction_date <= $2
+          AND (
+                    transaction_type = 'Add'
+                OR transaction_type = 'Remove'
+                        AND transaction_reason = 'Relisting'
+            )
+          AND (
+                    transaction_reason = 'Add'
+                OR transaction_reason = 'Add on Receiving'
+                OR transaction_reason = 'Relisting'
+            )
+        GROUP BY
+            DATE(transaction_date)
     `, [mondayString, sundayString])
     return query.rows;
 }

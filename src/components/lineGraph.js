@@ -77,6 +77,6 @@ export default function LineGraph ({dailyData,theme}) {
         ]
     }
     return (
-        <Line data={graphData} title={"Daily View"} options={options} />
+        <Line data={graphData} height={150} title={"Daily View"} options={options} />
     )
 }

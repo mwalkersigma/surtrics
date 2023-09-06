@@ -221,7 +221,7 @@ export default function Home() {
                     <InfoCard theme={theme} title={"Planned Total"} subtitle={"By end of day"}>
                         {formatter(expectedTotal)}
                     </InfoCard>
-                    <InfoCard theme={theme} title={"Total Difference"} subtitle={"excluding today"}>
+                    <InfoCard theme={theme} title={"Total Difference"}>
                        <span className={`${totalDifference > 0 ? "text-danger" : ""}`}>{formatter(totalDifference)}</span>
                     </InfoCard>
                 </Col>

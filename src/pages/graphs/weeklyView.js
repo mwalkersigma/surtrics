@@ -20,6 +20,7 @@ import Form from "react-bootstrap/Form";
 import findMonday from "../../modules/utils/findMondayFromDate";
 import {Col, Row} from "react-bootstrap";
 import InfoCard from "../../components/infoCards/infocard";
+import formatter from "../../modules/utils/numberFormatter";
 
 ChartJS.register(
     CategoryScale,
@@ -169,13 +170,13 @@ function WeeklyView() {
                     </Col>
                     <Col sm={2}>
                         <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>
-                            {weekData.reduce((acc, {count}) => (acc + +count), 0)}
+                            {formatter(weekData.reduce((acc, {count}) => (acc + +count), 0))}
                         </InfoCard>
                         <InfoCard style={{marginBottom:margin}} title={"Average Increments"} theme={theme}>
-                            {Math.round(weekData.reduce((acc, {count}) => (acc + +count), 0) / 5)}
+                            {formatter(Math.round(weekData.reduce((acc, {count}) => (acc + +count), 0) / 5))}
                         </InfoCard>
                         <InfoCard style={{marginBottom:0}} title={"Best Day"} theme={theme}>
-                            {weekData.reduce((acc, {count}) => (acc > +count ? acc : +count), 0)}
+                            {formatter(weekData.reduce((acc, {count}) => (acc > +count ? acc : +count), 0))}
                         </InfoCard>
                     </Col>
                 </Row>

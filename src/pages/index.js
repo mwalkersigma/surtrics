@@ -38,7 +38,7 @@ export default function Home() {
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
-    let weekSeed = makeWeekArray([...weekData, {date,count:0}, {date,count:0}]);
+    let weekSeed = makeWeekArray([...weekData, {date,count:0}, {date,count:0}],false);
 
     if (weekData.length === 0 || dailyData.length === 0 ) return <div className={"text-center"}>Loading...</div>
 

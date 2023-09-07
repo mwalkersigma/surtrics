@@ -1,17 +1,15 @@
 import db from "../../../db";
-import findMonday from "../../../modules/utils/findMondayFromDate";
+import findSunday from "../../../modules/utils/findMondayFromDate";
 
 
 
 async function getIncrements(date){
-    let monday = findMonday(date);
-    let sunday = new Date(monday);
-
-    sunday.setDate(sunday.getDate() + 7);
-
-    let sundayString = sunday.toISOString().split("T")[0];
-    let mondayString = monday.toISOString().split("T")[0];
-
+    let sunday = findSunday(date);
+    sunday.setDate(sunday.getDate() - 1);
+    let saturday = new Date(sunday);
+    saturday.setDate(saturday.getDate() + 7);
+    let sundayString = saturday.toISOString().split("T")[0];
+    let mondayString = sunday.toISOString().split("T")[0];
     let query = await db.query(`
         SELECT
             COUNT(*),

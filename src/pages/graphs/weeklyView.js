@@ -17,7 +17,7 @@ import DataLabels from "chartjs-plugin-datalabels";
 import makeWeekArray from "../../modules/utils/makeWeekArray";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import Form from "react-bootstrap/Form";
-import findMonday from "../../modules/utils/findMondayFromDate";
+import findSunday from "../../modules/utils/findMondayFromDate";
 import {Col, Row} from "react-bootstrap";
 import InfoCard from "../../components/infoCards/infocard";
 import formatter from "../../modules/utils/numberFormatter";
@@ -36,7 +36,7 @@ ChartJS.register(
 
 
 function getWeekString(date) {
-    let monday = findMonday(date);
+    let monday = findSunday(date);
     let sunday = new Date(monday);
     sunday.setDate(sunday.getDate() + 6);
     return `${formatDateWithZeros(monday)} - ${formatDateWithZeros(sunday)}`;
@@ -53,12 +53,10 @@ function colorize(goal) {
 }
 
 function WeeklyChart({weekData,theme, date}){
-    let monday = findMonday(new Date(date));
-    if(monday.getDay() !== 1){
-        monday.setDate(monday.getDate() - monday.getDay() + 1);
-    }
+    let sunday = findSunday(new Date(date));
     theme = theme === "dark" ? "#FFF" : "#000";
-    weekData = makeWeekArray(weekData,monday);
+    weekData = makeWeekArray(weekData,true,sunday);
+    console.log(weekData)
     const goal = useGoal();
     const options = {
         plugins: {
@@ -143,11 +141,18 @@ function WeeklyChart({weekData,theme, date}){
 function WeeklyView() {
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
     const weekData = useUpdates("/api/views/weeklyView",{date});
-    console.log(weekData)
     const theme = useContext(ThemeContext);
+    function handleDateChange(e) {
+        let date = new Date(e.target.value);
+        date.setHours(12);
+        date.setDate(date.getDate() + 1);
+        date = formatDateWithZeros(date);
+        setDate(date);
+    }
+    console.log(date);
     if(weekData.length === 0)return(
         <Container className={"text-center"}>
-            <Form.Control className={"mb-5"} value={date} onChange={(e)=>setDate(e.target.value)} type="date" />
+            <Form.Control className={"mb-5"} value={date} onChange={handleDateChange} type="date" />
             Loading...
         </Container>
     );
@@ -159,7 +164,7 @@ function WeeklyView() {
                     <Form.Control
                         className={"mb-3"}
                         value={date}
-                        onChange={(e)=>setDate(e.target.value)}
+                        onChange={handleDateChange}
                         type="date"
                     />
                 </Row>

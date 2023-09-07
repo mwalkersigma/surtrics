@@ -5,6 +5,7 @@ import {NavDropdown, Nav} from "react-bootstrap";
 
 let getStoredTheme,setStoredTheme,getPreferredTheme,setDomTheme;
 export const ThemeContext = createContext('light');
+export const SundayContext = createContext(true);
 
 if(typeof window !== 'undefined') {
     getStoredTheme = () => localStorage.getItem('theme');
@@ -24,7 +25,7 @@ if(typeof window !== 'undefined') {
         }
     }
 }
-function NavBar({theme,setTheme}){
+function NavBar({theme,setTheme,day,setDay}){
     return (
         <Navbar data-bs-theme="dark" className="bg-body-tertiary mb-5">
             <Container>
@@ -43,6 +44,12 @@ function NavBar({theme,setTheme}){
                             ( <Nav.Item onClick={() => setTheme('light')}>Light Mode</Nav.Item> ) :
                             ( <Nav.Item onClick={() => setTheme('dark')}>Dark Mode</Nav.Item> ) }
                     </NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item>
+                        { day === true ?
+                            ( <Nav.Item onClick={() => setDay(false)}>Monday Start</Nav.Item> ) :
+                            ( <Nav.Item onClick={() => setDay(true)}>Sunday Start</Nav.Item> ) }
+                    </NavDropdown.Item>
                 </NavDropdown>
             </Container>
         </Navbar>
@@ -54,6 +61,7 @@ function NavBar({theme,setTheme}){
 
 export default function Layout({ children }) {
     const [theme, setTheme] = useState();
+    const [sunday, setSunday] = useState();
     useEffect(() => {
         if(typeof window === 'undefined') return;
         const preferredTheme = getPreferredTheme()
@@ -68,10 +76,12 @@ export default function Layout({ children }) {
     }
     return (
         <>
-            <NavBar theme={theme} setTheme={handleSetTheme} />
+            <NavBar theme={theme} setTheme={handleSetTheme} day={sunday} setDay={setSunday} />
+            <SundayContext.Provider value={sunday}>
             <ThemeContext.Provider value={theme}>
             <div className="main-wrapper" style={{minHeight:"87vh"}}>{children}</div>
             </ThemeContext.Provider>
+            </SundayContext.Provider>
         </>
     )
 }

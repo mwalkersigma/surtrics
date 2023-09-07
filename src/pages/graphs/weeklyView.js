@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {Chart} from "react-chartjs-2";
 import useUpdates from "../../modules/hooks/useUpdates";
-import {ThemeContext} from "../layout";
+import {SundayContext, ThemeContext} from "../layout";
 import useGoal from "../../modules/hooks/useGoal";
 import {
     BarElement,
@@ -52,11 +52,10 @@ function colorize(goal) {
     }
 }
 
-function WeeklyChart({weekData,theme, date}){
-    let sunday = findSunday(new Date(date));
+function WeeklyChart({weekData,theme, date, day}){
+    let sunday = findSunday(new Date(date),false);
     theme = theme === "dark" ? "#FFF" : "#000";
-    weekData = makeWeekArray(weekData,true,sunday);
-    console.log(weekData)
+    weekData = makeWeekArray(weekData,!day,sunday);
     const goal = useGoal();
     const options = {
         plugins: {
@@ -142,11 +141,12 @@ function WeeklyView() {
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
     const weekData = useUpdates("/api/views/weeklyView",{date});
     const theme = useContext(ThemeContext);
+    const day = useContext(SundayContext);
     function handleDateChange(e) {
-        let date = new Date(e.target.value);
-        date.setHours(12);
-        date.setDate(date.getDate() + 1);
-        date = formatDateWithZeros(date);
+        let date = e.target.value;
+        //date.setHours(12);
+        //date.setDate(date.getDate() + 1);
+       // date = formatDateWithZeros(date);
         setDate(date);
     }
     console.log(date);
@@ -172,7 +172,7 @@ function WeeklyView() {
                 <div className={"mb-3"} />
                 <Row>
                     <Col sm={10} className={"p-1"} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
-                        {weekData.length > 0 && <WeeklyChart theme={theme} weekData={weekData} date={date} />}
+                        {weekData.length > 0 && <WeeklyChart day={day} theme={theme} weekData={weekData} date={date} />}
                     </Col>
                     <Col sm={2}>
                         <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>

@@ -7,7 +7,6 @@ export default function makeWeekArray (weekData,hasOffset,sunday = new Date()){
         tempDate.setDate(tempDate.getDate() + i - (hasOffset ?  1 : 0));
         return {date:tempDate.toISOString().split("T")[0],count:0};
     })
-    console.log(weekSeed)
     if(weekData.length === 0) return weekSeed;
     return weekSeed.map(({date}) => {
         let found = weekData.find((item) => item.date.split("T")[0] === date);

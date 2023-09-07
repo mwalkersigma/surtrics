@@ -1,8 +1,14 @@
-export default function findSunday(date) {
+export default function findSunday(date, isMonday = true) {
+    console.log(date)
     if(!date instanceof Date) throw new Error("Invalid Date");
     if(date.getHours() === 19) date.setDate(date.getDate() + 1);
     const d = date.toString().split(" ");
     const [dayName] = d;
+    if(isMonday){
+        date.setDate(date.getDate());
+    }
+    console.log(date)
+    console.log(dayName)
     switch (dayName) {
         case "Sun":
             return date;

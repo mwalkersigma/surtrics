@@ -13,10 +13,11 @@ import {
     LinearScale, LineElement, PointElement,
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
-import {ThemeContext} from "./layout";
+import {SundayContext, ThemeContext} from "./layout";
 import makeWeekArray from "../modules/utils/makeWeekArray";
 import InfoCard from "../components/infoCards/infocard";
 import BigInfoCard from "../components/infoCards/bigInfoCards";
+import findSunday from "../modules/utils/findMondayFromDate";
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -33,12 +34,13 @@ export default function Home() {
     let date = new Date();
     date = date.toISOString().split("T")[0];
     const theme = useContext(ThemeContext)
+    const day = useContext(SundayContext)
     const weekData = useUpdates("/api/views/weeklyView",{date});
     const dailyData = useUpdates("/api/views/dailyView",{date});
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
-    let weekSeed = makeWeekArray([...weekData, {date,count:0}, {date,count:0}],false);
+    let weekSeed = makeWeekArray([...weekData, {date,count:0}, {date,count:0}],day,findSunday(new Date(date)));
 
     if (weekData.length === 0 || dailyData.length === 0 ) return <div className={"text-center"}>Loading...</div>
 

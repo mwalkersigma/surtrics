@@ -11,8 +11,12 @@ import convertToDatabase from "../../../modules/utils/convertSkuVaultToDatabaseF
 async function processCSVTransaction(){
     return new Promise((resolve, reject) => {
         let records = [];
-
-        const filePath = "./src/csv/TransactionHistory-8_29_2023 8_00 AM.csv";
+        const baseFilePath = "./src/csv/";
+        const files = fs.readdirSync(baseFilePath);
+        let filePath;
+        files.forEach((file) => {
+            filePath = baseFilePath + file;
+        })
 
         const parser = parse({
             delimiter: ','

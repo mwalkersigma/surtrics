@@ -143,6 +143,7 @@ function WeeklyChart({weekData,theme, date}){
 function WeeklyView() {
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
     const weekData = useUpdates("/api/views/weeklyView",{date});
+    console.log(weekData)
     const theme = useContext(ThemeContext);
     if(weekData.length === 0)return(
         <Container className={"text-center"}>

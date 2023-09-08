@@ -52,10 +52,8 @@ function colorize(goal) {
     }
 }
 
-function WeeklyChart({weekData,theme, date, day}){
-    let sunday = findSunday(new Date(date),false);
+function WeeklyChart({weekData,theme}){
     theme = theme === "dark" ? "#FFF" : "#000";
-    weekData = makeWeekArray(weekData,!day,sunday);
     const goal = useGoal();
     const options = {
         plugins: {
@@ -106,8 +104,14 @@ function WeeklyChart({weekData,theme, date, day}){
             }
         },
     }
+    function returnDayOfWeek(date) {
+        const d = new Date(date.split("T")[0]);
+        d.setDate(d.getDate() + 1);
+        return d.toString().split(" ")[0];
+    }
+
     const data = weekData.length > 0 && {
-        labels: weekData.map(({date}) => (date.split("T")[0])),
+        labels: weekData.map(({date}) => (`${returnDayOfWeek(date)} ${date.split("T")[0]}`)),
         datasets: [
             {
                 type: "line",
@@ -139,17 +143,13 @@ function WeeklyChart({weekData,theme, date, day}){
 
 function WeeklyView() {
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
-    const weekData = useUpdates("/api/views/weeklyView",{date});
+    let weekData = useUpdates("/api/views/weeklyView",{date});
+
     const theme = useContext(ThemeContext);
     const day = useContext(SundayContext);
     function handleDateChange(e) {
-        let date = e.target.value;
-        //date.setHours(12);
-        //date.setDate(date.getDate() + 1);
-       // date = formatDateWithZeros(date);
-        setDate(date);
+        setDate(e.target.value);
     }
-    console.log(date);
     if(weekData.length === 0)return(
         <Container className={"text-center"}>
             <Form.Control className={"mb-5"} value={date} onChange={handleDateChange} type="date" />
@@ -157,6 +157,8 @@ function WeeklyView() {
         </Container>
     );
     let margin = "3.5rem";
+    let sunday = findSunday(new Date(date),false);
+    weekData = makeWeekArray(weekData,!day,sunday);
     return (
         <main>
             <Container>

@@ -33,10 +33,15 @@ ChartJS.register(
 export default function Home() {
     let date = new Date();
     date = date.toISOString().split("T")[0];
+
     const theme = useContext(ThemeContext)
     const day = useContext(SundayContext)
+
+    const shadowColor = theme === "dark" ? "#FFF" : "#000";
+
     const weekData = useUpdates("/api/views/weeklyView",{date});
     let dailyData = useUpdates("/api/views/dailyView",{date});
+
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
@@ -61,7 +66,12 @@ export default function Home() {
 
     const bestDay = Math.max(...weekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
-
+    function colorize(goal) {
+        return (ctx) => {
+            const increments = ctx?.parsed?.y;
+            return increments < goal ? "#d00d0d" : "#00ad11";
+        }
+    }
 
   return (
     <>
@@ -74,20 +84,20 @@ export default function Home() {
             <h3 className={"text-center"}>Surplus Metrics Dashboard</h3>
         </Container>
         <Container className={"mt-5"} >
-            <Row>
-                <Col sm={2} className={"gap-2"}>
+            <Row className={"pb-3"}>
+                <Col sm={2}>
                     <InfoCard theme={theme} title={"Daily Total"} >
                         {(formatter(totalForToday))}
                     </InfoCard>
-                    <InfoCard theme={theme} title={"Hourly total"} >
+                    <InfoCard theme={theme} style={{marginBottom:0}} title={"Hourly total"} >
                         {formatter(dailyData.at(-1)?.count)}
                     </InfoCard>
                 </Col>
                 <Col sm={2}>
-                    <InfoCard theme={theme} title={"Daily Average"}>
+                    <InfoCard theme={theme}  title={"Daily Average"}>
                         {formatter(dailyAverage)}
                     </InfoCard>
-                    <InfoCard theme={theme} title={"Hourly Average"}>
+                    <InfoCard theme={theme} style={{marginBottom:0}} title={"Hourly Average"}>
                         {formatter(hourlyAverage)}
                     </InfoCard>
 
@@ -96,15 +106,15 @@ export default function Home() {
                     <InfoCard theme={theme} title={"Daily Goal"}>
                         {formatter(goal)}
                     </InfoCard>
-                    <InfoCard theme={theme} title={"Hourly Goal"}>
+                    <InfoCard theme={theme} style={{marginBottom:0}} title={"Hourly Goal"}>
                         {formatter(Math.round(hourlyGoal))}
                     </InfoCard>
                 </Col>
                 <Col sm={2}>
-                    <InfoCard theme={theme} title={"Daily Difference"}>
+                    <InfoCard theme={theme}  title={"Daily Difference"}>
                         {formatter(dailyDifference)}
                     </InfoCard>
-                    <InfoCard theme={theme} title={"Hourly Difference"}>
+                    <InfoCard theme={theme} style={{marginBottom:0}} title={"Hourly Difference"}>
                         {formatter(hourlyDifference)}
                     </InfoCard>
                 </Col>
@@ -117,9 +127,10 @@ export default function Home() {
             <Row className={"pb-3"}>
                 <Col sm={4}>
                     <div
-                        className={"graph-card text-center"}
+                        className={`graph-card text-center`}
                         style={{
                             border: `1px solid ${theme === "dark" ? "#FFF" : "#000"}`,
+                            boxShadow: `3px 3px ${shadowColor}`,
                             fontSize: "1.5rem",
                         }}
                     >
@@ -130,8 +141,8 @@ export default function Home() {
                                 datasets:[
                                     {
                                         data:weekSeed.map(({count}) => +count),
-                                        borderColor: 'rgb(54, 162, 235)',
-                                        backgroundColor: 'rgba(54, 162, 235)',
+                                        borderColor: colorize(goal),
+                                        backgroundColor: colorize(goal),
                                     }
                                 ]
                             }}
@@ -173,6 +184,7 @@ export default function Home() {
                         style={{
                             border: `1px solid ${theme === "dark" ? "#FFF" : "#000"}`,
                             fontSize: "1.5rem",
+                            boxShadow: `3px 3px ${shadowColor}`,
                         }}
                     >
                         <p>Hourly Snapshot</p>
@@ -182,7 +194,7 @@ export default function Home() {
                                 datasets:[
                                     {
                                         data:dailyData.map(({count}) => +count),
-                                        borderColor: 'rgb(54, 162, 235)',
+                                        borderColor:'rgba(54, 162, 235, 1)',
                                         backgroundColor: 'rgba(54, 162, 235, 0.5)',
                                     }
                                 ]
@@ -194,7 +206,7 @@ export default function Home() {
                                     },
                                     datalabels: {
                                         display: false,
-                                        color: theme === "dark" ? "#ff00ae" : "#000",
+                                        color: theme === "dark" ? "#fff" : "#000",
                                         align: "top",
                                     },
                                 },
@@ -215,7 +227,7 @@ export default function Home() {
                     </div>
                 </Col>
             </Row>
-            <Row>
+            <Row style={{marginBottom:'5rem'}}>
                 <Col sm={4}>
                     <BigInfoCard theme={theme} title={"Best Day"}>
                         {formatter(bestDay)}
@@ -225,7 +237,7 @@ export default function Home() {
                     <InfoCard theme={theme} title={"Planned Total"} subtitle={"By end of day"}>
                         {formatter(expectedTotal)}
                     </InfoCard>
-                    <InfoCard theme={theme} title={"Total Difference"}>
+                    <InfoCard theme={theme} style={{marginBottom:0}} title={"Total Difference"}>
                        <span className={`${totalDifference > 0 ? "text-danger" : ""}`}>{formatter(totalDifference)}</span>
                     </InfoCard>
                 </Col>
@@ -233,7 +245,7 @@ export default function Home() {
                     <InfoCard theme={theme} title={"Best VS Today"} >
                         {formatter(bestDay - totalForToday)}
                     </InfoCard>
-                    <InfoCard theme={theme} title={"Best HR VS Now"}>
+                    <InfoCard theme={theme} style={{marginBottom:0}} title={"Best HR VS Now"}>
                         {formatter(bestHour - dailyData.at(-1)?.count)}
                     </InfoCard>
                 </Col>

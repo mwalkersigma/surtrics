@@ -40,7 +40,7 @@ const DailyView = () => {
     if(dailyData.length === 0)return(
         <Container className={"text-center"}>
             <Form.Control className={"mb-5"} value={date} onChange={(e)=>setDate(e.target.value)} type="date" />
-            Loading...
+            Loading... ( If this takes more than 10 seconds, there is probably no data for this date )
         </Container>
     );
     dailyData = dailyData.map(({count}) => +count);

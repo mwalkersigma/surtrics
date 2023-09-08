@@ -36,13 +36,16 @@ export default function Home() {
     const theme = useContext(ThemeContext)
     const day = useContext(SundayContext)
     const weekData = useUpdates("/api/views/weeklyView",{date});
-    const dailyData = useUpdates("/api/views/dailyView",{date});
+    let dailyData = useUpdates("/api/views/dailyView",{date});
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
     let weekSeed = makeWeekArray([...weekData, {date,count:0}, {date,count:0}],day,findSunday(new Date(date)));
 
-    if (weekData.length === 0 || dailyData.length === 0 ) return <div className={"text-center"}>Loading...</div>
+    if(dailyData.length === 0){
+        dailyData = []
+    }
+    if (weekData.length === 0) return <div className={"text-center"}>Loading...</div>
 
     const totalIncrements = weekSeed.map(({count}) => +count).reduce((a,b)=>a+b,0);
     const totalForToday = dailyData.reduce((a,b) => a + +b.count,0);

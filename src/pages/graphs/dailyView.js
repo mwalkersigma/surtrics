@@ -53,8 +53,8 @@ const DailyView = () => {
                 type="date"
             />
             <Row>
-                <Col sm={10} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}} >
-                    <LineGraph dailyData={dailyData} theme={theme} />
+                <Col sm={10} className={`themed-drop-shadow ${theme}`} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}} >
+                    <LineGraph title={"Daily View"} height={150} dailyData={dailyData} theme={theme} />
                 </Col>
                 <Col sm={2}>
                     <InfoCard style={{marginBottom:margin}}  title={"Total"} theme={theme}>

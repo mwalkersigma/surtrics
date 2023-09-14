@@ -3,7 +3,8 @@ import {Line} from "react-chartjs-2";
 import React from "react";
 import useGoal from "../modules/hooks/useGoal";
 
-export default function LineGraph ({dailyData,theme}) {
+export default function LineGraph (props) {
+    let {dailyData,theme} = props;
     theme = theme === "dark" ? "#FFF" : "#000";
     const goal = useGoal();
     const options = {
@@ -77,6 +78,6 @@ export default function LineGraph ({dailyData,theme}) {
         ]
     }
     return (
-        <Line data={graphData} height={150} title={"Daily View"} options={options} />
+        <Line {...props} data={graphData} options={options} />
     )
 }

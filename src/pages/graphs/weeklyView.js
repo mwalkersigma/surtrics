@@ -172,7 +172,7 @@ function WeeklyView() {
                 Showing data for {getWeekString(new Date(date))}.
                 <div className={"mb-3"} />
                 <Row>
-                    <Col sm={10} className={"p-1"} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
+                    <Col sm={10} className={`p-1 themed-drop-shadow ${theme}`} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
                         {weekData.length > 0 && <WeeklyChart theme={theme} weekData={weekData} date={date} />}
                     </Col>
                     <Col sm={2}>

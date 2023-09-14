@@ -1,4 +1,4 @@
-import db from "../../../db/index";
+import db from "../../db";
 
 
 export default function handler (req,res) {

@@ -2,8 +2,8 @@ import React, {useContext, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {Chart} from "react-chartjs-2";
 import useUpdates from "../../modules/hooks/useUpdates";
-import {SundayContext, ThemeContext} from "../layout";
-import useGoal from "../../modules/hooks/useGoal";
+import {ThemeContext} from "../layout";
+
 import {
     BarElement,
     CategoryScale,
@@ -14,7 +14,6 @@ import {
     Tooltip
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
-import makeWeekArray from "../../modules/utils/makeWeekArray";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import Form from "react-bootstrap/Form";
 import findStartOfWeek from "../../modules/utils/findMondayFromDate";
@@ -42,17 +41,12 @@ function getWeekString(date) {
     return `${formatDateWithZeros(sunday)} - ${formatDateWithZeros(saturday)}`;
 }
 
-function colorize(goal) {
-    return (ctx) => {
-        const increments = ctx?.parsed?.y;
-        return increments < goal ? "#d00d0d" : "#00ad11";
-    }
-}
 
-function WeeklyChart(props){
+
+function YearlyChart(props){
     let {yearData,theme} = props;
     const useTheme = theme => theme === "dark" ? "#FFF" : "#000";
-    const goal = useGoal();
+
     const options = {
         plugins: {
             legend: {
@@ -84,7 +78,6 @@ function WeeklyChart(props){
         scales: {
             y: {
                 min: 0,
-                max: goal * 2,
                 ticks: {
                     color: useTheme(theme)+"A"
                 },
@@ -102,34 +95,16 @@ function WeeklyChart(props){
             }
         },
     }
-    function returnDayOfWeek(date) {
-        const d = new Date(date.split("T")[0]);
-        d.setDate(d.getDate() + 1);
-        return d.toString().split(" ")[0];
-    }
+
 
     const data = yearData.length > 0 && {
-        labels: yearData.map(({date}) => (`${returnDayOfWeek(date)} ${date.split("T")[0]}`)),
+        labels: yearData?.map(({month}) => (month)),
         datasets: [
-            {
-                type: "line",
-                label: "Goal",
-                data: Array.from({length: 7}, () => (goal)),
-                borderColor: "#5b1fa8",
-                borderWidth: 2,
-                tension: 0.1,
-                borderDash: [0,0],
-                pointRadius: 3,
-                pointBackgroundColor: "#5b1fa8",
-                datalabels: {
-                    display: false
-                }
-            },
             {
                 type: "bar",
                 label: "Days",
-                data: yearData?.map(({count}) => (count)),
-                backgroundColor: colorize(goal),
+                data: yearData?.map(({transactions}) => (+transactions)),
+                backgroundColor: "#04570d",
                 barThickness: 75,
                 borderRadius: 10
             }
@@ -141,23 +116,23 @@ function WeeklyChart(props){
 
 
 
-function WeeklyView() {
+function YearlyView() {
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
-    let weekData = useUpdates("/api/views/weeklyView",{date});
+    let yearData = useUpdates("/api/views/yearlyView",{date});
 
     const theme = useContext(ThemeContext);
-    const day = useContext(SundayContext);
+
     function handleDateChange(e) {
         setDate(e.target.value);
     }
-    if(weekData.length === 0)return(
+    if(yearData.length === 0)return(
         <Container className={"text-center"}>
             <Form.Control className={"mb-5"} value={date} onChange={handleDateChange} type="date" />
             Loading...
         </Container>
     );
     let margin = "3.5rem";
-    weekData = makeWeekArray(weekData,day,findStartOfWeek(new Date(date)));
+
     return (
         <main>
             <Container>
@@ -173,17 +148,23 @@ function WeeklyView() {
                 <div className={"mb-3"} />
                 <Row>
                     <Col sm={10} className={`p-1 themed-drop-shadow ${theme}`} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
-                        {weekData.length > 0 && <WeeklyChart theme={theme} yearData={weekData} date={date} />}
+                        {yearData.length > 0 && <YearlyChart theme={theme} yearData={yearData} date={date} />}
                     </Col>
                     <Col sm={2}>
                         <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>
-                            {formatter(weekData.reduce((acc, {count}) => (acc + +count), 0))}
+                            {
+                                formatter(yearData.reduce((acc, {transactions}) => (acc + +transactions), 0))
+                            }
                         </InfoCard>
                         <InfoCard style={{marginBottom:margin}} title={"Average Increments"} theme={theme}>
-                            {formatter(Math.round(weekData.reduce((acc, {count}) => (acc + +count), 0) / 5))}
+                            {
+                                formatter(Math.round(yearData.reduce((acc, {transactions}) => (acc + +transactions), 0) / yearData.length))
+                            }
                         </InfoCard>
-                        <InfoCard style={{marginBottom:0}} title={"Best Day"} theme={theme}>
-                            {formatter(weekData.reduce((acc, {count}) => (acc > +count ? acc : +count), 0))}
+                        <InfoCard style={{marginBottom:0}} title={"Best Month"} theme={theme}>
+                            {
+                                formatter(yearData.reduce((acc, {transactions}) => (acc > +transactions ? acc : +transactions), 0))
+                            }
                         </InfoCard>
                     </Col>
                 </Row>
@@ -192,4 +173,4 @@ function WeeklyView() {
     )
 }
 
-export default WeeklyView;
+export default YearlyView;

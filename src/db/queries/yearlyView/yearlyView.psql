@@ -1,0 +1,22 @@
+SELECT
+    date_part('month',transaction_date) as month,
+    count(date(transaction_date)) AS transactions
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+        transaction_date >= '2023-01-01'
+  AND transaction_date < '2024-01-01'
+  AND (
+            transaction_type = 'Add'
+        OR transaction_type = 'Remove'
+                AND transaction_reason = 'Relisting'
+    )
+  AND (
+            transaction_reason = 'Add'
+        OR transaction_reason = 'Add on Receiving'
+        OR transaction_reason = 'Relisting'
+    )
+GROUP BY
+    month
+ORDER BY
+    month ASC

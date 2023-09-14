@@ -1,0 +1,12 @@
+SELECT
+    *
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+    "user" = 'BSA'
+    AND transaction_date > '2023-09-05T12:00:00Z'
+    AND transaction_date < '2023-09-06T01:00:00Z'
+    AND transaction_type = 'Create'
+
+
+

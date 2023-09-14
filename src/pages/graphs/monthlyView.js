@@ -18,6 +18,7 @@ import {
 } from "chart.js";
 import {Line} from "react-chartjs-2";
 import formatter from "../../modules/utils/numberFormatter";
+import DataLabels from "chartjs-plugin-datalabels";
 
 
 
@@ -29,6 +30,7 @@ ChartJS.register(
     Legend,
     LineElement,
     PointElement,
+    DataLabels
 );
 
 
@@ -36,11 +38,14 @@ ChartJS.register(
 
 function LineGraphMonthly ({monthData,theme}) {
     theme = theme === "dark" ? "#FFF" : "#000";
+    console.log(theme)
     const options = {
         responsive: true,
         plugins: {
-            datalabels:{
-                display: false,
+            datalabels: {
+                color: theme,
+                display: (context) => context.dataset.data[context.dataIndex] > 0,
+                formatter: Math.round
             },
             legend: {
                 position: 'top',
@@ -86,11 +91,18 @@ function LineGraphMonthly ({monthData,theme}) {
                 data: monthData.map(({transactions}) => +transactions),
                 borderColor: 'rgb(54, 162, 235)',
                 backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                datalabels: {
+                    color: theme,
+                    font: {
+                        weight: "bold",
+                        size: 16,
+                    },
+                }
             }
         ]
     }
     return (
-        <Line data={graphData} height={150} title={"Daily View"} options={options} />
+        <Line data={graphData} height={150} title={"Monthly View"} options={options} />
     )
 }
 const MonthlyView = () => {

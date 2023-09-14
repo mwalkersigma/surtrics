@@ -2,7 +2,8 @@ import db from "../../../db/index";
 
 
 export default function handler (req,res) {
-    db.query(`
+    console.log("Dedupe DB")
+    return db.query(`
         DELETE FROM
             surtrics.surplus_metrics_data a
                 USING surtrics.surplus_metrics_data b
@@ -15,4 +16,9 @@ export default function handler (req,res) {
             AND a.transaction_type = b.transaction_type
             AND a.quantity = b.quantity;
     `)
+        .then(() => {
+            console.log("Success")
+            res.status(200).json("Success")
+        })
+
 }

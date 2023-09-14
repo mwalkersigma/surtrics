@@ -34,12 +34,6 @@ ChartJS.register(
 
 
 
-function getWeekString(date) {
-    let sunday = findStartOfWeek(date);
-    let saturday = new Date(sunday);
-    saturday.setDate(sunday.getDate() + 6);
-    return `${formatDateWithZeros(sunday)} - ${formatDateWithZeros(saturday)}`;
-}
 
 
 
@@ -58,7 +52,7 @@ function YearlyChart(props){
                     color: useTheme(theme)+"A",
                 },
                 title: {
-                    text: "Weekly Increments",
+                    text: "Year View",
                     display: true,
                     color: useTheme(theme),
                     font: {
@@ -96,9 +90,9 @@ function YearlyChart(props){
         },
     }
 
-
+    const monthes = [ "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
     const data = yearData.length > 0 && {
-        labels: yearData?.map(({month}) => (month)),
+        labels: yearData?.map(({month}) => (monthes[month-1])),
         datasets: [
             {
                 type: "bar",
@@ -144,8 +138,6 @@ function YearlyView() {
                         type="date"
                     />
                 </Row>
-                Showing data for {getWeekString(new Date(date))}.
-                <div className={"mb-3"} />
                 <Row>
                     <Col sm={10} className={`p-1 themed-drop-shadow ${theme}`} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
                         {yearData.length > 0 && <YearlyChart theme={theme} yearData={yearData} date={date} />}

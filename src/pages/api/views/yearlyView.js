@@ -9,7 +9,8 @@ async function getIncrements(date){
     let query = await db.query(`
         SELECT
             date_part('month',transaction_date) as month,
-            count(date(transaction_date)) AS transactions
+            count(date(transaction_date)) AS transactions,
+            transaction_reason
         FROM
             surtrics.surplus_metrics_data
         WHERE
@@ -26,7 +27,8 @@ async function getIncrements(date){
                 OR transaction_reason = 'Relisting'
             )
         GROUP BY
-            month
+            month,
+            transaction_reason
         ORDER BY
             month
     `, [baseString,endString])

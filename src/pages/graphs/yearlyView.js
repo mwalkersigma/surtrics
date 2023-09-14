@@ -43,6 +43,13 @@ function YearlyChart(props){
 
     const options = {
         plugins: {
+            tooltip: {
+                callbacks: {
+                    footer: (context,data)=> {
+                        return "TOTAL: " + context.reduce((acc, {raw}) => (acc + +raw), 0);
+                    }
+                }
+            },
             legend: {
                 position: "top",
                 align: "center",
@@ -58,19 +65,25 @@ function YearlyChart(props){
                     font: {
                         size: 30,
                     }
-                }
+                },
+
             },
             datalabels: {
-                color: "#FFF",
-                display: (context) => context.dataset.data[context.dataIndex] > 0,
+                color: useTheme(theme),
+                display: (context) => context.dataset.data[context.dataIndex] > 200,
                 font: {
                     weight: "bold",
                 },
                 formatter: Math.round
             },
         },
+        interaction:{
+          intersect: false,
+          mode: "index"
+        },
         scales: {
             y: {
+                stacked: true,
                 min: 0,
                 ticks: {
                     color: useTheme(theme)+"A"
@@ -80,6 +93,7 @@ function YearlyChart(props){
                 }
             },
             x:{
+                stacked: true,
                 ticks: {
                     color: useTheme(theme)+"A"
                 },
@@ -92,15 +106,34 @@ function YearlyChart(props){
 
     const monthes = [ "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
     const data = yearData.length > 0 && {
-        labels: yearData?.map(({month}) => (monthes[month-1])),
+        labels: Array.from(new Set(yearData?.map(({month}) => (monthes[month-1])))),
         datasets: [
             {
                 type: "bar",
-                label: "Days",
-                data: yearData?.map(({transactions}) => (+transactions)),
+                label: "Add On Receiving",
+                data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add on Receiving").map(({transactions}) => (+transactions)),
+                backgroundColor: "#d00d0d",
+                barThickness: 75,
+                borderRadius: 10,
+                stack: "stack0"
+            },
+            {
+                type: "bar",
+                label: "Add",
+                data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add").map(({transactions}) => (+transactions)),
                 backgroundColor: "#04570d",
                 barThickness: 75,
-                borderRadius: 10
+                borderRadius: 10,
+                stack: "stack0"
+            },
+            {
+                type: "bar",
+                label: "Relisting",
+                data: yearData?.filter(({transaction_reason})=>transaction_reason === "Relisting").map(({transactions}) => (+transactions)),
+                backgroundColor: "#050c75",
+                barThickness: 75,
+                borderRadius: 10,
+                stack: "stack0"
             }
         ]
     };
@@ -126,7 +159,13 @@ function YearlyView() {
         </Container>
     );
     let margin = "3.5rem";
-
+    const cardData = Object.values(yearData.reduce((acc, {transactions,month}) =>{
+        if(!acc[month]){
+            acc[month]={transactions:0,month}
+        }
+        acc[month].transactions += +transactions;
+        return acc;
+    } , {}));
     return (
         <main>
             <Container>
@@ -145,17 +184,17 @@ function YearlyView() {
                     <Col sm={2}>
                         <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>
                             {
-                                formatter(yearData.reduce((acc, {transactions}) => (acc + +transactions), 0))
+                                formatter(cardData.reduce((acc, {transactions}) => (acc + +transactions), 0))
                             }
                         </InfoCard>
                         <InfoCard style={{marginBottom:margin}} title={"Average Increments"} theme={theme}>
                             {
-                                formatter(Math.round(yearData.reduce((acc, {transactions}) => (acc + +transactions), 0) / yearData.length))
+                                formatter(Math.round(cardData.reduce((acc, {transactions}) => (acc + +transactions), 0) / cardData.length))
                             }
                         </InfoCard>
                         <InfoCard style={{marginBottom:0}} title={"Best Month"} theme={theme}>
                             {
-                                formatter(yearData.reduce((acc, {transactions}) => (acc > +transactions ? acc : +transactions), 0))
+                                formatter(cardData.reduce((acc, {transactions}) => (acc > +transactions ? acc : +transactions), 0))
                             }
                         </InfoCard>
                     </Col>

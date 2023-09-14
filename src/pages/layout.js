@@ -5,7 +5,7 @@ import {NavDropdown, Nav} from "react-bootstrap";
 
 let getStoredTheme,setStoredTheme,getPreferredTheme,setDomTheme;
 export const ThemeContext = createContext('light');
-export const SundayContext = createContext(true);
+export const SundayContext = createContext(false);
 
 if(typeof window !== 'undefined') {
     getStoredTheme = () => localStorage.getItem('theme');
@@ -46,9 +46,10 @@ function NavBar({theme,setTheme,day,setDay}){
                     </NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item>
-                        { day === true ?
-                            ( <Nav.Item onClick={() => setDay(false)}>Monday Start</Nav.Item> ) :
-                            ( <Nav.Item onClick={() => setDay(true)}>Sunday Start</Nav.Item> ) }
+                            <Nav.Item onClick={() => setDay(false)}>Monday Start</Nav.Item>
+                    </NavDropdown.Item>
+                    <NavDropdown.Item>
+                            <Nav.Item onClick={() => setDay(true)}>Sunday Start</Nav.Item>
                     </NavDropdown.Item>
                 </NavDropdown>
             </Container>
@@ -61,7 +62,7 @@ function NavBar({theme,setTheme,day,setDay}){
 
 export default function Layout({ children }) {
     const [theme, setTheme] = useState();
-    const [sunday, setSunday] = useState();
+    const [sunday, setSunday] = useState(false);
     useEffect(() => {
         if(typeof window === 'undefined') return;
         const preferredTheme = getPreferredTheme()

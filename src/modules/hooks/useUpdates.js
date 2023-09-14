@@ -17,7 +17,7 @@ export default function useUpdates(route, init){
         const getTransactions = () => fetch(`${window.location.origin}${route}`,options)
             .then((response) => response.json())
             .then((data) => setServerData(data))
-            .finally(() => console.log("done"));
+            .finally(() => console.log("updated"));
 
         getTransactions()
             .catch((error) => console.log(error))

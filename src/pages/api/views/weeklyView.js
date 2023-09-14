@@ -1,15 +1,18 @@
 import db from "../../../db";
-import findSunday from "../../../modules/utils/findMondayFromDate";
+import findStartOfWeek from "../../../modules/utils/findMondayFromDate";
 
 
 
 async function getIncrements(date){
-    let sunday = findSunday(date);
-    sunday.setDate(sunday.getDate() - 1);
-    let saturday = new Date(sunday);
-    saturday.setDate(saturday.getDate() + 7);
-    let sundayString = saturday.toISOString().split("T")[0];
-    let mondayString = sunday.toISOString().split("T")[0];
+    let startOfWeek = findStartOfWeek(date);
+    startOfWeek.setDate(startOfWeek.getDate() - 1);
+
+    let endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(endOfWeek.getDate() + 8);
+
+    let endOfWeekString = endOfWeek.toISOString().split("T")[0];
+    let startWeekString = startOfWeek.toISOString().split("T")[0];
+
     let query = await db.query(`
         SELECT
             COUNT(*),
@@ -31,7 +34,7 @@ async function getIncrements(date){
             )
         GROUP BY
             DATE(transaction_date)
-    `, [mondayString, sundayString])
+    `, [startWeekString, endOfWeekString])
     return query.rows;
 }
 

@@ -17,7 +17,7 @@ import DataLabels from "chartjs-plugin-datalabels";
 import makeWeekArray from "../../modules/utils/makeWeekArray";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import Form from "react-bootstrap/Form";
-import findSunday from "../../modules/utils/findMondayFromDate";
+import findStartOfWeek from "../../modules/utils/findMondayFromDate";
 import {Col, Row} from "react-bootstrap";
 import InfoCard from "../../components/infoCards/infocard";
 import formatter from "../../modules/utils/numberFormatter";
@@ -36,14 +36,11 @@ ChartJS.register(
 
 
 function getWeekString(date) {
-    let monday = findSunday(date);
-    let sunday = new Date(monday);
-    sunday.setDate(sunday.getDate() + 6);
-    return `${formatDateWithZeros(monday)} - ${formatDateWithZeros(sunday)}`;
+    let sunday = findStartOfWeek(date);
+    let saturday = new Date(sunday);
+    saturday.setDate(sunday.getDate() + 6);
+    return `${formatDateWithZeros(sunday)} - ${formatDateWithZeros(saturday)}`;
 }
-
-
-
 
 function colorize(goal) {
     return (ctx) => {
@@ -52,8 +49,9 @@ function colorize(goal) {
     }
 }
 
-function WeeklyChart({weekData,theme}){
-    theme = theme === "dark" ? "#FFF" : "#000";
+function WeeklyChart(props){
+    let {weekData,theme} = props;
+    const useTheme = theme => theme === "dark" ? "#FFF" : "#000";
     const goal = useGoal();
     const options = {
         plugins: {
@@ -63,12 +61,12 @@ function WeeklyChart({weekData,theme}){
                 labels: {
                     boxWidth: 30,
                     usePointStyle: true,
-                    color: theme+"A",
+                    color: useTheme(theme)+"A",
                 },
                 title: {
                     text: "Weekly Increments",
                     display: true,
-                    color: theme,
+                    color: useTheme(theme),
                     font: {
                         size: 30,
                     }
@@ -88,18 +86,18 @@ function WeeklyChart({weekData,theme}){
                 min: 0,
                 max: goal * 2,
                 ticks: {
-                    color: theme + "A"
+                    color: useTheme(theme)+"A"
                 },
                 grid: {
-                    color: theme + "3"
+                    color: useTheme(theme)+"3"
                 }
             },
             x:{
                 ticks: {
-                    color: theme + "A"
+                    color: useTheme(theme)+"A"
                 },
                 grid: {
-                    color: theme + "3"
+                    color: useTheme(theme)+"3"
                 }
             }
         },
@@ -141,6 +139,8 @@ function WeeklyChart({weekData,theme}){
 }
 
 
+
+
 function WeeklyView() {
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
     let weekData = useUpdates("/api/views/weeklyView",{date});
@@ -157,8 +157,7 @@ function WeeklyView() {
         </Container>
     );
     let margin = "3.5rem";
-    let sunday = findSunday(new Date(date),false);
-    weekData = makeWeekArray(weekData,!day,sunday);
+    weekData = makeWeekArray(weekData,day,findStartOfWeek(new Date(date)));
     return (
         <main>
             <Container>
@@ -174,7 +173,7 @@ function WeeklyView() {
                 <div className={"mb-3"} />
                 <Row>
                     <Col sm={10} className={"p-1"} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
-                        {weekData.length > 0 && <WeeklyChart day={day} theme={theme} weekData={weekData} date={date} />}
+                        {weekData.length > 0 && <WeeklyChart theme={theme} weekData={weekData} date={date} />}
                     </Col>
                     <Col sm={2}>
                         <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>

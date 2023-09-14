@@ -36,7 +36,6 @@ const DailyView = () => {
     const [date,setDate] = useState(formatDateWithZeros(new Date()))
     let dailyData = useUpdates("/api/views/dailyView",{date});
     const theme = useContext(ThemeContext)
-
     if(dailyData.length === 0)return(
         <Container className={"text-center"}>
             <Form.Control className={"mb-5"} value={date} onChange={(e)=>setDate(e.target.value)} type="date" />

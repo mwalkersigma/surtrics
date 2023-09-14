@@ -17,7 +17,8 @@ import {SundayContext, ThemeContext} from "./layout";
 import makeWeekArray from "../modules/utils/makeWeekArray";
 import InfoCard from "../components/infoCards/infocard";
 import BigInfoCard from "../components/infoCards/bigInfoCards";
-import findSunday from "../modules/utils/findMondayFromDate";
+import findStartOfWeek from "../modules/utils/findMondayFromDate";
+import {setHours} from "date-fns";
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -27,7 +28,11 @@ ChartJS.register(
     LineElement,
 );
 
-
+const convertDateToDay = (date) => {
+    const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    date = new Date(date)
+    return `${days[date.getDay()]} ${date.toISOString().split("T")[0].split("-").slice(1).join("/")}`;
+}
 
 
 export default function Home() {
@@ -45,7 +50,7 @@ export default function Home() {
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
-    let weekSeed = makeWeekArray([...weekData, {date,count:0}, {date,count:0}],day,findSunday(new Date(date)));
+    let weekSeed = makeWeekArray([...weekData],day,findStartOfWeek(new Date(date)));
 
     if(dailyData.length === 0){
         dailyData = []
@@ -137,7 +142,7 @@ export default function Home() {
                         <p>Daily Snapshot</p>
                         <Bar
                             data={{
-                                labels:weekSeed.map(({date}) => new Date(date).toISOString().split("T")[0]),
+                                labels:weekSeed.map(({date}) => convertDateToDay(date)),
                                 datasets:[
                                     {
                                         data:weekSeed.map(({count}) => +count),

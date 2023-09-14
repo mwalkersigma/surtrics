@@ -1,0 +1,18 @@
+import db from "../../../db/index";
+
+
+export default function handler (req,res) {
+    db.query(`
+        DELETE FROM
+            surtrics.surplus_metrics_data a
+                USING surtrics.surplus_metrics_data b
+        WHERE
+            a.id < b.id
+            AND a."user" = b."user"
+            AND a.sku = b.sku
+            AND a.code = b.code
+            AND a.transaction_date = b.transaction_date
+            AND a.transaction_type = b.transaction_type
+            AND a.quantity = b.quantity;
+    `)
+}

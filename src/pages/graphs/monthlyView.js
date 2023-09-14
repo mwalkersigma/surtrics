@@ -44,14 +44,18 @@ function LineGraphMonthly ({monthData,theme}) {
         plugins: {
             datalabels: {
                 color: theme,
-                display: (context) => context.dataset.data[context.dataIndex] > 0,
-                formatter: Math.round
+                formatter: Math.round,
+                display: (context) => context.dataset.data[context.dataIndex] > 10 ? "auto" : false,
+                backgroundColor:(context)=> theme === "#FFF" ? false : "#FFF",
+                borderRadius: 10,
             },
             legend: {
                 position: 'top',
                 color: theme,
                 labels:{
                     color: theme + "A",
+                    borderRadius: 10,
+                    usePointStyle: true,
                 }
             },
             title: {
@@ -83,14 +87,69 @@ function LineGraphMonthly ({monthData,theme}) {
             }
         }
     };
+    console.log(monthData)
+    const dataSets = monthData.reduce((acc,curr)=>{
+        let date = curr.day.split("T")[0];
+        if(!acc[date]){
+            acc[date] = {
+                day: date,
+                total: +curr.transactions,
+                [curr['transaction_reason']]: +curr.transactions
+            }
+            return acc;
+        }
+        acc[date].total += +curr.transactions;
+        acc[date][curr['transaction_reason']] = +curr.transactions;
+        return acc
+    },{})
+    console.log(dataSets)
     const graphData = {
-        labels: monthData.map(({day}) => day.split("T")[0]),
+        labels: Array.from(new Set(monthData.map(({day}) => day.split("T")[0]))),
         datasets: [
             {
                 label: "Increments",
-                data: monthData.map(({transactions}) => +transactions),
-                borderColor: 'rgb(54, 162, 235)',
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                data: Object.values(dataSets).map((item) => item["total"] ?? 0),
+                borderColor: '#0f74d9',
+                backgroundColor: "#0f74d9",
+                datalabels: {
+                    color: theme,
+                    font: {
+                        weight: "bold",
+                        size: 16,
+                    },
+                }
+            },
+            {
+                label: "Add",
+                data: Object.values(dataSets).map((item) => item["Add"] ?? 0),
+                borderColor: '#04570d',
+                backgroundColor: "#04570d",
+                datalabels: {
+                    color: theme,
+                    font: {
+                        weight: "bold",
+                        size: 16,
+                    },
+                }
+            },
+            {
+                label: "Add on Receiving",
+                data: Object.values(dataSets).map((item) => item["Add on Receiving"] ?? 0),
+                borderColor: "#d00d0d",
+                backgroundColor: "#d00d0d",
+                datalabels: {
+                    color: theme,
+                    font: {
+                        weight: "bold",
+                        size: 16,
+                    },
+                }
+            },
+            {
+                label: "Relisting",
+                data: Object.values(dataSets).map((item) => item["Relisting"] ?? 0),
+                borderColor: "#050c75",
+                backgroundColor: "#050c75",
                 datalabels: {
                     color: theme,
                     font: {

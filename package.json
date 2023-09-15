@@ -26,5 +26,8 @@
     "react-dom": "18.2.0",
     "sass": "^1.66.1",
     "sigma-logger": "^1.0.3"
+  },
+  "devDependencies": {
+    "vitest": "^0.34.4"
   }
 }

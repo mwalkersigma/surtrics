@@ -1,11 +1,15 @@
-import createAdjustedGoal from "../modules/utils/createAdjustedGoals";
+import createAdjustedGoal from "../modules/utils/createAdjustedDailyGoal";
 import {Line} from "react-chartjs-2";
 import React from "react";
 import useGoal from "../modules/hooks/useGoal";
+import {colorScheme} from "../pages/_app";
 
 export default function LineGraph (props) {
     let {dailyData,theme} = props;
-    theme = theme === "dark" ? "#FFF" : "#000";
+    const temp = JSON.parse(JSON.stringify(props));
+    delete temp.dailyData;
+    delete temp.theme;
+    theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     const goal = useGoal();
     const options = {
         responsive: true,
@@ -60,24 +64,24 @@ export default function LineGraph (props) {
             {
                 label: "Goal",
                 data:makeHourlyGoal(goal || 0),
-                borderColor: 'rgb(0,173,17)',
-                backgroundColor: 'rgb(0,173,17)',
+                borderColor: colorScheme.purple,
+                backgroundColor: colorScheme.purple,
             },
             {
                 label: "Adjusted Goal",
                 data:createAdjustedGoal(makeHourlyGoal(goal || 0),dailyData),
-                borderColor: 'rgb(255, 99, 132)',
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: colorScheme.red,
+                backgroundColor: colorScheme.red,
             },
             {
                 label: "Increments",
                 data:dailyData,
-                borderColor: 'rgb(54, 162, 235)',
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: colorScheme.blue,
+                backgroundColor: colorScheme.blue,
             }
         ]
     }
     return (
-        <Line {...props} data={graphData} options={options} />
+        <Line {...temp} data={graphData} options={options} />
     )
 }

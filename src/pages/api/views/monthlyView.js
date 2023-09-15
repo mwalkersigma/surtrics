@@ -1,13 +1,17 @@
 import db from "../../../db";
-import findStartOfWeek from "../../../modules/utils/findMondayFromDate";
+import {addMonths} from "date-fns";
 
 
 
 async function getIncrements(date){
+    let endDate = new Date(date);
+    endDate = addMonths(endDate,1)
     let month = date.getMonth();
     let year = date.getFullYear();
     let baseString = `${year}-${month + 1}-01`
-    let endString = `${year}-${month + 2}-01`
+    month = endDate.getMonth();
+    year = endDate.getFullYear();
+    let endString = `${year}-${month + 1}-01`
 
     let query = await db.query(`
         SELECT
@@ -33,7 +37,7 @@ async function getIncrements(date){
             day,
             transaction_reason
         ORDER BY
-            day ASC
+            day
     `, [baseString,endString])
     return query.rows;
 }
@@ -45,6 +49,7 @@ export default function handler (req,res) {
         let body = JSON.parse(req.body) ?? {date: new Date()};
         date = new Date(body.date);
     }
+    console.log(date)
     return getIncrements(date)
         .then((response) => {
             res.status(200).json(response)

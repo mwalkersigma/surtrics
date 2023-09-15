@@ -19,6 +19,7 @@ import {
 import {Line} from "react-chartjs-2";
 import formatter from "../../modules/utils/numberFormatter";
 import DataLabels from "chartjs-plugin-datalabels";
+import {colorScheme} from "../_app";
 
 
 
@@ -37,8 +38,7 @@ ChartJS.register(
 
 
 function LineGraphMonthly ({monthData,theme}) {
-    theme = theme === "dark" ? "#FFF" : "#000";
-    console.log(theme)
+    theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     const options = {
         responsive: true,
         plugins: {
@@ -46,7 +46,7 @@ function LineGraphMonthly ({monthData,theme}) {
                 color: theme,
                 formatter: Math.round,
                 display: (context) => context.dataset.data[context.dataIndex] > 10 ? "auto" : false,
-                backgroundColor:(context)=> theme === "#FFF" ? false : "#FFF",
+                backgroundColor:()=> theme === colorScheme.white ? false : colorScheme.white,
                 borderRadius: 10,
             },
             legend: {
@@ -66,6 +66,10 @@ function LineGraphMonthly ({monthData,theme}) {
                     size: 30,
                 }
             },
+        },
+        interaction: {
+            mode: 'index',
+            intersect: false,
         },
         scales:{
             y: {
@@ -87,7 +91,6 @@ function LineGraphMonthly ({monthData,theme}) {
             }
         }
     };
-    console.log(monthData)
     const dataSets = monthData.reduce((acc,curr)=>{
         let date = curr.day.split("T")[0];
         if(!acc[date]){
@@ -102,15 +105,15 @@ function LineGraphMonthly ({monthData,theme}) {
         acc[date][curr['transaction_reason']] = +curr.transactions;
         return acc
     },{})
-    console.log(dataSets)
+
     const graphData = {
         labels: Array.from(new Set(monthData.map(({day}) => day.split("T")[0]))),
         datasets: [
             {
                 label: "Increments",
                 data: Object.values(dataSets).map((item) => item["total"] ?? 0),
-                borderColor: '#0f74d9',
-                backgroundColor: "#0f74d9",
+                borderColor: colorScheme.indigo,
+                backgroundColor: colorScheme.indigo,
                 datalabels: {
                     color: theme,
                     font: {
@@ -122,8 +125,8 @@ function LineGraphMonthly ({monthData,theme}) {
             {
                 label: "Add",
                 data: Object.values(dataSets).map((item) => item["Add"] ?? 0),
-                borderColor: '#04570d',
-                backgroundColor: "#04570d",
+                borderColor: colorScheme.green,
+                backgroundColor: colorScheme.green,
                 datalabels: {
                     color: theme,
                     font: {
@@ -135,8 +138,8 @@ function LineGraphMonthly ({monthData,theme}) {
             {
                 label: "Add on Receiving",
                 data: Object.values(dataSets).map((item) => item["Add on Receiving"] ?? 0),
-                borderColor: "#d00d0d",
-                backgroundColor: "#d00d0d",
+                borderColor: colorScheme.red,
+                backgroundColor: colorScheme.red,
                 datalabels: {
                     color: theme,
                     font: {
@@ -148,8 +151,8 @@ function LineGraphMonthly ({monthData,theme}) {
             {
                 label: "Relisting",
                 data: Object.values(dataSets).map((item) => item["Relisting"] ?? 0),
-                borderColor: "#050c75",
-                backgroundColor: "#050c75",
+                borderColor: colorScheme.blue,
+                backgroundColor: colorScheme.blue,
                 datalabels: {
                     color: theme,
                     font: {
@@ -175,6 +178,7 @@ const MonthlyView = () => {
             Loading... ( If this takes more than 10 seconds, there is probably no data for this date )
         </Container>
     );
+    console.log(monthData)
     let cardData = monthData.map(({transactions}) => +transactions);
     let margin = "3rem";
     return (

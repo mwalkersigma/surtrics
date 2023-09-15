@@ -19,6 +19,7 @@ import Form from "react-bootstrap/Form";
 import {Col, Row} from "react-bootstrap";
 import InfoCard from "../../components/infoCards/infocard";
 import formatter from "../../modules/utils/numberFormatter";
+import {colorScheme} from "../_app";
 
 ChartJS.register(
     CategoryScale,
@@ -38,7 +39,7 @@ ChartJS.register(
 
 function YearlyChart(props){
     let {yearData,theme} = props;
-    const useTheme = theme => theme === "dark" ? "#FFF" : "#000";
+    const useTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
     const options = {
         plugins: {
@@ -68,7 +69,7 @@ function YearlyChart(props){
 
             },
             datalabels: {
-                color: '#fff',
+                color: colorScheme.white,
                 display: (context) => context.dataset.data[context.dataIndex] > 200,
                 font: {
                     weight: "bold",
@@ -111,7 +112,7 @@ function YearlyChart(props){
                 type: "bar",
                 label: "Add On Receiving",
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add on Receiving").map(({transactions}) => (+transactions)),
-                backgroundColor: "#d00d0d",
+                backgroundColor: colorScheme.red,
                 barThickness: 75,
                 borderRadius: 10,
                 stack: "stack0"
@@ -120,7 +121,7 @@ function YearlyChart(props){
                 type: "bar",
                 label: "Add",
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add").map(({transactions}) => (+transactions)),
-                backgroundColor: "#04570d",
+                backgroundColor: colorScheme.green,
                 barThickness: 75,
                 borderRadius: 10,
                 stack: "stack0"
@@ -129,7 +130,7 @@ function YearlyChart(props){
                 type: "bar",
                 label: "Relisting",
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Relisting").map(({transactions}) => (+transactions)),
-                backgroundColor: "#050c75",
+                backgroundColor: colorScheme.blue,
                 barThickness: 75,
                 borderRadius: 10,
                 stack: "stack0"

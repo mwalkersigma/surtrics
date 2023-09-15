@@ -78,13 +78,18 @@ function WeeklyChart(props){
         plugins: {
             tooltip: {
                 callbacks: {
-                    footer: (context)=> {
-                        let total = context
-                            .filter(({dataset})=>{return dataset.label !== "Goal"})
-                            .filter(({dataset})=>{return dataset.label !== "Total"})
-                            .reduce((acc, {raw}) => (acc + +raw), 0);
-                        return "TOTAL: " + total;
-                    }
+                    label: (context) => {
+                        let label = context.dataset.label || "";
+                        if(label === "adjustedGoal")return "";
+                        if(label === "Total")return`Total: ${context.dataset.data[context.dataIndex]}`;
+
+                    },
+                    labelColor: function(context) {
+                        return {
+                            borderColor: context.dataset.backgroundColor || context.dataset.borderColor,
+                            backgroundColor: context.dataset.backgroundColor || context.dataset.borderColor
+                        };
+                    },
                 }
             },
             legend: {
@@ -161,44 +166,6 @@ function WeeklyChart(props){
         labels: weekData.map(({date}) => (`${returnDayOfWeek(date)} ${date.split("T")[0]}`)),
         datasets: [
             {
-                type: "line",
-                label: "Goal",
-                data: Array.from({length: 7}, () => (goal)),
-                pointBackgroundColor: colorScheme.purple,
-                borderColor: colorScheme.purple,
-                datalabels: {
-                    display: false
-                },
-                stack: "stack1"
-            },
-            {
-                type: "line",
-                label: "Total",
-                data: weekData?.map((item) => +item["count"] || 0),
-                showLine: false,
-                pointBackgroundColor: colorScheme.blue,
-                borderColor: colorScheme.blue,
-                datalabels: {
-                    color: "#FFF",
-                    backgroundColor: theme === 'light' && "#000A",
-                }
-            },
-            {
-                type: "line",
-                label: "adjustedGoal",
-                data: adjustedWeek,
-                pointBackgroundColor: colorScheme.red,
-                borderColor: colorScheme.red,
-                datalabels: {
-                    color: "#FFF",
-                    backgroundColor: theme === 'light' && "#000A",
-                    display: "auto",
-                    formatter: (value) => value - goal
-
-                },
-                stack: "stack2"
-            },
-            {
                 type: "bar",
                 label: "Add",
                 data: weekData?.map((item) => +item["Add"] || 0),
@@ -211,6 +178,7 @@ function WeeklyChart(props){
                 datalabels: {
                     display: false
                 },
+                order:4
             },
             {
                 type: "bar",
@@ -225,6 +193,7 @@ function WeeklyChart(props){
                 datalabels: {
                     display: false
                 },
+                order:4
             },
             {
                 type: "bar",
@@ -239,6 +208,47 @@ function WeeklyChart(props){
                 datalabels: {
                     display: false
                 },
+                order:4
+            },
+            {
+                type: "line",
+                label: "Goal",
+                data: Array.from({length: 7}, () => (goal)),
+                pointBackgroundColor: colorScheme.purple,
+                borderColor: colorScheme.purple,
+                datalabels: {
+                    display: false
+                },
+                stack: "stack1",
+                order:1
+            },
+            {
+                type: "line",
+                label: "adjustedGoal",
+                data: adjustedWeek,
+                pointBackgroundColor: colorScheme.red,
+                borderColor: colorScheme.red,
+                datalabels: {
+                    color: "#FFF",
+                    backgroundColor: theme === 'light' && "#000A",
+                    display: (context) => context.dataset.data[context.dataIndex]-goal > 0 && "auto",
+                    formatter: (value) => value - goal
+
+                },
+                order:2,
+                stack: "stack2"
+            },
+            {
+                type: "line",
+                label: "Total",
+                data: weekData?.map((item) => +item["count"] || 0),
+                showLine: false,
+                pointBackgroundColor: colorScheme.blue,
+                borderColor: colorScheme.blue,
+                datalabels: {
+                    color: "#FFF",
+                    backgroundColor: theme === 'light' && "#000A",
+                }
             }
         ]
     };

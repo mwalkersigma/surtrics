@@ -64,7 +64,7 @@ function WeeklyChart(props){
         plugins: {
             tooltip: {
                 callbacks: {
-                    footer: (context,data)=> {
+                    footer: (context)=> {
                         let total = context
                             .filter(({dataset})=>{return dataset.label !== "Goal"})
                             .filter(({dataset})=>{return dataset.label !== "Total"})

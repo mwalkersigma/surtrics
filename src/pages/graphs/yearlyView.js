@@ -16,7 +16,6 @@ import {
 import DataLabels from "chartjs-plugin-datalabels";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import Form from "react-bootstrap/Form";
-import findStartOfWeek from "../../modules/utils/findMondayFromDate";
 import {Col, Row} from "react-bootstrap";
 import InfoCard from "../../components/infoCards/infocard";
 import formatter from "../../modules/utils/numberFormatter";
@@ -45,7 +44,7 @@ function YearlyChart(props){
         plugins: {
             tooltip: {
                 callbacks: {
-                    footer: (context,data)=> {
+                    footer: (context)=> {
                         return "TOTAL: " + context.reduce((acc, {raw}) => (acc + +raw), 0);
                     }
                 }

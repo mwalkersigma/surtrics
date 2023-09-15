@@ -18,7 +18,6 @@ import makeWeekArray from "../modules/utils/makeWeekArray";
 import InfoCard from "../components/infoCards/infocard";
 import BigInfoCard from "../components/infoCards/bigInfoCards";
 import findStartOfWeek from "../modules/utils/findMondayFromDate";
-import {setHours} from "date-fns";
 import processWeekData from "../modules/utils/processWeekData";
 ChartJS.register(
     CategoryScale,

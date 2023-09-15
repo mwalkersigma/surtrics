@@ -18,9 +18,10 @@ import makeWeekArray from "../../modules/utils/makeWeekArray";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import Form from "react-bootstrap/Form";
 import findStartOfWeek from "../../modules/utils/findMondayFromDate";
-import {Col, Row} from "react-bootstrap";
+import {Col, Row, Stack} from "react-bootstrap";
 import InfoCard from "../../components/infoCards/infocard";
 import formatter from "../../modules/utils/numberFormatter";
+import processWeekData from "../../modules/utils/processWeekData";
 
 ChartJS.register(
     CategoryScale,
@@ -44,17 +45,34 @@ function getWeekString(date) {
 
 function colorize(goal) {
     return (ctx) => {
-        const increments = ctx?.parsed?.y;
-        return increments < goal ? "#d00d0d" : "#00ad11";
+        let stack = ctx?.parsed?._stacks.y;
+        let excluded = ["_top","_bottom","_visualValues"];
+        let total = 0;
+        for(let key in stack){
+            if(excluded.includes(key))continue;
+            total += stack[key];
+        }
+        return total < goal ? "#d00d0d" : "#00ad11";
     }
 }
 
 function WeeklyChart(props){
-    let {yearData,theme} = props;
+    let {weekData,theme,split} = props;
     const useTheme = theme => theme === "dark" ? "#FFF" : "#000";
     const goal = useGoal();
     const options = {
         plugins: {
+            tooltip: {
+                callbacks: {
+                    footer: (context,data)=> {
+                        let total = context
+                            .filter(({dataset})=>{return dataset.label !== "Goal"})
+                            .filter(({dataset})=>{return dataset.label !== "Total"})
+                            .reduce((acc, {raw}) => (acc + +raw), 0);
+                        return "TOTAL: " + total;
+                    }
+                }
+            },
             legend: {
                 position: "top",
                 align: "center",
@@ -74,15 +92,19 @@ function WeeklyChart(props){
             },
             datalabels: {
                 color: "#FFF",
-                display: (context) => context.dataset.data[context.dataIndex] > 0,
+                display: (context) => context.dataset.data[context.dataIndex] > 50,
                 font: {
                     weight: "bold",
-                },
-                formatter: Math.round
+                }
             },
+        },
+        interaction: {
+            mode: 'index',
+            intersect: false,
         },
         scales: {
             y: {
+                stacked: true,
                 min: 0,
                 max: goal * 2,
                 ticks: {
@@ -93,6 +115,7 @@ function WeeklyChart(props){
                 }
             },
             x:{
+                stacked: true,
                 ticks: {
                     color: useTheme(theme)+"A"
                 },
@@ -107,31 +130,72 @@ function WeeklyChart(props){
         d.setDate(d.getDate() + 1);
         return d.toString().split(" ")[0];
     }
-
-    const data = yearData.length > 0 && {
-        labels: yearData.map(({date}) => (`${returnDayOfWeek(date)} ${date.split("T")[0]}`)),
+    const data = weekData.length > 0 && {
+        labels: weekData.map(({date}) => (`${returnDayOfWeek(date)} ${date.split("T")[0]}`)),
         datasets: [
             {
                 type: "line",
                 label: "Goal",
                 data: Array.from({length: 7}, () => (goal)),
-                borderColor: "#5b1fa8",
-                borderWidth: 2,
-                tension: 0.1,
                 borderDash: [0,0],
                 pointRadius: 3,
-                pointBackgroundColor: "#5b1fa8",
+                pointBackgroundColor: "#353eaf",
+                borderColor: "#353eaf",
+                borderWidth: 2,
                 datalabels: {
                     display: false
+                },
+                stack: "stack1"
+            },
+            {
+                type: "line",
+                label: "Total",
+                data: weekData?.map((item) => +item["count"] || 0),
+                borderDash: [0,0],
+                pointRadius: 3,
+                pointBackgroundColor: "#ff00ae",
+                borderColor: "#ff00ae",
+                borderWidth: 2,
+                datalabels: {
+                    color: "#FFF",
+                    backgroundColor: theme === 'light' && "#000A",
                 }
             },
             {
                 type: "bar",
-                label: "Days",
-                data: yearData?.map(({count}) => (count)),
-                backgroundColor: colorize(goal),
+                label: "Add",
+                data: weekData?.map((item) => +item["Add"] || 0),
+                backgroundColor:split ? "#04570d" : colorize(goal),
                 barThickness: 75,
-                borderRadius: 10
+                borderRadius: 10,
+                stack: "stack0",
+                datalabels: {
+                    display: false
+                },
+            },
+            {
+                type: "bar",
+                label: "Add on Receiving",
+                data: weekData?.map((item) => +item["Add on Receiving"] || 0),
+                backgroundColor: split ? "#d00d0d" : colorize(goal),
+                barThickness: 75,
+                borderRadius: 10,
+                stack: "stack0",
+                datalabels: {
+                    display: false
+                },
+            },
+            {
+                type: "bar",
+                label: "Relisting",
+                data: weekData?.map((item) => +item["Relisting"] || 0),
+                backgroundColor: split ? "#050c75" : colorize(goal),
+                barThickness: 75,
+                borderRadius: 10,
+                stack: "stack0",
+                datalabels: {
+                    display: false
+                },
             }
         ]
     };
@@ -143,8 +207,8 @@ function WeeklyChart(props){
 
 function WeeklyView() {
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
+    const [checked,setChecked] = useState(false);
     let weekData = useUpdates("/api/views/weeklyView",{date});
-
     const theme = useContext(ThemeContext);
     const day = useContext(SundayContext);
     function handleDateChange(e) {
@@ -157,6 +221,7 @@ function WeeklyView() {
         </Container>
     );
     let margin = "3.5rem";
+    weekData = processWeekData(weekData)
     weekData = makeWeekArray(weekData,day,findStartOfWeek(new Date(date)));
     return (
         <main>
@@ -170,10 +235,15 @@ function WeeklyView() {
                     />
                 </Row>
                 Showing data for {getWeekString(new Date(date))}.
+                <Stack direction={"horizontal"}>
+                    <Form.Label onClick={()=>setChecked(!checked)}>Split into Type ? </Form.Label>
+                    <Form.Check onChange={()=>setChecked(!checked)} checked={checked} />
+                </Stack>
+
                 <div className={"mb-3"} />
                 <Row>
                     <Col sm={10} className={`p-1 themed-drop-shadow ${theme}`} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
-                        {weekData.length > 0 && <WeeklyChart theme={theme} yearData={weekData} date={date} />}
+                        {weekData.length > 0 && <WeeklyChart split={checked} theme={theme} weekData={weekData} date={date} />}
                     </Col>
                     <Col sm={2}>
                         <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>

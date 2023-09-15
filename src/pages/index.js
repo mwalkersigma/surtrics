@@ -19,6 +19,7 @@ import InfoCard from "../components/infoCards/infocard";
 import BigInfoCard from "../components/infoCards/bigInfoCards";
 import findStartOfWeek from "../modules/utils/findMondayFromDate";
 import {setHours} from "date-fns";
+import processWeekData from "../modules/utils/processWeekData";
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -35,6 +36,7 @@ const convertDateToDay = (date) => {
 }
 
 
+
 export default function Home() {
     let date = new Date();
     date = date.toISOString().split("T")[0];
@@ -44,7 +46,8 @@ export default function Home() {
 
     const shadowColor = theme === "dark" ? "#FFF" : "#000";
 
-    const weekData = useUpdates("/api/views/weeklyView",{date});
+    let weekData = useUpdates("/api/views/weeklyView",{date});
+    weekData = processWeekData(weekData)
     let dailyData = useUpdates("/api/views/dailyView",{date});
 
     const goal = useGoal();

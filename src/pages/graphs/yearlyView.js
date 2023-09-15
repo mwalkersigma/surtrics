@@ -69,7 +69,7 @@ function YearlyChart(props){
 
             },
             datalabels: {
-                color: useTheme(theme),
+                color: '#fff',
                 display: (context) => context.dataset.data[context.dataIndex] > 200,
                 font: {
                     weight: "bold",

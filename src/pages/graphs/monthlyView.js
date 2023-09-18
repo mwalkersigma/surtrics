@@ -20,6 +20,7 @@ import {Line} from "react-chartjs-2";
 import formatter from "../../modules/utils/numberFormatter";
 import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../_app";
+import yymmddTommddyy from "../../modules/utils/yymmddconverter";
 
 
 
@@ -106,8 +107,12 @@ function LineGraphMonthly ({monthData,theme}) {
         return acc
     },{})
 
+
     const graphData = {
-        labels: Array.from(new Set(monthData.map(({day}) => day.split("T")[0]))),
+        labels: Array
+            .from(new Set(monthData.map(({day}) => day.split("T")[0])))
+            .map(yymmddTommddyy)
+        ,
         datasets: [
             {
                 label: "Increments",
@@ -178,7 +183,6 @@ const MonthlyView = () => {
             Loading... ( If this takes more than 10 seconds, there is probably no data for this date )
         </Container>
     );
-    console.log(monthData)
     let cardData = monthData.map(({transactions}) => +transactions);
     let margin = "3rem";
     return (

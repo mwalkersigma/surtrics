@@ -23,6 +23,7 @@ import createAdjustedWeekArray from "../../modules/utils/createAdjustedWeekArray
 
 import InfoCard from "../../components/infoCards/infocard";
 import {colorScheme} from "../_app";
+import yymmddTommddyy from "../../modules/utils/yymmddconverter";
 
 ChartJS.register(
     CategoryScale,
@@ -41,7 +42,7 @@ function getWeekString(date) {
     let sunday = findStartOfWeek(date);
     let saturday = new Date(sunday);
     saturday.setDate(sunday.getDate() + 6);
-    return `${formatDateWithZeros(sunday)} - ${formatDateWithZeros(saturday)}`;
+    return `${yymmddTommddyy(formatDateWithZeros(sunday))} through ${yymmddTommddyy(formatDateWithZeros(saturday))}`;
 }
 function colorize(goal) {
     return (ctx) => {
@@ -163,7 +164,7 @@ function WeeklyChart(props){
         },
     }
     const data = weekData.length > 0 && {
-        labels: weekData.map(({date}) => (`${returnDayOfWeek(date)} ${date.split("T")[0]}`)),
+        labels: weekData.map(({date}) => (`${returnDayOfWeek(date)} ${yymmddTommddyy(date.split("T")[0])}`)),
         datasets: [
             {
                 type: "bar",

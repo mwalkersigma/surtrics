@@ -14,11 +14,13 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {SundayContext, ThemeContext} from "./layout";
-import makeWeekArray from "../modules/utils/makeWeekArray";
 import InfoCard from "../components/infoCards/infocard";
+
+import makeWeekArray from "../modules/utils/makeWeekArray";
 import BigInfoCard from "../components/infoCards/bigInfoCards";
 import findStartOfWeek from "../modules/utils/findMondayFromDate";
 import processWeekData from "../modules/utils/processWeekData";
+import {subHours, format, addHours} from "date-fns";
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -29,9 +31,7 @@ ChartJS.register(
 );
 
 const convertDateToDay = (date) => {
-    const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-    date = new Date(date)
-    return `${days[date.getDay()]} ${date.toISOString().split("T")[0].split("-").slice(1).join("/")}`;
+    return format(addHours(new Date(date),5),"EEE MM/dd")
 }
 
 
@@ -69,7 +69,7 @@ export default function Home() {
 
     const dailyDifference = weekData.at(-1).count - goal;
     const hourlyDifference = Math.round(dailyData.at(-1)?.count - hourlyGoal)
-    const totalDifference = expectedTotal - totalIncrements + dailyDifference;
+    const totalDifference = expectedTotal - totalIncrements;
 
     const bestDay = Math.max(...weekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
@@ -197,7 +197,7 @@ export default function Home() {
                         <p>Hourly Snapshot</p>
                         <Line
                             data={{
-                                labels: dailyData.map(({hour}) => new Date(hour).toISOString().split("T")[1].split(":")[0]),
+                                labels: dailyData.map(({hour}) => +(subHours(new Date(hour),5).toLocaleTimeString().split(":")[0])),
                                 datasets:[
                                     {
                                         data:dailyData.map(({count}) => +count),
@@ -219,14 +219,10 @@ export default function Home() {
                                 },
                                 scales: {
                                     y:{
-                                        //display: false,
                                         ticks: {
                                             color: theme === "dark" ? "#FFF" : "#000"
                                         }
                                     },
-                                    x: {
-                                        display: false
-                                    }
                                 },
                             }}
                             height={190}

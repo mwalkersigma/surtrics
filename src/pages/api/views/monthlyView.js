@@ -49,7 +49,6 @@ export default function handler (req,res) {
         let body = JSON.parse(req.body) ?? {date: new Date()};
         date = new Date(body.date);
     }
-    console.log(date)
     return getIncrements(date)
         .then((response) => {
             res.status(200).json(response)

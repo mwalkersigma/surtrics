@@ -164,9 +164,73 @@ describe("Create Adjusted Week Array", () =>{
             goal: 550,
             expected: [0, 0, 0, 1108.5, 1108.5]
         },
+        {
+            data: [
+                {
+                    "date": "2023-09-11",
+                    "count": 550,
+                },
+                {
+                    "date": "2023-09-12",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-13",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-14",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-15",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-16T10:00:00.000Z",
+                    "count": 0
+                },
+                {"date": "2023-09-17T10:00:00.000Z",
+                    "count": 0
+                }],
+            goal: 550,
+            expected: [0, 550, 550, 550, 550]
+        },
+        {
+            data: [
+                {
+                    "date": "2023-09-11",
+                    "count": 150,
+                },
+                {
+                    "date": "2023-09-12",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-13",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-14",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-15",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-16T10:00:00.000Z",
+                    "count": 0
+                },
+                {"date": "2023-09-17T10:00:00.000Z",
+                    "count": 0
+                }],
+            goal: 550,
+            expected: [0, 650, 650, 650, 650]
+        },
     ]
 
-    test.each(tests)("Given $goal expect $expected", ({data, goal, expected}) => {
+    test.each(tests)("Given A goal of : $goal expect $expected", ({data, goal, expected}) => {
         expect(createAdjustedWeekArray(data, goal)).toEqual(expected);
     })
 })

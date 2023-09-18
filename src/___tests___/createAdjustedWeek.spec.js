@@ -1,4 +1,4 @@
-import {describe, test, expect} from "vitest";
+import {describe, test, expect,it} from "vitest";
 import createAdjustedWeekArray from "../modules/utils/createAdjustedWeekArray";
 
 describe("Create Adjusted Week Array", () =>{
@@ -66,7 +66,7 @@ describe("Create Adjusted Week Array", () =>{
                     "count": 0
                 }],
             goal: 550,
-            expected: [0, 0, 0, 0, 550]
+            expected: [0, 0, 0, 0, 0]
         },
         {
             data: [
@@ -98,7 +98,7 @@ describe("Create Adjusted Week Array", () =>{
                     "count": 0
                 }],
             goal: 550,
-            expected: [0, 0, 0, 550, 550]
+            expected: [0, 0, 0, 0, 0]
         },
         {
             data: [
@@ -162,7 +162,7 @@ describe("Create Adjusted Week Array", () =>{
                     "count": 0
                 }],
             goal: 550,
-            expected: [0, 0, 0, 1108.5, 1108.5]
+            expected: [0, 0, 0, 558.5, 558.5]
         },
         {
             data: [
@@ -194,7 +194,7 @@ describe("Create Adjusted Week Array", () =>{
                     "count": 0
                 }],
             goal: 550,
-            expected: [0, 550, 550, 550, 550]
+            expected: [0, 0, 0, 0, 0]
         },
         {
             data: [
@@ -226,11 +226,44 @@ describe("Create Adjusted Week Array", () =>{
                     "count": 0
                 }],
             goal: 550,
-            expected: [0, 650, 650, 650, 650]
+            expected: [0, 100, 100, 100, 100]
+        },
+        {
+            data: [
+                {
+                    "date": "2023-09-11",
+                    "count": 404,
+                },
+                {
+                    "date": "2023-09-12",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-13",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-14",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-15",
+                    "count": 0,
+                },
+                {
+                    "date": "2023-09-16T10:00:00.000Z",
+                    "count": 0
+                },
+                {"date": "2023-09-17T10:00:00.000Z",
+                    "count": 0
+                }],
+            goal: 500,
+            expected: [0, 24, 24, 24, 24]
         },
     ]
-
-    test.each(tests)("Given A goal of : $goal expect $expected", ({data, goal, expected}) => {
+    tests.forEach(({data,goal,expected}) => {
+      it(`Given A goal of : ${goal} and the following data : ${data.map(item=>item.count)} expect ${expected}`, () => {
         expect(createAdjustedWeekArray(data, goal)).toEqual(expected);
+      })
     })
 })

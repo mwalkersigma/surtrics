@@ -233,7 +233,7 @@ function WeeklyChart(props){
                     color: "#FFF",
                     backgroundColor: theme === 'light' && "#000A",
                     display: (context) => context.dataset.data[context.dataIndex]-goal > 0 && "auto",
-                    formatter: (value) => value - goal
+                    formatter: (value) => Math.round(value - goal)
 
                 },
                 order:2,

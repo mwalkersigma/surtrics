@@ -2,9 +2,14 @@ import Head from 'next/head'
 import {Col, Row} from "react-bootstrap";
 import React, {useContext} from "react";
 import Container from "react-bootstrap/Container";
+
 import useUpdates from "../modules/hooks/useUpdates";
 import useGoal from "../modules/hooks/useGoal";
 import formatter from "../modules/utils/numberFormatter";
+import makeWeekArray from "../modules/utils/makeWeekArray";
+import findStartOfWeek from "../modules/utils/findMondayFromDate";
+import processWeekData from "../modules/utils/processWeekData";
+
 import {Bar, Line} from "react-chartjs-2";
 import {
     BarElement,
@@ -14,13 +19,15 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {SundayContext, ThemeContext} from "./layout";
-import InfoCard from "../components/infoCards/infocard";
 
-import makeWeekArray from "../modules/utils/makeWeekArray";
+import InfoCard from "../components/infoCards/infocard";
 import BigInfoCard from "../components/infoCards/bigInfoCards";
-import findStartOfWeek from "../modules/utils/findMondayFromDate";
-import processWeekData from "../modules/utils/processWeekData";
+
+
+
 import {subHours, format, addHours} from "date-fns";
+import {colorScheme} from "./_app";
+
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -43,7 +50,7 @@ export default function Home() {
     const theme = useContext(ThemeContext)
     const day = useContext(SundayContext)
 
-    const shadowColor = theme === "dark" ? "#FFF" : "#000";
+    const shadowColor = theme === "dark" ? colorScheme.white : colorScheme.dark;
 
     let weekData = useUpdates("/api/views/weeklyView",{date});
     weekData = processWeekData(weekData)
@@ -73,12 +80,8 @@ export default function Home() {
 
     const bestDay = Math.max(...weekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
-    function colorize(goal) {
-        return (ctx) => {
-            const increments = ctx?.parsed?.y;
-            return increments < goal ? "#d00d0d" : "#00ad11";
-        }
-    }
+
+
 
   return (
     <>
@@ -93,18 +96,18 @@ export default function Home() {
         <Container className={"mt-5"} >
             <Row className={"pb-3"}>
                 <Col sm={2}>
-                    <InfoCard theme={theme} title={"Daily Total"} >
+                    <InfoCard formatter={(value)=>value > goal} theme={theme} title={"Daily Total"} >
                         {(formatter(totalForToday))}
                     </InfoCard>
-                    <InfoCard theme={theme} style={{marginBottom:0}} title={"Hourly total"} >
+                    <InfoCard formatter={(value)=>value > hourlyGoal} theme={theme} style={{marginBottom:0}} title={"Hourly total"} >
                         {formatter(dailyData.at(-1)?.count)}
                     </InfoCard>
                 </Col>
                 <Col sm={2}>
-                    <InfoCard theme={theme}  title={"Daily Average"}>
+                    <InfoCard formatter={(value)=>value > goal} theme={theme}  title={"Daily Average"}>
                         {formatter(dailyAverage)}
                     </InfoCard>
-                    <InfoCard theme={theme} style={{marginBottom:0}} title={"Hourly Average"}>
+                    <InfoCard formatter={(value)=>value > hourlyGoal} theme={theme} style={{marginBottom:0}} title={"Hourly Average"}>
                         {formatter(hourlyAverage)}
                     </InfoCard>
 
@@ -118,10 +121,10 @@ export default function Home() {
                     </InfoCard>
                 </Col>
                 <Col sm={2}>
-                    <InfoCard theme={theme}  title={"Daily Difference"}>
+                    <InfoCard formatter={(value)=> value > 0} theme={theme}  title={"Daily Difference"}>
                         {formatter(dailyDifference)}
                     </InfoCard>
-                    <InfoCard theme={theme} style={{marginBottom:0}} title={"Hourly Difference"}>
+                    <InfoCard formatter={(value)=> value > 0} theme={theme} style={{marginBottom:0}} title={"Hourly Difference"}>
                         {formatter(hourlyDifference)}
                     </InfoCard>
                 </Col>
@@ -148,8 +151,8 @@ export default function Home() {
                                 datasets:[
                                     {
                                         data:weekSeed.map(({count}) => +count),
-                                        borderColor: colorize(goal),
-                                        backgroundColor: colorize(goal),
+                                        borderColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
+                                        backgroundColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
                                     }
                                 ]
                             }}
@@ -171,9 +174,6 @@ export default function Home() {
                                             color: "#FFF"
                                         }
                                     },
-                                    x: {
-                                        //display: false
-                                    }
                                 },
                             }}
                             height={190}
@@ -232,7 +232,7 @@ export default function Home() {
             </Row>
             <Row style={{marginBottom:'5rem'}}>
                 <Col sm={4}>
-                    <BigInfoCard theme={theme} title={"Best Day"}>
+                    <BigInfoCard formatter={(value)=>value > goal} theme={theme} title={"Best Day"}>
                         {formatter(bestDay)}
                     </BigInfoCard>
                 </Col>
@@ -241,19 +241,21 @@ export default function Home() {
                         {formatter(expectedTotal)}
                     </InfoCard>
                     <InfoCard theme={theme} style={{marginBottom:0}} title={"Total Difference"}>
-                       <span className={`${totalDifference > 0 ? "text-danger" : ""}`}>{formatter(totalDifference)}</span>
+                       <span className={`${totalDifference > 0 ? "text-danger" : ""}`}>{formatter(totalDifference) > 0 ? formatter(totalDifference):0}</span>
                     </InfoCard>
                 </Col>
                 <Col sm={2}>
-                    <InfoCard theme={theme} title={"Best VS Today"} >
+                    <InfoCard formatter={(value)=> value >= 0} theme={theme} title={"Best VS Today"} >
                         {formatter(bestDay - totalForToday)}
                     </InfoCard>
-                    <InfoCard theme={theme} style={{marginBottom:0}} title={"Best HR VS Now"}>
+                    <InfoCard formatter={(value)=>{
+                        return bestHour - dailyData.at(-1)?.count <= 0
+                    }} theme={theme} style={{marginBottom:0}} title={"Best HR VS Now"}>
                         {formatter(bestHour - dailyData.at(-1)?.count)}
                     </InfoCard>
                 </Col>
                 <Col sm={4}>
-                    <BigInfoCard theme={theme} title={"Best Hour"}>
+                    <BigInfoCard formatter={(value)=>value > hourlyGoal} theme={theme} title={"Best Hour"}>
                         {formatter(bestHour)}
                     </BigInfoCard>
                 </Col>

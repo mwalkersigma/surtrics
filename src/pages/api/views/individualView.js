@@ -13,6 +13,7 @@ FROM
     surtrics.surplus_metrics_data
 WHERE
     DATE(transaction_date) >= $1
+    AND DATE(transaction_date) <= $1
     AND "user" != 'BSA'
     AND "user" != 'System'
 GROUP BY

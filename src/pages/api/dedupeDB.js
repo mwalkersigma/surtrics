@@ -1,8 +1,9 @@
 import db from "../../db";
+import Logger from "sigma-logger";
 
 
 export default function handler (req,res) {
-    console.log("Dedupe DB")
+    Logger.log(`The database is being deduped`);
     return db.query(`
         DELETE FROM
             surtrics.surplus_metrics_data a

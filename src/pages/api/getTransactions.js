@@ -41,8 +41,8 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
     try {
         Logger.log(`body: ${JSON.stringify({currentTimestamp,timeLastUpdated,pageNumber},null,2)}`);
     }catch (e) {
-        console.log("error: ", e)
-        console.log("body: ", body)
+        Logger.log(`error: ${e}`)
+        Logger.log(`body: ${body} `)
     }
 
     const method = "POST";
@@ -64,15 +64,15 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
         return response.headers;
     }
     if(data['Transactions'].length === 0){
-        console.log("response status: ", response.status)
-        console.log("response statusText: ", response.statusText)
+        Logger.log(`response status: ${response.status}`)
+        Logger.log(`response statusText: ${response.statusText} `)
         return false;
     }
     await PromisePool
         .withConcurrency(25)
         .for(data['Transactions'])
         .process(async (item) => {
-            console.log("Inserting Record for sku: " , item['Sku'])
+            Logger.log(`Inserting Record for sku: ${item['Sku']}`)
             await Db.query(`
                 INSERT INTO nfs.surtrics.surplus_metrics_data (
                     "user", sku, code, scanned_code, lot_number, title, quantity,
@@ -82,7 +82,7 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
                 )
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
                 convertToDatabase(item))
-            console.log("INSERTED Record for sku: " , item['Sku'])
+            Logger.log(`Inserted Record for sku: ${item['Sku']}`)
         })
 
     return true;
@@ -99,11 +99,11 @@ async function isTimeToUpdate(currentTimestamp, timeLastUpdated){
     let {frequency} = await fs
         .readFile("./src/json/settings.json", "utf-8")
         .then((data) => JSON.parse(data));
-    console.log("frequency: ", frequency)
+    Logger.log(`frequency: ${frequency} `)
     frequency = convertFrequencyToSeconds(frequency);
     let timeDiff = (new Date(currentTimestamp) - new Date(timeLastUpdated)) / 1000;
 
-    console.log("timeDiff: ", timeDiff)
+    Logger.log(`timeDiff: ${timeDiff} `)
     return timeDiff < frequency
 }
 async function getTransactions(){
@@ -115,7 +115,7 @@ async function getTransactions(){
         const shouldNotUpdate = await isTimeToUpdate(currentTimestamp, timeLastUpdated);
 
         if(shouldNotUpdate){
-            console.log("not time to update")
+            Logger.log("not time to update")
             return "not time to update";
         }
 
@@ -128,16 +128,16 @@ async function getTransactions(){
             pageNumber++;
         }
         await fs.writeFile("./src/json/timeLastUpdated.json", JSON.stringify({timeLastUpdated: currentTimestamp}))
-        console.log(`Finished inserting into DB ${pageNumber - 1} pages of transactions`)
+        Logger.log(`Finished inserting into DB ${pageNumber - 1} pages of transactions`)
         return "update complete";
     } catch (e) {
-        console.log("error: ", e)
+        Logger.log(`error: ${e}`)
         return e;
     }
 }
 
 export default function handler (req,res){
-    console.log(`request received to update transactions`)
+    Logger.log(`request received to update transactions`)
     return getTransactions()
     .then((message) => {
         res.status(200).json({message});

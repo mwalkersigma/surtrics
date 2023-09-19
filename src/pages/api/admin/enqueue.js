@@ -1,4 +1,5 @@
 import queueChanges from "../../../modules/utils/queueChanges";
+import Logger from "sigma-logger";
 
 
 export default function handler (req,res){
@@ -8,6 +9,7 @@ export default function handler (req,res){
         changes.forEach(queueChanges)
         return res.status(200).json({changes,success:true});
     }
+    Logger.log(`The following changes were queued: ${changes}`);
     queueChanges(changes);
     return res.status(200).json({changes,success:true});
 

@@ -33,6 +33,10 @@ export default function LineGraph (props) {
                 }
             },
         },
+        interaction: {
+            mode: 'index',
+            intersect: false,
+        },
         scales:{
             y: {
                 min: 0,
@@ -66,6 +70,7 @@ export default function LineGraph (props) {
                 data:makeHourlyGoal(goal || 0),
                 borderColor: colorScheme.purple,
                 backgroundColor: colorScheme.purple,
+
             },
             {
                 label: "Adjusted Goal",

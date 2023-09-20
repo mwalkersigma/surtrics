@@ -1,8 +1,8 @@
 import React, {useContext, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import {Chart} from "react-chartjs-2";
-import useUpdates from "../modules/hooks/useUpdates";
-import {ThemeContext} from "./layout";
+import useUpdates from "../../modules/hooks/useUpdates";
+import {ThemeContext} from "../layout";
 
 import {
     BarElement,
@@ -14,12 +14,12 @@ import {
     Tooltip
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
-import formatDateWithZeros from "../modules/utils/formatDateWithZeros";
+import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import Form from "react-bootstrap/Form";
 import {Col, Row} from "react-bootstrap";
-import InfoCard from "../components/infoCards/infocard";
-import formatter from "../modules/utils/numberFormatter";
-import {colorScheme} from "./_app";
+import InfoCard from "../../components/infoCards/infocard";
+import formatter from "../../modules/utils/numberFormatter";
+import {colorScheme} from "../_app";
 
 ChartJS.register(
     CategoryScale,
@@ -62,6 +62,10 @@ function YearlyChart(props){
         plugins: {
             tooltip: {
                 callbacks: {
+                    label: (context) => {
+                        if(context.raw === 0) return "";
+                        return context.dataset.label + ": " + formatter(context.raw);
+                    },
                     footer: (context)=> {
                         return "TOTAL: " + context.reduce((acc, {raw}) => (acc + +raw), 0);
                     }
@@ -136,10 +140,11 @@ function YearlyChart(props){
                 label: type,
                 data: Object.values(dataForChart).map((user) => user[type] || 0),
                 backgroundColor: pickRandomColorFromColorScheme(),
+                maxBarThickness: 100,
             }
         })
     };
-    return <Chart data={data} type={"bar"} height={190} options={options}/>
+    return <Chart data={data} type={"bar"} height={150} options={options}/>
 }
 
 

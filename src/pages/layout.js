@@ -37,8 +37,10 @@ function NavBar({theme,setTheme,setDay}){
                         <Nav.Link href="/graphs/monthlyView">Monthly View</Nav.Link>
                         <Nav.Link href="/graphs/weeklyView">Weekly View</Nav.Link>
                         <Nav.Link href="/graphs/dailyView">Daily View</Nav.Link>
+                        <Nav.Link href="/graphs/individualGraph">User View</Nav.Link>
                     </NavDropdown>
                     <Nav.Link href="/individualView">Individual View</Nav.Link>
+
                 </Nav>
                 <NavDropdown className={`text-white`} title=" Theme " id="basic-nav-dropdown">
                     <NavDropdown.Item>

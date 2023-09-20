@@ -240,12 +240,12 @@ export default function Home() {
                     <InfoCard theme={theme} title={"Planned Total"} subtitle={"By end of day"}>
                         {formatter(expectedTotal)}
                     </InfoCard>
-                    <InfoCard theme={theme} style={{marginBottom:0}} title={"Total Difference"}>
-                       <span className={`${totalDifference > 0 ? "text-danger" : ""}`}>{formatter(totalDifference) > 0 ? formatter(totalDifference):0}</span>
+                    <InfoCard formatter={()=> totalDifference < 0} theme={theme} style={{marginBottom:0}} title={"Total Difference"}>
+                       {formatter(totalDifference) > 0 ? formatter(totalDifference):0}
                     </InfoCard>
                 </Col>
                 <Col sm={2}>
-                    <InfoCard formatter={(value)=> value >= 0} theme={theme} title={"Best VS Today"} >
+                    <InfoCard formatter={(value)=> value <= 0} theme={theme} title={"Best VS Today"} >
                         {formatter(bestDay - totalForToday)}
                     </InfoCard>
                     <InfoCard formatter={(value)=>{

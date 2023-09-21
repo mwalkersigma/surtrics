@@ -67,12 +67,17 @@ function NavBar({theme,setTheme,setDay}){
 export default function Layout({ children }) {
     const [theme, setTheme] = useState();
     const [sunday, setSunday] = useState(false);
+    const [hasNavBar, setHasNavBar] = useState(true);
     useEffect(() => {
         if(typeof window === 'undefined') return;
         const preferredTheme = getPreferredTheme()
         setTheme(preferredTheme)
         setStoredTheme(preferredTheme)
         setDomTheme(preferredTheme)
+        // check and see if the url has ?nav=false
+        const urlParams = new URLSearchParams(window.location.search);
+        const nav = urlParams.get('nav');
+        if(nav === "false") setHasNavBar(false);
     }, [])
     function handleSetTheme(theme) {
         setTheme(theme)
@@ -81,7 +86,7 @@ export default function Layout({ children }) {
     }
     return (
         <>
-            <NavBar theme={theme} setTheme={handleSetTheme} day={sunday} setDay={setSunday} />
+        { hasNavBar && <NavBar theme={theme} setTheme={handleSetTheme} day={sunday} setDay={setSunday} />}
             <SundayContext.Provider value={sunday}>
             <ThemeContext.Provider value={theme}>
             <div className="main-wrapper" style={{minHeight:"87vh"}}>{children}</div>

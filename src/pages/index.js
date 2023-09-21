@@ -74,8 +74,8 @@ export default function Home() {
 
     const expectedTotal = goal * weekData.length;
 
-    const dailyDifference = weekData.at(-1).count - goal;
-    const hourlyDifference = Math.round(dailyData.at(-1)?.count - hourlyGoal)
+    const dailyDifference = weekData.slice(-1)[0].count - goal;
+    const hourlyDifference = Math.round(dailyData.slice(-1)[0]?.count - hourlyGoal)
     const totalDifference = expectedTotal - totalIncrements;
 
     const bestDay = Math.max(...weekData.map(({count}) => +count));
@@ -100,7 +100,7 @@ export default function Home() {
                         {(formatter(totalForToday))}
                     </InfoCard>
                     <InfoCard formatter={(value)=>value > hourlyGoal} theme={theme} style={{marginBottom:0}} title={"Hourly total"} >
-                        {formatter(dailyData.at(-1)?.count)}
+                        {formatter(dailyData.slice(-1)[0]?.count)}
                     </InfoCard>
                 </Col>
                 <Col sm={2}>
@@ -249,9 +249,9 @@ export default function Home() {
                         {formatter(bestDay - totalForToday)}
                     </InfoCard>
                     <InfoCard formatter={(value)=>{
-                        return bestHour - dailyData.at(-1)?.count <= 0
+                        return bestHour - dailyData.slice(-1)[0]?.count <= 0
                     }} theme={theme} style={{marginBottom:0}} title={"Best HR VS Now"}>
-                        {formatter(bestHour - dailyData.at(-1)?.count)}
+                        {formatter(bestHour - dailyData.slice(-1)[0]?.count)}
                     </InfoCard>
                 </Col>
                 <Col sm={4}>

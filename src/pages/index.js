@@ -261,9 +261,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
         <Container className={"mt-5"}>
-            <h3 className={"text-center"}>Surplus Metrics Dashboard</h3>
+            {hasNavBar && <h3 className={"text-center"}>Surplus Metrics Dashboard</h3> }
         </Container>
-        <Container className={`${hasNavBar ? "mt-5" : ""}`} ><HomeDisplay/></Container>
+        <Container className={`${hasNavBar ? "mt-5" : "mt-3"}`} ><HomeDisplay/></Container>
     </>
   )
 }

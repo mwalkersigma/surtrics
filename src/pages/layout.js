@@ -2,6 +2,7 @@ import {createContext, useEffect, useState} from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import {NavDropdown, Nav} from "react-bootstrap";
+import useNav from "../modules/hooks/useNav";
 
 let getStoredTheme,setStoredTheme,getPreferredTheme,setDomTheme;
 export const ThemeContext = createContext('light');
@@ -67,7 +68,7 @@ function NavBar({theme,setTheme,setDay}){
 export default function Layout({ children }) {
     const [theme, setTheme] = useState();
     const [sunday, setSunday] = useState(false);
-    const [hasNavBar, setHasNavBar] = useState(true);
+    const hasNavBar = useNav();
     useEffect(() => {
         if(typeof window === 'undefined') return;
         const preferredTheme = getPreferredTheme()
@@ -75,9 +76,6 @@ export default function Layout({ children }) {
         setStoredTheme(preferredTheme)
         setDomTheme(preferredTheme)
         // check and see if the url has ?nav=false
-        const urlParams = new URLSearchParams(window.location.search);
-        const nav = urlParams.get('nav');
-        if(nav === "false") setHasNavBar(false);
     }, [])
     function handleSetTheme(theme) {
         setTheme(theme)

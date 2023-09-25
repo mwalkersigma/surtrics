@@ -300,11 +300,22 @@ function WeeklyView() {
                         <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>
                             {formatter(weekData.reduce((acc, {count}) => (acc + +count), 0))}
                         </InfoCard>
-                        <InfoCard style={{marginBottom:margin}} title={"Average Increments"} theme={theme}>
-                            {formatter(Math.round(weekData.reduce((acc, {count}) => (acc + +count), 0) / 5))}
+                        <InfoCard style={{marginBottom:margin}} title={"New Inbound"} theme={theme}>
+                            {
+                                formatter(weekData
+                                    .filter((item) => (item["Add"] || item["Add on Receiving"]))
+                                    .reduce((acc,item)=>acc + (+item["Add"] || 0) + (+item["Add on Receiving"] || 0),0)
+                                )
+                            }
                         </InfoCard>
-                        <InfoCard style={{marginBottom:0}} title={"Best Day"} theme={theme}>
-                            {formatter(weekData.reduce((acc, {count}) => (acc > +count ? acc : +count), 0))}
+                        <InfoCard style={{marginBottom:0}} title={"Re-listings"} theme={theme}>
+                            {
+                                formatter(
+                                    weekData
+                                    .filter((item) => (item["Relisting"]))
+                                    .reduce((acc,item)=>acc + (+item["Relisting"] || 0),0)
+                                )
+                            }
                         </InfoCard>
                     </Col>
                 </Row>

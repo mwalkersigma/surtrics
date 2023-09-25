@@ -1,4 +1,4 @@
-import {createContext, useEffect, useState} from "react";
+import {createContext, useEffect, useState,useRef} from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import {NavDropdown, Nav} from "react-bootstrap";
@@ -68,6 +68,8 @@ function NavBar({theme,setTheme,setDay}){
 export default function Layout({ children }) {
     const [theme, setTheme] = useState();
     const [sunday, setSunday] = useState(false);
+    const intervalRef = useRef();
+
     const hasNavBar = useNav();
     useEffect(() => {
         if(typeof window === 'undefined') return;
@@ -75,7 +77,11 @@ export default function Layout({ children }) {
         setTheme(preferredTheme)
         setStoredTheme(preferredTheme)
         setDomTheme(preferredTheme)
-        // check and see if the url has ?nav=false
+        let twentyFourHours = 1000 * 60 * 60 * 24;
+        intervalRef.current = setInterval(() => {
+            window.location.reload();
+        }, twentyFourHours);
+        return () => clearInterval(intervalRef.current);
     }, [])
     function handleSetTheme(theme) {
         setTheme(theme)

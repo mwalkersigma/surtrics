@@ -52,7 +52,12 @@ function HomeDisplay(){
     const shadowColor = theme === "dark" ? colorScheme.white : colorScheme.dark;
 
     let weekData = useUpdates("/api/views/weeklyView",{date});
-    weekData = processWeekData(weekData)
+    weekData = processWeekData(weekData);
+    let weekDays = weekData
+        .filter(({date}) => {
+            let day = addHours(new Date(date),5).getDay();
+            return day !== 0 && day !== 6
+        })
     let dailyData = useUpdates("/api/views/dailyView",{date});
 
     const goal = useGoal();
@@ -68,10 +73,10 @@ function HomeDisplay(){
     const totalIncrements = weekSeed.map(({count}) => +count).reduce((a,b)=>a+b,0);
     const totalForToday = dailyData.reduce((a,b) => a + +b.count,0);
 
-    const dailyAverage = Math.round(totalIncrements / weekData.length || 0);
+    const dailyAverage = Math.round(totalIncrements / weekDays.length || 0);
     const hourlyAverage = Math.round(dailyAverage / 7 || 0);
 
-    const expectedTotal = goal * weekData.length;
+    const expectedTotal = goal * weekDays.length;
 
     const dailyDifference = weekData.slice(-1)[0].count - goal;
     const hourlyDifference = Math.round(dailyData.slice(-1)[0]?.count - hourlyGoal)

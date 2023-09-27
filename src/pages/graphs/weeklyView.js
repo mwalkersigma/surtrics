@@ -76,6 +76,7 @@ function WeeklyChart(props){
     }
     const thickness = 3
     const options = {
+        devicePixelRatio: 4,
         plugins: {
             tooltip: {
                 callbacks: {

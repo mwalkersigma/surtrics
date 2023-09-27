@@ -59,6 +59,7 @@ function YearlyChart(props){
     const useTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
     const options = {
+        devicePixelRatio: 4,
         plugins: {
             tooltip: {
                 callbacks: {

@@ -41,6 +41,7 @@ ChartJS.register(
 function LineGraphMonthly ({monthData,theme}) {
     theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     const options = {
+        devicePixelRatio: 4,
         responsive: true,
         plugins: {
             datalabels: {

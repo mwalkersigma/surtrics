@@ -12,6 +12,7 @@ export default function LineGraph (props) {
     theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     const goal = useGoal();
     const options = {
+        devicePixelRatio: 4,
         responsive: true,
         plugins: {
             datalabels:{

@@ -1,8 +1,8 @@
 import {parse} from 'csv-parse';
 import fs from 'fs';
 import {PromisePool} from "@supercharge/promise-pool";
-import Db from "../../../db";
-import convertToDatabase from "../../../modules/utils/convertSkuVaultToDatabaseFormat";
+import Db from "../../db";
+import convertToDatabase from "../../modules/utils/convertSkuVaultToDatabaseFormat";
 
 
 

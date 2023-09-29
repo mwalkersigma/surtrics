@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import useUpdates from "../modules/hooks/useUpdates";
+import useUpdates from "../../modules/hooks/useUpdates";
 import Container from "react-bootstrap/Container";
 import {Table, Form, InputGroup} from "react-bootstrap";
 

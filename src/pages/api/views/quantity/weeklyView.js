@@ -1,6 +1,6 @@
-import db from "../../../db";
-import findStartOfWeek from "../../../modules/utils/findMondayFromDate";
-import getStartAndEndWeekString from "../../../modules/utils/getStartAndEndWeekString";
+
+import db from "../../../../db/index"
+import getStartAndEndWeekString from "../../../../modules/utils/getStartAndEndWeekString";
 
 
 
@@ -9,27 +9,29 @@ async function getIncrements(date){
 
     let query = await db.query(`
         SELECT
-            COUNT(*),
-            DATE(transaction_date),
-            transaction_reason
+            sum(quantity),
+            "user" as name,
+            transaction_type as type,
+            transaction_reason as reason,
+            DATE(transaction_date) as date
+
         FROM
             surtrics.surplus_metrics_data
         WHERE
-            transaction_date >= $1
-          AND transaction_date <= $2
+            "user" != 'BSA'
+          AND DATE(transaction_date) > $1
+          AND DATE(transaction_date) < $2
+          AND transaction_type = 'Add'
           AND (
-                    transaction_type = 'Add'
-                OR transaction_type = 'Remove'
-                        AND transaction_reason = 'Relisting'
-            )
-          AND (
-                    transaction_reason = 'Add'
+                    transaction_reason = 'Relisting'
+                OR transaction_reason = 'Add'
                 OR transaction_reason = 'Add on Receiving'
-                OR transaction_reason = 'Relisting'
             )
         GROUP BY
-            DATE(transaction_date),
-            transaction_reason
+            name,
+            type,
+            reason,
+            date
     `, [startWeekString, endOfWeekString])
     return query.rows;
 }

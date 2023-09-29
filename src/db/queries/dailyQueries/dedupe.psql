@@ -2,7 +2,7 @@ DELETE FROM
     surtrics.surplus_metrics_data a
     USING surtrics.surplus_metrics_data b
 WHERE
-        a.id < b.id
+      a.id < b.id
   AND a."user" = b."user"
   AND a.sku = b.sku
   AND a.code = b.code

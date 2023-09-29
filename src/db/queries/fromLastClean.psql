@@ -1,2 +1,0 @@
-DELETE FROM surtrics.surplus_metrics_data
-WHERE id > 1516669

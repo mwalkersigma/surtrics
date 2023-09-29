@@ -1,0 +1,21 @@
+SELECT
+    transaction_date,
+    code,
+    "user",
+    quantity,
+    count(*)
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+        "user" != 'BSA'
+  AND "user" != 'System'
+  AND transaction_date > '2023-08-29'
+  AND transaction_type = 'Add'
+  AND transaction_reason = 'Relisting'
+GROUP BY
+    transaction_date,
+    code,
+    "user",
+    quantity
+HAVING
+        count(*) > 1;

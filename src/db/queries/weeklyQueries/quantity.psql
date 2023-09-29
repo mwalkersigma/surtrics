@@ -1,0 +1,24 @@
+SELECT
+    sum(quantity),
+    "user" as name,
+    transaction_type as type,
+    transaction_reason as reason,
+    DATE(transaction_date) as date
+
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+        "user" != 'BSA'
+  AND DATE(transaction_date) > '09/24/2023'
+  AND DATE(transaction_date) < '09/30/2023'
+  AND transaction_type = 'Add'
+  AND (
+            transaction_reason = 'Relisting'
+        OR transaction_reason = 'Add'
+        OR transaction_reason = 'Add on Receiving'
+    )
+GROUP BY
+    name,
+    type,
+    reason,
+    date

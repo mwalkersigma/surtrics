@@ -54,3 +54,12 @@
     font-weight: bold;
   }
 }
+
+
+.hover-remove{
+  color: #dc3545;
+  &:hover{
+    background-color: #dc3545;
+    color: white;
+  }
+}

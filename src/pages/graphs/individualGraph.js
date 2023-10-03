@@ -17,7 +17,6 @@ import DataLabels from "chartjs-plugin-datalabels";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import Form from "react-bootstrap/Form";
 import {Col, Row} from "react-bootstrap";
-import InfoCard from "../../components/infoCards/infocard";
 import formatter from "../../modules/utils/numberFormatter";
 import {colorScheme} from "../_app";
 
@@ -54,7 +53,7 @@ function pickRandomColorFromColorScheme() {
 
 
 
-function YearlyChart(props){
+function IndividualChart(props){
     let {individualData,theme} = props;
     const useTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
@@ -179,7 +178,7 @@ function UserGraph() {
                 </Row>
                 <Row>
                     <Col sm={12} className={`p-1 themed-drop-shadow ${theme}`} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
-                        {individualData.length > 0 && <YearlyChart theme={theme} individualData={individualData} date={date} />}
+                        {individualData.length > 0 && <IndividualChart theme={theme} individualData={individualData} date={date} />}
                     </Col>
                 </Row>
             </Container>

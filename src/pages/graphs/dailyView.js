@@ -43,6 +43,7 @@ const DailyView = () => {
         </Container>
     );
     dailyData = dailyData.map(({count}) => +count);
+    console.log(dailyData)
     let margin = "3rem";
     return (
         <Container>

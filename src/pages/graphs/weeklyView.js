@@ -169,7 +169,7 @@ function WeeklyChart(props){
         datasets: [
             {
                 type: "bar",
-                label: "Add",
+                label: "Incrementation",
                 data: weekData?.map((item) => +item["Add"] || 0),
                 borderColor:colorize(goal),
                 backgroundColor:colorScheme.green,
@@ -184,7 +184,7 @@ function WeeklyChart(props){
             },
             {
                 type: "bar",
-                label: "Add on Receiving",
+                label: "New Inbound",
                 data: weekData?.map((item) => +item["Add on Receiving"] || 0),
                 borderColor:colorize(goal),
                 backgroundColor:colorScheme.red,

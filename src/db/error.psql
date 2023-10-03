@@ -1,0 +1,49 @@
+-- Select All
+SELECT
+    *
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+        transaction_type = 'Error';
+
+-----------------------------------------
+
+
+-- Delete All
+DELETE FROM surtrics.surplus_metrics_data
+WHERE
+        transaction_type = 'Error';
+------------------------------------------
+
+
+-- Select all names from the last 90 days
+SELECT
+    "user" as user_name
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+    transaction_date >= transaction_date - interval '90 days'
+GROUP BY
+    user_name;
+-----------------------------------------
+
+
+-- Select all error reports from a admin
+SELECT
+    *
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+    context = 'mwalker@sigmaequipment.com'
+    AND transaction_type = 'Error';
+----------------------------------------
+
+-- Select all error reports from a user
+SELECT
+    *
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+    "user" = 'Christopher Newman'
+    AND transaction_type = 'Error';
+---------------------------------------

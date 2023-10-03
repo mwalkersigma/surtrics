@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../styles/style.scss";
 import Layout from "./layout";
+import {SessionProvider} from "next-auth/react";
 
 
 export const colorScheme = {
@@ -28,7 +29,13 @@ export const colorScheme = {
 }
 
 
-export default function App({ Component, pageProps }) {
+function Base({ Component, pageProps }) {
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
   return getLayout(<Component {...pageProps} />)
+}
+
+export default function App ({ Component, pageProps : {session, ...pageProps}}){
+    return <SessionProvider session={session}>
+            <Base Component={Component} pageProps={pageProps}/>
+            </SessionProvider>
 }

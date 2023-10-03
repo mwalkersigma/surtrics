@@ -116,7 +116,7 @@ function LineGraphMonthly ({monthData,theme}) {
         ,
         datasets: [
             {
-                label: "Increments",
+                label: "Total",
                 data: Object.values(dataSets).map((item) => item["total"] ?? 0),
                 borderColor: colorScheme.indigo,
                 backgroundColor: colorScheme.indigo,
@@ -129,7 +129,7 @@ function LineGraphMonthly ({monthData,theme}) {
                 }
             },
             {
-                label: "Add",
+                label: "Incrementation",
                 data: Object.values(dataSets).map((item) => item["Add"] ?? 0),
                 borderColor: colorScheme.green,
                 backgroundColor: colorScheme.green,
@@ -142,7 +142,7 @@ function LineGraphMonthly ({monthData,theme}) {
                 }
             },
             {
-                label: "Add on Receiving",
+                label: "New Inbound",
                 data: Object.values(dataSets).map((item) => item["Add on Receiving"] ?? 0),
                 borderColor: colorScheme.red,
                 backgroundColor: colorScheme.red,
@@ -185,6 +185,7 @@ const MonthlyView = () => {
         </Container>
     );
     let cardData = monthData.map(({transactions}) => +transactions);
+    console.log(monthData, cardData)
     let margin = "3rem";
     return (
         <Container>
@@ -199,14 +200,24 @@ const MonthlyView = () => {
                     <LineGraphMonthly monthData={monthData} theme={theme} />
                 </Col>
                 <Col sm={2}>
-                    <InfoCard style={{marginBottom:margin}}  title={"Total"} theme={theme}>
+                    <InfoCard style={{marginBottom:margin}}  title={"Total Increments"} theme={theme}>
                         {formatter(cardData.reduce((a,b) => a + b,0))}
                     </InfoCard>
-                    <InfoCard style={{marginBottom:margin}} title={"Average"} theme={theme}>
-                        {formatter(Math.round(cardData.reduce((a,b) => a + b,0) / monthData.length))}
+                    <InfoCard style={{marginBottom:margin}} title={"New Inbound"} theme={theme}>
+                        {
+                            formatter(monthData
+                                .filter((item) => (item.transaction_reason === "Add on Receiving" || item.transaction_reason === "Add"))
+                                .reduce((acc, {transactions})=>acc + +transactions ,0)
+                            )
+                        }
                     </InfoCard>
-                    <InfoCard style={{marginBottom:0}} title={"Best Day"} theme={theme}>
-                        {formatter(cardData.reduce((a,b) => a > b ? a : b,0))}
+                    <InfoCard style={{marginBottom:0}} title={"Re-listings"} theme={theme}>
+                        {
+                            formatter(monthData
+                                .filter((item) => (item.transaction_reason === "Relisting"))
+                                .reduce((acc, {transactions})=>acc + +transactions ,0)
+                            )
+                        }
                     </InfoCard>
                 </Col>
             </Row>

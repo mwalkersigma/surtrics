@@ -110,7 +110,7 @@ function YearlyChart(props){
         datasets: [
             {
                 type: "bar",
-                label: "Add On Receiving",
+                label: "New Inbound",
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add on Receiving").map(({transactions}) => (+transactions)),
                 backgroundColor: colorScheme.red,
                 barThickness: 75,
@@ -119,7 +119,7 @@ function YearlyChart(props){
             },
             {
                 type: "bar",
-                label: "Add",
+                label: "Incrementation",
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add").map(({transactions}) => (+transactions)),
                 backgroundColor: colorScheme.green,
                 barThickness: 75,
@@ -159,13 +159,20 @@ function YearlyView() {
         </Container>
     );
     let margin = "3.5rem";
-    const cardData = Object.values(yearData.reduce((acc, {transactions,month}) =>{
+    const cardData = Object.values(yearData.reduce((acc, {transactions,month,transaction_reason}) =>{
         if(!acc[month]){
-            acc[month]={transactions:0,month}
+            acc[month]={transactions:0,month,[transaction_reason]:transactions};
+        }
+        else{
+            acc[month][transaction_reason] = transactions;
         }
         acc[month].transactions += +transactions;
         return acc;
     } , {}));
+
+
+
+    console.log(yearData,cardData)
     return (
         <main>
             <Container>
@@ -183,18 +190,23 @@ function YearlyView() {
                     </Col>
                     <Col sm={2}>
                         <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>
+                            {formatter(cardData.reduce((acc, {transactions}) => (acc + +transactions), 0))}
+                        </InfoCard>
+                        <InfoCard style={{marginBottom:margin}} title={"New Inbound"} theme={theme}>
                             {
-                                formatter(cardData.reduce((acc, {transactions}) => (acc + +transactions), 0))
+                                formatter(cardData
+                                    .filter((item) => (item["Add"] || item["Add on Receiving"]))
+                                    .reduce((acc,item)=>acc + (+item["Add"] || 0) + (+item["Add on Receiving"] || 0),0)
+                                )
                             }
                         </InfoCard>
-                        <InfoCard style={{marginBottom:margin}} title={"Average Increments"} theme={theme}>
+                        <InfoCard style={{marginBottom:0}} title={"Re-listings"} theme={theme}>
                             {
-                                formatter(Math.round(cardData.reduce((acc, {transactions}) => (acc + +transactions), 0) / cardData.length))
-                            }
-                        </InfoCard>
-                        <InfoCard style={{marginBottom:0}} title={"Best Month"} theme={theme}>
-                            {
-                                formatter(cardData.reduce((acc, {transactions}) => (acc > +transactions ? acc : +transactions), 0))
+                                formatter(
+                                    cardData
+                                        .filter((item) => (item["Relisting"]))
+                                        .reduce((acc,item)=>acc + (+item["Relisting"] || 0),0)
+                                )
                             }
                         </InfoCard>
                     </Col>

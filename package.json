@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supercharge/promise-pool": "^3.0.0",
+    "another-random-package": "^1.0.2",
     "bootstrap": "^5.3.1",
     "bottleneck": "^2.19.5",
     "chart.js": "^4.4.0",
@@ -19,6 +20,7 @@
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.19",
     "next": "13.4.12",
+    "next-auth": "^4.23.2",
     "pg": "^8.11.3",
     "react": "18.2.0",
     "react-bootstrap": "^2.8.0",

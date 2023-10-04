@@ -1,0 +1,14 @@
+SELECT
+    count(*),
+    user_who_approved
+FROM
+    surplusapi.approved_templates
+WHERE
+        source != 'BROAD SCRAPE'
+  AND source != 'BROAD SCRAPE (SURPRICE)'
+  AND user_who_approved != 'BSA'
+  AND user_who_approved IS NOT NULL
+  AND approval_time > '2023-10-03'
+  AND approval_time < '2023-10-04'
+GROUP BY
+    user_who_approved;

@@ -1,9 +1,12 @@
 import React, {useState} from 'react';
+
 import Container from "react-bootstrap/Container";
-import useUpdates from "../../modules/hooks/useUpdates";
-import makeDateArray from "../../modules/utils/makeDateArray";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
+
+import useUpdates from "../../modules/hooks/useUpdates";
+
+import makeDateArray from "../../modules/utils/makeDateArray";
 import formatDatabaseRows from "../../modules/utils/formatDatabaseRows";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 
@@ -22,7 +25,7 @@ const WarehousePicks = () => {
                 onChange={(e)=>setDate(e.target.value)}
                 type="date"
             />
-            <Table>
+            <Table striped bordered hover>
                 <thead>
                     <tr>
                         <th>Employee</th>

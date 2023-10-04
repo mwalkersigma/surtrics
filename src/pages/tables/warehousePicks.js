@@ -11,7 +11,7 @@ const WarehousePicks = () => {
     const [date, setDate] = useState(formatDateWithZeros(new Date()));
     const updates = useUpdates("/api/views/picks/warehousePicks",{date});
     const dates = makeDateArray(date);
-    let rows = formatDatabaseRows(updates)
+    let rows = formatDatabaseRows(updates);
 
     return (
         <Container>

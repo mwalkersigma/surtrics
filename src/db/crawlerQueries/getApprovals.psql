@@ -8,7 +8,7 @@ WHERE
   AND source != 'BROAD SCRAPE (SURPRICE)'
   AND user_who_approved != 'BSA'
   AND user_who_approved IS NOT NULL
-  AND approval_time > '2023-10-03'
-  AND approval_time < '2023-10-04'
+  AND approval_time > '2023-10-02'
+  AND approval_time < '2023-10-03'
 GROUP BY
     user_who_approved;

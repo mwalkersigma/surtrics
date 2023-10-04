@@ -1,16 +1,12 @@
-import React, {useContext, useState} from "react";
+import React, {useState} from "react";
 
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-
 import useUpdates from "../../modules/hooks/useUpdates";
-
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
-import getStartAndEndWeekString from "../../modules/utils/getStartAndEndWeekString";
-
-import {ThemeContext} from "../layout";
-import {addDays, addHours} from "date-fns";
-import {Table} from "react-bootstrap";
+import Table from "react-bootstrap/Table";
+import makeDateArray from "../../modules/utils/makeDateArray";
+import formatDatabaseRows from "../../modules/utils/formatDatabaseRows";
 
 
 
@@ -23,55 +19,20 @@ const conversionTable = {
 
 }
 
-function formatDatabaseRows(rows){
-    let result = {};
-    for(let i = 0 ; i < rows.length ; i++){
-        let {name, type, reason, sum, date} = rows[i];
-        if(!result[name]){
-            result[name] = {};
-        }
-        if(!result[name][date]){
-            result[name][date] = {};
-        }
-        if(!result[name][date][`${type} ${reason}`]){
-            result[name][date][`${type} ${reason}`] = 0;
-        }
-        result[name][date][`${type} ${reason}`] += +sum;
-    }
 
-    for(let user in result){
-        for(let date in result[user]){
-            let sum = 0;
-            for(let transaction in result[user][date]){
-                sum += result[user][date][transaction];
-            }
-            result[user][date]["Total"] = sum;
-        }
-    }
-    return result;
-}
 
 export default function QuantityView () {
     const [field, setField] = useState("Total");
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
     const databaseRows = useUpdates("/api/views/quantity/weeklyView",{date});
-    const theme = useContext(ThemeContext);
 
     if(!databaseRows.length > 0) return (<div className={"text-center"}>Loading...</div>);
 
     let rows = formatDatabaseRows(databaseRows);
     let users = Object.keys(rows);
 
-    const [startString] = getStartAndEndWeekString(new Date(date));
+    let dates = makeDateArray(date);
 
-    let dates = [startString];
-
-    for(let day = 1 ; day < 7 ; day++){
-        let date = new Date(startString);
-        date = addHours(date,5);
-        date = addDays(date,day);
-        dates.push(formatDateWithZeros(date));
-    }
 
 
     const handleChange = (name) => () => setField(name);
@@ -131,7 +92,6 @@ export default function QuantityView () {
                                     let dateData = rows[user][dateString];
                                     let converter = conversionTable[field];
                                     if(!dateData) return <td key={index}>0</td>
-                                    console.log(dateData)
                                     if(converter) {
                                         let sum = 0;
                                         for (let i = 0; i < converter.length; i++) {

@@ -1,0 +1,13 @@
+SELECT
+    COUNT(*),
+    "user",
+    DATE_TRUNC('day',transaction_date) as day
+FROM
+    surtrics.surplus_metrics_data
+WHERE
+        transaction_type = 'Pick'
+  AND transaction_date > '2023-10-02'
+  AND transaction_date < '2023-10-07'
+GROUP BY
+    "user",
+    day;

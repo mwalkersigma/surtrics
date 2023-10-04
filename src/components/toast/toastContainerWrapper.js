@@ -1,6 +1,7 @@
-import ToastMaker from "./ToastMaker.js";
-import {ToastContainer} from "react-bootstrap";
+
 import React from "react";
+import ToastContainer from "react-bootstrap/ToastContainer";
+import ToastMaker from "./toastMaker";
 
 const ToastContainerWrapper = ({serverMessages,removeServerMessages}) => {
     return (

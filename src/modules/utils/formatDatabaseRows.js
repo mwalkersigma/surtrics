@@ -2,6 +2,7 @@ export default function formatDatabaseRows(rows){
     let result = {};
     for(let i = 0 ; i < rows.length ; i++){
         let {name, type, reason, sum, date} = rows[i];
+        date = date.split("T")[0];
         if(!result[name]){
             result[name] = {};
         }

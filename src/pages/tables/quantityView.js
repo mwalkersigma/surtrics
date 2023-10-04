@@ -89,7 +89,7 @@ export default function QuantityView () {
                             <tr key={index}>
                                 <td>{user}</td>
                                 {dates.map((date,index) => {
-                                    let dateString = `${date}T05:00:00.000Z`
+                                    let dateString = `${date}`
                                     let dateData = rows[user][dateString];
                                     let converter = conversionTable[field];
                                     if(!dateData) return <td key={index}>0</td>

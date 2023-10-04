@@ -41,7 +41,7 @@ const WarehousePicks = () => {
 
                                     return (
                                         <td key={`${employee}-${rowDate}`}>
-                                            {rows[employee][rowDate+"T05:00:00.000Z"]?.Total ?? 0}
+                                            {rows[employee][rowDate]?.Total ?? 0}
                                         </td>
                                     )
                                 })}

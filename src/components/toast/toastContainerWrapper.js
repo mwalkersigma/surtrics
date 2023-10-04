@@ -1,4 +1,4 @@
-import ToastMaker from "./ToastMaker";
+import ToastMaker from "./ToastMaker.js";
 import {ToastContainer} from "react-bootstrap";
 import React from "react";
 

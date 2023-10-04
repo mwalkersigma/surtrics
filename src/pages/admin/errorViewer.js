@@ -3,10 +3,17 @@ import React, {useEffect, useState} from 'react';
 import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import Button from "react-bootstrap/Button";
+
 import ToastContainerWrapper from "../../components/toast/toastContainerWrapper";
+
 import useToastContainer from "../../modules/hooks/useToast";
 import createSuccessMessage from "../../modules/serverMessageFactories/createSuccessMessage";
 import createErrorMessage from "../../modules/serverMessageFactories/createErrorMessage";
+import Stack from "react-bootstrap/Stack";
+import {Col, Row} from "react-bootstrap";
+
 
 const ErrorViewer = () => {
     const [date, setDate] = useState(false);
@@ -27,6 +34,9 @@ const ErrorViewer = () => {
 
     },[setServerData,date]);
 
+    function resetDate(){
+        setDate(false);
+    }
     function removeEntry (e) {
         e.preventDefault();
         return(id)=>fetch(`${window.location.origin}/api/admin/removeError`,{
@@ -40,16 +50,27 @@ const ErrorViewer = () => {
                 setServerData(serverData.filter((row)=>row.id !== id));
             })
     }
-    console.log(serverData);
+
     return (
         <Container>
             <ToastContainerWrapper removeServerMessages={removeServerMessage} serverMessages={serverMessage}/>
             <h1>Error Reporting</h1>
-            <Form.Control
-                type={"date"}
-                onChange={(e)=>setDate(e.target.value)}
-                className={"my-3"}
-            />
+            <Row>
+                <Col sm={4}>
+                    <Form.Control
+                        type={"date"}
+                        onChange={(e)=>setDate(e.target.value)}
+                        className={"my-3"}
+                        md={4}
+                    />
+
+                </Col>
+
+                <Col sm={2}>
+                    <Button onClick={resetDate} className={"mt-3"} variant={"danger"}>Remove Filter</Button>
+                </Col>
+            </Row>
+
             <Table bordered striped hover>
                 <thead>
                 <tr>

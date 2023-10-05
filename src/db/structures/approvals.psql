@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS surtrics.surplus_approvals;
+CREATE TABLE IF NOT EXISTS surtrics.surplus_approvals
+(
+    id BIGSERIAL PRIMARY KEY,
+    sku VARCHAR(255) NOT NULL,
+    date_of_final_approval timestamp,
+    template_approval_status VARCHAR(255),
+    user_who_approved VARCHAR(255)
+);

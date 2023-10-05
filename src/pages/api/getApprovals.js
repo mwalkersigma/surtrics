@@ -161,55 +161,7 @@ export async function ChannelRouteMain(){
     });
     fileContents.on('close', () => {
         console.log('No more data in response.');
-        console.log(results.length)
-        // fsp.writeFile("./src/json/CA.approvals.json",JSON.stringify(results,null,2))
-        //     .then(() => console.log("Finished writing file."))
-        //     .then(() => {
-        //         let files = fs.readdirSync(outputFolder);
-        //         files.forEach(file => {
-        //             fs.unlinkSync(`${outputFolder}/${file}`)
-        //         })
-        //         fs.writeFileSync("./src/json/access_token.json",JSON.stringify({}))
-        //         console.log("Finished cleaning up files.")
-        //     })
-        //     .catch(err => console.log(err))
-        db.query(`DROP TABLE IF EXISTS surtrics.surplus_approvals;`)
-            .then(()=>db.query(`
-                CREATE TABLE IF NOT EXISTS surtrics.surplus_approvals
-                    (
-                        id BIGSERIAL PRIMARY KEY,
-                        sku VARCHAR(255) NOT NULL,
-                        date_of_final_approval timestamp,
-                        template_approval_status VARCHAR(255),
-                        user_who_approved VARCHAR(255)
-                    )
-                `)
-            )
-            .then(() => {
-                let query = `
-                    INSERT INTO nfs.surtrics.surplus_approvals
-                        (sku, date_of_final_approval, template_approval_status, user_who_approved)
-                    VALUES
-                `;
-                results.forEach((result,i) => {
-                    query += `('${result.sku}', '${result.finalApprovalDate}', 'Approved', '${result.approver}')`
-                    if(i < results.length - 1){
-                        query += ','
-                    }
-                })
-                console.log(query)
-
-            })
-        for(let i = 0; i < results.length; i++){}
-    });
-    return "Finished Channel Advisor Route."
-}
-
-
-
-export default function handler (req,res) {
-
-    return db.query(`DROP TABLE IF EXISTS nfs.surtrics.surplus_approvals;`)
+        db.query(`DROP TABLE IF EXISTS nfs.surtrics.surplus_approvals;`)
             .then(()=>db.query(`
                 CREATE TABLE IF NOT EXISTS nfs.surtrics.surplus_approvals
                     (
@@ -220,32 +172,30 @@ export default function handler (req,res) {
                         user_who_approved VARCHAR(255)
                     )
                 `))
-            .then(()=>fsp.readFile("./src/json/CA.approvals.json","utf-8"))
-            .then((data)=>{
-                let approvals = JSON.parse(data);
-
+            .then(()=>{
                 let query = `
-                INSERT INTO nfs.surtrics.surplus_approvals
-                    (sku, date_of_final_approval, template_approval_status, user_who_approved)
-                VALUES
-            `;
-                approvals.forEach((approval,i) => {
+                    INSERT INTO nfs.surtrics.surplus_approvals
+                        (sku, date_of_final_approval, template_approval_status, user_who_approved)
+                    VALUES
+                `;
+                results.forEach((approval,i) => {
                     query += `('${approval.sku}', '${approval.finalApprovalDate}', 'Approved', '${approval.approver}')`
-                    if(i < approvals.length - 1){
+                    if(i < results.length - 1){
                         query += ','
                     }
                 })
                 query += ';'
-                console.log(query)
                 return db.query(query)
             })
-            .then(() => res.status(200).json({statusCode: 200, message : "success"}))
-            .catch(err => res.status(500).json({statusCode: 500, message : err.message}))
+    });
+    return "Finished Channel Advisor Route."
+}
 
 
 
-    // return ChannelRouteMain()
-    //     .then((data) => res.status(200).json({statusCode: 200, message : data}))
-    //     .catch(err => res.status(500).json({statusCode: 500, message : err.message}))
+export default function handler (req,res) {
+    return ChannelRouteMain()
+        .then((data) => res.status(200).json({statusCode: 200, message : data}))
+        .catch(err => res.status(500).json({statusCode: 500, message : err.message}))
 
 }

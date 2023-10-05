@@ -29,7 +29,7 @@ function SignInComponent({session,isAdmin}){
 }
 
 export default function NavBar({theme,setTheme,setDay}){
-    const {data: session, status} = useSession();
+    const {data: session} = useSession();
     let {isAdmin} = useAdminList();
     isAdmin = isAdmin(session);
     return (
@@ -47,18 +47,15 @@ export default function NavBar({theme,setTheme,setDay}){
                     </NavDropdown>
 
                     <NavDropdown title={"Tables"} id="basic-nav-dropdown">
-                        {/*<Nav.Link href="/tables/yearlyView">Yearly View</Nav.Link>*/}
-                        {/*<Nav.Link href="/tables/monthlyView">Monthly View</Nav.Link>*/}
-                        {/*<Nav.Link href="/tables/weeklyView">Weekly View</Nav.Link>*/}
-                        {/*<Nav.Link href="/tables/dailyView">Daily View</Nav.Link>*/}
                         <Nav.Link href="/tables/individualView">Individual View</Nav.Link>
                         <Nav.Link href="/tables/quantityView">Quantity View</Nav.Link>
                         <Nav.Link href="/tables/warehousePicks">Warehouse Picks</Nav.Link>
+                        <Nav.Link href="/tables/approvalsView">Approvals View</Nav.Link>
                     </NavDropdown>
                     {isAdmin && (
                         <NavDropdown title={"Admin"} id="basic-nav-dropdown">
                             <Nav.Link href={"/admin"}>Admin</Nav.Link>
-                            <Nav.Link href={"/admin/errorReporting"}>Error Reporting</Nav.Link>
+                            <Nav.Link href={"/admin/errorReporting"}>Report Error</Nav.Link>
                             <Nav.Link href={"/admin/errorViewer"}>Error Viewer</Nav.Link>
                         </NavDropdown>
                     )}

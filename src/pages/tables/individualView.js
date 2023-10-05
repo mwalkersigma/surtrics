@@ -16,6 +16,7 @@ const IndividualView = () => {
     };
     return (
         <Container>
+            <h1 className={"text-center"}>Individual View</h1>
             <InputGroup>
                 <Form.Select value={chosenUser} onChange={(e)=>setChosenUser(e.target.value)} className={"mb-4"}>
                     <option>Choose a user</option>

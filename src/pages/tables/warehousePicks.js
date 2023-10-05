@@ -9,6 +9,7 @@ import useUpdates from "../../modules/hooks/useUpdates";
 import makeDateArray from "../../modules/utils/makeDateArray";
 import formatDatabaseRows from "../../modules/utils/formatDatabaseRows";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
+import yymmddTommddyy from "../../modules/utils/yymmddconverter";
 
 const WarehousePicks = () => {
     const [date, setDate] = useState(formatDateWithZeros(new Date()));
@@ -29,7 +30,7 @@ const WarehousePicks = () => {
                 <thead>
                     <tr>
                         <th>Employee</th>
-                        {dates.map((date) => <th key={`${date}`}>{date}</th>)}
+                        {dates.map((date) => <th key={`${date}`}>{yymmddTommddyy(date)}</th>)}
                     </tr>
                 </thead>
                 <tbody>

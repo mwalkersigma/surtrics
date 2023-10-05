@@ -40,7 +40,7 @@ export default function QuantityView () {
     console.log(databaseRows)
     return (
         <Container>
-            <h1>Quantity View</h1>
+            <h1 className={"text-center"}>Quantity View</h1>
             <Form.Control
                 className={"mb-3"}
                 value={date}

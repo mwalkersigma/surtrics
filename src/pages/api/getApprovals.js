@@ -187,6 +187,17 @@ export async function ChannelRouteMain(){
                 query += ';'
                 return db.query(query)
             })
+            .then(()=>{
+                // clean the outputs folder
+                fs.readdir(outputFolder, (err, files) => {
+                    if (err) throw err;
+                    for (const file of files) {
+                        fs.unlink(`${outputFolder}/${file}`, err => {
+                            if (err) throw err;
+                        });
+                    }
+                })
+            })
     });
     return "Finished Channel Advisor Route."
 }
@@ -197,5 +208,4 @@ export default function handler (req,res) {
     return ChannelRouteMain()
         .then((data) => res.status(200).json({statusCode: 200, message : data}))
         .catch(err => res.status(500).json({statusCode: 500, message : err.message}))
-
 }

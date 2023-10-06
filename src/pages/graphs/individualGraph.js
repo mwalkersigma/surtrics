@@ -135,6 +135,15 @@ function IndividualChart(props){
         labels: Object.keys(dataForChart),
         datasets:
         types.size > 0 && [...types].map((type,index)=> {
+            if(type === 'Create -'){
+                return {
+                    type: "bar",
+                    label: type,
+                    data: Object.values(dataForChart).map((user) => +user[type] / 4  || 0) ,
+                    backgroundColor: pickRandomColorFromColorScheme(),
+                    maxBarThickness: 100,
+                }
+            }
             return {
                 type: "bar",
                 label: type,

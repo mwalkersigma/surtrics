@@ -1,7 +1,6 @@
 import React from 'react';
 import useUpdates from "../../modules/hooks/useUpdates";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
-import AdminWrapper from "../../components/AdminWrapper";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import {
@@ -17,7 +16,9 @@ import {
 import {Line} from "react-chartjs-2";
 import {colorScheme} from "../_app";
 
-const ignoredNames = ["Bail", "" , "Whit","Finley Aldrid"]
+const ignoredNames = [
+    "Bail", "" , "Whit","Finley Aldrid"
+]
 
 ChartJS.register(
     CategoryScale,

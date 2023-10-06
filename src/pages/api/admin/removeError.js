@@ -1,5 +1,5 @@
 import db from "../../../db/index.js";
-import serverAdminWrapper from "../../../modules/utils/serverAdminWrapper";
+import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
 
 function main(req,res) {
     return serverAdminWrapper(async (req) => {

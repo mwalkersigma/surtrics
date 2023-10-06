@@ -12,6 +12,7 @@ import ToastContainerWrapper from "../../components/toast/toastContainerWrapper"
 import useToastContainer from "../../modules/hooks/useToast";
 import createSuccessMessage from "../../modules/serverMessageFactories/createSuccessMessage";
 import createErrorMessage from "../../modules/serverMessageFactories/createErrorMessage";
+import AdminWrapper from "../../components/AdminWrapper";
 
 
 
@@ -52,35 +53,36 @@ const ErrorViewer = () => {
     }
 
     return (
-        <Container>
-            <ToastContainerWrapper removeServerMessages={removeServerMessage} serverMessages={serverMessage}/>
-            <h1>Error Reporting</h1>
-            <Row>
-                <Col sm={4}>
-                    <Form.Control
-                        type={"date"}
-                        onChange={(e)=>setDate(e.target.value)}
-                        className={"my-3"}
-                        md={4}
-                    />
+        <AdminWrapper>
+            <Container>
+                <ToastContainerWrapper removeServerMessages={removeServerMessage} serverMessages={serverMessage}/>
+                <h1>Error Reporting</h1>
+                <Row>
+                    <Col sm={4}>
+                        <Form.Control
+                            type={"date"}
+                            onChange={(e)=>setDate(e.target.value)}
+                            className={"my-3"}
+                            md={4}
+                        />
 
-                </Col>
+                    </Col>
 
-                <Col sm={2}>
-                    <Button onClick={resetDate} className={"mt-3"} variant={"danger"}>Remove Filter</Button>
-                </Col>
-            </Row>
+                    <Col sm={2}>
+                        <Button onClick={resetDate} className={"mt-3"} variant={"danger"}>Remove Filter</Button>
+                    </Col>
+                </Row>
 
-            <Table bordered striped hover>
-                <thead>
-                <tr>
-                    <th >User</th>
-                    <th>Reason</th>
-                    <th colSpan={4}>Notes</th>
-                    <th>Remove</th>
-                </tr>
-                </thead>
-                <tbody>
+                <Table bordered striped hover>
+                    <thead>
+                    <tr>
+                        <th >User</th>
+                        <th>Reason</th>
+                        <th colSpan={4}>Notes</th>
+                        <th>Remove</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     {serverData && serverData?.map && serverData.map((row)=>(
                         <tr key={row.id}>
                             <td>{row.user}</td>
@@ -103,9 +105,11 @@ const ErrorViewer = () => {
                             </td>
                         </tr>
                     ))}
-                </tbody>
-            </Table>
-        </Container>
+                    </tbody>
+                </Table>
+            </Container>
+        </AdminWrapper>
+
     );
 };
 

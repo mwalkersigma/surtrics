@@ -3,6 +3,7 @@ import Container from "react-bootstrap/Container";
 import {Button, Image, Nav, NavDropdown, Stack} from "react-bootstrap";
 import {signIn, signOut, useSession} from "next-auth/react";
 import useAdminList from "../modules/hooks/useAdminList";
+import AdminWrapper from "./AdminWrapper";
 
 
 
@@ -53,13 +54,15 @@ export default function NavBar({theme,setTheme,setDay}){
                         <Nav.Link href="/tables/warehousePicks">Warehouse Picks</Nav.Link>
                         <Nav.Link href="/tables/approvalsView">Approvals View</Nav.Link>
                     </NavDropdown>
-                    {isAdmin && (
+
+                    <AdminWrapper invisible>
                         <NavDropdown title={"Admin"} id="basic-nav-dropdown">
                             <Nav.Link href={"/admin"}>Admin</Nav.Link>
                             <Nav.Link href={"/admin/errorReporting"}>Report Error</Nav.Link>
                             <Nav.Link href={"/admin/errorViewer"}>Error Viewer</Nav.Link>
                         </NavDropdown>
-                    )}
+                    </AdminWrapper>
+
                 </Nav>
                 <Nav>
                     <NavDropdown className={`text-white`} title=" Theme " id="basic-nav-dropdown">

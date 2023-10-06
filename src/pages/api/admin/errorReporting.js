@@ -1,6 +1,6 @@
 import db from "../../../db/index.js";
 import Logger from "sigma-logger";
-import serverAdminWrapper from "../../../modules/utils/serverAdminWrapper";
+import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
 import {subBusinessDays} from "date-fns";
 
 

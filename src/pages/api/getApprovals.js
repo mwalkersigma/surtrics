@@ -3,6 +3,7 @@ import fsp from "fs/promises";
 
 import Downloader from "nodejs-file-downloader";
 import decompress from "decompress";
+import {parse} from "csv-parse";
 
 import APILimiter from "../../modules/limiter/limiter";
 import ServerRequest from "../../modules/requester/serverRequest";
@@ -128,42 +129,44 @@ export async function ChannelRouteMain(){
     let file = outputFiles[0];
     Logger.log("unzipping files.")
     await decompress(`${outputFolder}/${file}`, outputFolder)
-    let fileContents = fs.createReadStream(`${outputFolder}/${file.split(".")[0]}.txt`);
+    let records = [];
     let count = 0;
-    let results = [];
-    let headers ;
-    fileContents.on('data', (chunk) => {
-        let data = chunk
-            .toString()
-            .split("\n")
-            .map(line => line.split("\t"));
+    await new Promise((res,rej)=>{
+        const parser = parse({
+            delimiter: '\t',
+        });
+        fs.createReadStream(`${outputFolder}/${file.split(".")[0]}.txt`).pipe(parser);
+        parser.on('readable', function(){
+            let record;
+            while ((record = parser.read()) !== null) {
 
-        if(count === 0) {
-            headers = data.splice(0, 1)[0];
-            count++;
-        }
-        Logger.log("Headers Made")
-        data.forEach(line => {
-            const isParent = line[6] === "Parent";
-            const isApproved = line[91] === "Approved";
-            const hasFinalApprovalDate = line[89] !== "";
-            if(!isParent || !isApproved || !hasFinalApprovalDate){
-                return
+                const isParent = record[6] === "Parent";
+                const isApproved = record[91] === "Approved";
+                const hasFinalApprovalDate = record[89] !== "";
+                if(isParent && isApproved && hasFinalApprovalDate){
+                    const sku = record[5];
+                    const approver = record[101];
+                    const finalApprovalDate = record[89];
+                    records.push({sku,approver,finalApprovalDate})
+                }
+
             }
-            const sku = line[5];
-            const approver = line[101];
-            const finalApprovalDate = line[89];
-            results.push({
-                sku,
-                approver,
-                finalApprovalDate
-            })
+        });
+        parser.on('error', function(err){
+            console.error(err.message)
+            rej(err)
         })
-    });
-    fileContents.on('close', () => {
-        Logger.log('No more data in response.');
-        db.query(`DROP TABLE IF EXISTS nfs.surtrics.surplus_approvals;`)
-            .then(()=>db.query(`
+        parser.on('end', function(){
+            console.log('done parsing TSV')
+            Logger.log(records.length)
+            res()
+        })
+    })
+    Logger.log("Finished unzipping files.")
+    Logger.log("Cleaning Table.")
+    await db.query(`DROP TABLE IF EXISTS nfs.surtrics.surplus_approvals;`);
+    Logger.log("Table Dropped. Recreating Table.")
+    await db.query(`
                 CREATE TABLE IF NOT EXISTS nfs.surtrics.surplus_approvals
                     (
                         id BIGSERIAL PRIMARY KEY,
@@ -172,39 +175,34 @@ export async function ChannelRouteMain(){
                         template_approval_status VARCHAR(255),
                         user_who_approved VARCHAR(255)
                     )
-                `))
-            .then(()=>{
-                Logger.log("Table Recreated. Inserting data.")
-                let query = `
+                `);
+    Logger.log("Table Recreated. Inserting data.");
+    let query = `
                     INSERT INTO nfs.surtrics.surplus_approvals
                         (sku, date_of_final_approval, template_approval_status, user_who_approved)
                     VALUES
                 `;
-                results.forEach((approval,i) => {
-                    query += `('${approval.sku}', '${approval.finalApprovalDate}', 'Approved', '${approval.approver}')`
-                    if(i < results.length - 1){
-                        query += ','
-                    }
-                })
-                query += ';'
-                Logger.log("Data Inserted. Ready to query.")
-                return db.query(query)
-            })
-            .then(()=>{
-                // clean the outputs folder
-                Logger.log("Cleaning up outputs folder.")
-                fs.readdir(outputFolder, (err, files) => {
-                    if (err) throw err;
-                    for (const file of files) {
-                        fs.unlink(`${outputFolder}/${file}`, err => {
-                            if (err) throw err;
-                        });
-                    }
-                })
-                fs.writeFileSync("./src/json/access_token.json",JSON.stringify({}));
-                Logger.log("Finished Channel Advisor Route.")
-            })
-    });
+    records.forEach((approval,i) => {
+        query += `('${approval.sku}', '${approval.finalApprovalDate}', 'Approved', '${approval.approver}')`
+        if(i < records.length - 1){
+            query += ','
+        }
+    })
+    query += ';'
+    db.query(query)
+    Logger.log("Data inserted. Cleaning up.")
+    Logger.log("Cleaning up outputs folder.")
+    fs.readdir(outputFolder, (err, files) => {
+        if (err) throw err;
+        for (const file of files) {
+            fs.unlink(`${outputFolder}/${file}`, err => {
+                if (err) throw err;
+            });
+        }
+    })
+    fs.writeFileSync("./src/json/access_token.json",JSON.stringify({}));
+    Logger.log("Finished Channel Advisor Route.")
+
     return "Finished Channel Advisor Route."
 }
 

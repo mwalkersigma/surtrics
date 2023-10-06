@@ -28,6 +28,29 @@ ChartJS.register(
     PointElement,
 );
 
+function smoothData(data,adjCount=3) {
+    // take the average of the current, n previous, and n next data points
+    // where n is the adjCount
+    let newData = [];
+    for(let i = 0; i < data.length; i++) {
+        if(i < adjCount) {
+            newData.push(data[i]);
+            continue;
+        }
+        if(i > data.length - adjCount) {
+            newData.push(data[i]);
+            continue;
+        }
+        let sum = 0;
+        for(let j = i - adjCount; j < i + adjCount; j++) {
+            sum += data[j];
+        }
+        newData.push(sum / (adjCount * 2 + 1));
+    }
+    return newData;
+}
+
+
 const ApprovalsView = () => {
     let [user, setUser] = React.useState("Bailey Moesner");
     const [date, setDate] = React.useState(formatDateWithZeros(new Date()));
@@ -59,11 +82,16 @@ const ApprovalsView = () => {
         if(!mappedUpdates[name][date]) mappedUpdates[name][date] = 0;
         mappedUpdates[name][date] += parseInt(update.count);
     })
+
     let userUpdates = mappedUpdates[user] || {};
     const options = {
         devicePixelRatio: 4,
         responsive: true,
         tension: 0.1,
+        interaction: {
+            mode: 'index',
+            intersect: false,
+        },
         plugins: {},
         scales:{}
     }
@@ -74,13 +102,22 @@ const ApprovalsView = () => {
             .map((date)=> date.split("-")
             .splice(1,2)
             .join("-")),
-        datasets: [{
+        datasets: [
+            {
             label: user,
             data: Object.values(userUpdates),
             fill: false,
             backgroundColor: colorScheme.red,
             borderColor: colorScheme.red,
-        }]
+            },
+            {
+                label: "Trend",
+                data: smoothData(Object.values(userUpdates),4),
+                fill: false,
+                backgroundColor: colorScheme.blue,
+                borderColor: colorScheme.blue,
+            }
+        ]
     }
     return (
         <AdminWrapper>

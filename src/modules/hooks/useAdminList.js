@@ -1,20 +1,20 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 export default function useAdminList () {
-    const [adminList, setAdminList] = React.useState(null);
-    React.useEffect(()=>{
+    const [roleList, setRoleList] = useState(null);
+    useEffect(()=>{
         fetch(`${window.location.origin}/api/getAdminList`)
             .then((res)=>res.json())
-            .then((data)=>setAdminList(data));
+            .then((data)=>setRoleList(data));
     },[])
     function isRole (role){
         return(session)=>{
-            if(!adminList) return false;
+            if(!roleList) return false;
             if(!session) return false;
             let emailLowerCase = session.user.email.toLowerCase();
-            let lowerCaseAdminList = adminList.map(user=>{
-                let hasAdminRole = user.roles.includes(role);
-                if(hasAdminRole){
+            let lowerCaseAdminList = roleList.map(user=>{
+                let hasRole = user.roles.includes(role);
+                if(hasRole){
                     return user.email.toLowerCase();
                 }
             });
@@ -22,5 +22,5 @@ export default function useAdminList () {
         }
     }
     const isAdmin = isRole("admin");
-    return {adminList,isAdmin,isRole};
+    return {adminList: roleList,isAdmin,isRole};
 }

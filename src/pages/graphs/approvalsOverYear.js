@@ -15,6 +15,7 @@ import {
 } from "chart.js";
 import {Line} from "react-chartjs-2";
 import {colorScheme} from "../_app";
+import {Col, Row} from "react-bootstrap";
 
 const ignoredNames = [
     "Bail", "" , "Whit","Finley Aldrid"
@@ -37,13 +38,21 @@ function smoothData(data,adjCount=3) {
     for(let i = 0; i < data.length; i++) {
         let sum = 0;
         if(i < adjCount) {
-            newData.push(data[i]);
+            for(let j = 0; j < i + adjCount; j++) {
+                sum += data[j];
+            }
+            newData.push(sum / (i + adjCount));
             continue;
         }
+
         if(i > data.length - adjCount) {
-            newData.push(data[i]);
+            for(let j = i - adjCount; j < data.length; j++) {
+                sum += data[j];
+            }
+            newData.push(sum / (data.length - i + adjCount));
             continue;
         }
+
         for(let j = i - adjCount; j < i + adjCount; j++) {
             sum += data[j];
         }
@@ -56,6 +65,7 @@ function smoothData(data,adjCount=3) {
 const ApprovalsView = () => {
     let [user, setUser] = React.useState("Bailey Moesner");
     const [date, setDate] = React.useState(formatDateWithZeros(new Date()));
+    const [resolution, setResolution] = React.useState(4);
     const updates = useUpdates("/api/views/approvals/yearlyView", {date});
     if(!(updates.length > 0)) return <Container>
         <Form.Control
@@ -78,12 +88,12 @@ const ApprovalsView = () => {
             return 0;
         })
         .forEach((update) => {
-        let name = update.name;
-        let date = update["date_of_final_approval"].split("T")[0];
-        if(!mappedUpdates[name]) mappedUpdates[name] = {};
-        if(!mappedUpdates[name][date]) mappedUpdates[name][date] = 0;
-        mappedUpdates[name][date] += parseInt(update.count);
-    })
+            let name = update.name;
+            let date = update["date_of_final_approval"].split("T")[0];
+            if(!mappedUpdates[name]) mappedUpdates[name] = {};
+            if(!mappedUpdates[name][date]) mappedUpdates[name][date] = 0;
+            mappedUpdates[name][date] += parseInt(update.count);
+        })
 
     let userUpdates = mappedUpdates[user] || {};
     const options = {
@@ -114,7 +124,7 @@ const ApprovalsView = () => {
             },
             {
                 label: "Trend",
-                data: smoothData(Object.values(userUpdates),3),
+                data: smoothData(Object.values(userUpdates),resolution),
                 fill: false,
                 backgroundColor: colorScheme.blue,
                 borderColor: colorScheme.blue,
@@ -131,12 +141,29 @@ const ApprovalsView = () => {
                     }
                     )}
                 </Form.Select>
-                <Form.Control
-                    className={"my-2"}
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    type="date"
-                />
+                <Row className={"my-3"}>
+                    <Col sm={2}>
+                        <Form.Label>Year Select</Form.Label>
+                        <Form.Control
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            type="date"
+                        />
+                    </Col>
+                    <Col sm={8}></Col>
+                    <Col sm={2}>
+                        <Form.Label>Trend Line Resolution</Form.Label>
+                        <Form.Control
+                            type={'number'}
+                            step={1}
+                            min={1}
+                            max={graphData.datasets[0].data.length / 8}
+                            value={resolution}
+                            onChange={(e) => setResolution(+e.target.value)}
+                        />
+                    </Col>
+                </Row>
+
                 <Line data={graphData} options={options} />
             </Container>
     );

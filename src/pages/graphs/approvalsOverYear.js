@@ -33,6 +33,7 @@ function smoothData(data,adjCount=3) {
     // where n is the adjCount
     let newData = [];
     for(let i = 0; i < data.length; i++) {
+        let sum = 0;
         if(i < adjCount) {
             newData.push(data[i]);
             continue;
@@ -41,7 +42,6 @@ function smoothData(data,adjCount=3) {
             newData.push(data[i]);
             continue;
         }
-        let sum = 0;
         for(let j = i - adjCount; j < i + adjCount; j++) {
             sum += data[j];
         }
@@ -112,7 +112,7 @@ const ApprovalsView = () => {
             },
             {
                 label: "Trend",
-                data: smoothData(Object.values(userUpdates),4),
+                data: smoothData(Object.values(userUpdates),3),
                 fill: false,
                 backgroundColor: colorScheme.blue,
                 borderColor: colorScheme.blue,

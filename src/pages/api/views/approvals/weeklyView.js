@@ -10,6 +10,7 @@ const query = `
     WHERE
         user_who_approved IS NOT NULL
       AND user_who_approved != 'undefined'
+      AND user_who_approved != ''
       AND date_of_final_approval >= $1
       AND date_of_final_approval <= $2
     GROUP BY
@@ -18,7 +19,6 @@ const query = `
 `
 
 export default async function handler(req, res) {
-    console.log(req.body)
     if(typeof req.body === "string") req.body = JSON.parse(req.body);
     let body = req.body;
     let date = body.date;

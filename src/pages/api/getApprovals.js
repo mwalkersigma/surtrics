@@ -201,6 +201,7 @@ export async function ChannelRouteMain(){
                         });
                     }
                 })
+                fs.writeFileSync("./src/json/access_token.json",JSON.stringify({}));
                 Logger.log("Finished Channel Advisor Route.")
             })
     });

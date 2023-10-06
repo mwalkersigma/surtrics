@@ -17,7 +17,8 @@ import {
 import {Line} from "react-chartjs-2";
 import {colorScheme} from "../_app";
 
-const ignoredNames = ["Bail", "" , "Whit",]
+const ignoredNames = ["Bail", "" , "Whit","Finley Aldrid"]
+
 ChartJS.register(
     CategoryScale,
     LinearScale,

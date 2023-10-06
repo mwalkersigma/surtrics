@@ -7,6 +7,7 @@ import decompress from "decompress";
 import APILimiter from "../../modules/limiter/limiter";
 import ServerRequest from "../../modules/requester/serverRequest";
 import db from "../../db/index"
+import Logger from "sigma-logger";
 
 const {APPLICATION_ID, SHARED_SECRET, REFRESH_TOKEN} = process.env
 
@@ -35,7 +36,6 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 export async function getUpdatesFromChannelAdvisor () {
 
     let channelAdvisorTokens = await fsp.readFile("./src/json/access_token.json").then(JSON.parse);
-    console.log("here")
     let {time,access_token,export_token} = {...channelAdvisorTokens};
     const now = new Date();
 
@@ -46,7 +46,7 @@ export async function getUpdatesFromChannelAdvisor () {
         access_token = newAccessToken;
         export_token = "";
     }
-    console.log(time,access_token,export_token)
+    Logger.log(JSON.stringify([time,access_token,export_token]))
     const timeSinceLastAuth = now - new Date(time);
     const oneHour = 1000 * 60 * 60;
 
@@ -67,7 +67,7 @@ export async function getUpdatesFromChannelAdvisor () {
     }
 
     if(export_token){
-        console.log("Export token found. Using token to get data.")
+        Logger.log("Export token found. Using token to get data.")
         requester.method = 'GET';
         searchParams += `&token=${export_token}`;
     }else{
@@ -77,13 +77,13 @@ export async function getUpdatesFromChannelAdvisor () {
     const response = await requester.executeRequest(baseURL + searchParams);
     const data = await response.json();
     const token = data['Token'];
-    console.log(token)
+    Logger.log(token)
     if(!export_token){
-        console.log("No export token found. Saving token to file.")
+        Logger.log("No export token found. Saving token to file.")
         export_token = token;
         fs.writeFileSync("./src/json/access_token.json",JSON.stringify({time,access_token,export_token}));
     }
-    console.log(data);
+    Logger.log(data);
     return data;
 }
 
@@ -96,12 +96,12 @@ async function getFileResponseUrl(){
             await sleep(1000 * 60)
         }
     }while (!fileResponseUrl);
-    console.log("File response url found.")
+    Logger.log("File response url found.")
     return fileResponseUrl;
 }
 async function downloadFile(fileResponseUrl){
     const {access_token} = await fsp.readFile("./src/json/access_token.json").then(JSON.parse);
-    console.log("starting download.")
+    Logger.log("starting download.")
     const downloader = new Downloader({
         url: fileResponseUrl,
         directory: "./src/json/outputs",
@@ -113,20 +113,20 @@ async function downloadFile(fileResponseUrl){
         await downloader.download();
     }
     catch (e) {
-        console.log("Error downloading file.");
-        console.log(e)
+        Logger.log("Error downloading file.");
+        Logger.log(e)
     }
-    console.log("Finished downloading file.")
+    Logger.log("Finished downloading file.")
 }
 export async function ChannelRouteMain(){
-    console.log("Starting Channel Advisor Route.")
+    Logger.log("Starting Channel Advisor Route.")
     let fileResponseUrl = await getFileResponseUrl();
-    console.log("File response url found.")
+    Logger.log("File response url found.")
     await downloadFile(fileResponseUrl);
     let outputFolder = "./src/json/outputs";
     let outputFiles = await fsp.readdir(outputFolder);
     let file = outputFiles[0];
-    console.log("unzipping files.")
+    Logger.log("unzipping files.")
     await decompress(`${outputFolder}/${file}`, outputFolder)
     let fileContents = fs.createReadStream(`${outputFolder}/${file.split(".")[0]}.txt`);
     let count = 0;
@@ -142,6 +142,7 @@ export async function ChannelRouteMain(){
             headers = data.splice(0, 1)[0];
             count++;
         }
+        Logger.log("Headers Made")
         data.forEach(line => {
             const isParent = line[6] === "Parent";
             const isApproved = line[91] === "Approved";
@@ -160,7 +161,7 @@ export async function ChannelRouteMain(){
         })
     });
     fileContents.on('close', () => {
-        console.log('No more data in response.');
+        Logger.log('No more data in response.');
         db.query(`DROP TABLE IF EXISTS nfs.surtrics.surplus_approvals;`)
             .then(()=>db.query(`
                 CREATE TABLE IF NOT EXISTS nfs.surtrics.surplus_approvals
@@ -173,6 +174,7 @@ export async function ChannelRouteMain(){
                     )
                 `))
             .then(()=>{
+                Logger.log("Table Recreated. Inserting data.")
                 let query = `
                     INSERT INTO nfs.surtrics.surplus_approvals
                         (sku, date_of_final_approval, template_approval_status, user_who_approved)
@@ -185,10 +187,12 @@ export async function ChannelRouteMain(){
                     }
                 })
                 query += ';'
+                Logger.log("Data Inserted. Ready to query.")
                 return db.query(query)
             })
             .then(()=>{
                 // clean the outputs folder
+                Logger.log("Cleaning up outputs folder.")
                 fs.readdir(outputFolder, (err, files) => {
                     if (err) throw err;
                     for (const file of files) {
@@ -197,6 +201,7 @@ export async function ChannelRouteMain(){
                         });
                     }
                 })
+                Logger.log("Finished Channel Advisor Route.")
             })
     });
     return "Finished Channel Advisor Route."

@@ -39,6 +39,7 @@ export default function NavBar({theme,setTheme,setDay}){
                 <Nav>
                     <Navbar.Brand href="/">Surplus Metrics</Navbar.Brand>
                     <NavDropdown title={"Graphs"} id="basic-nav-dropdown">
+                        <Nav.Link href="/graphs/approvalsOverYear">Approvals Year</Nav.Link>
                         <Nav.Link href="/graphs/yearlyView">Yearly View</Nav.Link>
                         <Nav.Link href="/graphs/monthlyView">Monthly View</Nav.Link>
                         <Nav.Link href="/graphs/weeklyView">Weekly View</Nav.Link>

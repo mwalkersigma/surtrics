@@ -120,7 +120,6 @@ const ApprovalsView = () => {
         ]
     }
     return (
-        <AdminWrapper>
             <Container>
                 <h1 className={"text-center"}>Approvals View</h1>
                 <Form.Select value={user} onChange={(e) => setUser(e.target.value)}>
@@ -138,8 +137,6 @@ const ApprovalsView = () => {
                 />
                 <Line data={graphData} options={options} />
             </Container>
-        </AdminWrapper>
-
     );
 };
 

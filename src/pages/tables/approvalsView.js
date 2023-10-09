@@ -26,6 +26,7 @@ const ApprovalsView = () => {
                 className={"my-3"}
                 onChange={(e) => setDate(e.target.value)}
                 type="date"
+                value={date}
             />
             <Table striped bordered hover>
                 <thead>

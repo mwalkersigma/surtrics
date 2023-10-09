@@ -37,7 +37,6 @@ export default function QuantityView () {
 
     const handleChange = (name) => () => setField(name);
     const isActiveField = (name) => field === name;
-    console.log(databaseRows)
     return (
         <Container>
             <h1 className={"text-center"}>Quantity View</h1>

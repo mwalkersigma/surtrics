@@ -138,8 +138,7 @@ const ApprovalsView = () => {
                     {Object.keys(mappedUpdates).map((name) => {
                         if(ignoredNames.includes(name)) return null;
                         return <option key={name} value={name}>{name}</option>
-                    }
-                    )}
+                    })}
                 </Form.Select>
                 <Row className={"my-3"}>
                     <Col sm={2}>
@@ -157,7 +156,8 @@ const ApprovalsView = () => {
                             type={'number'}
                             step={1}
                             min={1}
-                            max={graphData.datasets[0].data.length / 8}
+                            //max={graphData.datasets[0].data.length / 8}
+                            max={Math.min(graphData.datasets[0].data.length / 8, 5)}
                             value={resolution}
                             onChange={(e) => setResolution(+e.target.value)}
                         />

@@ -4,30 +4,13 @@ import {Button, Image, Nav, NavDropdown, Stack} from "react-bootstrap";
 import {signIn, signOut, useSession} from "next-auth/react";
 import useAdminList from "../modules/hooks/useAdminList";
 import AdminWrapper from "./AdminWrapper";
+import SignInComponent from "./SignInComponent";
 
-
-
-function SignInComponent({session,isAdmin}){
-    if(!session) return(
-        <Button onClick={()=>signIn("google")}>Sign In</Button>
-    )
-    return(
-        <>
-            <NavDropdown title={session.user.name} id="basic-nav-dropdown">
-                <NavDropdown.Item>
-                    <Stack direction={"horizontal"}>
-                        <Image className={"mx-auto"} src={session.user.image} alt={"user image"} roundedCircle height={50} referrerPolicy="no-referrer" />
-                        <NavDropdown.ItemText className={"text-center"}>{isAdmin?"Admin":"User"}</NavDropdown.ItemText>
-                    </Stack>
-                </NavDropdown.Item>
-                <NavDropdown.Divider/>
-                <NavDropdown.Item>
-                    <Nav.Item onClick={() => signOut()}>Sign Out</Nav.Item>
-                </NavDropdown.Item>
-            </NavDropdown>
-        </>
-    )
-}
+{/*<NavDropdown.ItemText>Graphs</NavDropdown.ItemText>*/}
+{/*<NavDropdown.Divider />*/}
+{/*<NavDropdown.Divider />*/}
+// <NavDropdown.ItemText>Tables</NavDropdown.ItemText>
+// <NavDropdown.Divider />
 
 export default function NavBar({theme,setTheme,setDay}){
     const {data: session} = useSession();
@@ -39,27 +22,53 @@ export default function NavBar({theme,setTheme,setDay}){
                 <Navbar.Toggle />
                 <Nav>
                     <Navbar.Brand href="/">Surplus Metrics</Navbar.Brand>
-                    <NavDropdown title={"Graphs"} id="basic-nav-dropdown">
-                        <Nav.Link href="/graphs/approvalsOverYear">Approvals Year</Nav.Link>
+
+                    <NavDropdown title={"Increments"}>
+                        <NavDropdown.ItemText>Graphs</NavDropdown.ItemText>
+                        <NavDropdown.Divider />
                         <Nav.Link href="/graphs/yearlyView">Yearly View</Nav.Link>
                         <Nav.Link href="/graphs/monthlyView">Monthly View</Nav.Link>
                         <Nav.Link href="/graphs/weeklyView">Weekly View</Nav.Link>
                         <Nav.Link href="/graphs/dailyView">Daily View</Nav.Link>
-                        <Nav.Link href="/graphs/individualGraph">User View</Nav.Link>
                     </NavDropdown>
 
-                    <NavDropdown title={"Tables"} id="basic-nav-dropdown">
-                        <Nav.Link href="/tables/individualView">Individual View</Nav.Link>
-                        <Nav.Link href="/tables/quantityView">Quantity View</Nav.Link>
-                        <Nav.Link href="/tables/warehousePicks">Warehouse Picks</Nav.Link>
-                        <Nav.Link href="/tables/approvalsView">Approvals View</Nav.Link>
+                    <NavDropdown title={"Approvals"}>
+                        <NavDropdown.ItemText>Graphs</NavDropdown.ItemText>
+                        <NavDropdown.Divider />
+                        <Nav.Link href="/graphs/approvalsOverYear">Yearly View</Nav.Link>
+                        <NavDropdown.Divider />
+                        <NavDropdown.ItemText>Tables</NavDropdown.ItemText>
+                        <NavDropdown.Divider />
+                        <Nav.Link href="/tables/approvalsView">Weekly View</Nav.Link>
+                    </NavDropdown>
+
+                    <NavDropdown title={"Quantity"}>
+                        <NavDropdown.ItemText>Tables</NavDropdown.ItemText>
+                        <NavDropdown.Divider />
+                        <Nav.Link href="/tables/quantityView">Weekly View</Nav.Link>
+                    </NavDropdown>
+
+                    <NavDropdown title={"Individual"}>
+                        <NavDropdown.ItemText>Graphs</NavDropdown.ItemText>
+                        <NavDropdown.Divider />
+                        <Nav.Link href="/graphs/individualGraph">Daily View</Nav.Link>
+                        <NavDropdown.Divider />
+                        <NavDropdown.ItemText>Tables</NavDropdown.ItemText>
+                        <NavDropdown.Divider />
+                        <Nav.Link href="/tables/individualView">Daily View</Nav.Link>
+                    </NavDropdown>
+
+                    <NavDropdown title={"Warehouse"}>
+                        <NavDropdown.ItemText>Tables</NavDropdown.ItemText>
+                        <NavDropdown.Divider />
+                        <Nav.Link href="/tables/warehousePicks">Weekly View</Nav.Link>
                     </NavDropdown>
 
                     <AdminWrapper invisible>
                         <NavDropdown title={"Admin"} id="basic-nav-dropdown">
                             <Nav.Link href={"/admin"}>Admin</Nav.Link>
-                            <Nav.Link href={"/admin/errorReporting"}>Report Error</Nav.Link>
-                            <Nav.Link href={"/admin/errorViewer"}>Error Viewer</Nav.Link>
+                            <Nav.Link href={"/admin/errorReporting"}>Submit Error</Nav.Link>
+                            <Nav.Link href={"/admin/errorViewer"}>Error View</Nav.Link>
                         </NavDropdown>
                     </AdminWrapper>
 

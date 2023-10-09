@@ -16,7 +16,6 @@ const WarehousePicks = () => {
     const updates = useUpdates("/api/views/picks/warehousePicks",{date});
     const dates = makeDateArray(date);
     let rows = formatDatabaseRows(updates);
-    console.log(updates)
     return (
         <Container>
             <h1 className={"text-center"}>Warehouse Picks</h1>

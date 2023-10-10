@@ -1,7 +1,7 @@
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
-import {Button, Image, Nav, NavDropdown, Stack} from "react-bootstrap";
-import {signIn, signOut, useSession} from "next-auth/react";
+import {Nav, NavDropdown} from "react-bootstrap";
+import {useSession} from "next-auth/react";
 import useAdminList from "../modules/hooks/useAdminList";
 import AdminWrapper from "./AdminWrapper";
 import SignInComponent from "./SignInComponent";
@@ -36,6 +36,7 @@ export default function NavBar({theme,setTheme,setDay}){
                         <NavDropdown.ItemText>Graphs</NavDropdown.ItemText>
                         <NavDropdown.Divider />
                         <Nav.Link href="/graphs/approvalsOverYear">Yearly View</Nav.Link>
+                        <Nav.Link href="/graphs/ApprovalsStackedWeek">Weekly View</Nav.Link>
                         <NavDropdown.Divider />
                         <NavDropdown.ItemText>Tables</NavDropdown.ItemText>
                         <NavDropdown.Divider />
@@ -63,6 +64,12 @@ export default function NavBar({theme,setTheme,setDay}){
                         <NavDropdown.Divider />
                         <Nav.Link href="/tables/warehousePicks">Weekly View</Nav.Link>
                     </NavDropdown>
+
+                    <AdminWrapper invisible altRoles={"BSA"}>
+                        <NavDropdown title={"Data Entry"}>
+                            <Nav.Link href="/BSA/BigCommerceEntry">Big Commerce</Nav.Link>
+                        </NavDropdown>
+                    </AdminWrapper>
 
                     <AdminWrapper invisible>
                         <NavDropdown title={"Admin"} id="basic-nav-dropdown">

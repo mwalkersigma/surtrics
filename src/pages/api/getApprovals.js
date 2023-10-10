@@ -130,7 +130,6 @@ export async function ChannelRouteMain(){
     Logger.log("unzipping files.")
     await decompress(`${outputFolder}/${file}`, outputFolder)
     let records = [];
-    let count = 0;
     await new Promise((res,rej)=>{
         const parser = parse({
             delimiter: '\t',
@@ -183,7 +182,7 @@ export async function ChannelRouteMain(){
                     VALUES
                 `;
     records.forEach((approval,i) => {
-        query += `('${approval.sku}', '${approval.finalApprovalDate}', 'Approved', '${approval.approver}')`
+        query += `('${approval.sku}', '${new Date(approval.finalApprovalDate)}', 'Approved', '${approval.approver}')`
         if(i < records.length - 1){
             query += ','
         }

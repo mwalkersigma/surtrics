@@ -19,6 +19,7 @@ const ApprovalsView = () => {
         mappedUpdates[name][date] += parseInt(update.count);
     })
     let weekArr = makeDateArray(date);
+
     return (
         <Container>
             <h1 className={"text-center"}>Approvals View</h1>

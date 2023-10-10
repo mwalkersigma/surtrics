@@ -1,9 +1,9 @@
 import React, {useContext, useState} from 'react';
 import Container from "react-bootstrap/Container";
-import {Chart} from "react-chartjs-2";
+
 import useUpdates from "../../modules/hooks/useUpdates";
 import {ThemeContext} from "../layout";
-
+import {Chart} from "react-chartjs-2";
 import {
     BarElement,
     CategoryScale,
@@ -170,9 +170,6 @@ function YearlyView() {
         return acc;
     } , {}));
 
-
-
-    console.log(yearData,cardData)
     return (
         <main>
             <Container>

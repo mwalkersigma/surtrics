@@ -1,7 +1,7 @@
 import findStartOfWeek from "./findMondayFromDate";
-import {setHours} from "date-fns";
 
-export default function makeWeekArray (weekData,hasOffset,sunday = new Date()){
+export default function makeWeekArray (weekData,hasOffset){
+    let sunday = new Date();
     if(sunday.getDay() !== 0) sunday = findStartOfWeek(sunday);
     let weekSeed = Array.from({length: 7}, (_,i) => {
         let tempDate = new Date(sunday);

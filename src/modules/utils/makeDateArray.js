@@ -3,6 +3,7 @@ import {addDays, addHours} from "date-fns";
 import formatDateWithZeros from "./formatDateWithZeros";
 
 export default function makeDateArray(date){
+    console.log(date)
     const [startString] = getStartAndEndWeekString(new Date(date));
 
     let dates = [startString];

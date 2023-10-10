@@ -12,7 +12,7 @@ import ToastContainerWrapper from "../../components/toast/toastContainerWrapper"
 import useToastContainer from "../../modules/hooks/useToast";
 import createSuccessMessage from "../../modules/serverMessageFactories/createSuccessMessage";
 import createErrorMessage from "../../modules/serverMessageFactories/createErrorMessage";
-import AdminWrapper from "../../components/AdminWrapper";
+import RoleWrapper from "../../components/RoleWrapper";
 
 
 
@@ -53,7 +53,7 @@ const ErrorViewer = () => {
     }
 
     return (
-        <AdminWrapper>
+        <RoleWrapper altRoles={"surplus director"}>
             <Container>
                 <ToastContainerWrapper removeServerMessages={removeServerMessage} serverMessages={serverMessage}/>
                 <h1>Error Reporting</h1>
@@ -108,7 +108,7 @@ const ErrorViewer = () => {
                     </tbody>
                 </Table>
             </Container>
-        </AdminWrapper>
+        </RoleWrapper>
 
     );
 };

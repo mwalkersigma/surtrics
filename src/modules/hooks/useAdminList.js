@@ -21,6 +21,14 @@ export default function useAdminList () {
             return lowerCaseAdminList.includes(emailLowerCase);
         }
     }
+    function getRoles (session){
+        if(!roleList) return [];
+        if(!session) return [];
+        let emailLowerCase = session.user.email.toLowerCase();
+        let user = roleList.find((user)=>user.email.toLowerCase() === emailLowerCase);
+        if(!user)return [];
+        return user.roles;
+    }
     const isAdmin = isRole("admin");
-    return {adminList: roleList,isAdmin,isRole};
+    return {adminList: roleList,isAdmin,isRole,getRoles};
 }

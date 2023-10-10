@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import AdminWrapper from "../../components/AdminWrapper";
+import RoleWrapper from "../../components/RoleWrapper";
 import useUpdates from "../../modules/hooks/useUpdates";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import {SundayContext, ThemeContext} from "../layout";
@@ -50,7 +50,7 @@ const ApprovalsStackedWeek = () => {
     const theme = useContext(ThemeContext);
     let approvals = useUpdates("/api/views/approvals/weeklyView", {date});
 
-    if(approvals.length === 0) return (<AdminWrapper><h1 className={"text-center"}>Loading...</h1></AdminWrapper>);
+    if(approvals.length === 0) return (<RoleWrapper><h1 className={"text-center"}>Loading...</h1></RoleWrapper>);
     approvals = approvals.map((approval) => ({...approval, date_of_final_approval: approval.date_of_final_approval.split("T")[0]}));
     const names = [...new Set(approvals.map(({name}) => name))];
     const dateArr = makeDateArray(date);

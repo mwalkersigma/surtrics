@@ -4,7 +4,7 @@ import {Col, Row, Stack, Form, Button} from "react-bootstrap";
 import useGoal from "../../modules/hooks/useGoal";
 import settings from "../../json/settings.json";
 import useFrequency from "../../modules/hooks/useFrequency";
-import AdminWrapper from "../../components/AdminWrapper";
+import RoleWrapper from "../../components/RoleWrapper";
 const {frequencies} = settings;
 
 
@@ -38,7 +38,7 @@ const Index = () => {
     }
 
     return (
-        <AdminWrapper>
+        <RoleWrapper altRoles={"surplus director"}>
             <Container>
                 <Stack>
                     <h1 className={"text-center mb-5"}>Admin Page</h1>
@@ -93,7 +93,7 @@ const Index = () => {
                     </Row>
                 </Stack>
             </Container>
-        </AdminWrapper>
+        </RoleWrapper>
     );
 };
 

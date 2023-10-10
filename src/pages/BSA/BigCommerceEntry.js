@@ -1,13 +1,13 @@
 import React from 'react';
-import AdminWrapper from "../../components/AdminWrapper";
+import RoleWrapper from "../../components/RoleWrapper";
 import Container from "react-bootstrap/Container";
 const BigCommerceEntry = () => {
     return (
-        <AdminWrapper altRoles={"BSA"}>
+        <RoleWrapper altRoles={"bsa"}>
             <Container>
                 <h1>Test</h1>
             </Container>
-        </AdminWrapper>
+        </RoleWrapper>
     );
 };
 

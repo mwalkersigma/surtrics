@@ -9,7 +9,7 @@ import Stack from "react-bootstrap/Stack"
 
 import {useSession} from "next-auth/react";
 
-import AdminWrapper from "../../components/AdminWrapper";
+import RoleWrapper from "../../components/RoleWrapper";
 import ToastContainerWrapper from "../../components/toast/toastContainerWrapper";
 
 import useToastContainer from "../../modules/hooks/useToast";
@@ -72,7 +72,7 @@ const ErrorReporting = () => {
     }
 
     return (
-        <AdminWrapper>
+        <RoleWrapper altRoles={"surplus director"}>
             <ToastContainerWrapper serverMessages={serverMessages} removeServerMessages={removeServerMessage}/>
                 <Container>
                     <h1>Error Reporting</h1>
@@ -119,7 +119,7 @@ const ErrorReporting = () => {
                         </Row>
                     </Form>
                 </Container>
-        </AdminWrapper>
+        </RoleWrapper>
     );
 };
 

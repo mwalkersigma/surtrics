@@ -63,8 +63,6 @@ function HomeDisplay(){
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
-    console.log(findStartOfWeek(new Date(date)))
-
     let weekSeed = makeWeekArray([...weekData],day,findStartOfWeek(new Date(date)));
 
     if(dailyData.length === 0){
@@ -86,7 +84,7 @@ function HomeDisplay(){
 
     const bestDay = Math.max(...weekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
-    console.log(weekSeed)
+
     return (<>
         <Row className={"pb-3"}>
             <Col sm={2}>

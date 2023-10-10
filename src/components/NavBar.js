@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import {Nav, NavDropdown} from "react-bootstrap";
 import {useSession} from "next-auth/react";
 import useAdminList from "../modules/hooks/useAdminList";
-import AdminWrapper from "./AdminWrapper";
+import RoleWrapper from "./RoleWrapper";
 import SignInComponent from "./SignInComponent";
 
 {/*<NavDropdown.ItemText>Graphs</NavDropdown.ItemText>*/}
@@ -14,7 +14,9 @@ import SignInComponent from "./SignInComponent";
 
 export default function NavBar({theme,setTheme,setDay}){
     const {data: session} = useSession();
-    let {isAdmin} = useAdminList();
+    let {isAdmin,getRoles,isRole} = useAdminList();
+    const isRanda = isRole("Randa")(session);
+    let roles = getRoles(session);
     isAdmin = isAdmin(session);
     return (
         <Navbar data-bs-theme="dark" className="bg-body-tertiary mb-5">
@@ -65,19 +67,20 @@ export default function NavBar({theme,setTheme,setDay}){
                         <Nav.Link href="/tables/warehousePicks">Weekly View</Nav.Link>
                     </NavDropdown>
 
-                    <AdminWrapper invisible altRoles={"BSA"}>
+                    <RoleWrapper invisible altRoles={"bsa"}>
                         <NavDropdown title={"Data Entry"}>
                             <Nav.Link href="/BSA/BigCommerceEntry">Big Commerce</Nav.Link>
+                            <Nav.Link href="/BSA/EbayEntry">Ebay</Nav.Link>
                         </NavDropdown>
-                    </AdminWrapper>
+                    </RoleWrapper>
 
-                    <AdminWrapper invisible>
+                    <RoleWrapper invisible altRoles={"surplus director"}>
                         <NavDropdown title={"Admin"} id="basic-nav-dropdown">
                             <Nav.Link href={"/admin"}>Admin</Nav.Link>
                             <Nav.Link href={"/admin/errorReporting"}>Submit Error</Nav.Link>
                             <Nav.Link href={"/admin/errorViewer"}>Error View</Nav.Link>
                         </NavDropdown>
-                    </AdminWrapper>
+                    </RoleWrapper>
 
                 </Nav>
                 <Nav>
@@ -95,7 +98,7 @@ export default function NavBar({theme,setTheme,setDay}){
                             <Nav.Item onClick={() => setDay(true)}>Sunday Start</Nav.Item>
                         </NavDropdown.Item>
                     </NavDropdown>
-                    <SignInComponent session={session} isAdmin={isAdmin} />
+                    <SignInComponent session={session} isAdmin={isAdmin} role={roles[0]} isRanda={isRanda}  />
                 </Nav>
             </Container>
         </Navbar>

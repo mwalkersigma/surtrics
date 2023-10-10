@@ -78,11 +78,16 @@ const ApprovalsStackedWeek = () => {
             })
             return acc
         },[0,0,0,0,0,0,0])
-    console.log()
     const options = {
         plugins:{
             tooltip:{
                 color:parseTheme(theme),
+                callbacks :{
+                    footer: (context) => {
+                        return "TOTAL: " + context.reduce((acc, {raw}) => (acc + +raw), 0);
+                    }
+                }
+
             },
             datalabels:{
                 color:parseTheme(theme),

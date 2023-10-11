@@ -63,7 +63,7 @@ function smoothData(data,adjCount=3) {
 
 
 const ApprovalsView = () => {
-    let [user, setUser] = React.useState("Bailey Moesner");
+    let [user, setUser] = React.useState("Total");
     const [date, setDate] = React.useState(formatDateWithZeros(new Date()));
     const [resolution, setResolution] = React.useState(4);
     const updates = useUpdates("/api/views/approvals/yearlyView", {date});
@@ -77,7 +77,7 @@ const ApprovalsView = () => {
         Loading...
     </Container>;
 
-    let mappedUpdates = {};
+    let mappedUpdates = {Total:{}};
     updates
         .sort((a,b) => {
             // sort them by date
@@ -92,6 +92,8 @@ const ApprovalsView = () => {
             let date = update["date_of_final_approval"].split("T")[0];
             if(!mappedUpdates[name]) mappedUpdates[name] = {};
             if(!mappedUpdates[name][date]) mappedUpdates[name][date] = 0;
+            if(!mappedUpdates["Total"][date]) mappedUpdates["Total"][date] = 0;
+            mappedUpdates["Total"][date] += parseInt(update.count);
             mappedUpdates[name][date] += parseInt(update.count);
         })
 
@@ -116,11 +118,11 @@ const ApprovalsView = () => {
             .join("-")),
         datasets: [
             {
-            label: user,
-            data: Object.values(userUpdates),
-            fill: false,
-            backgroundColor: colorScheme.red,
-            borderColor: colorScheme.red,
+                label: user,
+                data: Object.values(userUpdates),
+                fill: false,
+                backgroundColor: colorScheme.red,
+                borderColor: colorScheme.red,
             },
             {
                 label: "Trend",

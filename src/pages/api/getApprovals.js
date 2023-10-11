@@ -14,6 +14,15 @@ const {APPLICATION_ID, SHARED_SECRET, REFRESH_TOKEN} = process.env
 
 const limiter =  APILimiter(10000000,1440,5);
 const channelAdvisorLimiter = APILimiter(2000,1,5);
+function convertInvalidDate(date){
+    return new Date(date
+        .replace(/-/g, '/')
+        .replace(/T/, ' ')
+        .replace(/Z/, ' ')
+        .replace(/\.\d+/, '')
+    );
+
+}
 async function authorizeChannelAdvisor () {
     const authURL = 'https://api.channeladvisor.com/oauth2/token'
     const authHeader = {
@@ -122,7 +131,6 @@ async function downloadFile(fileResponseUrl){
 export async function ChannelRouteMain(){
     Logger.log("Starting Channel Advisor Route.")
     let fileResponseUrl = await getFileResponseUrl();
-    Logger.log("File response url found.")
     await downloadFile(fileResponseUrl);
     let outputFolder = "./src/json/outputs";
     let outputFiles = await fsp.readdir(outputFolder);
@@ -156,7 +164,7 @@ export async function ChannelRouteMain(){
             rej(err)
         })
         parser.on('end', function(){
-            console.log('done parsing TSV')
+            Logger.log('done parsing TSV')
             Logger.log(records.length)
             res()
         })
@@ -182,10 +190,17 @@ export async function ChannelRouteMain(){
                     VALUES
                 `;
     records.forEach((approval,i) => {
-        query += `('${approval.sku}', '${new Date(approval.finalApprovalDate)}', 'Approved', '${approval.approver}')`
+
+        if(new Date(approval.finalApprovalDate).toString() === "Invalid Date") {
+            approval.finalApprovalDate = convertInvalidDate(approval.finalApprovalDate)
+        }
+        const formatDate = new Date(approval.finalApprovalDate).toLocaleString('en-US', {timeZone: 'America/Chicago', hour12: true});
+
+        query += `('${approval.sku}', '${formatDate}', 'Approved', '${approval.approver}')`;
         if(i < records.length - 1){
             query += ','
         }
+
     })
     query += ';'
     db.query(query)
@@ -201,7 +216,6 @@ export async function ChannelRouteMain(){
     })
     fs.writeFileSync("./src/json/access_token.json",JSON.stringify({}));
     Logger.log("Finished Channel Advisor Route.")
-
     return "Finished Channel Advisor Route."
 }
 

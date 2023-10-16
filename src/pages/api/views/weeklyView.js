@@ -5,7 +5,6 @@ import getStartAndEndWeekString from "../../../modules/utils/getStartAndEndWeekS
 
 async function getIncrements(date){
     let [startWeekString, endOfWeekString] = getStartAndEndWeekString(date);
-    console.log(startWeekString, endOfWeekString)
     let query = await db.query(`
         SELECT
             COUNT(*),
@@ -30,7 +29,6 @@ async function getIncrements(date){
             DATE(transaction_date),
             transaction_reason
     `, [startWeekString, endOfWeekString])
-    console.log(query.rows)
     return query.rows;
 }
 

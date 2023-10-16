@@ -20,6 +20,11 @@ const ApprovalsView = () => {
     })
     let weekArr = makeDateArray(date);
 
+    console.log(date);
+    console.log(updates);
+    console.log(weekArr);
+    console.log(mappedUpdates);
+
     return (
         <Container>
             <h1 className={"text-center"}>Approvals View</h1>

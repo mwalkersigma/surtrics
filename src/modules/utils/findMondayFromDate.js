@@ -1,4 +1,4 @@
-import {isSunday, isMonday, getDay, addHours, previousSunday, previousMonday} from "date-fns";
+import {isSunday, isMonday, addHours, previousSunday, previousMonday} from "date-fns";
 
 function findSunday(date){
     if(isSunday(date)){

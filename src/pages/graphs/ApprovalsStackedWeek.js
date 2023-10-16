@@ -50,16 +50,40 @@ const ApprovalsStackedWeek = () => {
     const theme = useContext(ThemeContext);
     let approvals = useUpdates("/api/views/approvals/weeklyView", {date});
 
-    if(approvals.length === 0) return (<RoleWrapper><h1 className={"text-center"}>Loading...</h1></RoleWrapper>);
+    if(approvals.length === 0) return (
+        <RoleWrapper>
+            <Container>
+                <h1 className={"text-center"}>Approvals View</h1>
+                <Row>
+                    <Form.Control
+                        className={"mb-3"}
+                        value={date}
+                        onChange={(e)=>setDate(e.target.value)}
+                        type="date"
+                    />
+                </Row>
+                <h1 className={"text-center"}>
+                    No Data for the week found.
+                </h1>
+            </Container>
+
+
+        </RoleWrapper>
+    );
+
     approvals = approvals.map((approval) => ({...approval, date_of_final_approval: approval.date_of_final_approval.split("T")[0]}));
+
     const names = [...new Set(approvals.map(({name}) => name))];
     const dateArr = makeDateArray(date);
+
+
     names.forEach((name) => {
         dateArr.forEach((date) => {
             const found = approvals.find((approval) => approval.name === name && approval.date_of_final_approval === date);
             if(!found) approvals.push({name,date_of_final_approval:date,count:null})
         })
     })
+
     const dataForGraph = names.reduce((acc,cur)=>{
         if(!acc[cur]) acc[cur] = [];
         dateArr.forEach((date) => {
@@ -68,7 +92,8 @@ const ApprovalsStackedWeek = () => {
         })
         return acc
     },{})
-    // max should be 2.5 times the highest value for a given day
+
+
     const max = Object
         .values(dataForGraph)
         .map(arr=>arr.map(item=>+item))
@@ -78,6 +103,7 @@ const ApprovalsStackedWeek = () => {
             })
             return acc
         },[0,0,0,0,0,0,0])
+
     const options = {
         plugins:{
             tooltip:{
@@ -118,7 +144,8 @@ const ApprovalsStackedWeek = () => {
                 stack: 1
             }
         })
-    }
+    };
+    console.log(data)
     return (
             <Container>
                 <h1 className={"text-center"}>Approvals View</h1>

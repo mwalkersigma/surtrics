@@ -7,7 +7,7 @@ import useUpdates from "../modules/hooks/useUpdates";
 import useGoal from "../modules/hooks/useGoal";
 import formatter from "../modules/utils/numberFormatter";
 import makeWeekArray from "../modules/utils/makeWeekArray";
-import findStartOfWeek from "../modules/utils/findMondayFromDate";
+import findStartOfWeek from "../modules/utils/findSundayFromDate";
 import processWeekData from "../modules/utils/processWeekData";
 
 import {Bar, Line} from "react-chartjs-2";
@@ -47,7 +47,6 @@ function HomeDisplay(){
     date = date.toISOString().split("T")[0];
 
     const theme = useContext(ThemeContext)
-    const day = useContext(SundayContext)
 
     const shadowColor = theme === "dark" ? colorScheme.white : colorScheme.dark;
 
@@ -63,7 +62,7 @@ function HomeDisplay(){
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
-    let weekSeed = makeWeekArray([...weekData],day,findStartOfWeek(new Date(date)));
+    let weekSeed = makeWeekArray([...weekData],new Date(date));
 
     if(dailyData.length === 0){
         dailyData = []

@@ -1,12 +1,11 @@
 import db from "../../../db";
-import findStartOfWeek from "../../../modules/utils/findMondayFromDate";
 import getStartAndEndWeekString from "../../../modules/utils/getStartAndEndWeekString";
 
 
 
 async function getIncrements(date){
     let [startWeekString, endOfWeekString] = getStartAndEndWeekString(date);
-
+    console.log(startWeekString, endOfWeekString)
     let query = await db.query(`
         SELECT
             COUNT(*),
@@ -15,7 +14,7 @@ async function getIncrements(date){
         FROM
             surtrics.surplus_metrics_data
         WHERE
-            transaction_date >= $1
+            transaction_date > $1
           AND transaction_date <= $2
           AND (
                     transaction_type = 'Add'
@@ -31,6 +30,7 @@ async function getIncrements(date){
             DATE(transaction_date),
             transaction_reason
     `, [startWeekString, endOfWeekString])
+    console.log(query.rows)
     return query.rows;
 }
 

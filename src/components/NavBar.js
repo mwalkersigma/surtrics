@@ -90,13 +90,6 @@ export default function NavBar({theme,setTheme,setDay}){
                                 ( <Nav.Item onClick={() => setTheme('light')}>Light Mode</Nav.Item> ) :
                                 ( <Nav.Item onClick={() => setTheme('dark')}>Dark Mode</Nav.Item> ) }
                         </NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item>
-                            <Nav.Item onClick={() => setDay(false)}>Monday Start</Nav.Item>
-                        </NavDropdown.Item>
-                        <NavDropdown.Item>
-                            <Nav.Item onClick={() => setDay(true)}>Sunday Start</Nav.Item>
-                        </NavDropdown.Item>
                     </NavDropdown>
                     <SignInComponent session={session} isAdmin={isAdmin} role={roles[0]} isRanda={isRanda}  />
                 </Nav>

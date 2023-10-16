@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import useUpdates from "../../modules/hooks/useUpdates";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import makeDateArray from "../../modules/utils/makeDateArray";
@@ -8,7 +8,7 @@ import Form from "react-bootstrap/Form";
 import yymmddTommddyy from "../../modules/utils/yymmddconverter";
 
 const ApprovalsView = () => {
-    const [date, setDate] = React.useState(formatDateWithZeros(new Date()));
+    const [date, setDate] = useState(formatDateWithZeros(new Date()));
     const updates = useUpdates("/api/views/approvals/weeklyView", {date});
     let mappedUpdates = {};
     updates.forEach((update) => {
@@ -19,12 +19,6 @@ const ApprovalsView = () => {
         mappedUpdates[name][date] += parseInt(update.count);
     })
     let weekArr = makeDateArray(date);
-
-    console.log(date);
-    console.log(updates);
-    console.log(weekArr);
-    console.log(mappedUpdates);
-
     return (
         <Container>
             <h1 className={"text-center"}>Approvals View</h1>
@@ -38,7 +32,7 @@ const ApprovalsView = () => {
                 <thead>
                     <tr>
                         <th>Name</th>
-                        {weekArr.map((date) => <th key={date}>{yymmddTommddyy(date)}</th>)}
+                        {weekArr.map((date) => <th key={`${date}`}>{yymmddTommddyy(date)}</th>)}
                         <th>Total</th>
                     </tr>
                 </thead>

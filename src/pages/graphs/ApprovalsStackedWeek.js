@@ -51,7 +51,6 @@ const ApprovalsStackedWeek = () => {
     let approvals = useUpdates("/api/views/approvals/weeklyView", {date});
 
     if(approvals.length === 0) return (
-        <RoleWrapper>
             <Container>
                 <h1 className={"text-center"}>Approvals View</h1>
                 <Row>
@@ -62,13 +61,10 @@ const ApprovalsStackedWeek = () => {
                         type="date"
                     />
                 </Row>
-                <h1 className={"text-center"}>
+                <h4 className={"text-center"}>
                     No Data for the week found.
-                </h1>
+                </h4>
             </Container>
-
-
-        </RoleWrapper>
     );
 
     approvals = approvals.map((approval) => ({...approval, date_of_final_approval: approval.date_of_final_approval.split("T")[0]}));
@@ -145,7 +141,6 @@ const ApprovalsStackedWeek = () => {
             }
         })
     };
-    console.log(data)
     return (
             <Container>
                 <h1 className={"text-center"}>Approvals View</h1>

@@ -16,7 +16,7 @@ import useGoal from "../../modules/hooks/useGoal";
 
 import makeWeekArray from "../../modules/utils/makeWeekArray";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
-import findStartOfWeek from "../../modules/utils/findMondayFromDate";
+import findStartOfWeek from "../../modules/utils/findSundayFromDate";
 import formatter from "../../modules/utils/numberFormatter";
 import processWeekData from "../../modules/utils/processWeekData";
 import createAdjustedWeekArray from "../../modules/utils/createAdjustedWeekArray";
@@ -47,33 +47,29 @@ function getWeekString(date) {
 function colorize(goal) {
     return (ctx) => {
         let stack = ctx?.parsed?._stacks.y;
-        let excluded = ["_top","_bottom","_visualValues"];
+        let excluded = ["_top", "_bottom", "_visualValues"];
         let total = 0;
-        for(let key in stack){
-            if(excluded.includes(key))continue;
+        for (let key in stack) {
+            if (excluded.includes(key)) continue;
             total += stack[key];
         }
         return total < goal ? colorScheme.red : colorScheme.green;
     }
 }
+
 function returnDayOfWeek(date) {
     const d = new Date(date.split("T")[0]);
     d.setDate(d.getDate() + 1);
     return d.toString().split(" ")[0];
 }
 
-
-
-
 function WeeklyChart(props){
-    let {weekData,theme,day} = props;
+    let {weekData,theme} = props;
     const useTheme = (theme) => theme === "dark" ? colorScheme.light : colorScheme.dark;
     const goal = useGoal();
     const adjustedWeek = createAdjustedWeekArray(weekData,goal)
                                     .map(item => item > 0 ? +item + +goal  : goal);
-    if(day){
-        adjustedWeek.unshift(goal)
-    }
+
     const thickness = 3
     const options = {
         devicePixelRatio: 4,
@@ -257,16 +253,14 @@ function WeeklyChart(props){
     return <Chart data={data} type={"bar"} height={150} options={options}/>
 }
 
-
-
-
 function WeeklyView() {
+
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
 
     let weekData = useUpdates("/api/views/weeklyView",{date});
 
     const theme = useContext(ThemeContext);
-    const day = useContext(SundayContext);
+
 
     function handleDateChange(e) {
         setDate(e.target.value);
@@ -279,7 +273,7 @@ function WeeklyView() {
     );
     let margin = "3.5rem";
     weekData = processWeekData(weekData)
-    weekData = makeWeekArray(weekData,day,findStartOfWeek(new Date(date)));
+    weekData = makeWeekArray(weekData,new Date(date));
     return (
         <main>
             <Container>
@@ -295,7 +289,7 @@ function WeeklyView() {
                 <div className={"mb-3"} />
                 <Row>
                     <Col sm={10} className={`p-1 themed-drop-shadow ${theme}`} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
-                        {weekData.length > 0 && <WeeklyChart  day={day} theme={theme} weekData={weekData} date={date} />}
+                        {weekData.length > 0 && <WeeklyChart theme={theme} weekData={weekData} date={date} />}
                     </Col>
                     <Col sm={2}>
                         <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>

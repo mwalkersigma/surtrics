@@ -19,8 +19,6 @@ const conversionTable = {
 
 }
 
-
-
 export default function QuantityView () {
     const [field, setField] = useState("Total");
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
@@ -115,7 +113,7 @@ export default function QuantityView () {
                     <tr className={"table-secondary"}>
                         <td>Daily Total</td>
                         {dates.map((date,index) => {
-                            let dateString = `${date}T05:00:00.000Z`
+                            let dateString = `${date}`
                             let sum = 0;
                             for(let user of users){
                                 let dateData = rows[user][dateString];

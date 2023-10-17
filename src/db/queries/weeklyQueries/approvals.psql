@@ -4,11 +4,11 @@ SELECT
     DATE(date_of_final_approval) as date_of_final_approval
 FROM
     surtrics.surplus_approvals
-WHERE
-    user_who_approved IS NOT NULL
-    AND user_who_approved != 'undefined'
-    AND date_of_final_approval >= '2023-10-02'
-    AND date_of_final_approval <= '2023-10-07'
+-- WHERE
+--     user_who_approved IS NOT NULL
+--     AND user_who_approved != 'undefined'
+--     AND date_of_final_approval >= '2023-10-01'
+--     AND date_of_final_approval <= '2023-10-14'
 GROUP BY
     name,
     date_of_final_approval

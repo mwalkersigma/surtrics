@@ -142,11 +142,11 @@ export async function ChannelRouteMain(){
         const parser = parse({
             delimiter: '\t',
         });
+        console.log(outputFiles)
         fs.createReadStream(`${outputFolder}/${file.split(".")[0]}.txt`).pipe(parser);
         parser.on('readable', function(){
             let record;
             while ((record = parser.read()) !== null) {
-
                 const isParent = record[6] === "Parent";
                 const isApproved = record[91] === "Approved";
                 const hasFinalApprovalDate = record[89] !== "";
@@ -189,8 +189,8 @@ export async function ChannelRouteMain(){
                         (sku, date_of_final_approval, template_approval_status, user_who_approved)
                     VALUES
                 `;
-    records.forEach((approval,i) => {
 
+    records.forEach((approval,i) => {
         if(new Date(approval.finalApprovalDate).toString() === "Invalid Date") {
             approval.finalApprovalDate = convertInvalidDate(approval.finalApprovalDate)
         }
@@ -203,6 +203,7 @@ export async function ChannelRouteMain(){
 
     })
     query += ';'
+    // fs.writeFileSync("./src/data/channelAdvisor.json",JSON.stringify(records,null,2),{flag: "w+"});
     db.query(query)
     Logger.log("Data inserted. Cleaning up.")
     Logger.log("Cleaning up outputs folder.")

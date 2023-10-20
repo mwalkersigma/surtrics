@@ -9,21 +9,21 @@ import {Chart} from "react-chartjs-2";
 import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Tooltip} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 
-import {SundayContext, ThemeContext} from "../layout";
-import useUpdates from "../../modules/hooks/useUpdates";
-import useGoal from "../../modules/hooks/useGoal";
+import {SundayContext, ThemeContext} from "../../layout";
+import useUpdates from "../../../modules/hooks/useUpdates";
+import useGoal from "../../../modules/hooks/useGoal";
 
 
-import makeWeekArray from "../../modules/utils/makeWeekArray";
-import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
-import findStartOfWeek from "../../modules/utils/findSundayFromDate";
-import formatter from "../../modules/utils/numberFormatter";
-import processWeekData from "../../modules/utils/processWeekData";
-import createAdjustedWeekArray from "../../modules/utils/createAdjustedWeekArray";
+import makeWeekArray from "../../../modules/utils/makeWeekArray";
+import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
+import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
+import formatter from "../../../modules/utils/numberFormatter";
+import processWeekData from "../../../modules/utils/processWeekData";
+import createAdjustedWeekArray from "../../../modules/utils/createAdjustedWeekArray";
 
-import InfoCard from "../../components/infoCards/infocard";
-import {colorScheme} from "../_app";
-import yymmddTommddyy from "../../modules/utils/yymmddconverter";
+import InfoCard from "../../../components/infoCards/infocard";
+import {colorScheme} from "../../_app";
+import yymmddTommddyy from "../../../modules/utils/yymmddconverter";
 
 ChartJS.register(
     CategoryScale,

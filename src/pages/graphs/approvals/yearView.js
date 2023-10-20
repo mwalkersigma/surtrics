@@ -1,6 +1,6 @@
 import React from 'react';
-import useUpdates from "../../modules/hooks/useUpdates";
-import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
+import useUpdates from "../../../modules/hooks/useUpdates";
+import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import {
@@ -14,7 +14,7 @@ import {
     Tooltip
 } from "chart.js";
 import {Line} from "react-chartjs-2";
-import {colorScheme} from "../_app";
+import {colorScheme} from "../../_app";
 import {Col, Row} from "react-bootstrap";
 
 const ignoredNames = [

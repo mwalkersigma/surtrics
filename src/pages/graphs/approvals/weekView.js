@@ -1,12 +1,12 @@
 import React, {useContext, useState} from 'react';
-import useUpdates from "../../modules/hooks/useUpdates";
-import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
-import { ThemeContext} from "../layout";
+import useUpdates from "../../../modules/hooks/useUpdates";
+import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
+import {ThemeContext} from "../../layout";
 import {Row} from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 
 import {Chart} from "react-chartjs-2";
-import makeDateArray from "../../modules/utils/makeDateArray";
+import makeDateArray from "../../../modules/utils/makeDateArray";
 
 import {
     BarElement,
@@ -18,8 +18,9 @@ import {
     PointElement,
     Tooltip
 } from "chart.js";
+
 import DataLabels from "chartjs-plugin-datalabels";
-import {colorScheme} from "../_app";
+import {colorScheme} from "../../_app";
 import Container from "react-bootstrap/Container";
 
 
@@ -44,62 +45,61 @@ let colorPalette = [
 
 
 const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
-const QuantityStackedWeek = () => {
+const WeekView = () => {
     const [date, setDate] = useState(formatDateWithZeros(new Date()));
     const theme = useContext(ThemeContext);
-    let quantity = useUpdates("/api/views/quantity/weeklyViewTotalOnly", {date});
-    console.log(quantity)
-    if(quantity.length === 0) return (
-        <Container>
-            <h1 className={"text-center"}>Quantity Week View</h1>
-            <Row>
-                <Form.Control
-                    className={"mb-3"}
-                    value={date}
-                    onChange={(e)=>setDate(e.target.value)}
-                    type="date"
-                />
-            </Row>
-            <h4 className={"text-center"}>
-                No Data for the week found.
-            </h4>
-        </Container>
+    let approvals = useUpdates("/api/views/approvals/weeklyView", {date});
+
+    if(approvals.length === 0) return (
+            <Container>
+                <h1 className={"text-center"}>Approvals View</h1>
+                <Row>
+                    <Form.Control
+                        className={"mb-3"}
+                        value={date}
+                        onChange={(e)=>setDate(e.target.value)}
+                        type="date"
+                    />
+                </Row>
+                <h4 className={"text-center"}>
+                    No Data for the week found.
+                </h4>
+            </Container>
     );
 
-    quantity = quantity.map((quantity) => ({...quantity, date: quantity.date.split("T")[0]}));
+    approvals = approvals.map((approval) => ({...approval, date_of_final_approval: approval.date_of_final_approval.split("T")[0]}));
 
-    const names = [...new Set(quantity.map(({name}) => name))];
+    const names = [...new Set(approvals.map(({name}) => name))];
     const dateArr = makeDateArray(date);
 
 
     names.forEach((name) => {
         dateArr.forEach((date) => {
-            const found = quantity.find((quantity) => quantity.name === name && quantity.date === date);
-            if(!found) quantity.push({name,date:date,sum:null})
+            const found = approvals.find((approval) => approval.name === name && approval.date_of_final_approval === date);
+            if(!found) approvals.push({name,date_of_final_approval:date,count:null})
         })
     })
 
     const dataForGraph = names.reduce((acc,cur)=>{
         if(!acc[cur]) acc[cur] = [];
         dateArr.forEach((date) => {
-            const found = quantity.find((quantity) => quantity.name === cur && quantity.date === date);
-            acc[cur].push(found?.sum)
+            const found = approvals.find((approval) => approval.name === cur && approval.date_of_final_approval === date);
+            acc[cur].push(found.count)
         })
         return acc
     },{})
 
 
-
-    let max = Object
+    const max = Object
         .values(dataForGraph)
         .map(arr=>arr.map(item=>+item))
-        .reduce((acc,cur)=>{
+        .reduce((acc,cur,currentIndex)=>{
             cur.forEach((item,i)=>{
-                acc[i] += item;
+              acc[i] += item;
             })
             return acc
         },[0,0,0,0,0,0,0])
-    max = Math.ceil(Math.max(...max)*2)
+
     const options = {
         plugins:{
             tooltip:{
@@ -115,7 +115,7 @@ const QuantityStackedWeek = () => {
                 color:parseTheme(theme),
             },
             title:{
-                text:"Week View"
+              text:"Week View"
             }
         },
         interaction:{
@@ -124,7 +124,7 @@ const QuantityStackedWeek = () => {
         },
         scales:{
             y:{
-                max:max
+                max:Math.ceil(Math.max(...max)*1.5)
             }
         }
     }
@@ -142,19 +142,19 @@ const QuantityStackedWeek = () => {
         })
     };
     return (
-        <Container>
-            <h1 className={"text-center"}>Quantity Week View</h1>
-            <Row>
-                <Form.Control
-                    className={"mb-3"}
-                    value={date}
-                    onChange={(e)=>setDate(e.target.value)}
-                    type="date"
-                />
-            </Row>
-            <Chart data={data} type={"bar"} height={150} options={options}/>
-        </Container>
+            <Container>
+                <h1 className={"text-center"}>Approvals View</h1>
+                <Row>
+                    <Form.Control
+                        className={"mb-3"}
+                        value={date}
+                        onChange={(e)=>setDate(e.target.value)}
+                        type="date"
+                    />
+                </Row>
+                <Chart data={data} type={"bar"} height={150} options={options}/>
+            </Container>
     );
 };
 
-export default QuantityStackedWeek;
+export default WeekView;

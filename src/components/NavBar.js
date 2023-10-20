@@ -28,17 +28,18 @@ export default function NavBar({theme,setTheme,setDay}){
                     <NavDropdown title={"Increments"}>
                         <NavDropdown.ItemText>Graphs</NavDropdown.ItemText>
                         <NavDropdown.Divider />
-                        <Nav.Link href="/graphs/yearlyView">Yearly View</Nav.Link>
-                        <Nav.Link href="/graphs/monthlyView">Monthly View</Nav.Link>
-                        <Nav.Link href="/graphs/weeklyView">Weekly View</Nav.Link>
-                        <Nav.Link href="/graphs/dailyView">Daily View</Nav.Link>
+                        <Nav.Link href="/graphs/increments/yearlyView">Yearly View</Nav.Link>
+                        <Nav.Link href="/graphs/increments/monthlyView">Monthly View</Nav.Link>
+                        <Nav.Link href="/graphs/increments/weeklyView">Weekly View</Nav.Link>
+                        <Nav.Link href="/graphs/increments/dailyView">Daily View</Nav.Link>
                     </NavDropdown>
 
                     <NavDropdown title={"Approvals"}>
                         <NavDropdown.ItemText>Graphs</NavDropdown.ItemText>
                         <NavDropdown.Divider />
-                        <Nav.Link href="/graphs/approvalsOverYear">Yearly View</Nav.Link>
-                        <Nav.Link href="/graphs/ApprovalsStackedWeek">Weekly View</Nav.Link>
+                        <Nav.Link href="/graphs/approvals/yearView">Yearly View</Nav.Link>
+                        <Nav.Link href="/graphs/approvals/monthlyView">Monthly View</Nav.Link>
+                        <Nav.Link href="/graphs/approvals/weekView">Weekly View</Nav.Link>
                         <NavDropdown.Divider />
                         <NavDropdown.ItemText>Tables</NavDropdown.ItemText>
                         <NavDropdown.Divider />
@@ -46,6 +47,9 @@ export default function NavBar({theme,setTheme,setDay}){
                     </NavDropdown>
 
                     <NavDropdown title={"Quantity"}>
+                        <NavDropdown.ItemText>Graphs</NavDropdown.ItemText>
+                        <NavDropdown.Divider />
+                        <Nav.Link href="/graphs/quantity/weeklyView">Weekly View</Nav.Link>
                         <NavDropdown.ItemText>Tables</NavDropdown.ItemText>
                         <NavDropdown.Divider />
                         <Nav.Link href="/tables/quantityView">Weekly View</Nav.Link>

@@ -1,8 +1,8 @@
 import React, {useContext, useState} from 'react';
 import Container from "react-bootstrap/Container";
 
-import useUpdates from "../../modules/hooks/useUpdates";
-import {ThemeContext} from "../layout";
+import useUpdates from "../../../modules/hooks/useUpdates";
+import {ThemeContext} from "../../layout";
 import {Chart} from "react-chartjs-2";
 import {
     BarElement,
@@ -14,12 +14,12 @@ import {
     Tooltip
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
-import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
+import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
 import Form from "react-bootstrap/Form";
 import {Col, Row} from "react-bootstrap";
-import InfoCard from "../../components/infoCards/infocard";
-import formatter from "../../modules/utils/numberFormatter";
-import {colorScheme} from "../_app";
+import InfoCard from "../../../components/infoCards/infocard";
+import formatter from "../../../modules/utils/numberFormatter";
+import {colorScheme} from "../../_app";
 
 ChartJS.register(
     CategoryScale,

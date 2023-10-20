@@ -1,12 +1,12 @@
 import React, {useContext, useState} from 'react';
 import Form from "react-bootstrap/Form";
-import useUpdates from "../../modules/hooks/useUpdates";
-import {ThemeContext} from "../layout";
+import useUpdates from "../../../modules/hooks/useUpdates";
+import {ThemeContext} from "../../layout";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
-import InfoCard from "../../components/infoCards/infocard";
+import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
+import InfoCard from "../../../components/infoCards/infocard";
 import {
     CategoryScale,
     Chart as ChartJS,
@@ -17,10 +17,10 @@ import {
     Tooltip
 } from "chart.js";
 import {Line} from "react-chartjs-2";
-import formatter from "../../modules/utils/numberFormatter";
+import formatter from "../../../modules/utils/numberFormatter";
 import DataLabels from "chartjs-plugin-datalabels";
-import {colorScheme} from "../_app";
-import yymmddTommddyy from "../../modules/utils/yymmddconverter";
+import {colorScheme} from "../../_app";
+import yymmddTommddyy from "../../../modules/utils/yymmddconverter";
 
 
 

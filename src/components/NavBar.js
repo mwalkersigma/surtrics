@@ -58,7 +58,7 @@ export default function NavBar({theme,setTheme,setDay}){
                     <NavDropdown title={"Individual"}>
                         <NavDropdown.ItemText>Graphs</NavDropdown.ItemText>
                         <NavDropdown.Divider />
-                        <Nav.Link href="/graphs/individualGraph">Daily View</Nav.Link>
+                        <Nav.Link href="/graphs/individual/individualGraph">Daily View</Nav.Link>
                         <NavDropdown.Divider />
                         <NavDropdown.ItemText>Tables</NavDropdown.ItemText>
                         <NavDropdown.Divider />
@@ -83,6 +83,7 @@ export default function NavBar({theme,setTheme,setDay}){
                             <Nav.Link href={"/admin"}>Admin</Nav.Link>
                             <Nav.Link href={"/admin/errorReporting"}>Submit Error</Nav.Link>
                             <Nav.Link href={"/admin/errorViewer"}>Error View</Nav.Link>
+                            <Nav.Link href={"/admin/eventReporting"}>Submit Event</Nav.Link>
                         </NavDropdown>
                     </RoleWrapper>
 

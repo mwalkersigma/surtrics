@@ -25,10 +25,6 @@ if(typeof window !== 'undefined') {
     }
 }
 
-
-
-
-
 export default function Layout({ children }) {
     const [theme, setTheme] = useState();
     const [sunday, setSunday] = useState(false);

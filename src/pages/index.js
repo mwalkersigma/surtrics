@@ -1,13 +1,12 @@
 import Head from 'next/head'
 import {Col, Row} from "react-bootstrap";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext} from "react";
 import Container from "react-bootstrap/Container";
 
 import useUpdates from "../modules/hooks/useUpdates";
 import useGoal from "../modules/hooks/useGoal";
 import formatter from "../modules/utils/numberFormatter";
 import makeWeekArray from "../modules/utils/makeWeekArray";
-import findStartOfWeek from "../modules/utils/findSundayFromDate";
 import processWeekData from "../modules/utils/processWeekData";
 
 import {Bar, Line} from "react-chartjs-2";
@@ -18,14 +17,14 @@ import {
     LinearScale, LineElement, PointElement,
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
-import {SundayContext, ThemeContext} from "./layout";
+import {ThemeContext} from "./layout";
 
 import InfoCard from "../components/infoCards/infocard";
 import BigInfoCard from "../components/infoCards/bigInfoCards";
 
 
 
-import {subHours, format, addHours, previousSunday} from "date-fns";
+import {subHours, format, addHours } from "date-fns";
 import {colorScheme} from "./_app";
 import useNav from "../modules/hooks/useNav";
 
@@ -239,7 +238,7 @@ function HomeDisplay(){
                 <InfoCard formatter={(value)=> value <= 0} theme={theme} title={"Best VS Today"} >
                     {formatter(bestDay - totalForToday)}
                 </InfoCard>
-                <InfoCard formatter={(value)=>{
+                <InfoCard formatter={()=>{
                     return bestHour - dailyData.slice(-1)[0]?.count <= 0
                 }} theme={theme} style={{marginBottom:0}} title={"Best HR VS Now"}>
                     {formatter(bestHour - dailyData.slice(-1)[0]?.count)}

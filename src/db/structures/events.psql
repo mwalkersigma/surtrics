@@ -1,0 +1,32 @@
+-- Table: surtrics.surplus_event_data;
+
+DROP TABLE IF EXISTS surtrics.surplus_event_data;
+CREATE TABLE IF NOT EXISTS surtrics.surplus_event_data (
+    event_id BIGSERIAL PRIMARY KEY,
+    event_name VARCHAR(255) NOT NULL,
+    event_date DATE NOT NULL,
+    event_notes TEXT,
+    affected_categories TEXT[],
+    user_who_submitted VARCHAR(255) NOT NULL
+);
+
+
+-- create Test Data
+INSERT INTO surtrics.surplus_event_data (event_name, event_date, event_notes, affected_categories, user_who_submitted)
+VALUES
+    ('Event', '2020-01-01', 'This is a test event', '{"Increments","Approvals","Quantity"}', 'Test User'),
+    ('Event', '2020-01-02', 'This is a test event', '{"Increments","Approvals","Quantity"}', 'Test User'),
+    ('Event', '2020-01-03', 'This is a test event', '{"Increments","Approvals","Quantity"}', 'Test User'),
+    ('Event', '2020-01-04', 'This is a test event', '{"Increments","Approvals","Quantity"}', 'Test User'),
+    ('Event', '2020-01-05', 'This is a test event', '{"Increments","Approvals","Quantity"}', 'Test User'),
+    ('Event', '2020-01-06', 'This is a test event', '{"Increments","Approvals","Quantity"}', 'Test User');
+
+INSERT INTO surtrics.surplus_event_data (event_name, event_date, event_notes, affected_categories, user_who_submitted)
+VALUES ('Event', '2020-01-07', 'This event has text of an arbitrary length it should be noted that maybe this is a good idea notes could be rather long', '{"Warehouse"}', 'Test User');
+
+SELECT
+    *
+FROM
+    surtrics.surplus_event_data
+WHERE
+    'Warehouse' = ANY(affected_categories);

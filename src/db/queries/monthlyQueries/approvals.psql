@@ -1,0 +1,14 @@
+SELECT
+    COUNT(*),
+    user_who_approved as name,
+    DATE(date_of_final_approval) as date_of_final_approval
+FROM
+    surtrics.surplus_approvals
+WHERE
+    user_who_approved IS NOT NULL
+    AND user_who_approved != 'undefined'
+    AND date_of_final_approval >= '2023-10-01'
+    AND date_of_final_approval <= '2023-11-01'
+GROUP BY
+    name,
+    date_of_final_approval;

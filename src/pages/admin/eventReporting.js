@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import Container from "react-bootstrap/Container";
 import RoleWrapper from "../../components/RoleWrapper";
+import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {useSession} from "next-auth/react";
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
+import {useSession} from "next-auth/react";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 
 function useCategories(list){
@@ -31,7 +31,7 @@ const EventReporting = () => {
      * @property {string} affected_categories
      * @property {string} user_who_submitted
      */
-    const{data} = useSession();
+    const {data: session} = useSession();
     const [otherCategory,setOtherCategory] = useState({
         name:"",
         checked:false
@@ -47,6 +47,7 @@ const EventReporting = () => {
     const [eventDate,setEventDate] = useState(formatDateWithZeros(new Date()));
     const [eventNotes,setEventNotes] = useState("");
 
+
     function handleSubmit () {
         let affectedCategories = [];
         Object.keys(categoryState).forEach((category)=>{
@@ -58,15 +59,20 @@ const EventReporting = () => {
             event_date:eventDate,
             event_notes:eventNotes,
             affected_categories:affectedCategories,
-            user_who_submitted:userName
+            user_who_submitted:userName,
+            session
         }
-        console.log(event);
+        fetch(`${window.location.origin}/api/admin/submitEvent`,{
+            method:"POST",
+            body:JSON.stringify(event)
+        })
+            .then((res)=>res.text())
     }
 
 
-    const userName = data?.user?.name;
+    const userName = session?.user?.name;
     return (
-        <RoleWrapper>
+        <RoleWrapper altRoles={["surplus director"]}>
             <Container>
                 <h1>Event Reporting</h1>
                 <Form>

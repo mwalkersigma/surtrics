@@ -3,7 +3,7 @@ import RoleWrapper from "../../components/RoleWrapper";
 
 const EbayEntry = () => {
     return (
-        <RoleWrapper>
+        <RoleWrapper altRoles={"bsa"}>
             <h1 className={"text-center"}>test</h1>
         </RoleWrapper>
     );

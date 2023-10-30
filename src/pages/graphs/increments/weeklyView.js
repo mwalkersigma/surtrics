@@ -9,7 +9,7 @@ import {Chart} from "react-chartjs-2";
 import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Tooltip} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 
-import {SundayContext, ThemeContext} from "../../layout";
+import {ThemeContext} from "../../layout";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import useGoal from "../../../modules/hooks/useGoal";
 
@@ -64,9 +64,9 @@ function returnDayOfWeek(date) {
 }
 
 function WeeklyChart(props){
-    let {weekData,theme} = props;
+    let {weekData,theme,date} = props;
     const useTheme = (theme) => theme === "dark" ? colorScheme.light : colorScheme.dark;
-    const goal = useGoal();
+    const goal = useGoal({date});
     const adjustedWeek = createAdjustedWeekArray(weekData,goal)
                                     .map(item => item > 0 ? +item + +goal  : goal);
 
@@ -112,7 +112,6 @@ function WeeklyChart(props){
                                 }
                             })
                         }
-                        console.log("No Data")
                         return [];
                     }
                 },
@@ -258,7 +257,6 @@ function WeeklyView() {
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
 
     let weekData = useUpdates("/api/views/weeklyView",{date});
-
     const theme = useContext(ThemeContext);
 
 

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import RoleWrapper from "../../components/RoleWrapper";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
@@ -8,42 +8,47 @@ import Button from "react-bootstrap/Button";
 import {useSession} from "next-auth/react";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import useGoal from "../../modules/hooks/useGoal";
+import ToastContainerWrapper from "../../components/toast/toastContainerWrapper";
+import useToastContainer from "../../modules/hooks/useToast";
+import createSuccessMessage from "../../modules/serverMessageFactories/createSuccessMessage";
 
 
-const EventReporting = () => {
-    /**
-     * @Interface Event
-     * @property {string} event_name
-     * @property {string} event_date
-     * @property {string} event_notes
-     * @property {string} affected_categories
-     * @property {string} user_who_submitted
-     */
+const UpdateGoal = () => {
     const {data: session} = useSession();
     const [eventDate,setEventDate] = useState(formatDateWithZeros(new Date()));
-    const goal = useGoal();
-    const [newGoal, setNewGoal] = useState(null);
-
+    const [messages,set,remove] = useToastContainer();
+    let goal = useGoal();
+    const [newGoal, setNewGoal] = useState('');
+    const [displayGoal,setDisplayGoal] = useState(goal * 5);
+    useEffect(() => {
+        setDisplayGoal(goal * 5)
+    }, [goal,newGoal]);
 
     function handleSubmit () {
         if(!newGoal) return;
+        if(!newGoal > 0) return;
         const event = {
             goal_date:eventDate,
             goal_amount:newGoal,
             user_who_submitted:userName,
             session
         }
-        fetch(`${window.location.origin}/api/admin/submitGoal`,{
-            method:"POST",
+        fetch(`${window.location.origin}/api/admin/goal`,{
+            method:"PUT",
             body:JSON.stringify(event)
         })
         .then((res)=>res.text())
+        .then((text) => {
+            set(createSuccessMessage(text))
+            setDisplayGoal(newGoal)
+        })
     }
 
 
     const userName = session?.user?.name;
     return (
         <RoleWrapper altRoles={["surplus director"]}>
+            <ToastContainerWrapper serverMessages={messages} removeServerMessages={remove} />
             <Container>
                 <h1 className={"text-center my-5"}>Update Goal</h1>
                 <Form>
@@ -60,11 +65,11 @@ const EventReporting = () => {
                     <Row className={"my-3"}>
                         <Form.Group as={Col}>
                             <Form.Label>Goal Amount</Form.Label>
-                            <Form.Control type={"number"} onChange={(e)=>setNewGoal(e.target.value)} value={Number(newGoal)} placeholder={goal * 5} />
+                            <Form.Control type={"number"} onChange={(e)=>setNewGoal(e.target.value)} value={newGoal} placeholder={displayGoal} />
                         </Form.Group>
                         <Form.Group as={Col}>
                             <Form.Label>Current Goal</Form.Label>
-                            <Form.Control disabled readOnly value={goal * 5} type={"number"} />
+                            <Form.Control disabled readOnly placeholder={newGoal} value={displayGoal} type={"number"} />
                         </Form.Group>
                     </Row>
                     <Row>
@@ -80,4 +85,4 @@ const EventReporting = () => {
     );
 };
 
-export default EventReporting;
+export default UpdateGoal;

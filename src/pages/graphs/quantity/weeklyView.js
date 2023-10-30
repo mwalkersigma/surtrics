@@ -48,7 +48,6 @@ const WeeklyView = () => {
     const [date, setDate] = useState(formatDateWithZeros(new Date()));
     const theme = useContext(ThemeContext);
     let quantity = useUpdates("/api/views/quantity/weeklyViewTotalOnly", {date});
-    console.log(quantity)
     if(quantity.length === 0) return (
         <Container>
             <h1 className={"text-center"}>Quantity Week View</h1>

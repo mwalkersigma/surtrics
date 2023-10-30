@@ -16,7 +16,6 @@ function disabledHandler() {
 
 export function middleware(req) {
     let {pathname} = req.nextUrl;
-    console.log(req)
     switch (true) {
         case pathname.startsWith("/api/disabled"):
             return disabledHandler(req);

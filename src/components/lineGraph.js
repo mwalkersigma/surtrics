@@ -5,12 +5,12 @@ import useGoal from "../modules/hooks/useGoal";
 import {colorScheme} from "../pages/_app";
 
 export default function LineGraph (props) {
-    let {dailyData,theme} = props;
+    let {dailyData,theme,date} = props;
     const temp = JSON.parse(JSON.stringify(props));
     delete temp.dailyData;
     delete temp.theme;
     theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
-    const goal = useGoal();
+    const goal = useGoal({date});
     const options = {
         devicePixelRatio: 4,
         responsive: true,

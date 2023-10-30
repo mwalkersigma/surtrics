@@ -142,7 +142,6 @@ export async function ChannelRouteMain(){
         const parser = parse({
             delimiter: '\t',
         });
-        console.log(outputFiles)
         fs.createReadStream(`${outputFolder}/${file.split(".")[0]}.txt`).pipe(parser);
         parser.on('readable', function(){
             let record;

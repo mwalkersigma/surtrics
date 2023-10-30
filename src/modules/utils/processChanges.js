@@ -17,7 +17,6 @@ export default function processChanges(changes) {
     }
 
     for(let change of changeList) {
-        console.log(change.filePath)
         let file = fs.readFileSync(change.filePath);
         file = JSON.parse(`${file}`);
         file[change.key] = change.value;

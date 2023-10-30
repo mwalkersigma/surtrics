@@ -24,7 +24,6 @@ export default async function handler(req, res) {
     let date = body.date;
     date = new Date(date);
     let [startWeekString, endOfWeekString] = getStartAndEndWeekString(date);
-    console.log(startWeekString, endOfWeekString)
     return db.query(query, [startWeekString, endOfWeekString])
         .then((result) => {
             res.status(200).json(result.rows)

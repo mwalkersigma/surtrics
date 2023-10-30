@@ -185,7 +185,6 @@ const MonthlyView = () => {
         </Container>
     );
     let cardData = monthData.map(({transactions}) => +transactions);
-    console.log(monthData, cardData)
     let margin = "3rem";
     return (
         <Container>

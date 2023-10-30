@@ -3,14 +3,14 @@ import db from "../../../db/index.js";
 
 function handler (req,res) {
     if(req.method === "GET") {
-        console.log("get")
         return db.query(`
             SELECT
                 goal_amount
             FROM
                 surtrics.surplus_goal_data
             ORDER BY
-                goal_date DESC
+                goal_date DESC,
+                goal_id DESC
             LIMIT 1;
         `)
         .then(({rows}) => {
@@ -22,10 +22,6 @@ function handler (req,res) {
         let body = req.body;
         if(typeof body ==="string") body = JSON.parse(body);
         const {date} = body;
-        let dateString = new Date(date);
-        if(dateString.toString() === "Invalid Date") return res.status(400).json({error:"Invalid date"});
-        // yyyy-mm-dd
-        dateString = dateString.toISOString().split("T")[0];
         return db.query(`
             SELECT
                 *
@@ -34,9 +30,27 @@ function handler (req,res) {
             WHERE
                 goal_date < $1
             ORDER BY
-                ABS(goal_date - $1)
+                ABS(goal_date - $1),
+                goal_id DESC
             LIMIT 1;
-        `,[dateString])
+        `,[date])
+            .then(({rows}) =>{
+                if(rows.length === 0){
+                    return db.query(`
+                        SELECT
+                            *
+                        FROM
+                            surtrics.surplus_goal_data
+                        ORDER BY
+                            ABS(goal_date - $1)
+                        LIMIT 1;
+                    `,[date])
+                        .then(({rows}) => {
+                            return res.status(200).json(rows[0])
+                        })
+                }
+                return res.status(200).json(rows[0])
+            })
     }
     if(req.method === "PUT") {
         return serverAdminWrapper(async (req) => {
@@ -46,8 +60,14 @@ function handler (req,res) {
             return db.query(`
         INSERT INTO surtrics.surplus_goal_data (goal_date, goal_amount, user_who_submitted)
         VALUES ($1,$2,$3);
-        `,[goal_date,goal_amount,user_who_submitted])
+        `,[goal_date,+goal_amount,user_who_submitted])
         })(req,res)
+            .then(() => {
+                return res.status(200).send("Goal Updated")
+            })
+            .catch((error) => {
+                return res.status(500).send(error.message)
+            })
     }
 }
 

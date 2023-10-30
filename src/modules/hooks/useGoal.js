@@ -10,10 +10,6 @@ the goal has been updated
 
 import {useEffect, useRef, useState} from "react";
 
-function passThroughLogger (data) {
-    console.log(data);
-    return data;
-}
 
 async function getGoal () {
     return await fetch(`${window.location.origin}/api/admin/goal`)
@@ -22,7 +18,7 @@ async function getGoal () {
 async function getGoalForDate (date) {
     return await fetch(`${window.location.origin}/api/admin/goal`,{
         method:"POST",
-        body:JSON.stringify({date})
+        body:JSON.stringify(date)
     })
         .then(res => res.json())
 
@@ -59,6 +55,5 @@ export default function useGoal (options) {
             .catch((error) => console.log(error));
         return () => clearInterval(intervalRef.current);
     }, [options]);
-    console.log(goal);
     return goal
 }

@@ -17,7 +17,6 @@ const query = `
 `
 
 export default async function handler(req, res) {
-    console.log(req.body)
     if(typeof req.body === "string") req.body = JSON.parse(req.body);
     let body = req.body;
     let date = body.date;

@@ -18,7 +18,6 @@ export default function handler (req,res) {
             AND a.quantity = b.quantity;
     `)
         .then(() => {
-            console.log("Success")
             res.status(200).json("Success")
         })
 

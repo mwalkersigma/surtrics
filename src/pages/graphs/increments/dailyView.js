@@ -43,7 +43,6 @@ const DailyView = () => {
         </Container>
     );
     dailyData = dailyData.map(({count}) => +count);
-    console.log(dailyData)
     let margin = "3rem";
     return (
         <Container>
@@ -55,7 +54,7 @@ const DailyView = () => {
             />
             <Row>
                 <Col sm={10} className={`themed-drop-shadow ${theme}`} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}} >
-                    <LineGraph title={"Daily View"} height={150} dailyData={dailyData} theme={theme} />
+                    <LineGraph title={"Daily View"} height={150} date={date} dailyData={dailyData} theme={theme} />
                 </Col>
                 <Col sm={2}>
                     <InfoCard style={{marginBottom:margin}}  title={"Total"} theme={theme}>

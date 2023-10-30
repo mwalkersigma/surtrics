@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS surtrics.surplus_goal_data (
 
 INSERT INTO surtrics.surplus_goal_data (goal_date, goal_amount, user_who_submitted)
 VALUES
+    ('2022-01-01', 1450, 'Michael Walker'),
     ('2023-01-01', 1200, 'Michael Walker'),
     ('2023-03-05', 1546, 'Michael Walker'),
     ('2023-06-04', 1933, 'Michael Walker'),

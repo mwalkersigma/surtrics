@@ -24,10 +24,7 @@ function RoleWrapper({children,altRoles,invisible}){
     if(status === "error") return <Container><h2>Error</h2></Container>;
     if(!session)return <Container><h2>Not logged in</h2></Container>;
     if(Array.isArray(altRoles)) {
-        console.log(altRoles);
         let hasAuthorizedRole = altRoles.map(role => isRole(role)(session)).includes(true);
-        console.log(hasAuthorizedRole)
-        console.log(isAdmin(session))
         if (!isAdmin(session) && !hasAuthorizedRole) return <Container>
             <h2 className={"text-center"}>
                 Not an Authorized User.

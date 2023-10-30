@@ -4,7 +4,6 @@ import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
-import makeDateArray from "../../../modules/utils/makeDateArray";
 import {ThemeContext} from "../../layout";
 import {colorScheme} from "../../_app";
 import {Chart} from "react-chartjs-2";
@@ -97,7 +96,7 @@ const MonthlyView = () => {
     const max = Object
         .values(dataForGraph)
         .map(arr=>arr.map(item=>+item))
-        .reduce((acc,cur,currentIndex)=>{
+        .reduce((acc,cur)=>{
             cur.forEach((item,i)=>{
                 acc[i] += item;
             })
@@ -123,7 +122,6 @@ const MonthlyView = () => {
        })
         return acc;
     },{});
-    console.log(dateArr,Object.values(totalData))
     const options = {
         plugins:{
             tooltip:{

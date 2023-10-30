@@ -32,6 +32,7 @@ const EventReporting = () => {
      * @property {string} user_who_submitted
      */
     const {data: session} = useSession();
+    const userName = session?.user?.name;
     const [otherCategory,setOtherCategory] = useState({
         name:"",
         checked:false
@@ -70,7 +71,7 @@ const EventReporting = () => {
     }
 
 
-    const userName = session?.user?.name;
+
     return (
         <RoleWrapper altRoles={["bsa","surplus director"]}>
             <Container>

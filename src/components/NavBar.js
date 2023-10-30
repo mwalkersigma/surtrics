@@ -80,7 +80,7 @@ export default function NavBar({theme,setTheme,setDay}){
                             <RoleWrapper invisible altRoles={["surplus director"]}>
                                 <Nav.Link href="/surplus/BigCommerceEntry">Quick Books</Nav.Link>
                             </RoleWrapper>
-                            <Nav.Link href={"/admin/eventReporting"}>Submit Event</Nav.Link>
+                            <Nav.Link href={"/BSA/eventReporting"}>Submit Event</Nav.Link>
                         </NavDropdown>
                     </RoleWrapper>
 

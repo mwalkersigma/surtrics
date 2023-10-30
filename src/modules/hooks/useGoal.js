@@ -10,34 +10,55 @@ the goal has been updated
 
 import {useEffect, useRef, useState} from "react";
 
+function passThroughLogger (data) {
+    console.log(data);
+    return data;
+}
+
 async function getGoal () {
-    return await fetch(`${window.location.origin}/api/getGoal`)
+    return await fetch(`${window.location.origin}/api/admin/goal`)
         .then(res => res.json())
+}
+async function getGoalForDate (date) {
+    return await fetch(`${window.location.origin}/api/admin/goal`,{
+        method:"POST",
+        body:JSON.stringify({date})
+    })
+        .then(res => res.json())
+
+}
+function roundUp(num){
+    return Math.ceil(num/10)*10;
 }
 function isCorrectTime () {
     return new Date().getHours() === 5;
 }
 
-export default function useGoal () {
+export default function useGoal (options) {
     const [goal,setGoal] = useState(0);
     const intervalRef = useRef(null);
+    options = JSON.stringify(options || {});
+
     useEffect(() => {
-        const getGoalData = async () => {
-            const { goal } = await getGoal();
-            setGoal(goal);
+        let effectOptions = JSON.parse(options);
+        function updateGoal(amount){
+            if(effectOptions?.['round'] === false) return setGoal(amount);
+            return setGoal(roundUp(amount/5));
         }
-        getGoalData()
-            .catch((error) => console.log(error))
-
-        intervalRef.current = setInterval(async () => {
-            if(isCorrectTime()){
-                const { goal } = await getGoal();
-                setGoal(goal);
-            }
-        }, 1000 * 60)
-        return () => clearInterval(intervalRef.current)
-
-
-    }, []);
+        let goalFunc = effectOptions?.date ? getGoalForDate : getGoal;
+        goalFunc(effectOptions)
+            .then(({goal_amount}) => updateGoal(goal_amount))
+            .then(()=>{
+                intervalRef.current = setInterval(async () => {
+                    if(isCorrectTime()) {
+                        let {goal_amount} = await goalFunc(effectOptions);
+                        updateGoal(goal_amount)
+                    }
+                }, 1000 * 60)
+            })
+            .catch((error) => console.log(error));
+        return () => clearInterval(intervalRef.current);
+    }, [options]);
+    console.log(goal);
     return goal
 }

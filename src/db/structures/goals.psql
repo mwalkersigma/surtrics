@@ -1,0 +1,41 @@
+-- Table: surtrics.surplus_event_data;
+DROP TABLE IF EXISTS surtrics.surplus_goal_data;
+CREATE TABLE IF NOT EXISTS surtrics.surplus_goal_data (
+    goal_id BIGSERIAL PRIMARY KEY,
+    goal_date DATE NOT NULL,
+    goal_amount INTEGER NOT NULL,
+    user_who_submitted VARCHAR(255) NOT NULL
+);
+
+INSERT INTO surtrics.surplus_goal_data (goal_date, goal_amount, user_who_submitted)
+VALUES
+    ('2023-01-01', 1200, 'Michael Walker'),
+    ('2023-03-05', 1546, 'Michael Walker'),
+    ('2023-06-04', 1933, 'Michael Walker'),
+    ('2023-08-06', 2320, 'Michael Walker'),
+    ('2023-09-03', 2706, 'Michael Walker');
+
+SELECT
+    *
+FROM
+    surtrics.surplus_goal_data;
+
+-- SELECT MOST RECENT GOAL
+SELECT
+    *
+FROM
+    surtrics.surplus_goal_data
+ORDER BY
+    goal_date DESC
+LIMIT 1;
+
+-- SELECT THE GOAL NEAREST TO DATE AND THE GOAL DATE IS BEFORE THE DATE
+SELECT
+    *
+FROM
+    surtrics.surplus_goal_data
+WHERE
+    goal_date < '2023-10-30'
+ORDER BY
+    ABS(goal_date - '2023-10-30')
+LIMIT 1;

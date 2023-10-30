@@ -56,8 +56,8 @@ const ErrorReporting = () => {
             setLoading(false);
             return setServerMessage(createErrorMessage("Please fill out all fields"))
         }
-        fetch(`${window.location.origin}/api/admin/errorReporting`,{
-            method:"POST",
+        fetch(`${window.location.origin}/api/admin/error`,{
+            method:"PUT",
             body:state
         })
         .then((res)=>res.text())

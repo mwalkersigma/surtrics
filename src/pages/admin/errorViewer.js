@@ -29,7 +29,7 @@ const ErrorViewer = () => {
                 body:JSON.stringify({date})
             }
         }
-        fetch(`${window.location.origin}/api/admin/getErrorsByReporter`,options)
+        fetch(`${window.location.origin}/api/admin/error`,options)
             .then((res)=>res.json())
             .then(setServerData);
 
@@ -40,8 +40,8 @@ const ErrorViewer = () => {
     }
     function removeEntry (e) {
         e.preventDefault();
-        return(id)=>fetch(`${window.location.origin}/api/admin/removeError`,{
-            method:"POST",
+        return(id)=>fetch(`${window.location.origin}/api/admin/error`,{
+            method:"DELETE",
             body:JSON.stringify({id})
         })
             .then((res)=>res.json())

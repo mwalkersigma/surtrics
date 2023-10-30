@@ -1,7 +1,7 @@
 import {auth} from "../../pages/api/auth/[...nextauth]";
 import fs from "fs/promises";
 
-export default function serverAdminWrapper( cb , options ) {
+export default function serverAdminWrapper( cb , ...options ) {
     return async (req,res) => {
         try {
             const session = await auth(req, res);
@@ -16,9 +16,7 @@ export default function serverAdminWrapper( cb , options ) {
             }
             let authorizedRoles = ["admin"];
             if(options){
-                if(typeof options === "string"){
-                    authorizedRoles.push(options)
-                }
+                authorizedRoles = authorizedRoles.concat(options);
             }
             let isAuthorized = user.roles.map(role=>authorizedRoles.includes(role)).includes(true);
             if(!isAuthorized){
@@ -30,18 +28,3 @@ export default function serverAdminWrapper( cb , options ) {
         }
     }
 }
-
-
-
-
-
-
-
-
-/*
-
-            // adminList = adminList.map(admin=> admin.toLowerCase());
-            // if (!adminList.includes(session.user.email.toLowerCase())) {
-            //     return "You must be an admin to use this route."
-            // }
- */

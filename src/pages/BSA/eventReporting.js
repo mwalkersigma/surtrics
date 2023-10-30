@@ -37,11 +37,11 @@ const EventReporting = () => {
         checked:false
     });
     const [categoryState,toggleCategory] = useCategories([
-        "Increments",
-        "Quantity",
-        "Approvals",
-        "Errors",
-        "Warehouse"
+        "Marketing",
+        "Processing",
+        "Website",
+        "Warehouse",
+        "Pricing"
     ])
     const [eventTitle,setEventTitle] = useState("");
     const [eventDate,setEventDate] = useState(formatDateWithZeros(new Date()));
@@ -72,7 +72,7 @@ const EventReporting = () => {
 
     const userName = session?.user?.name;
     return (
-        <RoleWrapper altRoles={["surplus director"]}>
+        <RoleWrapper altRoles={["bsa","surplus director"]}>
             <Container>
                 <h1>Event Reporting</h1>
                 <Form>

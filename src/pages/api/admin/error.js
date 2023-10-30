@@ -3,7 +3,7 @@ import {subBusinessDays} from "date-fns";
 import Logger from "sigma-logger";
 import db from "../../../db/index";
 
-async function getHandler(req,res){
+async function getHandler(req,res,options){
     return serverAdminWrapper(async (req,res,{user:{email}}) => {
         let queryString = `
         SELECT
@@ -16,9 +16,9 @@ async function getHandler(req,res){
         const params = [email];
         const query = await db.query(queryString, params);
         return query.rows;
-    })(req,res)
+    },options)(req,res)
 }
-async function postHandler(req,res){
+async function postHandler(req,res,options){
     return serverAdminWrapper(async (req,res,{user:{email}}) => {
         let queryString = `
         SELECT
@@ -37,9 +37,9 @@ async function postHandler(req,res){
         }
         const query = await db.query(queryString, params);
         return query.rows;
-    })(req,res)
+    },options)(req,res)
 }
-async function putHandler(req,res){
+async function putHandler(req,res,options){
     return await serverAdminWrapper(async (req) => {
         const body = JSON.parse(req.body);
         const {user,reason,notes,session:browserSession} = body;
@@ -55,10 +55,10 @@ async function putHandler(req,res){
         const response = `Error Reporting: User: ${sessionUser.email} reported an error for ${user} with reason: ${reason} and notes: ${notes}`
         Logger.log(response);
         return response
-    })(req,res)
+    },options)(req,res)
 }
 
-async function deleteHandler(req,res){
+async function deleteHandler(req,res,options){
     return serverAdminWrapper(async (req) => {
         const body = JSON.parse(req.body);
         const {id} = body;
@@ -69,7 +69,7 @@ async function deleteHandler(req,res){
                 id = $1;
         `,[id]);
         return `Success! ID ${id} was removed.`;
-    })(req,res)
+    },options)(req,res)
 }
 
 export default function handler(req,res) {
@@ -77,16 +77,16 @@ export default function handler(req,res) {
     let call;
     switch (method) {
         case "GET":
-            call = getHandler(req,res);
+            call = getHandler(req,res,"bsa");
             break;
         case "POST":
-            call = postHandler(req,res);
+            call = postHandler(req,res,"bsa");
             break;
         case "PUT":
-            call = putHandler(req,res);
+            call = putHandler(req,res,"bsa");
             break;
         case "DELETE":
-            call = deleteHandler(req,res);
+            call = deleteHandler(req,res,"bsa");
             break;
         default:
             call = Promise.resolve({error: "Method not allowed"});

@@ -3,7 +3,6 @@ import db from "../../../db/index.js";
 
 export default function handler (req,res) {
     return serverAdminWrapper(async (req) => {
-        console.log("req.body",req.body);
         let body = req.body;
         if(typeof body ==="string") body = JSON.parse(body);
         const {event_name,event_date,event_notes,affected_categories,user_who_submitted} = body;
@@ -12,10 +11,10 @@ export default function handler (req,res) {
         VALUES ($1,$2,$3,$4,$5);
         `,[event_name,event_date,event_notes,affected_categories,user_who_submitted])
     },"bsa","surplus director")(req,res)
-        .then(response=>{
-            console.log("response",response);
-            return res.status(200).json(response)
+        .then((response)=>{
+            let message = "Success! Event was submitted."
+            res.status(200).json({message,response})
         })
-        .catch((err)=>res.status(500).json({err}))
+        .catch((err)=>res.status(500).json({message:"Error",err}))
 
 }

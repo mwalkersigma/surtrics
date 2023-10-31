@@ -30,3 +30,8 @@ FROM
     surtrics.surplus_event_data
 WHERE
     'Warehouse' = ANY(affected_categories);
+
+SELECT
+    *
+FROM
+    surtrics.surplus_event_data

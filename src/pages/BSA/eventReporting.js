@@ -8,6 +8,10 @@ import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
 import {useSession} from "next-auth/react";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
+import ToastContainerWrapper from "../../components/toast/toastContainerWrapper";
+import useToastContainer from "../../modules/hooks/useToast";
+import createSuccessMessage from "../../modules/serverMessageFactories/createSuccessMessage";
+import createErrorMessage from "../../modules/serverMessageFactories/createErrorMessage";
 
 function useCategories(list){
     let categories = {};
@@ -18,7 +22,10 @@ function useCategories(list){
     function toggleCategory(category){
         setCategoryState({...categoryState,[category]:!categoryState[category]})
     }
-    return [categoryState,toggleCategory];
+    function resetCategories(){
+        setCategoryState(categories);
+    }
+    return [categoryState,toggleCategory,resetCategories];
 }
 
 
@@ -32,12 +39,13 @@ const EventReporting = () => {
      * @property {string} user_who_submitted
      */
     const {data: session} = useSession();
+    const [serverMessages, setServerMessage, removeServerMessage] = useToastContainer();
     const userName = session?.user?.name;
     const [otherCategory,setOtherCategory] = useState({
         name:"",
         checked:false
     });
-    const [categoryState,toggleCategory] = useCategories([
+    const [categoryState,toggleCategory,reset] = useCategories([
         "Marketing",
         "Processing",
         "Website",
@@ -67,13 +75,31 @@ const EventReporting = () => {
             method:"POST",
             body:JSON.stringify(event)
         })
-            .then((res)=>res.text())
+            .then((res)=>res.json())
+            .then(({message})=>{
+                setServerMessage(createSuccessMessage(message))
+            })
+            .catch((err)=>{
+                setServerMessage(createErrorMessage(err))
+            })
+            .finally(()=>{
+                setEventTitle("");
+                setEventDate(formatDateWithZeros(new Date()));
+                setEventNotes("");
+                reset();
+                setOtherCategory({
+                    name:"",
+                    checked:false
+                })
+            })
+
     }
 
 
 
     return (
         <RoleWrapper altRoles={["bsa","surplus director"]}>
+            <ToastContainerWrapper serverMessages={serverMessages} removeServerMessages={removeServerMessage}/>
             <Container>
                 <h1>Event Reporting</h1>
                 <Form>
@@ -81,7 +107,12 @@ const EventReporting = () => {
                         <Form.Group as={Col}>
                             <Form.Label>Event Name </Form.Label>
                             <Form.Text> This is meant to be a short title</Form.Text>
-                            <Form.Control onChange={(e)=>setEventTitle(e.target.value)} type={"text"} placeholder={"Event Title"}/>
+                            <Form.Control
+                                onChange={(e)=>setEventTitle(e.target.value)}
+                                value={eventTitle}
+                                type={"text"}
+                                placeholder={"Event Title"}
+                            />
                         </Form.Group>
                         <Form.Group as={Col}>
                             <Form.Label>Event Date</Form.Label>
@@ -126,7 +157,12 @@ const EventReporting = () => {
                     <Row className={"my-3"}>
                         <Form.Group as={Col}>
                             <Form.Label>Event Notes</Form.Label>
-                            <Form.Control onChange={(e)=>setEventNotes(e.target.value)} as={"textarea"} placeholder={"Event Notes"}/>
+                            <Form.Control
+                                onChange={(e)=>setEventNotes(e.target.value)}
+                                value={eventNotes}
+                                as={"textarea"}
+                                placeholder={"Event Notes"}
+                            />
                         </Form.Group>
                     </Row>
                     <Row>

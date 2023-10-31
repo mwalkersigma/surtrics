@@ -75,18 +75,19 @@ async function deleteHandler(req,res,options){
 export default function handler(req,res) {
     let {method} = req;
     let call;
+    let authorizedRoles = ["surplus director","bsa"]
     switch (method) {
         case "GET":
-            call = getHandler(req,res,"bsa");
+            call = getHandler(req,res,...authorizedRoles);
             break;
         case "POST":
-            call = postHandler(req,res,"bsa");
+            call = postHandler(req,res,...authorizedRoles);
             break;
         case "PUT":
-            call = putHandler(req,res,"bsa");
+            call = putHandler(req,res,...authorizedRoles);
             break;
         case "DELETE":
-            call = deleteHandler(req,res,"bsa");
+            call = deleteHandler(req,res,...authorizedRoles);
             break;
         default:
             call = Promise.resolve({error: "Method not allowed"});

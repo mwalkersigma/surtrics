@@ -72,7 +72,7 @@ const ErrorReporting = () => {
     }
 
     return (
-        <RoleWrapper altRoles={"surplus director"}>
+        <RoleWrapper altRoles={["surplus director","bsa"]}>
             <ToastContainerWrapper serverMessages={serverMessages} removeServerMessages={removeServerMessage}/>
                 <Container>
                     <h1>Error Reporting</h1>

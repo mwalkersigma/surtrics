@@ -52,6 +52,15 @@ VALUES
         ('10/3/22', 2786659, 16336  ,'Michael Walker'),
         ('10/10/22',2453347, 15786  ,'Michael Walker'),
         ('10/17/22',2523965, 17790  ,'Michael Walker'),
+        ('10/31/22' , 2565893, 18132 ,'Michael Walker'),
+        ('11/7/22'  , 2443148, 17973 ,'Michael Walker'),
+        ('11/14/22' , 2480652, 17854 ,'Michael Walker'),
+        ('11/21/22' , 2042362, 15140 ,'Michael Walker'),
+        ('11/28/22' , 2368419, 17606 ,'Michael Walker'),
+        ('12/5/22'  , 2410089, 17407 ,'Michael Walker'),
+        ('12/12/22' , 2357579, 16333 ,'Michael Walker'),
+        ('12/19/22' , 2192241, 13728 ,'Michael Walker'),
+        ('12/26/22' , 2024288, 12017 ,'Michael Walker'),
         ('1/2/23' ,  2246233, 15076 ,'Michael Walker'),
         ('1/9/23' ,  2488592, 16260 ,'Michael Walker'),
         ('1/16/23', 3784029, 19756  ,'Michael Walker'),
@@ -93,7 +102,8 @@ VALUES
         ('9/25/23', 3502961, 11542  ,'Michael Walker'),
         ('10/2/23', 3034194, 10265  ,'Michael Walker'),
         ('10/9/23' ,2980166, 11425  ,'Michael Walker'),
-        ('10/16/23',3198201, 10563  ,'Michael Walker');
+        ('10/16/23',3198201, 10563  ,'Michael Walker'),
+        ('10/23/23', 2955445, 10784, 'Michael Walker');
 
 
 SELECT * FROM surtrics.surplus_ebay_data;

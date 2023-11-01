@@ -1,13 +1,17 @@
-
+DROP TABLE IF EXISTS surtrics.big_commerce_data;
 DROP TABLE IF EXISTS surtrics.surplus_big_commerce_data;
-CREATE TABLE IF NOT EXISTS surtrics.big_commerce_data (
+CREATE TABLE IF NOT EXISTS surtrics.surplus_big_commerce_data (
     entry_id BIGSERIAL PRIMARY KEY,
     visits INTEGER,
     shopped INTEGER,
     add_to_cart INTEGER,
-    purchased INTEGER,
-    sales INTEGER,
     web_leads INTEGER,
     date_for_week DATE,
     user_who_entered VARCHAR(255)
 );
+
+
+SELECT
+    *
+FROM
+    surtrics.surplus_big_commerce_data

@@ -14,19 +14,10 @@ import createSuccessMessage from "../../modules/serverMessageFactories/createSuc
 import useToastContainer from "../../modules/hooks/useToast";
 import ToastContainerWrapper from "../../components/toast/toastContainerWrapper";
 import createErrorMessage from "../../modules/serverMessageFactories/createErrorMessage";
+import useBasicForm from "../../modules/hooks/useBasicForm";
 
 
-const useBasicForm = (initialState) => {
-    const [formState, setFormState] = useState(initialState);
-    const handleChange = (key) => (e) => {
-        setFormState({...formState, [key]: e.target.value});
-    };
-    const handleReset = () => {
-        setFormState(initialState);
-    }
-    return [formState, handleChange, handleReset];
 
-}
 const EbayEntry = () => {
     const {data: session} = useSession();
     const userName = session?.user?.name;

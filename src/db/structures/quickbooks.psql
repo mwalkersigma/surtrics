@@ -1,0 +1,14 @@
+DROP TABLE IF EXISTS surtrics.surplus_quickbooks_data;
+CREATE TABLE IF NOT EXISTS surtrics.surplus_quickbooks_data (
+    po_id bigserial NOT NULL,
+    po_name varchar(255) NOT NULL,
+    po_number varchar(255),
+    po_date date NOT NULL,
+    purchase_type varchar(255),
+    purchase_total numeric(10,2) NOT NULL,
+    user_who_submitted varchar(255) NOT NULL
+);
+
+SELECT * FROM surtrics.surplus_quickbooks_data;
+
+

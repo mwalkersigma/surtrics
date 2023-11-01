@@ -79,7 +79,7 @@ export default function NavBar({theme,setTheme,setDay}){
                                 <Nav.Link href="/BSA/EbayEntry">Ebay</Nav.Link>
                             </RoleWrapper>
                             <RoleWrapper invisible altRoles={["surplus director"]}>
-                                <Nav.Link href="/surplus/BigCommerceEntry">Quick Books</Nav.Link>
+                                <Nav.Link href="/BSA/quickBooks">Quick Books</Nav.Link>
                             </RoleWrapper>
                             <NavDropdown.Divider/>
                             <Nav.Link href={"/BSA/eventReporting"}>Submit Event</Nav.Link>
@@ -91,7 +91,6 @@ export default function NavBar({theme,setTheme,setDay}){
                     <RoleWrapper invisible altRoles={"surplus director"}>
                         <NavDropdown title={"Admin"} id="basic-nav-dropdown">
                             <Nav.Link href={"/admin"}>Admin</Nav.Link>
-
                             <Nav.Link href={"/admin/updateGoal"}>Update Goal</Nav.Link>
                         </NavDropdown>
                     </RoleWrapper>

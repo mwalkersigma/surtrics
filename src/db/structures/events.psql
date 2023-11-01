@@ -34,4 +34,6 @@ WHERE
 SELECT
     *
 FROM
-    surtrics.surplus_event_data
+    surtrics.surplus_event_data;
+
+-- delete id 3, 4

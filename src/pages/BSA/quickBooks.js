@@ -10,6 +10,8 @@ import useToastContainer from "../../modules/hooks/useToast";
 import ToastContainerWrapper from "../../components/toast/toastContainerWrapper";
 import createSuccessMessage from "../../modules/serverMessageFactories/createSuccessMessage";
 import createErrorMessage from "../../modules/serverMessageFactories/createErrorMessage";
+
+
 // purchase types are: auction, no list , targetted;
 const QuickBooks = () => {
     const {data: session} = useSession();
@@ -21,14 +23,10 @@ const QuickBooks = () => {
         date_of_sale: "",
         purchase_type: "",
         total_amount: 0,
-        user_who_submitted: "",
     });
 
     const [serverMessages, setServerMessage, removeServerMessage] = useToastContainer();
 
-    useEffect(() => {
-        handleChange("user_who_submitted")({target:{value:userName}});
-    }, [userName,formState.user_who_submitted]);
 
     function handleSubmit () {
         fetch(`${window.location.origin}/api/dataEntry/quickBooks`,{
@@ -108,7 +106,7 @@ const QuickBooks = () => {
                 <Row className={"my-3"}>
                     <Form.Group as={Col} controlId={"form_control_user_who_submitted"}>
                         <Form.Label>User Who Submitted</Form.Label>
-                        <Form.Control type={"text"} disabled readOnly placeholder={formState.user_who_submitted}/>
+                        <Form.Control type={"text"} disabled readOnly placeholder={userName}/>
                     </Form.Group>
                     <Col>
                         <Stack className={"justify-content-end align-items-lg-stretch h-100"}>

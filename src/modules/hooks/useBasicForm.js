@@ -2,6 +2,7 @@ import {useState} from "react";
 
 //remove leading 0
 function removeLeadingZero(str){
+    if(!str){return str}
     if(typeof str === 'number'){
         str = str.toString();
     }

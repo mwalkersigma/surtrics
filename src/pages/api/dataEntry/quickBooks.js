@@ -1,5 +1,6 @@
 import router from "../../../modules/utils/requestRouter";
 import db from "../../../db/index"
+import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
 
 function parseBody(req) {
     let body = req.body;
@@ -31,11 +32,43 @@ function putHandler(req, res) {
         });
 
 }
+function getHandler(req, res) {
+    return serverAdminWrapper(async (req, res, {user:{name}}) => {
+    return db.query(`
+        SELECT * FROM surtrics.surplus_quickbooks_data
+        WHERE user_who_submitted = $1
+    `,[name])
+    })(req,res)
+        .then(({rows}) => {
+            res.status(200).json(rows);
+        })
+        .catch((error) => {
+            res.status(500).json({error});
+        });
+}
 
+function deleteHandler(req, res) {
+    return serverAdminWrapper((req,res)=> {
+        return db.query(`
+            DELETE
+            FROM surtrics.surplus_quickbooks_data
+            WHERE po_id = $1
+        `, [parseBody(req).id])
+            .then(() => {
+                res.status(200).json({message: "Successfully deleted data"});
+            })
+            .catch((error) => {
+                res.status(500).json({error});
+            });
+    })(req,res)
+
+}
 
 export default function handler (req, res) {
     return router({
         PUT: putHandler,
+        GET: getHandler,
+        DELETE: deleteHandler,
     })(req, res)
 
 }

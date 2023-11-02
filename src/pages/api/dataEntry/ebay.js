@@ -19,8 +19,7 @@ function putHandler(req, res) {
             VALUES ($1, $2, $3, $4)
         `, [impressions, page_views, date_for_week, name])
     })(req,res)
-        .then((response) => {
-            console.l
+        .then(() => {
             res.status(200).json({message: "Successfully added data"});
         })
         .catch((error) => {

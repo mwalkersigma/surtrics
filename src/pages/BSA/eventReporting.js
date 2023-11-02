@@ -71,8 +71,8 @@ const EventReporting = () => {
             user_who_submitted:userName,
             session
         }
-        fetch(`${window.location.origin}/api/admin/submitEvent`,{
-            method:"POST",
+        fetch(`${window.location.origin}/api/admin/event`,{
+            method:"PUT",
             body:JSON.stringify(event)
         })
             .then((res)=>res.json())

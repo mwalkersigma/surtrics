@@ -1,11 +1,16 @@
 import {useEffect, useRef, useState} from "react";
 
-export default function useUpdates(route, routeOptions){
+export default function useUpdates(route, routeOptions) {
     const interval = routeOptions?.interval || 1000 * 60;
     const intervalRef = useRef(null);
     const [serverData, setServerData] = useState([])
 
-    routeOptions = JSON.stringify(routeOptions || {})
+    if (routeOptions) {
+        routeOptions = JSON.stringify(routeOptions || {})
+    }
+    else {
+        routeOptions = false
+    }
     useEffect(() => {
         let options = {};
         if(routeOptions){

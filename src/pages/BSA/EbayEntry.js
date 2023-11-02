@@ -26,11 +26,7 @@ const EbayEntry = () => {
         impressions: 0,
         page_views: 0,
         date_for_week: formatDateWithZeros(addDays(findStartOfWeek(new Date()),1)),
-        user_who_submitted: "",
     })
-    useEffect(() => {
-        handleChange("user_who_submitted")({target:{value:userName}});
-    }, [userName]);
 
     function handleDate(e){
         handleChange("date_for_week")
@@ -70,7 +66,7 @@ const EbayEntry = () => {
                             <Form.Label>Impression</Form.Label>
                             <Form.Control
                                 type={"number"}
-                                placeholder={"Ebay Impression"}
+                                placeholder={0}
                                 value={formState.impressions}
                                 onChange={handleChange("impressions")}
                             />
@@ -79,7 +75,7 @@ const EbayEntry = () => {
                             <Form.Label>Page Views</Form.Label>
                             <Form.Control
                                 type={"number"}
-                                placeholder={"Ebay Page Views"}
+                                placeholder={0}
                                 value={formState.page_views}
                                 onChange={handleChange("page_views")}
                             />
@@ -100,7 +96,7 @@ const EbayEntry = () => {
                                 type={"text"}
                                 disabled
                                 readOnly
-                                placeholder={formState.user_who_submitted}
+                                placeholder={userName}
                             />
                         </Form.Group>
                         <Col>

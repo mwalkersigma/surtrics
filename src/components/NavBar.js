@@ -85,7 +85,7 @@ export default function NavBar({theme,setTheme,setDay}){
                             <Nav.Link href={"/BSA/eventReporting"}>Submit Event</Nav.Link>
                             <NavDropdown.Divider/>
                             <Nav.Link href={"/admin/errorReporting"}>Submit Error</Nav.Link>
-                            <Nav.Link href={"/admin/errorViewer"}>Error View</Nav.Link>
+                            <Nav.Link href={"/viewers/error"}>Error View</Nav.Link>
                         </NavDropdown>
                     </RoleWrapper>
                     <RoleWrapper invisible altRoles={"surplus director"}>

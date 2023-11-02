@@ -20,6 +20,7 @@
     "decompress": "^4.2.1",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.19",
+    "js-convert-case": "^4.2.0",
     "next": "13.4.12",
     "next-auth": "^4.23.2",
     "nodejs-file-downloader": "^4.12.1",

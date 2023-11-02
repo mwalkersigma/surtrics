@@ -16,7 +16,7 @@ import RoleWrapper from "../../components/RoleWrapper";
 
 
 
-const ErrorViewer = () => {
+const Error = () => {
     const [date, setDate] = useState(false);
     const [serverData, setServerData] = useState([]);
     const [serverMessage, setServerMessage, removeServerMessage] = useToastContainer();
@@ -113,4 +113,4 @@ const ErrorViewer = () => {
     );
 };
 
-export default ErrorViewer;
+export default Error;

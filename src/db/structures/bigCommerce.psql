@@ -9,6 +9,22 @@ CREATE TABLE IF NOT EXISTS surtrics.surplus_big_commerce_data (
     user_who_entered VARCHAR(255)
 );
 
+INSERT INTO surtrics.surplus_big_commerce_data (visits, shopped, add_to_cart, web_leads, date_for_week, user_who_entered)
+VALUES (100, 50, 25, 10, '2019-01-01', 'test_user');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 SELECT
     *

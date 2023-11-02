@@ -4,27 +4,107 @@ CREATE TABLE IF NOT EXISTS surtrics.surplus_big_commerce_data (
     visits INTEGER,
     shopped INTEGER,
     add_to_cart INTEGER,
-    web_leads INTEGER,
     date_for_week DATE,
     user_who_entered VARCHAR(255)
 );
 
-INSERT INTO surtrics.surplus_big_commerce_data (visits, shopped, add_to_cart, web_leads, date_for_week, user_who_entered)
-VALUES (100, 50, 25, 10, '2019-01-01', 'test_user');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+INSERT INTO surtrics.surplus_big_commerce_data ( visits, shopped, add_to_cart, date_for_week, user_who_entered)
+VALUES
+    (2816, 1694, 102,  '1/3/22', 'Michael Walker'),
+    (3004, 1871, 182,  '1/10/22', 'Michael Walker'),
+    (3182, 1980, 107,  '1/17/22', 'Michael Walker'),
+    (3192, 2061, 78,   '1/24/22', 'Michael Walker'),
+    (3080, 2014, 100,  '1/31/22', 'Michael Walker'),
+    (3389, 2222, 108,  '2/7/22', 'Michael Walker'),
+    (3385, 2259, 165,  '2/14/22', 'Michael Walker'),
+    (3289, 2149, 125,  '2/21/22', 'Michael Walker'),
+    (2909, 1928, 79,   '2/28/22', 'Michael Walker'),
+    (3139, 2073, 7209, '3/7/22', 'Michael Walker'),
+    (3310, 2055, 82,   '3/14/22', 'Michael Walker'),
+    (3504, 2260, 133,  '3/21/22', 'Michael Walker'),
+    (3654, 2288, 85,   '3/28/22', 'Michael Walker'),
+    (3103, 1674, 1563, '4/4/22', 'Michael Walker'),
+    (3127, 1726, 477,  '4/11/22', 'Michael Walker'),
+    (4250, 2119, 483,  '4/18/22', 'Michael Walker'),
+    (4107, 2226, 108,  '4/25/22', 'Michael Walker'),
+    (3286, 1963, 177,  '5/2/22', 'Michael Walker'),
+    (5698, 2291, 106,  '5/9/22', 'Michael Walker'),
+    (4621, 2203, 205,  '5/16/22', 'Michael Walker'),
+    (3300, 2136, 135,  '5/23/22', 'Michael Walker'),
+    (3327, 1916, 59,   '5/30/22', 'Michael Walker'),
+    (3474, 2199, 75,   '6/6/22', 'Michael Walker'),
+    (3656, 2083, 75,   '6/13/22', 'Michael Walker'),
+    (3011, 2266, 79,   '6/20/22', 'Michael Walker'),
+    (3949, 2578, 75,   '6/27/22', 'Michael Walker'),
+    (3243, 2425, 89,   '7/4/22', 'Michael Walker'),
+    (3692, 2712, 93,   '7/11/22', 'Michael Walker'),
+    (3850, 2847, 146,  '7/18/22', 'Michael Walker'),
+    (3593, 2951, 141,  '7/25/22', 'Michael Walker'),
+    (3593, 3026, 161,  '8/1/22', 'Michael Walker'),
+    (4335, 3029, 122,  '8/8/22', 'Michael Walker'),
+    (3709, 3140, 222,  '8/15/22', 'Michael Walker'),
+    (4694, 3414, 176,  '8/22/22', 'Michael Walker'),
+    (4347, 2809, 113,  '8/29/22', 'Michael Walker'),
+    (4032, 3055, 262,  '9/5/22', 'Michael Walker'),
+    (4061, 3293, 175,  '9/12/22', 'Michael Walker'),
+    (4333, 3252, 205,  '9/19/22', 'Michael Walker'),
+    (3672, 3311, 641,  '9/26/22', 'Michael Walker'),
+    (4815, 3298, 905,  '10/3/22', 'Michael Walker'),
+    (4515, 3478, 125,  '10/10/22', 'Michael Walker'),
+    (5377, 3540, 139,  '10/17/22', 'Michael Walker'),
+    (5015, 3878, 1107, '10/24/22', 'Michael Walker'),
+    (4282, 3913, 319,  '10/31/22', 'Michael Walker'),
+    (4824, 3964, 124,  '11/7/22', 'Michael Walker'),
+    (4674, 3880, 201,  '11/14/22', 'Michael Walker'),
+    (4670, 4009, 96,   '11/21/22', 'Michael Walker'),
+    (3983, 3639, 184,  '11/28/22', 'Michael Walker'),
+    (3771, 3459, 143,  '12/5/22', 'Michael Walker'),
+    (3798, 3434, 296,  '12/12/22', 'Michael Walker'),
+    (3478, 3127, 226,  '12/19/22', 'Michael Walker'),
+    (2595, 2329, 157,  '12/26/22', 'Michael Walker'),
+    (3564, 3292, 502, '1/2/23', 'Michael Walker'),
+    (4527, 4181, 149, '1/9/23', 'Michael Walker'),
+    (4857, 4491, 295,  '1/16/23', 'Michael Walker'),
+    (5008, 4593, 235,  '1/23/23', 'Michael Walker'),
+    (5145, 4868, 288,  '1/30/23', 'Michael Walker'),
+    (5925, 5543, 200,  '2/6/23', 'Michael Walker'),
+    (7661, 6590, 198,  '2/13/23', 'Michael Walker'),
+    (9016, 7122, 186,  '2/20/23', 'Michael Walker'),
+    (9045, 7570, 255,  '2/27/23', 'Michael Walker'),
+    (9542, 7111, 1144, '3/6/23', 'Michael Walker'),
+    (8905, 7321, 205,  '3/13/23', 'Michael Walker'),
+    (9565, 7892, 398,  '3/20/23', 'Michael Walker'),
+    (8996, 7261, 394,  '3/27/23', 'Michael Walker'),
+    (8127, 6488, 228,  '4/3/23', 'Michael Walker'),
+    (9107, 7124, 322,  '4/10/23', 'Michael Walker'),
+    (9040, 7219, 283,  '4/17/23', 'Michael Walker'),
+    (9420, 7499, 307,  '4/24/23', 'Michael Walker'),
+    (9054, 7152, 226,  '5/1/23', 'Michael Walker'),
+    (10119, 7854, 198, '5/8/23', 'Michael Walker'),
+    (8918, 7380, 370,  '5/15/23', 'Michael Walker'),
+    (9167, 7792, 208,  '5/22/23', 'Michael Walker'),
+    (7636, 6445, 162,  '5/29/23', 'Michael Walker'),
+    (8677, 7118, 174,  '6/5/23', 'Michael Walker'),
+    (8770, 7151, 430,  '6/12/23', 'Michael Walker'),
+    (8728, 7214, 721,  '6/19/23', 'Michael Walker'),
+    (8700, 6936, 204,  '6/26/23', 'Michael Walker'),
+    (8011, 6812, 229,  '7/3/23', 'Michael Walker'),
+    (9289, 7741, 150,  '7/10/23', 'Michael Walker'),
+    (8340, 7340, 231,  '7/17/23', 'Michael Walker'),
+    (8792, 7168, 160,  '7/24/23', 'Michael Walker'),
+    (8614, 6688, 223,  '7/31/23', 'Michael Walker'),
+    (8856, 6788, 149,  '8/7/23', 'Michael Walker'),
+    (9018, 6652, 147,  '8/14/23', 'Michael Walker'),
+    (10222, 7085, 169, '8/21/23', 'Michael Walker'),
+    (9409, 6661, 166,  '8/28/23', 'Michael Walker'),
+    (8464, 6219, 238,  '9/4/23', 'Michael Walker'),
+    (9383, 6744, 150,  '9/11/23', 'Michael Walker'),
+    (9541, 6521, 237,  '9/18/23', 'Michael Walker'),
+    (10030, 6480, 292, '9/25/23', 'Michael Walker'),
+    (9534, 7117, 381,  '10/2/23', 'Michael Walker'),
+    (9528, 7000, 348,  '10/9/23', 'Michael Walker'),
+    (12202, 7102, 371, '10/16/23', 'Michael Walker'),
+    (8554, 7103, 220,  '10/23/23', 'Michael Walker');
 
 SELECT
     *

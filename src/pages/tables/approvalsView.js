@@ -52,6 +52,23 @@ const ApprovalsView = () => {
                             </tr>
                         )}
                     )}
+                    <tr>
+                        <td>Total</td>
+                        {weekArr.map((date) => {
+                            let total = 0;
+                            Object.keys(mappedUpdates).forEach((name) => {
+                                if(mappedUpdates[name][date]) total += mappedUpdates[name][date]
+                            })
+                            return (
+                                <td key={date}>
+                                    {total}
+                                </td>
+                            )
+                        })}
+                        <td>{Object.values(mappedUpdates).reduce((a,b) => {
+                            return a + Object.values(b).reduce((c,d) => c+d,0)
+                        },0)}</td>
+                    </tr>
                 </tbody>
 
             </Table>

@@ -1,0 +1,23 @@
+DROP TABLE IF EXISTS surtrics.surplus_sales_data;
+CREATE TABLE IF NOT EXISTS surtrics.surplus_sales_data(
+    sale_id BIGSERIAL PRIMARY KEY NOT NULL ,
+    payment_date DATE NOT NULL ,
+    order_id INT NOT NULL,
+    order_status VARCHAR(50) NOT NULL,
+    name TEXT NOT NULL,
+    store_id INT NOT NULL,
+    items text[] NOT NULL
+);
+
+SELECT
+    *
+FROM
+    surtrics.surplus_sales_data
+INNER JOIN nfs.surplusapi.appr
+WHERE
+    store_id = 225004
+    AND name LIKE 'Brad %'
+
+;
+
+

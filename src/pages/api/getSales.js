@@ -1,7 +1,7 @@
-import { componentsDB } from "../../db/componentDB"
+import { componentDB } from "../../db/componentDB"
 
 export default function handler (req,res) {
-    return componentsDB.query('' +
+    return componentDB.query('' +
         `
 SELECT 
     sum(sd.quantity_sold) as total_sales,

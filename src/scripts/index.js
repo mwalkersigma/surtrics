@@ -8,9 +8,7 @@ function buildURL(base_url, endpoint, options) {
     let temp = JSON.parse(JSON.stringify(options))
     Object.keys(temp).forEach((key) => {
         if (key.toLowerCase().includes('date')) {
-            // minus 30 days from the date
-            temp[key] = new Date(temp[key]) - 30 * 24 * 60 * 60 * 1000;
-            temp[key] = new Date(temp[key]).toISOString()
+            temp[key] = new Date(temp[key]).toISOString().split("T")[0];
         }
         url.searchParams.append(key, temp[key])
     })
@@ -21,11 +19,12 @@ async function getShipStationOrders() {
     const endpoint = "/orders";
     let options = {
         pageSize: 500,
-        paymentStartDate: "01-01-2020",
+        paymentDateStart: "05-01-2023",
     }
     let results = [];
     while (true) {
-        let fullUrl = buildURL(baseUrl, endpoint, options)
+        let fullUrl = buildURL(baseUrl, endpoint, options).href;
+        console.log(fullUrl);
         let headers ={
             "Authorization": "Basic " + shipStationToken
         }
@@ -46,7 +45,6 @@ async function getShipStationOrders() {
         options.page = page + 1;
         console.log(`Page ${page} of ${pages} retrieved`)
         console.log(`Total orders retrieved: ${results.length}`)
-        fullUrl = buildURL(baseUrl, endpoint, options)
     }
     return results;
 }

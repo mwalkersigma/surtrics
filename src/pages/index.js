@@ -24,7 +24,7 @@ import BigInfoCard from "../components/infoCards/bigInfoCards";
 
 
 
-import {subHours, format, addHours } from "date-fns";
+import {subHours, format, addHours, isWeekend} from "date-fns";
 import {colorScheme} from "./_app";
 import useNav from "../modules/hooks/useNav";
 
@@ -37,9 +37,7 @@ ChartJS.register(
     LineElement,
 );
 
-const convertDateToDay = (date) => {
-    return format(addHours(new Date(date),5),"EEE MM/dd")
-}
+
 
 function HomeDisplay(){
     let date = new Date();
@@ -51,18 +49,15 @@ function HomeDisplay(){
 
     let weekData = useUpdates("/api/views/weeklyView",{date});
     weekData = processWeekData(weekData);
-    let weekDays = weekData
-        .filter(({date}) => {
-            let day = addHours(new Date(date),5).getDay();
-            return day !== 0 && day !== 6
-        })
-    let dailyData = useUpdates("/api/views/dailyView",{date});
 
+    let weekDays = weekData.filter(({date}) => isWeekend(new Date(date)))
+    let dailyData = useUpdates("/api/views/dailyView",{date});
+    console.log(dailyData)
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
-    let weekSeed = makeWeekArray([...weekData],new Date(date));
-
+    let weekSeed = makeWeekArray(weekData,new Date(date));
+    let dateLabels = weekSeed.map(({date}) => format(addHours(new Date(date),6),"EEE MM/dd"));
     if(dailyData.length === 0){
         dailyData = []
     }
@@ -71,8 +66,8 @@ function HomeDisplay(){
     const totalIncrements = weekSeed.map(({count}) => +count).reduce((a,b)=>a+b,0);
     const totalForToday = dailyData.reduce((a,b) => a + +b.count,0);
 
-    const dailyAverage = Math.round(totalIncrements / weekDays.length || 0);
-    const hourlyAverage = Math.round(dailyAverage / 7 || 0);
+    const dailyAverage = Math.round(totalIncrements / weekDays.length || 1);
+    const hourlyAverage = Math.round(dailyAverage / 7 || 1);
 
     const expectedTotal = goal * weekDays.length;
 
@@ -82,7 +77,6 @@ function HomeDisplay(){
 
     const bestDay = Math.max(...weekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
-
     return (<>
         <Row className={"pb-3"}>
             <Col sm={2}>
@@ -137,7 +131,7 @@ function HomeDisplay(){
                     <p>Daily Snapshot</p>
                     <Bar
                         data={{
-                            labels:weekSeed.map(({date}) => convertDateToDay(date)),
+                            labels: dateLabels,
                             datasets:[
                                 {
                                     data:weekSeed.map(({count}) => +count),
@@ -187,7 +181,7 @@ function HomeDisplay(){
                     <p>Hourly Snapshot</p>
                     <Line
                         data={{
-                            labels: dailyData.map(({hour}) => +(subHours(new Date(hour),5).toLocaleTimeString().split(":")[0])),
+                            labels: dailyData.map(({hour}) => +(subHours(new Date(hour),7).toLocaleTimeString().split(":")[0])),
                             datasets:[
                                 {
                                     data:dailyData.map(({count}) => +count),

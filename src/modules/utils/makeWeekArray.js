@@ -1,16 +1,25 @@
 import findStartOfWeek from "./findSundayFromDate";
+import {addDays, format} from "date-fns";
 
+
+
+/*
+    @function makeWeekArray
+    @param {Array} weekData - Array of objects with date and count
+    @param {Date} sunday - Date object representing the sunday of the week
+    @description = When given an array of objects with a count and date property,
+    it orders those objects into an array and inserts the missing days of the week.
+    @returns {Array} - Array of objects with date and count with a length of 7.
+    Starting with sunday and ending with saturday.
+
+ */
 export default function makeWeekArray (weekData,sunday=new Date()){
-    sunday = findStartOfWeek(sunday);
-    let weekSeed = Array.from({length: 7}, (_,i) => {
-        let tempDate = new Date(sunday);
-        tempDate.setDate(tempDate.getDate() + i);
-        return {date:tempDate.toISOString(),count:0};
-    });
+    let firstDayOfWeek = findStartOfWeek(sunday);
+    let weekSeed = Array.from({length: 7}, (_,i) => ({date:format(addDays(firstDayOfWeek,i),"yyyy-MM-dd"),count:0}));
     if(weekData.length === 0) return weekSeed;
     return weekSeed.map(({date}) => {
-        let found = weekData.find((item) => item.date.split("T")[0] === date.split("T")[0]);
-        if(found) return found;
+        let sameDay = weekData.find((item) => item.date === date);
+        if(sameDay) return sameDay;
         return {date,count:0};
     })
 }

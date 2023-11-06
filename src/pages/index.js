@@ -52,7 +52,7 @@ function HomeDisplay(){
 
     let weekDays = weekData.filter(({date}) => isWeekend(new Date(date)))
     let dailyData = useUpdates("/api/views/dailyView",{date});
-    console.log(dailyData)
+
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 

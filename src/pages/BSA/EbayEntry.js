@@ -29,8 +29,9 @@ const EbayEntry = () => {
     })
 
     function handleDate(e){
+        let update = {target:{value:formatDateWithZeros(addDays(findStartOfWeek(new Date(e.target.value)),1))}};
         handleChange("date_for_week")
-        (formatDateWithZeros(addDays(findStartOfWeek(new Date(e.target.value)),1)));
+        (update);
     }
     /*
     *

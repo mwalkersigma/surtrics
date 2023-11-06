@@ -19,7 +19,7 @@ function putHandler(req, res) {
             INSERT INTO surtrics.surplus_ebay_data (impressions, page_views, date_for_week, user_who_entered)
             VALUES ($1, $2, $3, $4)
         `, [impressions, page_views, date_for_week, name])
-    })(req,res)
+    },"bsa","surplus director")(req,res)
         .then((response) => {
             res.status(200).json({message: "Successfully added data",response});
         })
@@ -44,7 +44,7 @@ function getHandler(req, res) {
                 res.status(500).json({error});
             });
 
-    })(req,res)
+    },"bsa","surplus director")(req,res)
 }
 function deleteHandler(req, res) {
     return serverAdminWrapper((req,res)=> {
@@ -59,7 +59,7 @@ function deleteHandler(req, res) {
             .catch((error) => {
                 res.status(500).json({error});
             });
-    })(req,res)
+    },"bsa","surplus director")(req,res)
 }
 function patchHandler(req,res){
     return serverAdminWrapper((req,res) => {
@@ -76,7 +76,7 @@ function patchHandler(req,res){
             .catch((error) => {
                 res.status(500).json({error});
             });
-    })(res,req)
+    },"bsa","surplus director")(res,req)
 }
 
 export default function handler (req, res) {

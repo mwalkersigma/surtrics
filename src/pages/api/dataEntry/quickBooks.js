@@ -38,7 +38,7 @@ function getHandler(req, res) {
         SELECT * FROM surtrics.surplus_quickbooks_data
         WHERE user_who_submitted = $1
     `,[name])
-    })(req,res)
+    },"bsa","surplus director")(req,res)
         .then(({rows}) => {
             res.status(200).json(rows);
         })
@@ -60,7 +60,7 @@ function deleteHandler(req, res) {
             .catch((error) => {
                 res.status(500).json({error});
             });
-    })(req,res)
+    },"bsa","surplus director")(req,res)
 
 }
 

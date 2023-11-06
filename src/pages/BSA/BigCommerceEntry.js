@@ -40,7 +40,8 @@ const BigCommerceEntry = () => {
             body:JSON.stringify(formState)
         })
             .then((res)=>res.json())
-            .then(({message})=>{
+            .then(({message,response})=>{
+                console.log(response)
                 setServerMessage(createSuccessMessage(message))
                 handleReset();
             })

@@ -2,7 +2,7 @@ import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
 import {subBusinessDays} from "date-fns";
 import Logger from "sigma-logger";
 import db from "../../../db/index";
-import router from "../../../modules/utils/requestRouter";
+import router from "../../../modules/serverUtils/requestRouter";
 
 async function getHandler(req,res,...options){
     return serverAdminWrapper(async (req,res,{user:{email}}) => {

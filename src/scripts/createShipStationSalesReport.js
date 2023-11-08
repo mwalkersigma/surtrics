@@ -33,5 +33,6 @@ Object.entries(salesBetweenShipDates.reduce((acc, {advancedOptions: {storeId}, i
         return acc;
     }, {})
     console.log(`Store ID: ${storeId}`);
+    console.log(Object.keys(bySku).length + " Items");
     console.table(bySku);
 })

@@ -89,11 +89,11 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
 }
 
 async function getLastUpdatedTime(){
-    const {timeLastUpdated} = await fs
+    const {timeLastUpdated:{skuVault}} = await fs
         .readFile("./src/json/timeLastUpdated.json", "utf-8")
         .then((data) => JSON.parse(data));
 
-    return timeLastUpdated;
+    return skuVault;
 }
 async function isTimeToUpdate(currentTimestamp, timeLastUpdated){
     let {frequency} = await fs
@@ -127,7 +127,7 @@ async function getTransactions(){
             }
             pageNumber++;
         }
-        await fs.writeFile("./src/json/timeLastUpdated.json", JSON.stringify({timeLastUpdated: currentTimestamp}))
+        await fs.writeFile("./src/json/timeLastUpdated.json", JSON.stringify({timeLastUpdated:{skuVault:currentTimestamp}}))
         Logger.log(`Finished inserting into DB ${pageNumber - 1} pages of transactions`)
         return "update complete";
     } catch (e) {

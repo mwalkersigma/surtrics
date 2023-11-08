@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS surtrics.surplus_sales_data;
 CREATE TABLE IF NOT EXISTS surtrics.surplus_sales_data(
     sale_id BIGSERIAL PRIMARY KEY NOT NULL ,
-    payment_date DATE NOT NULL ,
+    payment_date timestamp NOT NULL ,
     order_id INT NOT NULL,
     order_status VARCHAR(50) NOT NULL,
     name TEXT NOT NULL,
@@ -13,11 +13,9 @@ SELECT
     *
 FROM
     surtrics.surplus_sales_data
-INNER JOIN nfs.surplusapi.appr
 WHERE
-    store_id = 225004
-    AND name LIKE 'Brad %'
-
-;
+    DATE(payment_date - interval '2 hours') = '10-23-23'
+ORDER BY
+    store_id;
 
 

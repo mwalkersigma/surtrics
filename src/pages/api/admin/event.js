@@ -1,5 +1,5 @@
 import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
-import router from "../../../modules/utils/requestRouter";
+import router from "../../../modules/serverUtils/requestRouter";
 import db from "../../../db/index"
 
 function parseBody(req) {

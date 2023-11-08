@@ -1,15 +1,8 @@
-import router from "../../../modules/utils/requestRouter";
+import router from "../../../modules/serverUtils/requestRouter";
 import db from "../../../db/index"
 import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
+import {parseBody} from "../../../modules/serverUtils/parseBody";
 
-function parseBody(req) {
-    let body = req.body;
-    if(typeof body === 'string') {
-        body = JSON.parse(body)
-    }
-    return body;
-
-}
 function putHandler(req, res) {
     return serverAdminWrapper((req, res,{user:{name}}) => {
         let body = parseBody(req);

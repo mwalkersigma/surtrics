@@ -33,6 +33,7 @@
     "sigma-logger": "^1.0.3"
   },
   "devDependencies": {
+    "node-env-run": "^4.0.2",
     "vitest": "^0.34.4"
   }
 }

@@ -1,5 +1,11 @@
 const fs = require("fs");
-
+function convertOrderToSQL(orders){
+    let queryString = `INSERT INTO surtrics.surplus_sales_data (payment_date, order_id, order_status, name, store_id, items) VALUES`
+    orders.forEach(order => {
+        let {paymentDate, orderId, orderStatus, name, storeId, items} = order;
+        queryString += `( '${paymentDate}', '${orderId}', '${orderStatus}', '${name}', '${storeId}', Array['${items}']), \n`
+    });
+}
 
 (async () => {
     const path = "../json/orders.json";
@@ -20,17 +26,15 @@ const fs = require("fs");
                         return {sku, quantity, unitPrice};
                     })
                     .map(item => JSON.stringify(item));
-
+                console.log(items)
                 let storeId = order.advancedOptions.storeId;
                 return {paymentDate, orderId, orderStatus, items, storeId , name};
             })
             .filter(order => order.storeId === storeID)
             .forEach(order => {
               queryString += `( '${order.paymentDate}', '${order.orderId}', '${order.orderStatus}', '${order.name}', '${order.storeId}', Array['${order.items}']), \n`
-            })
-
-    console.log(orders)
-    fs.writeFileSync("../db/salesData.psql", queryString);
+            });
+     fs.writeFileSync("../db/salesData.psql", queryString);
 
 })()
 

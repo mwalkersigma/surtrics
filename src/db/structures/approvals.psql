@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS surtrics.surplus_approvals;
+--DROP TABLE IF EXISTS surtrics.surplus_approvals;
 CREATE TABLE IF NOT EXISTS surtrics.surplus_approvals
 (
     id BIGSERIAL PRIMARY KEY,

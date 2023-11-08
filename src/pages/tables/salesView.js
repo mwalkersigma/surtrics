@@ -37,7 +37,7 @@ class Order {
 }
 
 const SalesView = () => {
-    let [date, setDate] = React.useState(new Date());
+    let [date, setDate] = React.useState(formatDateWithZeros(new Date()));
     let sales = useUpdates("/api/views/sales/sales",{date});
     if (!sales) {
         return (<Container>
@@ -56,7 +56,12 @@ const SalesView = () => {
         <h1 className={"text-center my-3"}>Daily Sales By Channel</h1>
         <div className={"mb-5"}>
             <label htmlFor="date">Date: </label>
-            <Form.Control type="date" id="date" value={formatDateWithZeros(date)} onChange={e => setDate(new Date(e.target.value))}/>
+            <Form.Control
+                className={"my-3"}
+                onChange={(e) => setDate(e.target.value)}
+                type="date"
+                value={date}
+            />
         </div>
         {storeIDs.map(storeId => {
             return (<div key={storeId}>

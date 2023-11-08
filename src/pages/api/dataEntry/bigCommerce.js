@@ -3,9 +3,26 @@ import db from "../../../db/index"
 import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
 import {parseBody} from "../../../modules/serverUtils/parseBody";
 
+function getHandler(req, res) {
+    return serverAdminWrapper((req, res,{user:{name}}) => {
+        return db.query(`
+            SELECT 
+                * 
+            FROM 
+                surtrics.surplus_big_commerce_data
+            WHERE
+                user_who_entered = $1
+        `,[name])
+            .then((data) => {
+                res.status(200).json(data.rows);
+            })
+            .catch((error) => {
+                res.status(500).json({error});
+            });
 
+    },"bsa","surplus director")(req,res)
+}
 function putHandler(req, res) {
-
     return serverAdminWrapper(async (req)=>{
         let body = parseBody(req);
         const {
@@ -29,9 +46,25 @@ function putHandler(req, res) {
             res.status(500).json({error});
         });
 }
-
+function deleteHandler(req, res) {
+    return serverAdminWrapper((req,res)=> {
+        return db.query(`
+            DELETE
+            FROM surtrics.surplus_big_commerce_data
+            WHERE entry_id = $1
+        `, [parseBody(req).id])
+            .then(() => {
+                res.status(200).json({message: "Successfully deleted data"});
+            })
+            .catch((error) => {
+                res.status(500).json({error});
+            });
+    },"bsa","surplus director")(req,res)
+}
 export default function handler(req,res) {
     return router({
-        PUT:putHandler
+        PUT:putHandler,
+        GET:getHandler,
+        DELETE:deleteHandler
     })(req,res)
 }

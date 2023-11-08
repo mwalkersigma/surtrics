@@ -136,7 +136,7 @@ async function getShipStationOrders(options) {
             break;
         }
         let data = await response.json();
-        const {page,pages,total,orders} = data;
+        const {page,pages,orders} = data;
         results = results.concat(orders);
         if(page === pages) {
             break;

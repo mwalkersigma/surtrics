@@ -26,7 +26,7 @@ yarn-error.log*
 
 # local env files
 .env.local
-
+.env
 # vercel
 .vercel
 
@@ -40,3 +40,4 @@ TransactionHistory-8_24_2023 1_10 PM.csv
 .idea
 logs
 /src/data/
+src/scripts/eBay.csv

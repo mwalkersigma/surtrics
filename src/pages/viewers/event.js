@@ -8,11 +8,12 @@ import {format} from "date-fns";
 
 const Event = () => {
     const events = useUpdates("/api/admin/event");
-    console.log(events)
     const {headers,rows,removeHandler} = useTableHandle(events,"event_id");
     const handleRemove = removeHandler("/api/admin/event")
     return (
         <Container>
+            <h1 className={"text-center my-4"}>Your Events</h1>
+
             <Table bordered hover striped>
                 <thead>
                     <tr>

@@ -13,6 +13,7 @@ const QuickBooks = () => {
     const handleRemove = removeHandler("/api/dataEntry/quickBooks");
     return (
         <Container>
+            <h1 className={"text-center my-4"}>Quick Books Data</h1>
             <Table striped bordered hover>
                 <thead>
                     <tr>

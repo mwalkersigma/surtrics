@@ -9,11 +9,11 @@ import Container from "react-bootstrap/Container";
 
 const BigCommerce = () => {
     const update = useUpdates("/api/dataEntry/bigCommerce");
-    console.log(update)
     const { headers,rows,removeHandler} = useTableHandle(update,"entry_id");
     const handleRemove = removeHandler("/api/dataEntry/bigCommerce");
     return (
         <Container>
+            <h1 className={"text-center my-4"}>Big Commerce Data</h1>
             <Table striped bordered hover className={"text-center"}>
                 <thead>
                     <tr>

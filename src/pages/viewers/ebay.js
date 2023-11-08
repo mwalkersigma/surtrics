@@ -15,6 +15,7 @@ const EbayDataViewer = () => {
     const handleRemove = removeHandler("/api/dataEntry/ebay");
     return (
         <Container>
+            <h1 className={"text-center my-4"}>Ebay Data</h1>
             <Table striped bordered hover className={"text-center"}>
                 <thead>
                     <tr>

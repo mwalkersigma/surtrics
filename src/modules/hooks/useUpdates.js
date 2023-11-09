@@ -1,7 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 
 export default function useUpdates(route, routeOptions) {
-    const interval = routeOptions?.interval || 1000 * 60;
     const intervalRef = useRef(null);
     const [serverData, setServerData] = useState([])
 
@@ -19,6 +18,7 @@ export default function useUpdates(route, routeOptions) {
                 body: routeOptions,
             }
         }
+        console.log("updating",routeOptions)
         const getTransactions = () => fetch(`${window.location.origin}${route}`,options)
             .then((response) => response.json())
             .then((data) => setServerData(data))
@@ -27,9 +27,9 @@ export default function useUpdates(route, routeOptions) {
         getTransactions()
             .catch((error) => console.log(error))
 
-        intervalRef.current = setInterval(getTransactions, interval || 1000 * 60 )
+        intervalRef.current = setInterval(getTransactions, 1000 * 60 )
         return () => clearInterval(intervalRef.current)
 
-    }, [route,routeOptions,interval])
+    }, [route,routeOptions])
     return serverData
 }

@@ -34,7 +34,8 @@ ChartJS.register(
 
 const DailyView = () => {
     const [date,setDate] = useState(formatDateWithZeros(new Date()))
-    let dailyData = useUpdates("/api/views/dailyView",{date});
+    let dailyData = useUpdates("/api/views/increments",{date,amount:24,interval:"hour"});
+    console.log(dailyData)
     const theme = useContext(ThemeContext)
     if(dailyData.length === 0)return(
         <Container className={"text-center"}>

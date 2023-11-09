@@ -48,7 +48,7 @@ const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.d
 const WeekView = () => {
     const [date, setDate] = useState(formatDateWithZeros(new Date()));
     const theme = useContext(ThemeContext);
-    let approvals = useUpdates("/api/views/approvals/weeklyView", {date});
+    let approvals = useUpdates("/api/views/approvals/weeklyView", {date,interval:"1 week"});
 
     if(approvals.length === 0) return (
             <Container>

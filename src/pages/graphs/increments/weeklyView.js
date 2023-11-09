@@ -256,7 +256,7 @@ function WeeklyView() {
 
     const [date,setDate] = useState(formatDateWithZeros(new Date()));
 
-    let weekData = useUpdates("/api/views/weeklyView",{date});
+    let weekData = useUpdates("/api/views/increments",{date,amount:7,interval:"days"});
     const theme = useContext(ThemeContext);
 
 

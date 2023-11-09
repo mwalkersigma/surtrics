@@ -41,6 +41,10 @@ let colorPalette = [
     colorScheme.blue,
     colorScheme.green,
     colorScheme.red,
+    colorScheme.purple,
+    colorScheme.yellow,
+    colorScheme.orange,
+    colorScheme.pink,
 ]
 
 
@@ -134,8 +138,8 @@ const WeekView = () => {
             return {
                 label: name,
                 data:graphData,
-                backgroundColor: colorPalette[i%3],
-                borderColor: colorPalette[i%3],
+                backgroundColor: colorPalette[i%colorPalette.length],
+                borderColor: colorPalette[i%colorPalette.length],
                 borderWidth: 1,
                 stack: 1
             }

@@ -22,6 +22,7 @@ import {
 import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../_app";
 import Container from "react-bootstrap/Container";
+import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 
 
 
@@ -46,9 +47,9 @@ let colorPalette = [
 
 const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 const WeekView = () => {
-    const [date, setDate] = useState(formatDateWithZeros(new Date()));
+    const [date, setDate] = useState(formatDateWithZeros(findStartOfWeek(new Date())));
     const theme = useContext(ThemeContext);
-    let approvals = useUpdates("/api/views/approvals/weeklyView", {date,interval:"1 week"});
+    let approvals = useUpdates("/api/views/approvals", {date,interval:"1 week"});
 
     if(approvals.length === 0) return (
             <Container>
@@ -93,7 +94,7 @@ const WeekView = () => {
     const max = Object
         .values(dataForGraph)
         .map(arr=>arr.map(item=>+item))
-        .reduce((acc,cur,currentIndex)=>{
+        .reduce((acc,cur)=>{
             cur.forEach((item,i)=>{
               acc[i] += item;
             })
@@ -148,7 +149,7 @@ const WeekView = () => {
                     <Form.Control
                         className={"mb-3"}
                         value={date}
-                        onChange={(e)=>setDate(e.target.value)}
+                        onChange={(e)=>setDate(formatDateWithZeros(findStartOfWeek(new Date(e.target.value))))}
                         type="date"
                     />
                 </Row>

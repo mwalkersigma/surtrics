@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
 import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
 import Container from "react-bootstrap/Container";
@@ -16,6 +16,7 @@ import {
 import {Line} from "react-chartjs-2";
 import {colorScheme} from "../../_app";
 import {Col, Row} from "react-bootstrap";
+import {setDate, setMonth} from "date-fns";
 
 const ignoredNames = [
     "Bail", "" , "Whit","Finley Aldrid"
@@ -61,12 +62,13 @@ function smoothData(data,adjCount=3) {
     return newData;
 }
 
-
+const dateSet = setDate
 const ApprovalsView = () => {
-    let [user, setUser] = React.useState("Total");
-    const [date, setDate] = React.useState(formatDateWithZeros(new Date()));
-    const [resolution, setResolution] = React.useState(4);
-    const updates = useUpdates("/api/views/approvals/yearlyView", {date});
+    let [user, setUser] = useState("Total");
+    const [date, setDate] = useState(formatDateWithZeros(dateSet(setMonth(new Date(),0),1)));
+    const [resolution, setResolution] = useState(4);
+    const updates = useUpdates("/api/views/approvals", {date, interval:"1 year"});
+    console.log(updates)
     if(!(updates.length > 0)) return <Container>
         <Form.Control
             className={"my-2"}
@@ -147,7 +149,7 @@ const ApprovalsView = () => {
                         <Form.Label>Year Select</Form.Label>
                         <Form.Control
                             value={date}
-                            onChange={(e) => setDate(e.target.value)}
+                            onChange={(e) => setDate(formatDateWithZeros(dateSet(setMonth(new Date(e.target.value),0),1)))}
                             type="date"
                         />
                     </Col>
@@ -158,7 +160,6 @@ const ApprovalsView = () => {
                             type={'number'}
                             step={1}
                             min={1}
-                            //max={graphData.datasets[0].data.length / 8}
                             max={Math.min(graphData.datasets[0].data.length / 8, 5)}
                             value={resolution}
                             onChange={(e) => setResolution(+e.target.value)}

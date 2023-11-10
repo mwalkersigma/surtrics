@@ -156,7 +156,7 @@ function YearlyView() {
     const theme = useContext(ThemeContext);
 
     function handleDateChange(e) {
-        setDate(formatDateWithZeros(dateSet(setMonth(new Date(),0),1)));
+        setDate(formatDateWithZeros(dateSet(setMonth(new Date(e.target.value),0),1)));
     }
     if(yearData.length === 0)return(
         <Container className={"text-center"}>

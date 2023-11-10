@@ -13,7 +13,9 @@ function getSales(req) {
     return db.query(`
         SELECT *
         FROM surtrics.surplus_sales_data
-        WHERE DATE(payment_date - interval '2 hours') = '${yyyy}-${mm}-${dd}'
+        WHERE 
+            DATE(payment_date - interval '2 hours') = '${yyyy}-${mm}-${dd}'
+            AND order_status != 'cancelled'
         ORDER BY store_id;
     `)
         .then(result => result.rows)

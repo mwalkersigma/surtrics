@@ -55,6 +55,12 @@ export default function NavBar({theme,setTheme,setDay}){
                         <Nav.Link href="/tables/quantityView">Weekly View</Nav.Link>
                     </NavDropdown>
 
+                    <NavDropdown title={"Sales"}>
+                        <NavDropdown.ItemText>Tables</NavDropdown.ItemText>
+                        <NavDropdown.Divider class={"my-2"} />
+                        <Nav.Link href="/tables/salesView">Daily View</Nav.Link>
+                    </NavDropdown>
+
                     <NavDropdown title={"Individual"}>
                         <NavDropdown.ItemText>Graphs</NavDropdown.ItemText>
                         <NavDropdown.Divider />
@@ -86,6 +92,7 @@ export default function NavBar({theme,setTheme,setDay}){
                             <Nav.Link href={"/admin/errorReporting"}>Submit Error</Nav.Link>
                         </NavDropdown>
                     </RoleWrapper>
+
                     <RoleWrapper invisible altRoles={["bsa","surplus director"]}>
                         <NavDropdown title={"Viewers"}>
                             <Nav.Link href={"/viewers/error"}>Error View</Nav.Link>
@@ -95,6 +102,7 @@ export default function NavBar({theme,setTheme,setDay}){
                             <Nav.Link href={"/viewers/quickBooks"}>Quick Books</Nav.Link>
                         </NavDropdown>
                     </RoleWrapper>
+
                     <RoleWrapper invisible altRoles={"surplus director"}>
                         <NavDropdown title={"Admin"} id="basic-nav-dropdown">
                             <Nav.Link href={"/admin"}>Admin</Nav.Link>

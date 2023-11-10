@@ -3,30 +3,13 @@ import { PromisePool} from "@supercharge/promise-pool";
 import fs from "fs/promises";
 import convertToDatabase from "../../modules/utils/convertSkuVaultToDatabaseFormat";
 import Logger from "sigma-logger";
+import {isTimeToUpdate} from "../../modules/serverUtils/isTimeToUpdate";
+import getLastUpdatedTime from "../../modules/serverUtils/getLastUpdatedTime";
+import updateLastUpdatedTime from "../../modules/serverUtils/updateLastUpdatedTime";
 const {SKU_VAULT_TENANT_TOKEN, SKU_VAULT_USER_TOKEN} = process.env;
 // exported 8/24/2023 1:11pm;
 
 const sleep = (seconds) => new Promise((resolve) => setTimeout(resolve, seconds*1000));
-
-
-const convertFrequencyToSeconds = (frequency) => {
-    switch (frequency) {
-        case "every minute":
-            return 60;
-        case "every 5 minutes":
-            return 300;
-        case "every 15 minutes":
-            return 900;
-        case "every half hour":
-            return 1800;
-        case "every hour":
-            return 3600;
-        case "daily":
-            return 86400;
-        case "weekly":
-            return 604800;
-    }
-}
 
 async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
 
@@ -88,30 +71,14 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
     return true;
 }
 
-async function getLastUpdatedTime(){
-    const {timeLastUpdated:{skuVault}} = await fs
-        .readFile("./src/json/timeLastUpdated.json", "utf-8")
-        .then((data) => JSON.parse(data));
 
-    return skuVault;
-}
-async function isTimeToUpdate(currentTimestamp, timeLastUpdated){
-    let {frequency} = await fs
-        .readFile("./src/json/settings.json", "utf-8")
-        .then((data) => JSON.parse(data));
-    Logger.log(`frequency: ${frequency} `)
-    frequency = convertFrequencyToSeconds(frequency);
-    let timeDiff = (new Date(currentTimestamp) - new Date(timeLastUpdated)) / 1000;
 
-    Logger.log(`timeDiff: ${timeDiff} `)
-    return timeDiff < frequency
-}
 async function getTransactions(){
     try {
         let pageNumber = 0;
         let result = true;
         const currentTimestamp = new Date().toISOString();
-        const timeLastUpdated = await getLastUpdatedTime();
+        const timeLastUpdated = await getLastUpdatedTime("skuVault");
         const shouldNotUpdate = await isTimeToUpdate(currentTimestamp, timeLastUpdated);
 
         if(shouldNotUpdate){
@@ -127,7 +94,7 @@ async function getTransactions(){
             }
             pageNumber++;
         }
-        await fs.writeFile("./src/json/timeLastUpdated.json", JSON.stringify({timeLastUpdated:{skuVault:currentTimestamp}}))
+        await updateLastUpdatedTime("skuVault")
         Logger.log(`Finished inserting into DB ${pageNumber - 1} pages of transactions`)
         return "update complete";
     } catch (e) {

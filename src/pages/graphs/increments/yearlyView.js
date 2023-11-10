@@ -20,6 +20,7 @@ import {Col, Row} from "react-bootstrap";
 import InfoCard from "../../../components/infoCards/infocard";
 import formatter from "../../../modules/utils/numberFormatter";
 import {colorScheme} from "../../_app";
+import {getMonth, setDate, setMonth} from "date-fns";
 
 ChartJS.register(
     CategoryScale,
@@ -105,13 +106,18 @@ function YearlyChart(props){
     }
 
     const monthes = [ "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    yearData =  yearData.map((item)=>{
+        const {date_of_transaction} = item;
+        return{...item, ...{date_of_transaction: getMonth(new Date(date_of_transaction))+1}}
+    }).sort((a,b)=>a.date_of_transaction - b.date_of_transaction)
+    console.log(yearData)
     const data = yearData.length > 0 && {
-        labels: Array.from(new Set(yearData?.map(({month}) => (monthes[month-1])))),
+        labels: Array.from(new Set(yearData?.map(({date_of_transaction}) => (monthes[date_of_transaction-1])))),
         datasets: [
             {
                 type: "bar",
                 label: "New Inbound",
-                data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add on Receiving").map(({transactions}) => (+transactions)),
+                data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add on Receiving").map(({count}) => (+count)),
                 backgroundColor: colorScheme.red,
                 barThickness: 75,
                 borderRadius: 10,
@@ -120,7 +126,7 @@ function YearlyChart(props){
             {
                 type: "bar",
                 label: "Incrementation",
-                data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add").map(({transactions}) => (+transactions)),
+                data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add").map(({count}) => (+count)),
                 backgroundColor: colorScheme.green,
                 barThickness: 75,
                 borderRadius: 10,
@@ -129,7 +135,7 @@ function YearlyChart(props){
             {
                 type: "bar",
                 label: "Relisting",
-                data: yearData?.filter(({transaction_reason})=>transaction_reason === "Relisting").map(({transactions}) => (+transactions)),
+                data: yearData?.filter(({transaction_reason})=>transaction_reason === "Relisting").map(({count}) => (+count)),
                 backgroundColor: colorScheme.blue,
                 barThickness: 75,
                 borderRadius: 10,
@@ -142,15 +148,15 @@ function YearlyChart(props){
 
 
 
-
+let dateSet = setDate
 function YearlyView() {
-    const [date,setDate] = useState(formatDateWithZeros(new Date()));
-    let yearData = useUpdates("/api/views/yearlyView",{date});
-
+    const [date,setDate] = useState(formatDateWithZeros(dateSet(setMonth(new Date(),0),1)));
+    let yearData = useUpdates("/api/views/increments",{date,interval:"1 year",increment:"month"});
+    console.log(yearData)
     const theme = useContext(ThemeContext);
 
     function handleDateChange(e) {
-        setDate(e.target.value);
+        setDate(formatDateWithZeros(dateSet(setMonth(new Date(),0),1)));
     }
     if(yearData.length === 0)return(
         <Container className={"text-center"}>
@@ -159,14 +165,14 @@ function YearlyView() {
         </Container>
     );
     let margin = "3.5rem";
-    const cardData = Object.values(yearData.reduce((acc, {transactions,month,transaction_reason}) =>{
-        if(!acc[month]){
-            acc[month]={transactions:0,month,[transaction_reason]:transactions};
+    const cardData = Object.values(yearData.reduce((acc, {count,date_of_transaction,transaction_reason}) =>{
+        if(!acc[date_of_transaction]){
+            acc[date_of_transaction]={count:0,date_of_transaction,[transaction_reason]:count};
         }
         else{
-            acc[month][transaction_reason] = transactions;
+            acc[date_of_transaction][transaction_reason] = count;
         }
-        acc[month].transactions += +transactions;
+        acc[date_of_transaction].count += +count;
         return acc;
     } , {}));
 
@@ -187,7 +193,7 @@ function YearlyView() {
                     </Col>
                     <Col sm={2}>
                         <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>
-                            {formatter(cardData.reduce((acc, {transactions}) => (acc + +transactions), 0))}
+                            {formatter(cardData.reduce((acc, {count}) => (acc + +count), 0))}
                         </InfoCard>
                         <InfoCard style={{marginBottom:margin}} title={"New Inbound"} theme={theme}>
                             {

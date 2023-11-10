@@ -21,6 +21,7 @@ import formatter from "../../../modules/utils/numberFormatter";
 import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../_app";
 import yymmddTommddyy from "../../../modules/utils/yymmddconverter";
+import {setDate} from "date-fns";
 
 
 
@@ -39,6 +40,7 @@ ChartJS.register(
 
 
 function LineGraphMonthly ({monthData,theme}) {
+    console.log(monthData)
     theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     const options = {
         devicePixelRatio: 4,
@@ -94,24 +96,24 @@ function LineGraphMonthly ({monthData,theme}) {
         }
     };
     const dataSets = monthData.reduce((acc,curr)=>{
-        let date = curr.day.split("T")[0];
+        let date = curr.date_of_transaction.split("T")[0];
         if(!acc[date]){
             acc[date] = {
                 day: date,
-                total: +curr.transactions,
-                [curr['transaction_reason']]: +curr.transactions
+                total: +curr.count,
+                [curr['transaction_reason']]: +curr.count
             }
             return acc;
         }
-        acc[date].total += +curr.transactions;
-        acc[date][curr['transaction_reason']] = +curr.transactions;
+        acc[date].total += +curr.count;
+        acc[date][curr['transaction_reason']] = +curr.count;
         return acc
     },{})
 
 
     const graphData = {
         labels: Array
-            .from(new Set(monthData.map(({day}) => day.split("T")[0])))
+            .from(new Set(monthData.map(({date_of_transaction}) => date_of_transaction.split("T")[0])))
             .map(yymmddTommddyy)
         ,
         datasets: [
@@ -174,8 +176,9 @@ function LineGraphMonthly ({monthData,theme}) {
     )
 }
 const MonthlyView = () => {
-    const [date,setDate] = useState(formatDateWithZeros(new Date()))
-    let monthData = useUpdates("/api/views/monthlyView",{date});
+    const [date,setStateDate] = useState(formatDateWithZeros(setDate(new Date(),1)))
+    //useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
+    let monthData = useUpdates("/api/views/increments",{date,interval:"1 month",increment:"day"});
     const theme = useContext(ThemeContext)
 
     if(monthData.length === 0)return(
@@ -191,7 +194,7 @@ const MonthlyView = () => {
             <Form.Control
                 className={"mb-3"}
                 value={date}
-                onChange={(e)=>setDate(e.target.value)}
+                onChange={(e)=>setStateDate(formatDateWithZeros(setDate(new Date(e.target.value),1)))}
                 type="date"
             />
             <Row>

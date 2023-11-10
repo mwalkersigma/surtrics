@@ -43,7 +43,7 @@ async function postHandler(req,res,...options){
 async function putHandler(req,res,...options){
     return await serverAdminWrapper(async (req) => {
         const body = JSON.parse(req.body);
-        const {user,reason,notes,session:browserSession} = body;
+        const {user,reason,notes,session:browserSession,date} = body;
         const {user:sessionUser} = browserSession;
         delete sessionUser.image;
         await db.query(`
@@ -52,7 +52,7 @@ async function putHandler(req,res,...options){
                 ("user", sku,code, scanned_code, lot_number, title, location, quantity, quantity_before, quantity_after, transaction_note, transaction_reason, transaction_type, serial_numbers, context, transaction_date)
             VALUES
              ($1,null,null,null,null,null,null,null,null,null,$2,$3,'Error',null,$4,$5)
-        `,[user,notes,reason,sessionUser.email,subBusinessDays(new Date(),1)])
+        `,[user,notes,reason,sessionUser.email,date])
         const response = `Error Reporting: User: ${sessionUser.email} reported an error for ${user} with reason: ${reason} and notes: ${notes}`
         Logger.log(response);
         return response

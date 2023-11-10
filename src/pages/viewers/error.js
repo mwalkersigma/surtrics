@@ -13,6 +13,7 @@ import useToastContainer from "../../modules/hooks/useToast";
 import createSuccessMessage from "../../modules/serverMessageFactories/createSuccessMessage";
 import createErrorMessage from "../../modules/serverMessageFactories/createErrorMessage";
 import RoleWrapper from "../../components/RoleWrapper";
+import {format} from "date-fns";
 
 
 
@@ -79,6 +80,7 @@ const Error = () => {
                         <th >User</th>
                         <th>Reason</th>
                         <th colSpan={4}>Notes</th>
+                        <th>date</th>
                         <th>Remove</th>
                     </tr>
                     </thead>
@@ -88,6 +90,7 @@ const Error = () => {
                             <td>{row.user}</td>
                             <td>{row.transaction_reason}</td>
                             <td colSpan={4}>{row.transaction_note}</td>
+                            <td>{format(new Date(row.transaction_date),"MM-dd-yyyy")}</td>
                             <td>
                                 <a
                                     className={"text-decoration-none hover-remove"}

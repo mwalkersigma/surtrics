@@ -1,6 +1,7 @@
 export default function processWeekData(weekData){
     return Object.values(weekData.reduce((acc, curr) => {
-        let date = curr.date.split("T")[0];
+        //todo remove this logic change
+        let date = curr?.["date_of_transaction"]?.split("T")[0] || curr?.date.split("T")[0];
         if(!acc[date]){
             acc[date] = {
                 date,

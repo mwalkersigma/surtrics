@@ -254,15 +254,17 @@ function WeeklyChart(props){
 
 function WeeklyView() {
 
-    const [date,setDate] = useState(formatDateWithZeros(new Date()));
+    const [date,setDate] = useState(formatDateWithZeros(findStartOfWeek(new Date())));
 
-    let weekData = useUpdates("/api/views/weeklyView",{date});
+    let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
+
     const theme = useContext(ThemeContext);
 
 
     function handleDateChange(e) {
-        setDate(e.target.value);
+        setDate(formatDateWithZeros(findStartOfWeek(new Date(e.target.value))));
     }
+    console.log(date);
     if(weekData.length === 0)return(
         <Container className={"text-center"}>
             <Form.Control className={"mb-5"} value={date} onChange={handleDateChange} type="date" />

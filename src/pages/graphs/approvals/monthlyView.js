@@ -19,6 +19,7 @@ import {
     Tooltip
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
+import {setDate} from "date-fns";
 
 ChartJS.register(
     CategoryScale,
@@ -38,12 +39,13 @@ let colorPalette = [
     colorScheme.green,
     colorScheme.red,
 ]
+const dateSet = setDate
 
 const MonthlyView = () => {
-    const [date, setDate] = useState(formatDateWithZeros(new Date()));
+    const [date, setDate] = useState(formatDateWithZeros(dateSet(new Date(),1)));
     const theme = useContext(ThemeContext);
-    let approvals = useUpdates("/api/views/approvals/monthlyView", {date});
-
+    let approvals = useUpdates("/api/views/approvals", {date, interval: "1 month"});
+    console.log(approvals)
 
 
     if(approvals.length === 0) return (

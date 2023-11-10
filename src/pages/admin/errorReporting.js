@@ -35,6 +35,7 @@ function validate(state){
 
 const ErrorReporting = () => {
     const [users, setUsers] = useState([]);
+    const [date, setDate] = useState(new Date());
     const [user, setUser] = useState("");
     const [reason, setReason] = useState("");
     const [notes, setNotes] = useState("");
@@ -50,7 +51,7 @@ const ErrorReporting = () => {
             .catch((err)=>console.log(err))
     }, []);
     function handleSubmit () {
-        const state = JSON.stringify({user,reason,notes,session});
+        const state = JSON.stringify({user,reason,notes,session,date});
         setLoading(true)
         if(!validate({user,reason,notes})){
             setLoading(false);
@@ -95,7 +96,16 @@ const ErrorReporting = () => {
                                     <option value={"not approved"}>Not Approved</option>
                                     <option value={"wrong label"}>Wrong Label</option>
                                     <option value={"no location"} >No Location</option>
+                                    <option value={"Typo"} > Typo </option>
+                                    <option value={"listing Error"}> Listing Error </option>
+                                    <option value={"Wrong Condition"}> Wrong Condition </option>
+                                    <option value={"Mixed Bag"}> Mixed Bag </option>
                                 </Form.Select>
+                            </Form.Group>
+
+                            <Form.Group as={Col} class={"mb-4 "}>
+                                <Form.Label>Date</Form.Label>
+                                <Form.Control value={date} onChange={(e)=>setDate(e.target.value)} type={"date"}/>
                             </Form.Group>
                         </Row>
                         <Row>

@@ -1,20 +1,22 @@
 import db from "../../../db";
 import getStartAndEndWeekString from "../../../modules/utils/getStartAndEndWeekString";
+import {parseBody} from "../../../modules/serverUtils/parseBody";
+import router from "../../../modules/serverUtils/requestRouter";
 
 
 
-async function getIncrements(date){
-    let [startWeekString, endOfWeekString] = getStartAndEndWeekString(date);
+async function getIncrements(req,res,date,interval,increment){
+    console.log(date,interval,increment)
     let query = await db.query(`
         SELECT
             COUNT(*),
-            DATE(transaction_date),
+            date_trunc($3,transaction_date) as date_of_transaction,
             transaction_reason
         FROM
             surtrics.surplus_metrics_data
         WHERE
             transaction_date > $1
-          AND transaction_date <= $2
+            AND transaction_date <= DATE($1) + $2::interval
           AND (
                     transaction_type = 'Add'
                 OR transaction_type = 'Remove'
@@ -26,24 +28,33 @@ async function getIncrements(date){
                 OR transaction_reason = 'Relisting'
             )
         GROUP BY
-            DATE(transaction_date),
+            date_of_transaction,
             transaction_reason
-    `, [startWeekString, endOfWeekString])
+    `, [date, interval,increment])
     return query.rows;
 }
 
 
 export default function handler (req,res) {
-    let date = new Date();
-    if(req.body){
-        let body = JSON.parse(req.body) ?? {date: new Date()};
-        date = new Date(body.date);
+    let date,body,interval,increment;
+    body = parseBody(req);
+
+    date = body?.date ? new Date(body.date) : new Date();
+    if(!body?.interval){
+        return res.status(400).json({error: "No interval provided"})
     }
-    return getIncrements(date)
+
+    interval = body.interval;
+    increment = body.increment || interval
+
+    return router({
+        POST:getIncrements
+    })(req,res,date,interval,increment)
         .then((response) => {
             res.status(200).json(response)
         })
         .catch((error) => {
             res.status(500).json(error)
         })
+
 }

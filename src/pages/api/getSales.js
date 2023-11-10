@@ -98,6 +98,7 @@ async function main () {
                 let storeId = order['advancedOptions'].storeId;
                 return JSON.stringify({paymentDate, orderId, orderStatus, items, storeId, name});
             })
+            .filter((order) => order.orderStatus !== "cancelled")
         newOrders = [...new Set(newOrders)].map((order) => JSON.parse(order));
         console.log("finished processing orders")
 
@@ -117,25 +118,20 @@ async function main () {
                 let {rows} = await db.query(queryString, [orderId]);
                 if (rows.length === 0) {
                     let {paymentDate, orderId, orderStatus, name, storeId, items} = order;
-                    queries.push([`
-                        INSERT INTO 
-                            surtrics.surplus_sales_data (payment_date, order_id, order_status, name, store_id, items)
-                        VALUES 
-                            ($1, $2, $3, $4, $5, ARRAY[$6]);
-                        `,[paymentDate, orderId, orderStatus, name, storeId, items]
-                        ])
-                    console.log("inserting order")
+                    console.log(`Inserting order ${orderId} from ${storeId} on ${paymentDate} with status ${orderStatus} for ${name}`)
+                    let queryString = `INSERT INTO surtrics.surplus_sales_data (payment_date, order_id, order_status, name, store_id, items) VALUES`
+                    queries.push(queryString + `( '${paymentDate}', '${orderId}', '${orderStatus}', '${name}', '${storeId}', Array['${items}']);`)
                     return "inserted"
                 }
                 if (rows.length > 0) {
                     let {order_status} = rows[0];
                     if (order_status !== orderStatus) {
+                        console.log(`Updating order ${orderId} from ${order_status} to ${orderStatus}`);
                         queries.push([`UPDATE surtrics.surplus_sales_data SET order_status = '${orderStatus}' WHERE order_id = ${orderId};`])
                         console.log("updating order")
-                        return "updated"
+                        return "updated";
                     }
-                    console.log("no change")
-                    return "no change"
+                    return "no change";
                 }
             })
 
@@ -143,16 +139,14 @@ async function main () {
             acc[curr] = acc[curr] ? acc[curr] + 1 : 1;
             return acc;
         },{}))
-
-        let {results:queryRows,errors:QueryErrors} = await PromisePool
+        console.log(queries)
+        let {errors:QueryErrors} = await PromisePool
             .for(queries)
             .withConcurrency(25)
             .process(async (query) => {
                 return await db.query(...query);
             })
-        console.log(
-            JSON.stringify(queryRows),
-        )
+
         console.warn(
             JSON.stringify(QueryErrors)
         )

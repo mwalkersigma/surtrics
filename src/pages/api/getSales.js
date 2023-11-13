@@ -114,16 +114,28 @@ async function main () {
                 let {rows} = await db.query(queryString, [orderId]);
                 if (rows.length === 0) {
                     let {paymentDate, orderId, orderStatus, name, storeId, items} = order;
-                    console.log(`Inserting order ${orderId} from ${storeId} on ${paymentDate} with status ${orderStatus} for ${name}`)
-                    let queryString = `INSERT INTO surtrics.surplus_sales_data (payment_date, order_id, order_status, name, store_id, items) VALUES`
-                    queries.push(queryString + `( '${paymentDate}', '${orderId}', '${orderStatus}', '${name}', '${storeId}', Array['${items}']);`)
+                    console.log(`Inserting order ${orderId} from ${storeId} on ${paymentDate} with status ${orderStatus} for ${name}`);
+                    console.log("Items: ", items)
+                    queries.push([`
+                            INSERT INTO 
+                                surtrics.surplus_sales_data (payment_date, order_id, order_status, name, store_id, items) 
+                            VALUES ($1, $2, $3, $4, $5, $6::text[])
+                            `, [paymentDate, orderId, orderStatus, name, storeId, items]]);
                     return "inserted"
                 }
                 if (rows.length > 0) {
                     let {order_status} = rows[0];
                     if (order_status !== orderStatus) {
                         console.log(`Updating order ${orderId} from ${order_status} to ${orderStatus}`);
-                        queries.push([`UPDATE surtrics.surplus_sales_data SET order_status = '${orderStatus}' WHERE order_id = ${orderId};`])
+                        queries.push([`
+                                    UPDATE 
+                                        surtrics.surplus_sales_data 
+                                    SET 
+                                        order_status = $1 
+                                    WHERE 
+                                        order_id = $2;`,
+                            [order_status, orderId]]
+                        )
                         console.log("updating order")
                         return "updated";
                     }
@@ -142,7 +154,8 @@ async function main () {
             .process(async (query) => {
                 return await db.query(...query);
             })
-
+        Logger.log("Errors: ");
+        Logger.log(JSON.stringify(QueryErrors, null, 2))
         Logger.log("finished inserting into database")
         await updateLastUpdatedTime("shipStation");
         Logger.log("finished updating last updated time for shipStation")

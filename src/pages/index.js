@@ -40,27 +40,24 @@ ChartJS.register(
 
 
 function HomeDisplay(){
-    let date = new Date();
-    date = date.toISOString().split("T")[0];
+    let date = new Date().toISOString().split("T")[0];
 
     const theme = useContext(ThemeContext)
 
     const shadowColor = theme === "dark" ? colorScheme.white : colorScheme.dark;
 
-    let weekData = useUpdates("/api/views/weeklyView",{date});
+    let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
     weekData = processWeekData(weekData);
 
     let weekDays = weekData.filter(({date}) => isWeekend(new Date(date)))
-    let dailyData = useUpdates("/api/views/dailyView",{date});
-
+    let dailyData = useUpdates("/api/views/increments",{date, interval:"1 day", increment: "hour"});
+    console.log(dailyData)
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
     let weekSeed = makeWeekArray(weekData,new Date(date));
     let dateLabels = weekSeed.map(({date}) => format(addHours(new Date(date),6),"EEE MM/dd"));
-    if(dailyData.length === 0){
-        dailyData = []
-    }
+
     if (weekData.length === 0) return <div className={"text-center"}>Loading...</div>
 
     const totalIncrements = weekSeed.map(({count}) => +count).reduce((a,b)=>a+b,0);
@@ -181,7 +178,7 @@ function HomeDisplay(){
                     <p>Hourly Snapshot</p>
                     <Line
                         data={{
-                            labels: dailyData.map(({hour}) => +(subHours(new Date(hour),7).toLocaleTimeString().split(":")[0])),
+                            labels: dailyData.map(({date_of_transaction}) => +(subHours(new Date(date_of_transaction),7).toLocaleTimeString().split(":")[0])),
                             datasets:[
                                 {
                                     data:dailyData.map(({count}) => +count),

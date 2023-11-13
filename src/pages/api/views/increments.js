@@ -6,7 +6,7 @@ import router from "../../../modules/serverUtils/requestRouter";
 
 
 async function getIncrements(req,res,date,interval,increment){
-    console.log(date,interval,increment)
+    console.log(date.toISOString(),interval,increment)
     let query = await db.query(`
         SELECT
             COUNT(*),
@@ -15,7 +15,7 @@ async function getIncrements(req,res,date,interval,increment){
         FROM
             surtrics.surplus_metrics_data
         WHERE
-            transaction_date > $1
+            transaction_date >= $1
             AND transaction_date <= DATE($1) + $2::interval
           AND (
                     transaction_type = 'Add'
@@ -30,7 +30,7 @@ async function getIncrements(req,res,date,interval,increment){
         GROUP BY
             date_of_transaction,
             transaction_reason
-    `, [date, interval,increment])
+    `, [date.toISOString(), interval,increment])
     return query.rows;
 }
 

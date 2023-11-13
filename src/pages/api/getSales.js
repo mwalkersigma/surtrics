@@ -49,8 +49,8 @@ async function getShipStationOrders(options) {
             break;
         }
         options.page = page + 1;
-        console.log(`Page ${page} of ${pages} retrieved`)
-        console.log(`Total orders retrieved: ${results.length}`)
+        Logger.log(`Page ${page} of ${pages} retrieved`)
+        Logger.log(`Total orders retrieved: ${results.length}`)
     }
     return results;
 }
@@ -66,10 +66,10 @@ async function main () {
         let shouldNotUpdate = await isTimeToUpdate(currentTimestamp, timeLastUpdated);
 
         if (shouldNotUpdate) {
-            Logger.log("No need to update");
+            Logger.log("No need to update sales");
             return;
         }
-        Logger.log("Time to update");
+        Logger.log("Time to update sales");
 
         timeLastUpdated = new Date(timeLastUpdated).toISOString().split("T")[0];
 
@@ -83,10 +83,7 @@ async function main () {
                 paymentDateStart: timeLastUpdated
             })
         ])
-
-
-
-        console.log("finished getting orders")
+        Logger.log(`Retrieved ${newOrders.length} new orders and ${updatedOrders.length} updated orders`)
         newOrders = newOrders
             .concat(updatedOrders)
             .map((order) => {
@@ -100,8 +97,7 @@ async function main () {
             })
             .filter((order) => order.orderStatus !== "cancelled")
         newOrders = [...new Set(newOrders)].map((order) => JSON.parse(order));
-        console.log("finished processing orders")
-
+        Logger.log(`After removing duplicates and cancelled orders, there are ${newOrders.length} new orders to insert`)
         let queries = [];
 
 
@@ -109,7 +105,7 @@ async function main () {
                        FROM surtrics.surplus_sales_data
                        WHERE order_id = $1`;
 
-        console.log("Preparing to query database")
+        Logger.log("Preparing to query database")
         const {results} = await PromisePool
             .for(newOrders)
             .withConcurrency(25)
@@ -135,11 +131,11 @@ async function main () {
                 }
             })
 
-        console.log(results.reduce((acc,curr) => {
+        Logger.log(results.reduce((acc,curr) => {
             acc[curr] = acc[curr] ? acc[curr] + 1 : 1;
             return acc;
         },{}))
-        console.log(queries)
+        Logger.log(queries)
         let {errors:QueryErrors} = await PromisePool
             .for(queries)
             .withConcurrency(25)
@@ -147,11 +143,9 @@ async function main () {
                 return await db.query(...query);
             })
 
-        console.warn(
-            JSON.stringify(QueryErrors)
-        )
-        console.log("finished inserting into database")
+        Logger.log("finished inserting into database")
         await updateLastUpdatedTime("shipStation");
+        Logger.log("finished updating last updated time for shipStation")
     } catch (e) {
         console.log(e);
     }

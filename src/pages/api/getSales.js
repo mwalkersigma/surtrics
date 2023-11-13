@@ -147,7 +147,6 @@ async function main () {
             acc[curr] = acc[curr] ? acc[curr] + 1 : 1;
             return acc;
         },{}))
-        Logger.log(queries)
         let {errors:QueryErrors} = await PromisePool
             .for(queries)
             .withConcurrency(25)

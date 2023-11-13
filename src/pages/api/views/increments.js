@@ -6,7 +6,6 @@ import router from "../../../modules/serverUtils/requestRouter";
 
 
 async function getIncrements(req,res,date,interval,increment){
-    console.log(date.toISOString(),interval,increment)
     let query = await db.query(`
         SELECT
             COUNT(*),

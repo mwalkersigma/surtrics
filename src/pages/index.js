@@ -49,9 +49,9 @@ function HomeDisplay(){
     let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
     weekData = processWeekData(weekData);
 
-    let weekDays = weekData.filter(({date}) => isWeekend(new Date(date)))
+    let weekDays = weekData.filter(({date}) => !isWeekend(new Date(date)))
     let dailyData = useUpdates("/api/views/increments",{date, interval:"1 day", increment: "hour"});
-    console.log(dailyData)
+
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
@@ -74,6 +74,7 @@ function HomeDisplay(){
 
     const bestDay = Math.max(...weekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
+
     return (<>
         <Row className={"pb-3"}>
             <Col sm={2}>

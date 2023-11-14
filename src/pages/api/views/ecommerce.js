@@ -1,19 +1,26 @@
-WITH
+import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
+import router from "../../../modules/serverUtils/requestRouter";
+import db from "../../../db/index";
+
+async function getHandler(){
+    return await db.query(`
+        WITH
     big_commerce_sales AS (
         SELECT
+            count(*) as transactions,
             DATE_TRUNC('month',payment_date) as payment_month,
             JSON_AGG(items) as items
         FROM
             surtrics.surplus_sales_data
         WHERE
             store_id = 225004
-            AND order_status != 'Cancelled'
         GROUP BY
             payment_month,
             store_id
     ),
     ebay_sales AS (
         SELECT
+            count(*) as transactions,
             DATE_TRUNC('month',payment_date) as payment_month,
             JSON_AGG(items) as items
         FROM
@@ -96,8 +103,9 @@ WITH
     quickbooks AS (
         SELECT
             DATE_TRUNC('month',po_date) as month_quickbooks,
-            AVG(purchase_total) as po_total
-
+            count(*) as po_count,
+            AVG(purchase_total) as po_avg,
+            SUM(purchase_total) as po_total
         FROM
             surtrics.surplus_quickbooks_data
         GROUP BY
@@ -108,7 +116,9 @@ SELECT
     impressions,
     page_views,
     ebay_sales.items as ebay_sales,
+    ebay_sales.transactions as ebay_sales_transactions,
     big_commerce_sales.items as big_commerce_sales,
+    big_commerce_sales.transactions as big_commerce_transactions,
     visits,
     new_listing.transactions as new_listing_transactions,
     relisting.transactions as relisting_transactions,
@@ -116,6 +126,8 @@ SELECT
     shopped,
     add_to_cart,
     web_leads,
+    po_avg,
+    po_count,
     po_total
 FROM
     increments
@@ -135,3 +147,29 @@ LEFT JOIN
     quickbooks ON quickbooks.month_quickbooks = increments.month_of_transaction
 ORDER BY
     month_of_transaction
+    `)
+}
+function postHandler(){}
+function putHandler(){}
+function deleteHandler(){}
+
+export default function handler(req, res) {
+    return serverAdminWrapper((req, res) => {
+        return router({
+            GET: getHandler,
+            //POST: postHandler,
+            //PUT: putHandler,
+            //DELETE: deleteHandler,
+        })(req, res)
+    })(req, res)
+        .then((response) => {
+            let data = {response};
+            if(response?.rows){
+                data.rows = response.rows;
+            }
+            res.status(200).json(data)
+        })
+        .catch((error) => {
+            res.status(500).json({error})
+        })
+}

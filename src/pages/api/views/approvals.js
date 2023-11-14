@@ -18,7 +18,7 @@ async function getIncrements(req,res,date,interval){
         GROUP BY
             name,
             date_of_final_approval;
-    `, [interval,date])
+    `, [interval,date.toLocaleString()])
     return query.rows;
 }
 

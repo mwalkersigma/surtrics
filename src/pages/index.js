@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import {Col, Row} from "react-bootstrap";
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import Container from "react-bootstrap/Container";
 
 import useUpdates from "../modules/hooks/useUpdates";
@@ -24,9 +24,11 @@ import BigInfoCard from "../components/infoCards/bigInfoCards";
 
 
 
-import {subHours, format, addHours, isWeekend} from "date-fns";
+import {subHours, format, addHours, isWeekend, addDays} from "date-fns";
 import {colorScheme} from "./_app";
 import useNav from "../modules/hooks/useNav";
+import formatDateWithZeros from "../modules/utils/formatDateWithZeros";
+import findStartOfWeek from "../modules/utils/findSundayFromDate";
 
 ChartJS.register(
     CategoryScale,
@@ -37,26 +39,130 @@ ChartJS.register(
     LineElement,
 );
 
+function WeekGraph ({weekSeed,goal,theme,shadowColor}){
+    let dateLabels = weekSeed.map(({date}) => format(addHours(new Date(date),6),"EEE MM/dd"));
+    return <Col sm={4}>
+        <div
+            className={`graph-card text-center`}
+            style={{
+                border: `1px solid ${theme === "dark" ? "#FFF" : "#000"}`,
+                boxShadow: `3px 3px ${shadowColor}`,
+                fontSize: "1.5rem",
+            }}
+        >
+            <p>Daily Snapshot</p>
+            <Bar
+                data={{
+                    labels: dateLabels,
+                    datasets:[
+                        {
+                            data:weekSeed.map(({count}) => +count),
+                            borderColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
+                            backgroundColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
+                        }
+                    ]
+                }}
+                options={{
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        datalabels: {
+                            color: "#FFF",
+                        },
+                    },
+                    scales: {
+                        y:{
+                            min: 0,
+                            max: goal * 2,
+                            display: false,
+                            ticks: {
+                                color: "#FFF"
+                            }
+                        },
+                    },
+                }}
+                height={190}
+            />
+        </div>
+    </Col>
+}
+
+function DailyGraph ({dailyData,theme,shadowColor}){
+    return <Col sm={4}>
+        <div
+            className={"graph-card text-center"}
+            style={{
+                border: `1px solid ${theme === "dark" ? "#FFF" : "#000"}`,
+                fontSize: "1.5rem",
+                boxShadow: `3px 3px ${shadowColor}`,
+            }}
+        >
+            <p>Hourly Snapshot</p>
+            <Line
+                data={{
+                    labels: dailyData.map(({date_of_transaction}) => +(subHours(new Date(date_of_transaction),7).toLocaleTimeString().split(":")[0])),
+                    datasets:[
+                        {
+                            data:dailyData.map(({count}) => +count),
+                            borderColor:'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        }
+                    ]
+                }}
+                options={{
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        datalabels: {
+                            display: false,
+                            color: theme === "dark" ? "#fff" : "#000",
+                            align: "top",
+                        },
+                    },
+                    scales: {
+                        y:{
+                            ticks: {
+                                color: theme === "dark" ? "#FFF" : "#000"
+                            }
+                        },
+                    },
+                }}
+                height={190}
+            />
+        </div>
+    </Col>
+}
+
 
 
 function HomeDisplay(){
-    let date = new Date().toISOString().split("T")[0];
 
     const theme = useContext(ThemeContext)
-
     const shadowColor = theme === "dark" ? colorScheme.white : colorScheme.dark;
 
+    let date = new Date().toLocaleString().split("T")[0];
+    let dailyData = useUpdates("/api/views/increments",{date, interval:"1 day", increment: "hour"});
+    dailyData = dailyData
+        .reduce((acc,curr) => {
+            let date = new Date(curr.date_of_transaction).toLocaleString().split("T")[0];
+            if (!acc[date]) acc[date] = 0;
+            acc[date] += +curr.count;
+            return acc
+        },{})
+    dailyData = Object.entries(dailyData).map(([date,count]) => ({date_of_transaction:date,count}));
+    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()),1))
     let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
     weekData = processWeekData(weekData);
 
     let weekDays = weekData.filter(({date}) => !isWeekend(new Date(date)))
-    let dailyData = useUpdates("/api/views/increments",{date, interval:"1 day", increment: "hour"});
 
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
     let weekSeed = makeWeekArray(weekData,new Date(date));
-    let dateLabels = weekSeed.map(({date}) => format(addHours(new Date(date),6),"EEE MM/dd"));
+
 
     if (weekData.length === 0) return <div className={"text-center"}>Loading...</div>
 
@@ -75,6 +181,7 @@ function HomeDisplay(){
     const bestDay = Math.max(...weekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
 
+    console.log(dailyData)
     return (<>
         <Row className={"pb-3"}>
             <Col sm={2}>
@@ -117,100 +224,13 @@ function HomeDisplay(){
             </Col>
         </Row>
         <Row className={"pb-3"}>
-            <Col sm={4}>
-                <div
-                    className={`graph-card text-center`}
-                    style={{
-                        border: `1px solid ${theme === "dark" ? "#FFF" : "#000"}`,
-                        boxShadow: `3px 3px ${shadowColor}`,
-                        fontSize: "1.5rem",
-                    }}
-                >
-                    <p>Daily Snapshot</p>
-                    <Bar
-                        data={{
-                            labels: dateLabels,
-                            datasets:[
-                                {
-                                    data:weekSeed.map(({count}) => +count),
-                                    borderColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
-                                    backgroundColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
-                                }
-                            ]
-                        }}
-                        options={{
-                            plugins: {
-                                legend: {
-                                    display: false,
-                                },
-                                datalabels: {
-                                    color: "#FFF",
-                                },
-                            },
-                            scales: {
-                                y:{
-                                    min: 0,
-                                    max: goal * 2,
-                                    display: false,
-                                    ticks: {
-                                        color: "#FFF"
-                                    }
-                                },
-                            },
-                        }}
-                        height={190}
-                    />
-                </div>
-            </Col>
+            <WeekGraph weekSeed={weekSeed} shadowColor={shadowColor} goal={goal} theme={theme}/>
             <Col sm={4}>
                 <BigInfoCard theme={theme} title={"Weekly Goal"}>
                     {formatter(goal * 5)}
                 </BigInfoCard>
             </Col>
-            <Col sm={4}>
-                <div
-                    className={"graph-card text-center"}
-                    style={{
-                        border: `1px solid ${theme === "dark" ? "#FFF" : "#000"}`,
-                        fontSize: "1.5rem",
-                        boxShadow: `3px 3px ${shadowColor}`,
-                    }}
-                >
-                    <p>Hourly Snapshot</p>
-                    <Line
-                        data={{
-                            labels: dailyData.map(({date_of_transaction}) => +(subHours(new Date(date_of_transaction),7).toLocaleTimeString().split(":")[0])),
-                            datasets:[
-                                {
-                                    data:dailyData.map(({count}) => +count),
-                                    borderColor:'rgba(54, 162, 235, 1)',
-                                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                                }
-                            ]
-                        }}
-                        options={{
-                            plugins: {
-                                legend: {
-                                    display: false,
-                                },
-                                datalabels: {
-                                    display: false,
-                                    color: theme === "dark" ? "#fff" : "#000",
-                                    align: "top",
-                                },
-                            },
-                            scales: {
-                                y:{
-                                    ticks: {
-                                        color: theme === "dark" ? "#FFF" : "#000"
-                                    }
-                                },
-                            },
-                        }}
-                        height={190}
-                    />
-                </div>
-            </Col>
+            <DailyGraph dailyData={dailyData} shadowColor={shadowColor} theme={theme}/>
         </Row>
         <Row style={{marginBottom:'5rem'}}>
             <Col sm={4}>

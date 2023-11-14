@@ -24,6 +24,7 @@ import createAdjustedWeekArray from "../../../modules/utils/createAdjustedWeekAr
 import InfoCard from "../../../components/infoCards/infocard";
 import {colorScheme} from "../../_app";
 import yymmddTommddyy from "../../../modules/utils/yymmddconverter";
+import {addDays} from "date-fns";
 
 ChartJS.register(
     CategoryScale,
@@ -254,7 +255,7 @@ function WeeklyChart(props){
 
 function WeeklyView() {
 
-    const [date,setDate] = useState(formatDateWithZeros(findStartOfWeek(new Date())));
+    const [date,setDate] = useState(formatDateWithZeros(addDays(findStartOfWeek(new Date()),1)));
 
     let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
 
@@ -262,7 +263,7 @@ function WeeklyView() {
 
 
     function handleDateChange(e) {
-        setDate(formatDateWithZeros(findStartOfWeek(new Date(e.target.value))));
+        setDate(formatDateWithZeros(addDays(findStartOfWeek(new Date(e.target.value)),1)));
     }
     console.log(date);
     if(weekData.length === 0)return(

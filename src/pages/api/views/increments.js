@@ -29,7 +29,7 @@ async function getIncrements(req,res,date,interval,increment){
         GROUP BY
             date_of_transaction,
             transaction_reason
-    `, [date.toISOString(), interval,increment])
+    `, [date.toLocaleDateString(), interval,increment])
     return query.rows;
 }
 

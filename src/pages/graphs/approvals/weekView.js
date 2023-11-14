@@ -52,55 +52,68 @@ let colorPalette = [
 const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 const WeekView = () => {
     const [date, setDate] = useState(formatDateWithZeros(findStartOfWeek(new Date())));
+
     const theme = useContext(ThemeContext);
+
     let approvals = useUpdates("/api/views/approvals", {date,interval:"1 week"});
 
-    if(approvals.length === 0) return (
-            <Container>
-                <h1 className={"text-center"}>Approvals View</h1>
-                <Row>
-                    <Form.Control
-                        className={"mb-3"}
-                        value={date}
-                        onChange={(e)=>setDate(e.target.value)}
-                        type="date"
-                    />
-                </Row>
-                <h4 className={"text-center"}>
-                    No Data for the week found.
-                </h4>
-            </Container>
-    );
-
-    approvals = approvals.map((approval) => ({...approval, date_of_final_approval: approval.date_of_final_approval.split("T")[0]}));
+    if(!approvals){
+        return ( <Container>
+            <h1 className={"text-center"}>Approvals View</h1>
+            <Row>
+                <Form.Control
+                    className={"mb-3"}
+                    value={date}
+                    onChange={(e)=>setDate(e.target.value)}
+                    type="date"
+                />
+            </Row>
+            <h4 className={"text-center"}>
+                No Data for the week found.
+            </h4>
+        </Container>)
+    }
 
     const names = [...new Set(approvals.map(({name}) => name))];
     const dateArr = makeDateArray(date);
 
-
+    approvals = approvals.map((approval) =>{
+        return {
+            date_of_final_approval:approval.date_of_final_approval.split("T")[0],
+            name:approval.name,
+            count:approval.count
+        }
+    });
     names.forEach((name) => {
+        let possibleApprovals =
+            approvals
+                .filter((approval) => approval.name === name)
+                .map(({transactionDate})=>transactionDate)
         dateArr.forEach((date) => {
-            const found = approvals.find((approval) => approval.name === name && approval.date_of_final_approval === date);
-            if(!found) approvals.push({name,date_of_final_approval:date,count:null})
+            const found = possibleApprovals.find((approvalDate) => approvalDate === date);
+            if(!found){
+                approvals.push({name,date_of_final_approval:date,count:null})
+            }
         })
     })
 
     const dataForGraph = names.reduce((acc,cur)=>{
         if(!acc[cur]) acc[cur] = [];
+        let possibleApprovals =
+            approvals
+                .filter((approval) => approval.name === cur)
         dateArr.forEach((date) => {
-            const found = approvals.find((approval) => approval.name === cur && approval.date_of_final_approval === date);
+            const found = possibleApprovals.find((approvalDate) => approvalDate.date_of_final_approval === date);
             acc[cur].push(found.count)
         })
         return acc
     },{})
-
-
     const max = Object
         .values(dataForGraph)
         .map(arr=>arr.map(item=>+item))
         .reduce((acc,cur)=>{
             cur.forEach((item,i)=>{
-              acc[i] += item;
+                acc[i] += item;
             })
             return acc
         },[0,0,0,0,0,0,0])
@@ -114,13 +127,12 @@ const WeekView = () => {
                         return "TOTAL: " + context.reduce((acc, {raw}) => (acc + +raw), 0);
                     }
                 }
-
             },
             datalabels:{
                 color:parseTheme(theme),
             },
             title:{
-              text:"Week View"
+                text:"Week View"
             }
         },
         interaction:{
@@ -135,16 +147,17 @@ const WeekView = () => {
     }
     const data = {
         labels: dateArr,
-        datasets:Object.entries(dataForGraph).map(([name,graphData],i) => {
-            return {
-                label: name,
-                data:graphData,
-                backgroundColor: colorPalette[i%colorPalette.length],
-                borderColor: colorPalette[i%colorPalette.length],
-                borderWidth: 1,
-                stack: 1
-            }
-        })
+        datasets:Object.entries(dataForGraph)
+            .map(([name,graphData],i) => {
+                return {
+                    label: name,
+                    data:graphData,
+                    backgroundColor: colorPalette[i%colorPalette.length],
+                    borderColor: colorPalette[i%colorPalette.length],
+                    borderWidth: 1,
+                    stack: 1
+                }
+            })
     };
     return (
             <Container>

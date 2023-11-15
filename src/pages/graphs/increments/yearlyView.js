@@ -106,11 +106,12 @@ function YearlyChart(props){
     }
 
     const monthes = [ "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-    yearData =  yearData.map((item)=>{
+    yearData =  yearData
+        .map((item)=>{
         const {date_of_transaction} = item;
-        return{...item, ...{date_of_transaction: getMonth(new Date(date_of_transaction))+1}}
-    }).sort((a,b)=>a.date_of_transaction - b.date_of_transaction)
-    console.log(yearData)
+        return{...item, ...{date_of_transaction: +date_of_transaction.split("T")[0].split("-")[1]}}
+        })
+        .sort((a,b)=>a.date_of_transaction - b.date_of_transaction)
     const data = yearData.length > 0 && {
         labels: Array.from(new Set(yearData?.map(({date_of_transaction}) => (monthes[date_of_transaction-1])))),
         datasets: [
@@ -152,12 +153,12 @@ let dateSet = setDate
 function YearlyView() {
     const [date,setDate] = useState(formatDateWithZeros(dateSet(setMonth(new Date(),0),1)));
     let yearData = useUpdates("/api/views/increments",{date,interval:"1 year",increment:"month"});
-    console.log(yearData)
     const theme = useContext(ThemeContext);
 
     function handleDateChange(e) {
         setDate(formatDateWithZeros(dateSet(setMonth(new Date(e.target.value),0),1)));
     }
+
     if(yearData.length === 0)return(
         <Container className={"text-center"}>
             <Form.Control className={"mb-5"} value={date} onChange={handleDateChange} type="date" />

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supercharge/promise-pool": "^3.0.0",
+    "@tabler/icons-react": "^2.40.0",
     "another-random-package": "^1.0.2",
     "bootstrap": "^5.3.1",
     "bottleneck": "^2.19.5",
@@ -33,7 +34,16 @@
     "sigma-logger": "^1.0.3"
   },
   "devDependencies": {
+    "@mantine/core": "^7.2.2",
+    "@mantine/dates": "^7.2.2",
+    "@mantine/form": "^7.2.2",
+    "@mantine/hooks": "^7.2.2",
+    "@mantine/notifications": "^7.2.2",
+    "dayjs": "^1.11.10",
     "node-env-run": "^4.0.2",
+    "postcss": "^8.4.31",
+    "postcss-preset-mantine": "^1.11.0",
+    "postcss-simple-vars": "^7.0.1",
     "vitest": "^0.34.4"
   }
 }

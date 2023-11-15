@@ -1,5 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../styles/style.scss";
+import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
+import { MantineProvider, createTheme } from '@mantine/core';
 import Layout from "./layout";
 import {SessionProvider} from "next-auth/react";
 
@@ -33,9 +36,22 @@ function Base({ Component, pageProps }) {
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
   return getLayout(<Component {...pageProps} />)
 }
+const theme = createTheme({
+    /** Put your mantine theme override here */
+});
 
 export default function App ({ Component, pageProps : {session, ...pageProps}}){
-    return <SessionProvider session={session}>
-            <Base Component={Component} pageProps={pageProps}/>
+
+    return(
+        <MantineProvider theme={theme} defaultColorScheme="dark">
+            <SessionProvider session={session}>
+                <Base Component={Component} pageProps={pageProps}/>
             </SessionProvider>
+        </MantineProvider>
+    )
 }
+
+
+
+
+

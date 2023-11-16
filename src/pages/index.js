@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import {Col, Row} from "react-bootstrap";
-import React, {useContext, useState} from "react";
+import React from "react";
 import Container from "react-bootstrap/Container";
 
 import useUpdates from "../modules/hooks/useUpdates";
@@ -17,7 +17,6 @@ import {
     LinearScale, LineElement, PointElement,
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
-import {ThemeContext} from "./layout";
 
 import InfoCard from "../components/infoCards/infocard";
 import BigInfoCard from "../components/infoCards/bigInfoCards";
@@ -29,6 +28,7 @@ import {colorScheme} from "./_app";
 import useNav from "../modules/hooks/useNav";
 import formatDateWithZeros from "../modules/utils/formatDateWithZeros";
 import findStartOfWeek from "../modules/utils/findSundayFromDate";
+import {useMantineColorScheme} from "@mantine/core";
 
 ChartJS.register(
     CategoryScale,
@@ -138,8 +138,7 @@ function DailyGraph ({dailyData,theme,shadowColor}){
 
 
 function HomeDisplay(){
-
-    const theme = useContext(ThemeContext)
+    const {colorScheme:theme} = useMantineColorScheme();
     const shadowColor = theme === "dark" ? colorScheme.white : colorScheme.dark;
 
     let date = new Date().toLocaleString().split("T")[0];
@@ -181,7 +180,6 @@ function HomeDisplay(){
     const bestDay = Math.max(...weekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
 
-    console.log(dailyData)
     return (<>
         <Row className={"pb-3"}>
             <Col sm={2}>

@@ -6,13 +6,9 @@ import useAdminList from "../modules/hooks/useAdminList";
 import RoleWrapper from "./RoleWrapper";
 import SignInComponent from "./SignInComponent";
 
-{/*<NavDropdown.ItemText>Graphs</NavDropdown.ItemText>*/}
-{/*<NavDropdown.Divider />*/}
-{/*<NavDropdown.Divider />*/}
-// <NavDropdown.ItemText>Tables</NavDropdown.ItemText>
-// <NavDropdown.Divider />
 
-export default function NavBar({theme,setTheme,setDay}){
+
+export default function NavBar({theme,setTheme}){
     const {data: session} = useSession();
     let {isAdmin,getRoles,isRole} = useAdminList();
     const isRanda = isRole("Randa")(session);

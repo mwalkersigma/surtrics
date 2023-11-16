@@ -1,0 +1,10 @@
+.card {
+    padding:var(--mantine-spacing-md)  var(--mantine-spacing-xl);
+
+}
+
+
+
+.title {
+    font-family: Greycliff CF, var(--mantine-font-family);
+}

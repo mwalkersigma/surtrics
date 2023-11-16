@@ -22,11 +22,11 @@ const icons = {
     visits: IconDirections,
 };
 
-export default function StatsCard ({stat,Icon:i}){
+export default function StatsCard ({stat,Icon:i, ...rest}){
     const Icon = icons[i] || IconEye;
-    const DiffIcon = stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
+    const DiffIcon = stat?.diff ? stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight : null;
     return (
-        <Paper withBorder p="md" radius="md" key={stat.title}>
+        <Paper {...rest} withBorder p="md" radius="md" key={stat.title}>
             <Group justify="space-between">
                 <Text size="xs" c="dimmed" className={classes.title}>
                     {stat.title}
@@ -36,10 +36,12 @@ export default function StatsCard ({stat,Icon:i}){
 
             <Group align="flex-end" gap="xs" mt={25}>
                 <Text className={classes.value}>{formatter(stat.value,stat?.format ?? "number")}</Text>
-                <Text c={stat.diff > 0 ? 'teal' : 'red'} fz="sm" fw={500} className={classes.diff}>
-                    <span>{Math.trunc(stat.diff * 100)/100}%</span>
-                    <DiffIcon size="1rem" stroke={1.5} />
-                </Text>
+                {DiffIcon &&
+                    <Text c={stat.diff > 0 ? 'teal' : 'red'} fz="sm" fw={500} className={classes.diff}>
+                        <span>{Math.trunc(stat.diff * 100)/100} {!stat.diffFormat && "%"} </span>
+                        <DiffIcon size="1rem" stroke={1.5} />
+                    </Text>
+                }
             </Group>
 
             <Text fz="xs" c="dimmed" mt={7}>

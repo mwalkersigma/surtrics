@@ -26,7 +26,7 @@ export default function StatsCard ({stat,Icon:i, ...rest}){
     const Icon = icons[i] || IconEye;
     const DiffIcon = stat?.diff ? stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight : null;
     return (
-        <Paper {...rest} withBorder p="md" radius="md" key={stat.title}>
+        <Paper {...rest} withBorder p="md" radius="md">
             <Group justify="space-between">
                 <Text size="xs" c="dimmed" className={classes.title}>
                     {stat.title}

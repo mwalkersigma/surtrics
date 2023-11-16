@@ -16,6 +16,7 @@
     "bottleneck": "^2.19.5",
     "chart.js": "^4.4.0",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "clsx": "^2.0.0",
     "csv-parse": "^5.4.1",
     "date-fns": "^2.30.0",
     "decompress": "^4.2.1",

@@ -20,6 +20,7 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {setDate} from "date-fns";
+import {useMantineColorScheme} from "@mantine/core/lib";
 
 ChartJS.register(
     CategoryScale,
@@ -43,7 +44,7 @@ const dateSet = setDate
 
 const MonthlyView = () => {
     const [date, setDate] = useState(formatDateWithZeros(dateSet(new Date(),1)));
-    const theme = useContext(ThemeContext);
+    const {colorScheme:theme} = useMantineColorScheme();
     let approvals = useUpdates("/api/views/approvals", {date, interval: "1 month"});
     console.log(approvals)
 

@@ -11,9 +11,8 @@ import {
     Menu,
     UnstyledButton,
     Avatar,
-    useMantineTheme,
     useMantineColorScheme,
-    NavLink,
+    NavLink, ScrollArea,
 } from '@mantine/core';
 import {
     IconChevronDown,
@@ -100,6 +99,7 @@ function SurtricsHeader ({ mobileOpened, toggleMobile, desktopOpened, toggleDesk
 function SurtricsNavbar ({}) {
     return (
         <AppShell.Navbar p="md">
+            <ScrollArea>
             <NavLink label={"Dashboard"} href={"/"}/>
             <NavLink label={"Increments"}>
                 <NavLink label={"Graphs"}>
@@ -174,6 +174,7 @@ function SurtricsNavbar ({}) {
                     <NavLink label={"Update Goals"} href={"/admin/updateGoal"}/>
                 </NavLink>
             </RoleWrapper>
+            </ScrollArea>
         </AppShell.Navbar>
     )
 }
@@ -225,7 +226,7 @@ export default function Layout({children}) {
             </AppShell.Main>
             <AppShell.Footer p="md">
                 <Text fz={"xs"}>
-                    Surtrics 2023 Built By Michael Walker.
+                    Surtrics 2023 Built By Michael Walker. <br/>
                     Proud to be employee owned.
                 </Text>
             </AppShell.Footer>

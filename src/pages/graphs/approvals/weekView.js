@@ -23,6 +23,7 @@ import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../_app";
 import Container from "react-bootstrap/Container";
 import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
+import {useMantineColorScheme} from "@mantine/core/lib";
 
 
 
@@ -53,7 +54,7 @@ const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.d
 const WeekView = () => {
     const [date, setDate] = useState(formatDateWithZeros(findStartOfWeek(new Date())));
 
-    const theme = useContext(ThemeContext);
+    const {colorScheme:theme} = useMantineColorScheme();
 
     let approvals = useUpdates("/api/views/approvals", {date,interval:"1 week"});
 

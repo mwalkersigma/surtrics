@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import LineGraph from "../../../components/lineGraph";
 
 import useUpdates from "../../../modules/hooks/useUpdates";
-import formatter from "../../../modules/utils/numberFormatter";
 import {
     Container, Stack, useMantineColorScheme, Grid, Skeleton, Title
 } from "@mantine/core";
@@ -65,7 +64,8 @@ const DailyView = () => {
     chartData = chartData.map(({count}) => +count);
 
     let margin = "1rem";
-    return (<Container fluid>
+    return (
+        <Container fluid>
             <Title ta={"center"}>Surplus Increments Daily View</Title>
             <Grid spacing={"xl"}>
                 <Grid.Col span={1}></Grid.Col>
@@ -91,35 +91,38 @@ const DailyView = () => {
                     <Stack>
                         <StatsCard
                             stat={{
-                                title: "Total", value: formatter(chartData.reduce((a, b) => a + b, 0)),
+                                title: "Total",
+                                value: (chartData.reduce((a, b) => a + b, 0)),
                             }}/>
                         <StatsCard
                             stat={{
                                 title: "Average",
-                                value: formatter(Math.round(chartData.reduce((a, b) => a + b, 0) / dailyData.length)),
+                                value: (Math.round(chartData.reduce((a, b) => a + b, 0) / dailyData.length)),
                             }}/>
                         <StatsCard
                             stat={{
-                                title: "Best Hour", value: formatter(chartData.reduce((a, b) => a > b ? a : b, 0)),
+                                title: "Best Hour", value: (chartData.reduce((a, b) => a > b ? a : b, 0)),
                             }}/>
                         <StatsCard
                             stat={{
-                                title: "New Inbound", value: formatter(dailyData
+                                title: "New Inbound",
+                                value: (dailyData
                                     .filter((item) => (item.transaction_reason === "Add on Receiving" || item.transaction_reason === "Add"))
                                     .reduce((acc, {count}) => acc + +count, 0)),
                             }}
                         />
-
                         <StatsCard
                             stat={{
-                                title: "Re-listings", value: formatter(dailyData
+                                title: "Re-listings",
+                                value: (dailyData
                                     .filter((item) => (item.transaction_reason === "Relisting"))
                                     .reduce((acc, {count}) => acc + +count, 0)),
                             }}/>
                     </Stack>
                 </Grid.Col>
             </Grid>
-        </Container>);
+        </Container>
+    );
 };
 
 

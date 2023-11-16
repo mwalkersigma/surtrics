@@ -1,15 +1,9 @@
-import React, {useContext, useState} from 'react';
-
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import React, {useState} from 'react';
 
 import {Chart} from "react-chartjs-2";
 import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Tooltip} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 
-import {ThemeContext} from "../../layout";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import useGoal from "../../../modules/hooks/useGoal";
 
@@ -20,11 +14,14 @@ import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 import formatter from "../../../modules/utils/numberFormatter";
 import processWeekData from "../../../modules/utils/processWeekData";
 import createAdjustedWeekArray from "../../../modules/utils/createAdjustedWeekArray";
-
-import InfoCard from "../../../components/infoCards/infocard";
-import {colorScheme} from "../../_app";
 import yymmddTommddyy from "../../../modules/utils/yymmddconverter";
+
+import {colorScheme} from "../../_app";
 import {addDays} from "date-fns";
+import {useMantineColorScheme, Container, Title, Grid, Skeleton, Stack} from "@mantine/core";
+import {DatePickerInput} from "@mantine/dates";
+import LineGraph from "../../../components/lineGraph";
+import StatsCard from "../../../components/mantine/StatsCard";
 
 ChartJS.register(
     CategoryScale,
@@ -66,14 +63,18 @@ function returnDayOfWeek(date) {
 
 function WeeklyChart(props){
     let {weekData,theme,date} = props;
-    const useTheme = (theme) => theme === "dark" ? colorScheme.light : colorScheme.dark;
+    console.log(theme)
+    const Theme = (theme) => theme === "dark" ? colorScheme.light : colorScheme.dark;
     const goal = useGoal({date});
     const adjustedWeek = createAdjustedWeekArray(weekData,goal)
                                     .map(item => item > 0 ? +item + +goal  : goal);
 
+
     const thickness = 3
     const options = {
         devicePixelRatio: 4,
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             tooltip: {
                 callbacks: {
@@ -81,7 +82,6 @@ function WeeklyChart(props){
                         let label = context.dataset.label || "";
                         if(label === "adjustedGoal")return "";
                         if(label === "Total")return`Total: ${context.dataset.data[context.dataIndex]}`;
-
                     },
                     labelColor: function(context) {
                         return {
@@ -97,7 +97,6 @@ function WeeklyChart(props){
                 labels: {
                     borderless: true,
                     usePointStyle: true,
-                    color: useTheme(theme)+"A",
                     generateLabels:(chart)=>{
                         let data = chart.data;
                         if(data.labels.length && data.datasets.length){
@@ -105,6 +104,7 @@ function WeeklyChart(props){
                                 const meta = chart.getDatasetMeta(i);
                                 return {
                                     text: dataset.label,
+                                    fontColor: Theme(theme) + "AA",
                                     fillStyle: dataset.backgroundColor || dataset.borderColor,
                                     strokeStyle: dataset.backgroundColor || dataset.borderColor,
                                     hidden: meta.hidden,
@@ -116,14 +116,6 @@ function WeeklyChart(props){
                         return [];
                     }
                 },
-                title: {
-                    text: "Weekly Increments",
-                    display: true,
-                    color: useTheme(theme),
-                    font: {
-                        size: 30,
-                    }
-                }
             },
             datalabels: {
                 color: colorScheme.white,
@@ -143,19 +135,19 @@ function WeeklyChart(props){
                 min: 0,
                 max: Math.max(goal * 2,adjustedWeek.reduce((acc,curr)=>{return acc > curr ? acc : curr},0)),
                 ticks: {
-                    color: useTheme(theme) + "AA"
+                    color: Theme(theme) + "AA"
                 },
                 grid: {
-                    color: useTheme(theme)+"33"
+                    color: Theme(theme)+"33"
                 }
             },
             x:{
                 stacked: true,
                 ticks: {
-                    color: useTheme(theme)+ "AA"
+                    color: Theme(theme)+ "AA"
                 },
                 grid: {
-                    color: useTheme(theme)+"33"
+                    color: Theme(theme)+"33"
                 }
             }
         },
@@ -254,69 +246,104 @@ function WeeklyChart(props){
 }
 
 function WeeklyView() {
+    const [date, setDate] = useState(new Date())
+    const {colorScheme:theme} = useMantineColorScheme();
 
-    const [date,setDate] = useState(formatDateWithZeros(addDays(findStartOfWeek(new Date()),1)));
-
-    let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
-
-    const theme = useContext(ThemeContext);
+    let weekData = useUpdates("/api/views/increments",{date:formatDateWithZeros(addDays(findStartOfWeek(new Date(date)),1)),interval:"1 week",increment:"day"});
 
 
-    function handleDateChange(e) {
-        setDate(formatDateWithZeros(addDays(findStartOfWeek(new Date(e.target.value)),1)));
-    }
-    console.log(date);
-    if(weekData.length === 0)return(
-        <Container className={"text-center"}>
-            <Form.Control className={"mb-5"} value={date} onChange={handleDateChange} type="date" />
-            Loading...
-        </Container>
-    );
-    let margin = "3.5rem";
+     if(weekData.length === 0) return (
+         <Container fluid>
+             <Title ta={"center"}>Surplus Increments Weekly View</Title>
+             <Grid spacing={"xl"}>
+                 <Grid.Col span={1}></Grid.Col>
+                 <Grid.Col span={8}>
+                     <DatePickerInput
+                         mt={"xl"}
+                         mb={"xl"}
+                         label={"Date"}
+                         value={date}
+                         onChange={(e) => setDate(e)}
+                     />
+                 </Grid.Col>
+                 <Grid.Col span={3}></Grid.Col>
+             </Grid>
+             <Grid spacing={"xl"}>
+                 <Grid.Col span={1}></Grid.Col>
+                 <Grid.Col span={8}>
+                     <Skeleton height={"65vh"} radius="md" animate={false}/>
+                 </Grid.Col>
+                 <Grid.Col span={2}>
+                     <Stack>
+                         <Skeleton height={110} radius="md" animate={false}/>
+                         <Skeleton height={110} radius="md" animate={false}/>
+                         <Skeleton height={110} radius="md" animate={false}/>
+                         <Skeleton height={110} radius="md" animate={false}/>
+                         <Skeleton height={110} radius="md" animate={false}/>
+                     </Stack>
+                 </Grid.Col>
+             </Grid>
+         </Container>
+     );
+
     weekData = processWeekData(weekData)
     weekData = makeWeekArray(weekData,new Date(date));
     return (
-        <main>
-            <Container>
-                <Row>
-                    <Form.Control
-                        className={"mb-3"}
+        <Container fluid>
+            <Title ta={"center"}>Surplus Increments Weekly View</Title>
+            <Grid spacing={"xl"}>
+                <Grid.Col span={1}></Grid.Col>
+                <Grid.Col span={8}>
+                    <DatePickerInput
+                        mt={"xl"}
+                        mb={"xl"}
+                        label={"Date"}
                         value={date}
-                        onChange={handleDateChange}
-                        type="date"
+                        onChange={(e) => setDate(e)}
                     />
-                </Row>
-                Showing data for {getWeekString(new Date(date))}.
-                <div className={"mb-3"} />
-                <Row>
-                    <Col sm={10} className={`p-1 themed-drop-shadow ${theme}`} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
-                        {weekData.length > 0 && <WeeklyChart theme={theme} weekData={weekData} date={date} />}
-                    </Col>
-                    <Col sm={2}>
-                        <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>
-                            {formatter(weekData.reduce((acc, {count}) => (acc + +count), 0))}
-                        </InfoCard>
-                        <InfoCard style={{marginBottom:margin}} title={"New Inbound"} theme={theme}>
-                            {
-                                formatter(weekData
+                </Grid.Col>
+                <Grid.Col span={3}></Grid.Col>
+            </Grid>
+            <Grid spacing={"xl"}>
+                <Grid.Col span={1}></Grid.Col>
+                <Grid.Col span={8}>
+                    <div style={{position: "relative", height: "100%"}} className={"chart-container"}>
+                        <WeeklyChart theme={theme} weekData={weekData} date={date}/>
+                    </div>
+                </Grid.Col>
+                <Grid.Col span={2}>
+                    <Stack>
+                        <StatsCard
+                            stat={{
+                                title: "Total",
+                                value: weekData.reduce((a,b)=>a+b.count,0),
+                            }}/>
+                        <StatsCard
+                            stat={{
+                                title: "Average",
+                                value: weekData.reduce((a, b) => a + b.count, 0) / weekData.length
+                            }}/>
+                        <StatsCard
+                            stat={{
+                                title: "Best Day", value: Math.max(...weekData.map(({count}) => count)),
+                            }}/>
+                        <StatsCard
+                            stat={{
+                                title: "New Inbound", value: weekData
                                     .filter((item) => (item["Add"] || item["Add on Receiving"]))
-                                    .reduce((acc,item)=>acc + (+item["Add"] || 0) + (+item["Add on Receiving"] || 0),0)
-                                )
-                            }
-                        </InfoCard>
-                        <InfoCard style={{marginBottom:0}} title={"Re-listings"} theme={theme}>
-                            {
-                                formatter(
-                                    weekData
-                                    .filter((item) => (item["Relisting"]))
-                                    .reduce((acc,item)=>acc + (+item["Relisting"] || 0),0)
-                                )
-                            }
-                        </InfoCard>
-                    </Col>
-                </Row>
-            </Container>
-        </main>
+                                    .reduce((acc,item)=>acc + (+item["Add"] || 0) + (+item["Add on Receiving"] || 0),0),
+                            }}
+                        />
+                        <StatsCard
+                            stat={{
+                                title: "Re-listings", value:weekData
+                                        .filter((item) => (item["Relisting"]))
+                                        .reduce((acc,item)=>acc + (+item["Relisting"] || 0),0),
+                            }}/>
+                    </Stack>
+                </Grid.Col>
+            </Grid>
+        </Container>
     )
 }
 

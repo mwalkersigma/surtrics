@@ -26,46 +26,20 @@ import RoleWrapper from "../components/RoleWrapper";
 import useNav from "../modules/hooks/useNav";
 
 
-export default function Layout({children}) {
-    const hasNavBar = useNav();
-    const intervalRef = useRef();
+function SurtricsHeader ({ mobileOpened, toggleMobile, desktopOpened, toggleDesktop}) {
     const {setColorScheme, colorScheme} = useMantineColorScheme()
-    const [mobileOpened, {toggle: toggleMobile}] = useDisclosure();
-    const [desktopOpened, {toggle: toggleDesktop}] = useDisclosure(true);
-
     const [userMenuOpened, setUserMenuOpened] = useState(false);
     const {data: session} = useSession();
     const user = session?.user;
-
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-        let twentyFourHours = 1000 * 60 * 60 * 24;
-        intervalRef.current = setInterval(() => {
-            window.location.reload();
-        }, twentyFourHours);
-        return () => clearInterval(intervalRef.current);
-    }, []);
-
-    if (!hasNavBar) return children;
     return (
-        <AppShell header={{height: 60}} padding="md"
-            navbar={{
-                width: 300,
-                breakpoint: 'sm',
-                collapsed: {
-                    mobile: !mobileOpened,
-                    desktop: !desktopOpened
-                },
-            }}
-        >
-            <AppShell.Header>
-                <Group h="100%" justify="space-between">
-                    <Group h="100%" px="md">
-                        <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm"/>
-                        <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm"/>
-                        <Text href={"/"} size="xl">Surtrics</Text>
-                    </Group>
-                    <Group h="100%">
+        <AppShell.Header>
+            <Group h="100%" justify="space-between">
+                <Group h="100%" px="md">
+                    <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm"/>
+                    <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm"/>
+                    <Text href={"/"} size="xl">Surtrics</Text>
+                </Group>
+                <Group h="100%">
                     {!user && (
                         <Button onClick={() => signIn("google")} variant="default">
                             Sign In
@@ -120,24 +94,26 @@ export default function Layout({children}) {
 
                 </Group>
             </Group>
-
         </AppShell.Header>
+    )
+}
+function SurtricsNavbar ({}) {
+    return (
         <AppShell.Navbar p="md">
             <NavLink label={"Dashboard"} href={"/"}/>
             <NavLink label={"Increments"}>
                 <NavLink label={"Graphs"}>
-                    <NavLink href={"/graphs/increments/dailyView"} label={"Daily View"}/>
-                    <NavLink href="/graphs/increments/yearlyView" label={"Yearly View"}/>
-                    <NavLink href="/graphs/increments/monthlyView" label={"Monthly View"}/>
-                    <NavLink href="/graphs/increments/weeklyView" label={"Weekly View"}/>
                     <NavLink href="/graphs/increments/dailyView" label={"Daily View"}/>
+                    <NavLink href="/graphs/increments/weeklyView" label={"Weekly View"}/>
+                    <NavLink href="/graphs/increments/monthlyView" label={"Monthly View"}/>
+                    <NavLink href="/graphs/increments/yearlyView" label={"Yearly View"}/>
                 </NavLink>
             </NavLink>
             <NavLink label={"Approvals"}>
                 <NavLink label={"Graphs"}>
-                    <NavLink href="/graphs/approvals/yearView" label={"Yearly View"}/>
-                    <NavLink href="/graphs/approvals/monthlyView" label={"Monthly View"}/>
                     <NavLink href="/graphs/approvals/weekView" label={"Weekly View"}/>
+                    <NavLink href="/graphs/approvals/monthlyView" label={"Monthly View"}/>
+                    <NavLink href="/graphs/approvals/yearView" label={"Yearly View"}/>
                 </NavLink>
                 <NavLink label={"Tables"}>
                     <NavLink href="/tables/approvalsView" label={"Weekly View"}/>
@@ -199,14 +175,60 @@ export default function Layout({children}) {
                 </NavLink>
             </RoleWrapper>
         </AppShell.Navbar>
-        <AppShell.Main>
-            {children}
-        </AppShell.Main>
-        <AppShell.Footer p="md">
-            <Text fz={"xs"}>
-                Surtrics 2023 Built By Michael Walker.
-                Proud to be employee owned.
-            </Text>
-        </AppShell.Footer>
-    </AppShell>)
+    )
+}
+
+
+
+export default function Layout({children}) {
+    const hasNavBar = useNav();
+    const intervalRef = useRef();
+    const [mobileOpened, {toggle: toggleMobile}] = useDisclosure();
+    const [desktopOpened, {toggle: toggleDesktop}] = useDisclosure(true);
+
+    const appShellProps = {
+        header:{height: 60},
+        padding:"md",
+        navbar:{
+            width: 300,
+            breakpoint: 'sm',
+            collapsed: {
+                mobile: !mobileOpened,
+                desktop: !desktopOpened
+            },
+        }
+    }
+    const toggleProps = {
+        mobileOpened,
+        toggleMobile,
+        desktopOpened,
+        toggleDesktop,
+    }
+
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        let twentyFourHours = 1000 * 60 * 60 * 24;
+        intervalRef.current = setInterval(() => {
+            window.location.reload();
+        }, twentyFourHours);
+        return () => clearInterval(intervalRef.current);
+    }, []);
+
+    if (!hasNavBar) return children;
+    return (
+        <AppShell {...appShellProps}>
+            <SurtricsHeader{...toggleProps}/>
+            <SurtricsNavbar/>
+            <AppShell.Main>
+                {children}
+            </AppShell.Main>
+            <AppShell.Footer p="md">
+                <Text fz={"xs"}>
+                    Surtrics 2023 Built By Michael Walker.
+                    Proud to be employee owned.
+                </Text>
+            </AppShell.Footer>
+        </AppShell>
+    )
 }

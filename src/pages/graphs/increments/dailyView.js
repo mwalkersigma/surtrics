@@ -2,9 +2,7 @@ import React, {useState} from 'react';
 import LineGraph from "../../../components/lineGraph";
 
 import useUpdates from "../../../modules/hooks/useUpdates";
-import {
-    Container, Stack, useMantineColorScheme, Grid, Skeleton, Title
-} from "@mantine/core";
+import {useMantineColorScheme} from "@mantine/core";
 
 import {
     CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Tooltip
@@ -32,7 +30,6 @@ const DailyView = () => {
     chartData = Object.entries(chartData).map(([date, count]) => ({date_of_transaction: date, count}));
     chartData = chartData.map(({count}) => +count);
 
-    let margin = "1rem";
     return (
         <GraphWithStatCard
             title={"Surplus Increments Daily View"}

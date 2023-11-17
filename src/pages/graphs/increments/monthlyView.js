@@ -14,7 +14,7 @@ import {Line} from "react-chartjs-2";
 import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../_app";
 import {setDate} from "date-fns";
-import {useMantineColorScheme, Grid, Skeleton, Stack, Title, Container} from "@mantine/core";
+import {useMantineColorScheme} from "@mantine/core";
 import {MonthPickerInput} from "@mantine/dates";
 import StatsCard from "../../../components/mantine/StatsCard";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";

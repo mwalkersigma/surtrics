@@ -125,7 +125,6 @@ const ApprovalsView = () => {
             }
         ]
     }
-    let maxForSlider = Math.min(graphData.datasets[0].data.length / 8, 5)
     return (
         <GraphWithStatCard
             isLoading={updates.length === 0}

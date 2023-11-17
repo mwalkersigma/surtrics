@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
 import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
 
@@ -22,7 +22,7 @@ import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
-import {addDays,format} from "date-fns";
+import {addDays} from "date-fns";
 import StatsCard from "../../../components/mantine/StatsCard";
 
 

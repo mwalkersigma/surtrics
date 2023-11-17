@@ -1,9 +1,5 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
-import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Form from "react-bootstrap/Form";
 import {colorScheme} from "../../_app";
 import {Chart} from "react-chartjs-2";
 

@@ -153,11 +153,7 @@ const WeekView = () => {
     const [date, setDate] = useState(new Date());
     const {colorScheme:theme} = useMantineColorScheme();
     let approvals = useUpdates("/api/views/approvals", {date:formatDateWithZeros(addDays(findStartOfWeek(new Date(date)),1)),interval:"1 week"});
-    // Highest Approvals
-    // Average Approvals
-    // Total Approvals
-    // Highest User
-    // Average per person per day
+
     const users = [...new Set(approvals.map(({name}) => name))]
         .reduce((acc,cur)=>{
             acc[cur] = approvals.filter(({name})=>name===cur).reduce((acc,cur)=>acc+ +cur.count,0);
@@ -223,30 +219,6 @@ const WeekView = () => {
             >
             <WeeklyApprovalsChart approvals={approvals} date={date} theme={theme}/>
         </GraphWithStatCard>)
-
-
-
-
-
-
-
-
-
-
-    // return (
-    //         <Container>
-    //             <h1 className={"text-center"}>Approvals View</h1>
-    //             <Row>
-    //                 <Form.Control
-    //                     className={"mb-3"}
-    //                     value={date}
-    //                     onChange={(e)=>setDate(formatDateWithZeros(findStartOfWeek(new Date(e.target.value))))}
-    //                     type="date"
-    //                 />
-    //             </Row>
-    //
-    //         </Container>
-    // );
 };
 
 export default WeekView;

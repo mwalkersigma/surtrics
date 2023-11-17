@@ -229,9 +229,9 @@ export default function Layout({children}) {
                 </ScrollArea>
             </AppShell.Main>
             <AppShell.Footer p="md">
-                <Text fz={"xs"}>
-                    Surtrics 2023 Built By Michael Walker. <br/>
-                    Proud to be employee owned.
+                <Text ta={"center"} fz={"xs"}>
+                    Surtrics 2023. Proud to be employee owned.<br/>
+                    To suggest improvements, please contact <a href={"mailto:mwalker@sigmaequipment.com"}>  Michael Walker</a>
                 </Text>
             </AppShell.Footer>
         </AppShell>

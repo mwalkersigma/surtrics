@@ -1,10 +1,12 @@
 import React from 'react';
 import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
 import useUpdates from "../../modules/hooks/useUpdates";
-import Table from "react-bootstrap/Table";
 import {format} from "date-fns";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
+import {NativeSelect, Table} from "@mantine/core";
+import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
+import {DatePickerInput} from "@mantine/dates";
+import formatter from "../../modules/utils/numberFormatter";
 
 
 class Order {
@@ -37,88 +39,103 @@ class Order {
 }
 
 const SalesView = () => {
-    let [date, setDate] = React.useState(formatDateWithZeros(new Date()));
-    let sales = useUpdates("/api/views/sales/sales",{date});
-    if (!sales) {
-        return (<Container>
-                <h1 className={"text-center my-3"}>Sales View</h1>
-                <p>Loading...</p>
-            </Container>)
-    }
+    let [date, setDate] = React.useState(new Date());
+    const [store, setStore] = React.useState("225004");
+    let sales = useUpdates("/api/views/sales/sales", {date});
+
     sales = sales.map(sale => new Order(sale));
     let storeIDs = [...new Set(sales.map(sale => sale.storeId))];
     let storeSales = {};
     storeIDs.forEach(storeId => {
         storeSales[storeId] = sales.filter(sale => sale.storeId === storeId);
     });
+    storeSales["All"] = sales;
 
-    return (<Container>
-        <h1 className={"text-center my-3"}>Daily Sales By Channel</h1>
-        <div className={"mb-5"}>
-            <label htmlFor="date">Date: </label>
-            <Form.Control
-                className={"my-3"}
-                onChange={(e) => setDate(e.target.value)}
-                type="date"
-                value={date}
-            />
-        </div>
-        {storeIDs.map(storeId => {
-            return (<div key={storeId}>
-                        <h2>Store ID: {storeId}</h2>
-                        <Table striped bordered hover>
-                            <thead>
-                                <tr>
-                                    <th>Sku</th>
-                                    <th>Name</th>
-                                    <th>Quantity</th>
-                                    <th>Revenue</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                [...storeSales[storeId]
-                                .reduce((acc,sale)=>{
-                                    let items = sale.items;
-                                    items.forEach(item =>{
-                                        let name = item.name;
-                                        let hasName = acc.has(name);
-                                        if(hasName){
-                                            let current = acc.get(name);
-                                            current.quantity += +item.quantity;
-                                            current.total += +item.quantity * +item.unitPrice;
-                                            current.total = Math.ceil(current.total * 100) / 100;
-                                            acc.set(name,current);
-                                        }else{
-                                            acc.set(name,{...item,...{total: Math.ceil(+item.quantity * +item.unitPrice * 100) / 100}});
-                                        }
-                                    })
-                                    return acc;
-                                },new Map())
-                                .values()]
-                                    .map(item => {
-                                        return (<tr key={item.sku}>
-                                            <td>{item.sku}</td>
-                                            <td>{item.name}</td>
-                                            <td>{item.quantity}</td>
-                                            <td>{item.total}</td>
-                                        </tr>)
-                                    })
+    const chosenStore = storeSales[store];
+    console.log(chosenStore);
+
+
+    return (
+        <GraphWithStatCard
+            title={"Daily Sales By Channel"}
+            isLoading={sales.length === 0}
+            dateInput={
+                <DatePickerInput
+                    mb={"xl"}
+                    label={"Date"}
+                    value={date}
+                    onChange={(e) => setDate(e)}
+                />
+            }
+            slotOne={
+                <NativeSelect
+                    mb={"xl"}
+                    label={"Store"}
+                    value={store}
+                    onChange={(e) => setStore(e.target.value)}
+                >
+                    <option>Choose a store</option>
+                    {storeIDs.map((store, index) => <option value={`${store}`} key={index}>{store}</option>)}
+                    <option value={"All"}>All</option>
+                </NativeSelect>
+            }
+            cards={[]}
+        >
+            <Table captionSide="bottom" striped highlightOnHover withTableBorder withColumnBorders >
+                <Table.Caption>
+                    {`Total Orders: ${chosenStore && chosenStore.length}`}
+                </Table.Caption>
+                <Table.Thead>
+                    <Table.Tr>
+                        <Table.Th>Sku</Table.Th>
+                        <Table.Th>Name</Table.Th>
+                        <Table.Th>Quantity</Table.Th>
+                        <Table.Th>Revenue</Table.Th>
+                    </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                    {chosenStore && [...chosenStore
+                        .reduce((acc, sale) => {
+                                let items = sale.items;
+                                items.forEach(item => {
+                                    let name = item.name;
+                                    let hasName = acc.has(name);
+                                    if (hasName) {
+                                        let current = acc.get(name);
+                                        current.quantity += +item.quantity;
+                                        current.total += +item.quantity * +item.unitPrice;
+                                        current.total = Math.ceil(current.total * 100) / 100;
+                                        acc.set(name, current);
+                                    } else {
+                                        acc.set(name, {...item, ...{total: Math.ceil(+item.quantity * +item.unitPrice * 100) / 100}});
+                                    }
+                                })
+                                return acc;
                             }
-                            </tbody>
-                        </Table>
-                        <div className={"mb-5 text-end"}>
-                            <p>
-                                Total Quantity: {storeSales[storeId].reduce((total, sale) => total + sale.items.reduce((total, item) => total + item.quantity, 0), 0)} &nbsp;
-                                Total Revenue: {Math.round(storeSales[storeId].reduce((total, sale) => total + sale.total, 0) * 100)/100}
-                            </p>
-                            <p>Total Orders: {storeSales[storeId].length}</p>
-                        </div>
-                    </div>
-                    )
-                    })
-                    }
-                </Container>);
-        };
-
-            export default SalesView;
+                            , new Map())
+                        .values()]
+                        .map((item,index) => {
+                                return (
+                                    <Table.Tr key={item.sku + index}>
+                                        <Table.Td>{item.sku}</Table.Td>
+                                        <Table.Td>{item.name}</Table.Td>
+                                        <Table.Td>{item.quantity}</Table.Td>
+                                        <Table.Td>{formatter(item.total,'currency')}</Table.Td>
+                                    </Table.Tr>
+                                )
+                            }
+                        )}
+                </Table.Tbody>
+                <Table.Tfoot>
+                    <Table.Tr>
+                        <Table.Th>Total</Table.Th>
+                        <Table.Th></Table.Th>
+                        <Table.Th>{chosenStore && chosenStore.reduce((total, sale) => total + sale.items.reduce((total, item) => total + item.quantity, 0), 0)}</Table.Th>
+                        <Table.Th>{chosenStore && Math.round(chosenStore.reduce((total, sale) => total + sale.total, 0) * 100) / 100}</Table.Th>
+                    </Table.Tr>
+                </Table.Tfoot>
+            </Table>
+        </GraphWithStatCard>
+    )
+};
+export default SalesView;

@@ -7,11 +7,6 @@ import RoleWrapper from "../../components/RoleWrapper";
 const {frequencies} = settings;
 
 
-
-
-
-
-
 const Index = () => {
     const frequency = useFrequency();
     const [userFrequency, setUserFrequency] = React.useState(frequencies[0]);

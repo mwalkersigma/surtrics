@@ -2,9 +2,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "../styles/style.scss";
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
+import '@mantine/notifications/styles.css';
 import { MantineProvider, createTheme } from '@mantine/core';
 import Layout from "./layout";
 import {SessionProvider} from "next-auth/react";
+import {Notifications} from "@mantine/notifications";
 
 
 export const colorScheme = {
@@ -45,6 +47,7 @@ export default function App ({ Component, pageProps : {session, ...pageProps}}){
     return(
         <MantineProvider theme={theme} defaultColorScheme="dark">
             <SessionProvider session={session}>
+                <Notifications />
                 <Base Component={Component} pageProps={pageProps}/>
             </SessionProvider>
         </MantineProvider>

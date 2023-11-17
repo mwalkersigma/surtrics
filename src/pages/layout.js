@@ -152,7 +152,7 @@ function SurtricsNavbar ({}) {
                         <NavLink label={"Ebay"} href={"/BSA/EbayEntry"}/>
                     </RoleWrapper>
                     <RoleWrapper invisible altRoles={["surplus director"]}>
-                        <NavLink label={"Surplus"} href={"/surplusEntry"}/>
+                        <NavLink label={"Quick Book"} href={"/BSA/quickBooks"}/>
                     </RoleWrapper>
                     <NavLink label={"Submit Event"} href={"/BSA/eventReporting"}/>
                     <NavLink label={"Submit Error"} href={"/admin/errorReporting"}/>

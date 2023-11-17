@@ -38,7 +38,6 @@ const DailyView = () => {
             title={"Surplus Increments Daily View"}
             dateInput={
                 <DatePickerInput
-                    mt={"xl"}
                     mb={"xl"}
                     label={"Date"}
                     value={date}
@@ -58,7 +57,7 @@ const DailyView = () => {
                         key={1}
                         stat={{
                             title: "Average",
-                            value: (Math.round(chartData.reduce((a, b) => a + b, 0) / dailyData.length)),
+                            value: (Math.round(chartData.reduce((a, b) => a + b, 0) / chartData.length)),
                         }}/>,
                     <StatsCard
                         key={2}

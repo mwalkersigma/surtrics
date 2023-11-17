@@ -23,7 +23,7 @@ const icons = {
 };
 
 export default function StatsCard ({stat,Icon:i, ...rest}){
-    const Icon = icons[i] || IconEye;
+    const Icon = icons[i] ?? null;
     const DiffIcon = stat?.diff ? stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight : null;
     return (
         <Paper {...rest} withBorder p="md" radius="md">
@@ -31,7 +31,7 @@ export default function StatsCard ({stat,Icon:i, ...rest}){
                 <Text size="xs" c="dimmed" className={classes.title}>
                     {stat.title}
                 </Text>
-                <Icon className={classes.icon} size="1.4rem" stroke={1.5} />
+                {i && <Icon className={classes.icon} size="1.4rem" stroke={1.5} />}
             </Group>
 
             <Group align="flex-end" gap="xs" mt={25}>

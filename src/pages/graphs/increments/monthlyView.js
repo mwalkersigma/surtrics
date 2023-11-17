@@ -192,7 +192,6 @@ const MonthlyView = () => {
             title={"Surplus Increments Monthly View"}
             dateInput={
                 <MonthPickerInput
-                    mt={"xl"}
                     mb={"xl"}
                     label={"Month"}
                     value={date}
@@ -223,14 +222,14 @@ const MonthlyView = () => {
                         key={3}
                         stat={{
                             title: "New Inbound",
-                            value: (cardData.reduce((acc, {total}) => acc + total, 0)) ,
+                            value: cardData.reduce((acc,cur)=>acc + ((+cur["Add"] || 0) + (+cur["Add on Receiving"] || 0)),0),
                         }}
                     />,
                     <StatsCard
                         key={4}
                         stat={{
                             title: "Re-listings",
-                            value: (cardData.reduce((acc, {total}) => acc + total, 0)),
+                            value: cardData.reduce((acc,cur)=>acc + (+cur["Relisting"] || 0),0),
                         }}/>
                 ]
             }

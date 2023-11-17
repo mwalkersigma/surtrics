@@ -1,9 +1,6 @@
 import React, {useContext, useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
 import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
-import {ThemeContext} from "../../layout";
-import {Row} from "react-bootstrap";
-import Form from "react-bootstrap/Form";
 
 import {Chart} from "react-chartjs-2";
 import makeDateArray from "../../../modules/utils/makeDateArray";
@@ -21,9 +18,12 @@ import {
 
 import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../_app";
-import Container from "react-bootstrap/Container";
 import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
-import {useMantineColorScheme} from "@mantine/core/lib";
+import {useMantineColorScheme} from "@mantine/core";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import {DatePickerInput} from "@mantine/dates";
+import {addDays,format} from "date-fns";
+import StatsCard from "../../../components/mantine/StatsCard";
 
 
 
@@ -51,30 +51,10 @@ let colorPalette = [
 
 
 const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
-const WeekView = () => {
-    const [date, setDate] = useState(formatDateWithZeros(findStartOfWeek(new Date())));
 
-    const {colorScheme:theme} = useMantineColorScheme();
 
-    let approvals = useUpdates("/api/views/approvals", {date,interval:"1 week"});
 
-    if(!approvals){
-        return ( <Container>
-            <h1 className={"text-center"}>Approvals View</h1>
-            <Row>
-                <Form.Control
-                    className={"mb-3"}
-                    value={date}
-                    onChange={(e)=>setDate(e.target.value)}
-                    type="date"
-                />
-            </Row>
-            <h4 className={"text-center"}>
-                No Data for the week found.
-            </h4>
-        </Container>)
-    }
-
+function WeeklyApprovalsChart({approvals,date,theme}){
     const names = [...new Set(approvals.map(({name}) => name))];
     const dateArr = makeDateArray(date);
 
@@ -97,7 +77,6 @@ const WeekView = () => {
             }
         })
     })
-
     const dataForGraph = names.reduce((acc,cur)=>{
         if(!acc[cur]) acc[cur] = [];
         let possibleApprovals =
@@ -118,8 +97,10 @@ const WeekView = () => {
             })
             return acc
         },[0,0,0,0,0,0,0])
-
     const options = {
+        responsive:true,
+        maintainAspectRatio:false,
+        devicePixelRatio:4,
         plugins:{
             tooltip:{
                 color:parseTheme(theme),
@@ -161,19 +142,111 @@ const WeekView = () => {
             })
     };
     return (
-            <Container>
-                <h1 className={"text-center"}>Approvals View</h1>
-                <Row>
-                    <Form.Control
-                        className={"mb-3"}
-                        value={date}
-                        onChange={(e)=>setDate(formatDateWithZeros(findStartOfWeek(new Date(e.target.value))))}
-                        type="date"
-                    />
-                </Row>
-                <Chart data={data} type={"bar"} height={150} options={options}/>
-            </Container>
-    );
+        <Chart data={data} type={"bar"} height={150} options={options}/>
+    )
+}
+
+
+
+
+const WeekView = () => {
+    const [date, setDate] = useState(new Date());
+    const {colorScheme:theme} = useMantineColorScheme();
+    let approvals = useUpdates("/api/views/approvals", {date:formatDateWithZeros(addDays(findStartOfWeek(new Date(date)),1)),interval:"1 week"});
+    // Highest Approvals
+    // Average Approvals
+    // Total Approvals
+    // Highest User
+    // Average per person per day
+    const users = [...new Set(approvals.map(({name}) => name))]
+        .reduce((acc,cur)=>{
+            acc[cur] = approvals.filter(({name})=>name===cur).reduce((acc,cur)=>acc+ +cur.count,0);
+            return acc
+        },{})
+    const totalApprovals = approvals?.reduce((acc,cur)=>acc+ +cur.count,0);
+    const averageApprovals = totalApprovals/approvals?.length;
+    const bestDay = approvals?.reduce((acc,cur)=>{
+        if(acc.count < +cur.count) return cur;
+        return acc;
+    },{count:0})
+    console.log(bestDay)
+    return (<GraphWithStatCard
+            title={"Surplus Approvals Weekly View"}
+            isLoading={approvals.length === 0}
+            dateInput={
+                <DatePickerInput
+                    mt={"xl"}
+                    mb={"xl"}
+                    label={"Date"}
+                    value={date}
+                    onChange={(e) => setDate(e)}
+                />
+            }
+            cards={
+                [
+                    <StatsCard
+                        key={0}
+                        stat={{
+                            title:"Total",
+                            value:totalApprovals,
+                            subtitle:"Approvals for the week"
+                        }}
+                    />,
+                    <StatsCard
+                        key={1}
+                        stat={{
+                            title:"Average Approvals",
+                            value:averageApprovals,
+                            subtitle:"Per Person Per Day"
+                        }}
+                    />,
+                    <StatsCard
+                        key={2}
+                        stat={{
+                            title:"Best Day",
+                            value:bestDay.count,
+                            subtitle:`${bestDay.name} - ${new Date(bestDay.date_of_final_approval).toLocaleDateString()}`
+                        }}
+                    />,
+
+                    <StatsCard
+                        key={3}
+                        stat={{
+                            title:"Lister of the week",
+                            value:Math.max(...Object.values(users)),
+                            subtitle:Object.keys(users).find((key)=>users[key]===Math.max(...Object.values(users)))
+                        }}
+                    />,
+
+                ]
+            }
+            >
+            <WeeklyApprovalsChart approvals={approvals} date={date} theme={theme}/>
+        </GraphWithStatCard>)
+
+
+
+
+
+
+
+
+
+
+    // return (
+    //         <Container>
+    //             <h1 className={"text-center"}>Approvals View</h1>
+    //             <Row>
+    //                 <Form.Control
+    //                     className={"mb-3"}
+    //                     value={date}
+    //                     onChange={(e)=>setDate(formatDateWithZeros(findStartOfWeek(new Date(e.target.value))))}
+    //                     type="date"
+    //                 />
+    //             </Row>
+    //
+    //         </Container>
+    // );
 };
 
 export default WeekView;

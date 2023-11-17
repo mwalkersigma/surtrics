@@ -11,16 +11,14 @@ import useGoal from "../../../modules/hooks/useGoal";
 import makeWeekArray from "../../../modules/utils/makeWeekArray";
 import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
 import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
-import formatter from "../../../modules/utils/numberFormatter";
 import processWeekData from "../../../modules/utils/processWeekData";
 import createAdjustedWeekArray from "../../../modules/utils/createAdjustedWeekArray";
 import yymmddTommddyy from "../../../modules/utils/yymmddconverter";
 
 import {colorScheme} from "../../_app";
 import {addDays} from "date-fns";
-import {useMantineColorScheme, Container, Title, Grid, Skeleton, Stack} from "@mantine/core";
+import {useMantineColorScheme} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
-import LineGraph from "../../../components/lineGraph";
 import StatsCard from "../../../components/mantine/StatsCard";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 
@@ -37,12 +35,6 @@ ChartJS.register(
 
 
 
-function getWeekString(date) {
-    let sunday = findStartOfWeek(date);
-    let saturday = new Date(sunday);
-    saturday.setDate(sunday.getDate() + 6);
-    return `${yymmddTommddyy(formatDateWithZeros(sunday))} through ${yymmddTommddyy(formatDateWithZeros(saturday))}`;
-}
 function colorize(goal) {
     return (ctx) => {
         let stack = ctx?.parsed?._stacks.y;
@@ -64,7 +56,6 @@ function returnDayOfWeek(date) {
 
 function WeeklyChart(props){
     let {weekData,theme,date} = props;
-    console.log(theme)
     const Theme = (theme) => theme === "dark" ? colorScheme.light : colorScheme.dark;
     const goal = useGoal({date});
     const adjustedWeek = createAdjustedWeekArray(weekData,goal)
@@ -252,8 +243,6 @@ function WeeklyView() {
 
     let weekData = useUpdates("/api/views/increments",{date:formatDateWithZeros(addDays(findStartOfWeek(new Date(date)),1)),interval:"1 week",increment:"day"});
 
-
-
     weekData = processWeekData(weekData)
     weekData = makeWeekArray(weekData,new Date(date));
 
@@ -262,7 +251,6 @@ function WeeklyView() {
             title={"Surplus Increments Weekly View"}
             dateInput={
                 <DatePickerInput
-                    mt={"xl"}
                     mb={"xl"}
                     label={"Date"}
                     value={date}
@@ -293,20 +281,19 @@ function WeeklyView() {
                         key={3}
                         stat={{
                             title: "New Inbound",
-                            value: (weekData
-                                .filter((item) => (item["Add"] || item["Add on Receiving"]))
-                                .reduce((acc, {count}) => acc + +count, 0)),
-                        }}
+                            value: weekData
+                                .reduce((acc,cur)=>acc + ((+cur["Add"] || 0) + (+cur["Add on Receiving"] || 0)),0)
+                            }}
                     />,
                     <StatsCard
                         key={4}
                         stat={{
-                            title: "Re-listings",
-                            value: (weekData
-                                .filter((item) => (item["Relisting"]))
-                                .reduce((acc, {count}) => acc + +count, 0)),
+                            title: "Relisting",
+                            value: weekData
+                                .reduce((acc,cur)=>acc + (+cur["Relisting"] || 0),0)
                         }}
                     />
+
                 ]
             }
         >

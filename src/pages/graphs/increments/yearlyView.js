@@ -115,8 +115,7 @@ function YearlyChart(props){
                 label: "New Inbound",
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add on Receiving").map(({count}) => (+count)),
                 backgroundColor: colorScheme.red,
-                barThickness: 75,
-                borderRadius: 10,
+                borderRadius: 5,
                 stack: "stack0"
             },
             {
@@ -124,8 +123,7 @@ function YearlyChart(props){
                 label: "Incrementation",
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add").map(({count}) => (+count)),
                 backgroundColor: colorScheme.green,
-                barThickness: 75,
-                borderRadius: 10,
+                borderRadius: 5,
                 stack: "stack0"
             },
             {
@@ -133,8 +131,7 @@ function YearlyChart(props){
                 label: "Relisting",
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Relisting").map(({count}) => (+count)),
                 backgroundColor: colorScheme.blue,
-                barThickness: 75,
-                borderRadius: 10,
+                borderRadius: 5,
                 stack: "stack0"
             }
         ]
@@ -167,7 +164,6 @@ function YearlyView() {
             title={"Surplus Increments Yearly View"}
             dateInput={
                 <YearPickerInput
-                    mt={"xl"}
                     mb={"xl"}
                     label={"Year"}
                     value={date}

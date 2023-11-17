@@ -12,6 +12,7 @@ import {
 
 import {DatePickerInput} from "@mantine/dates";
 import StatsCard from "../../../components/mantine/StatsCard";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 
 
 ChartJS.register(CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement,);
@@ -20,38 +21,6 @@ const DailyView = () => {
     const [date, setDate] = useState(new Date())
     let dailyData = useUpdates("/api/views/increments", {date, interval: "1 day", increment: "hour"});
     const {colorScheme: theme} = useMantineColorScheme();
-
-    if (dailyData.length === 0) return (<Container fluid>
-            <Title ta={"center"}>Surplus Increments Daily View</Title>
-            <Grid spacing={"xl"}>
-                <Grid.Col span={1}></Grid.Col>
-                <Grid.Col span={8}>
-                    <DatePickerInput
-                        mt={"xl"}
-                        mb={"xl"}
-                        label={"Date"}
-                        value={date}
-                        onChange={(e) => setDate(e)}
-                    />
-                </Grid.Col>
-                <Grid.Col span={3}></Grid.Col>
-            </Grid>
-            <Grid spacing={"xl"}>
-                <Grid.Col span={1}></Grid.Col>
-                <Grid.Col span={8}>
-                    <Skeleton height={"65vh"} radius="md" animate={false}/>
-                </Grid.Col>
-                <Grid.Col span={2}>
-                    <Stack>
-                        <Skeleton height={110} radius="md" animate={false}/>
-                        <Skeleton height={110} radius="md" animate={false}/>
-                        <Skeleton height={110} radius="md" animate={false}/>
-                        <Skeleton height={110} radius="md" animate={false}/>
-                        <Skeleton height={110} radius="md" animate={false}/>
-                    </Stack>
-                </Grid.Col>
-            </Grid>
-        </Container>);
 
     let chartData = dailyData
         .reduce((acc, curr) => {
@@ -65,63 +34,59 @@ const DailyView = () => {
 
     let margin = "1rem";
     return (
-        <Container fluid>
-            <Title ta={"center"}>Surplus Increments Daily View</Title>
-            <Grid spacing={"xl"}>
-                <Grid.Col span={1}></Grid.Col>
-                <Grid.Col span={8}>
-                    <DatePickerInput
-                        mt={"xl"}
-                        mb={"xl"}
-                        label={"Date"}
-                        value={date}
-                        onChange={(e) => setDate(e)}
-                    />
-                </Grid.Col>
-                <Grid.Col span={3}></Grid.Col>
-            </Grid>
-            <Grid spacing={"xl"}>
-                <Grid.Col span={1}></Grid.Col>
-                <Grid.Col span={8}>
-                    <div style={{position: "relative", height: "100%"}} className={"chart-container"}>
-                        <LineGraph date={date} dailyData={chartData} theme={theme}/>
-                    </div>
-                </Grid.Col>
-                <Grid.Col span={2}>
-                    <Stack>
-                        <StatsCard
-                            stat={{
-                                title: "Total",
-                                value: (chartData.reduce((a, b) => a + b, 0)),
-                            }}/>
-                        <StatsCard
-                            stat={{
-                                title: "Average",
-                                value: (Math.round(chartData.reduce((a, b) => a + b, 0) / dailyData.length)),
-                            }}/>
-                        <StatsCard
-                            stat={{
-                                title: "Best Hour", value: (chartData.reduce((a, b) => a > b ? a : b, 0)),
-                            }}/>
-                        <StatsCard
-                            stat={{
-                                title: "New Inbound",
-                                value: (dailyData
-                                    .filter((item) => (item.transaction_reason === "Add on Receiving" || item.transaction_reason === "Add"))
-                                    .reduce((acc, {count}) => acc + +count, 0)),
-                            }}
-                        />
-                        <StatsCard
-                            stat={{
-                                title: "Re-listings",
-                                value: (dailyData
-                                    .filter((item) => (item.transaction_reason === "Relisting"))
-                                    .reduce((acc, {count}) => acc + +count, 0)),
-                            }}/>
-                    </Stack>
-                </Grid.Col>
-            </Grid>
-        </Container>
+        <GraphWithStatCard
+            title={"Surplus Increments Daily View"}
+            dateInput={
+                <DatePickerInput
+                    mt={"xl"}
+                    mb={"xl"}
+                    label={"Date"}
+                    value={date}
+                    onChange={(e) => setDate(e)}
+                />
+            }
+            isLoading={dailyData.length === 0}
+            cards={
+                [
+                    <StatsCard
+                        key={0}
+                        stat={{
+                            title: "Total",
+                            value: (chartData.reduce((a, b) => a + b, 0)),
+                        }}/>,
+                    <StatsCard
+                        key={1}
+                        stat={{
+                            title: "Average",
+                            value: (Math.round(chartData.reduce((a, b) => a + b, 0) / dailyData.length)),
+                        }}/>,
+                    <StatsCard
+                        key={2}
+                        stat={{
+                            title: "Best Hour", value: (chartData.reduce((a, b) => a > b ? a : b, 0)),
+                        }}/>,
+                    <StatsCard
+                        key={3}
+                        stat={{
+                            title: "New Inbound",
+                            value: (dailyData
+                                .filter((item) => (item.transaction_reason === "Add on Receiving" || item.transaction_reason === "Add"))
+                                .reduce((acc, {count}) => acc + +count, 0)),
+                        }}
+                    />,
+                    <StatsCard
+                        key={4}
+                        stat={{
+                            title: "Re-listings",
+                            value: (dailyData
+                                .filter((item) => (item.transaction_reason === "Relisting"))
+                                .reduce((acc, {count}) => acc + +count, 0)),
+                        }}/>
+                ]
+            }
+        >
+            <LineGraph date={date} dailyData={chartData} theme={theme}/>
+        </GraphWithStatCard>
     );
 };
 

@@ -17,6 +17,7 @@ import {setDate} from "date-fns";
 import {useMantineColorScheme, Grid, Skeleton, Stack, Title, Container} from "@mantine/core";
 import {MonthPickerInput} from "@mantine/dates";
 import StatsCard from "../../../components/mantine/StatsCard";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 
 
 
@@ -166,45 +167,11 @@ const MonthlyView = () => {
     const [date,setDate] = useState(dateSet(new Date(),1))
     let monthData = useUpdates("/api/views/increments",{date,interval:"1 month",increment:"day"});
     const {colorScheme:theme} = useMantineColorScheme();
-    if(monthData.length === 0){
-        return(
-            <Container fluid>
-                <Title ta={"center"}>Surplus Increments Weekly View</Title>
-                <Grid spacing={"xl"}>
-                    <Grid.Col span={1}></Grid.Col>
-                    <Grid.Col span={8}>
-                        <MonthPickerInput
-                            mt={"xl"}
-                            mb={"xl"}
-                            label={"Date"}
-                            value={date}
-                            onChange={(e) => setDate(e)}
-                        />
-                    </Grid.Col>
-                    <Grid.Col span={3}></Grid.Col>
-                </Grid>
-                <Grid spacing={"xl"}>
-                    <Grid.Col span={1}></Grid.Col>
-                    <Grid.Col span={8}>
-                        <Skeleton height={"65vh"} radius="md" animate={false}/>
-                    </Grid.Col>
-                    <Grid.Col span={2}>
-                        <Stack>
-                            <Skeleton height={110} radius="md" animate={false}/>
-                            <Skeleton height={110} radius="md" animate={false}/>
-                            <Skeleton height={110} radius="md" animate={false}/>
-                            <Skeleton height={110} radius="md" animate={false}/>
-                            <Skeleton height={110} radius="md" animate={false}/>
-                        </Stack>
-                    </Grid.Col>
-                </Grid>
-            </Container>
-        );
-    }
+
 
     // group by date
     // add a total field
-    let cardData = monthData.reduce((acc,curr)=>{
+    let cardData = monthData?.reduce((acc,curr)=>{
         let date = curr.date_of_transaction.split("T")[0];
         if(!acc[date]){
             acc[date] = {
@@ -218,66 +185,59 @@ const MonthlyView = () => {
         acc[date][curr['transaction_reason']] = +curr.count;
         return acc
     },{})
-    cardData = Object.values(cardData);
+    cardData = Object?.values(cardData);
 
     return (
-        <Container fluid>
-            <Title ta={"center"}>Surplus Increments Weekly View</Title>
-            <Grid spacing={"xl"}>
-                <Grid.Col span={1}></Grid.Col>
-                <Grid.Col span={8}>
-                    <MonthPickerInput
-                        mt={"xl"}
-                        mb={"xl"}
-                        label={"Date"}
-                        value={date}
-                        onChange={(e) => setDate(e)}
-                    />
-                </Grid.Col>
-                <Grid.Col span={3}></Grid.Col>
-            </Grid>
-            <Grid spacing={"xl"}>
-                <Grid.Col span={1}></Grid.Col>
-                <Grid.Col span={8}>
-                    <div style={{position: "relative", height: "100%"}} className={"chart-container"}>
-                        <LineGraphMonthly monthData={monthData} theme={theme}/>
-                    </div>
-                </Grid.Col>
-                <Grid.Col span={2}>
-                    <Stack>
-                        <Stack>
-                            <StatsCard
-                                stat={{
-                                    title: "Total",
-                                    value: (cardData.reduce((acc, {total}) => acc + +total, 0)),
-
-                                }}/>
-                            <StatsCard
-                                stat={{
-                                    title: "Average",
-                                    value: (Math.round(cardData.reduce((acc, {total}) => acc + +total, 0) / cardData.length)),
-                                }}/>
-                            <StatsCard
-                                stat={{
-                                    title: "Best Day", value: Math.max(...cardData.map(({total}) => total)),
-                                }}/>
-                            <StatsCard
-                                stat={{
-                                    title: "New Inbound",
-                                    value: (cardData.reduce((acc, cur) => acc + ((cur?.['Add on Receiving'] ?? 0) + (cur?.["Add"] ?? 0)), 0)) ,
-                                }}
-                            />
-                            <StatsCard
-                                stat={{
-                                    title: "Re-listings",
-                                    value: (cardData.reduce((acc, cur) => acc + cur?.['Relisting'] ?? 0 , 0)),
-                                }}/>
-                        </Stack>
-                    </Stack>
-                </Grid.Col>
-            </Grid>
-        </Container>
-    );
+        <GraphWithStatCard
+            title={"Surplus Increments Monthly View"}
+            dateInput={
+                <MonthPickerInput
+                    mt={"xl"}
+                    mb={"xl"}
+                    label={"Month"}
+                    value={date}
+                    onChange={(e) => setDate(e)}
+                />
+            }
+            isLoading={monthData.length === 0}
+            cards={
+                [
+                    <StatsCard
+                        key={0}
+                        stat={{
+                            title: "Total",
+                            value: (cardData.reduce((a, {total}) => a + total, 0)),
+                        }}/>,
+                    <StatsCard
+                        key={1}
+                        stat={{
+                            title: "Average",
+                            value: (Math.round(cardData.reduce((a, {total}) => a + total, 0) / cardData.length)),
+                        }}/>,
+                    <StatsCard
+                        key={2}
+                        stat={{
+                            title: "Best Day", value: (cardData.reduce((a, {total}) => a > total ? a : total, 0)),
+                        }}/>,
+                    <StatsCard
+                        key={3}
+                        stat={{
+                            title: "New Inbound",
+                            value: (cardData.reduce((acc, {total}) => acc + total, 0)) ,
+                        }}
+                    />,
+                    <StatsCard
+                        key={4}
+                        stat={{
+                            title: "Re-listings",
+                            value: (cardData.reduce((acc, {total}) => acc + total, 0)),
+                        }}/>
+                ]
+            }
+        >
+            <LineGraphMonthly monthData={monthData} theme={theme}/>
+        </GraphWithStatCard>
+    )
 };
 
 

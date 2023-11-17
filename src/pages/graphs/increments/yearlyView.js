@@ -2,7 +2,6 @@ import React, {useContext, useState} from 'react';
 import Container from "react-bootstrap/Container";
 
 import useUpdates from "../../../modules/hooks/useUpdates";
-import {ThemeContext} from "../../layout";
 import {Chart} from "react-chartjs-2";
 import {
     BarElement,
@@ -21,6 +20,10 @@ import InfoCard from "../../../components/infoCards/infocard";
 import formatter from "../../../modules/utils/numberFormatter";
 import {colorScheme} from "../../_app";
 import {getMonth, setDate, setMonth} from "date-fns";
+import {useMantineColorScheme} from "@mantine/core";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import {YearPickerInput} from "@mantine/dates";
+import StatsCard from "../../../components/mantine/StatsCard";
 
 ChartJS.register(
     CategoryScale,
@@ -43,6 +46,9 @@ function YearlyChart(props){
     const useTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
     const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        devicePixelRatio: 4,
         plugins: {
             tooltip: {
                 callbacks: {
@@ -59,15 +65,6 @@ function YearlyChart(props){
                     usePointStyle: true,
                     color: useTheme(theme)+"A",
                 },
-                title: {
-                    text: "Year View",
-                    display: true,
-                    color: useTheme(theme),
-                    font: {
-                        size: 30,
-                    }
-                },
-
             },
             datalabels: {
                 color: colorScheme.white,
@@ -110,7 +107,6 @@ function YearlyChart(props){
         const {date_of_transaction} = item;
         return{...item, ...{date_of_transaction: getMonth(new Date(date_of_transaction))+1}}
     }).sort((a,b)=>a.date_of_transaction - b.date_of_transaction)
-    console.log(yearData)
     const data = yearData.length > 0 && {
         labels: Array.from(new Set(yearData?.map(({date_of_transaction}) => (monthes[date_of_transaction-1])))),
         datasets: [
@@ -150,21 +146,11 @@ function YearlyChart(props){
 
 let dateSet = setDate
 function YearlyView() {
-    const [date,setDate] = useState(formatDateWithZeros(dateSet(setMonth(new Date(),0),1)));
+    const [date,setDate] = useState(dateSet(setMonth(new Date(),0),1));
     let yearData = useUpdates("/api/views/increments",{date,interval:"1 year",increment:"month"});
-    console.log(yearData)
-    const theme = useContext(ThemeContext);
+    const {colorScheme:theme} = useMantineColorScheme();
 
-    function handleDateChange(e) {
-        setDate(formatDateWithZeros(dateSet(setMonth(new Date(e.target.value),0),1)));
-    }
-    if(yearData.length === 0)return(
-        <Container className={"text-center"}>
-            <Form.Control className={"mb-5"} value={date} onChange={handleDateChange} type="date" />
-            Loading...
-        </Container>
-    );
-    let margin = "3.5rem";
+
     const cardData = Object.values(yearData.reduce((acc, {count,date_of_transaction,transaction_reason}) =>{
         if(!acc[date_of_transaction]){
             acc[date_of_transaction]={count:0,date_of_transaction,[transaction_reason]:count};
@@ -175,48 +161,67 @@ function YearlyView() {
         acc[date_of_transaction].count += +count;
         return acc;
     } , {}));
-
+    console.log(cardData)
     return (
-        <main>
-            <Container>
-                <Row>
-                    <Form.Control
-                        className={"mb-3"}
-                        value={date}
-                        onChange={handleDateChange}
-                        type="date"
-                    />
-                </Row>
-                <Row>
-                    <Col sm={10} className={`p-1 themed-drop-shadow ${theme}`} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
-                        {yearData.length > 0 && <YearlyChart theme={theme} yearData={yearData} date={date} />}
-                    </Col>
-                    <Col sm={2}>
-                        <InfoCard style={{marginBottom:margin}} title={"Total Increments"} theme={theme}>
-                            {formatter(cardData.reduce((acc, {count}) => (acc + +count), 0))}
-                        </InfoCard>
-                        <InfoCard style={{marginBottom:margin}} title={"New Inbound"} theme={theme}>
-                            {
-                                formatter(cardData
-                                    .filter((item) => (item["Add"] || item["Add on Receiving"]))
-                                    .reduce((acc,item)=>acc + (+item["Add"] || 0) + (+item["Add on Receiving"] || 0),0)
-                                )
-                            }
-                        </InfoCard>
-                        <InfoCard style={{marginBottom:0}} title={"Re-listings"} theme={theme}>
-                            {
-                                formatter(
-                                    cardData
-                                        .filter((item) => (item["Relisting"]))
-                                        .reduce((acc,item)=>acc + (+item["Relisting"] || 0),0)
-                                )
-                            }
-                        </InfoCard>
-                    </Col>
-                </Row>
-            </Container>
-        </main>
-    )
+        <GraphWithStatCard
+            title={"Surplus Increments Yearly View"}
+            dateInput={
+                <YearPickerInput
+                    mt={"xl"}
+                    mb={"xl"}
+                    label={"Year"}
+                    value={date}
+                    onChange={(e) => setDate(e)}
+                />
+        }
+            isLoading={yearData.length === 0}
+            cards={
+            [
+                <StatsCard
+                    key={0}
+                    stat={{
+                        title: "Total",
+                        value: (cardData.reduce((a, {count}) => a + count, 0)),
+                    }}
+                />,
+                <StatsCard
+                    key={1}
+                    stat={{
+                        title: "Average",
+                        value: (Math.round(cardData.reduce((a, {count}) => a + count, 0) / cardData.length)),
+                    }}
+                />,
+                <StatsCard
+                    key={2}
+                    stat={{
+                        title: "Best Month",
+                        value: (cardData.reduce((a, {count}) => a > count ? a : count, 0)),
+                    }}
+                />,
+                <StatsCard
+                    key={3}
+                    stat={{
+                        title: "New Inbound",
+                        value: (yearData
+                            .filter((item) => (item.transaction_reason === "Add on Receiving" || item.transaction_reason === "Add"))
+                            .reduce((acc, {count}) => acc + +count, 0)),
+                    }}
+                />,
+                <StatsCard
+                    key={4}
+                    stat={{
+                        title: "Re-listings",
+                        value: (yearData
+                            .filter((item) => (item.transaction_reason === "Relisting"))
+                            .reduce((acc, {count}) => acc + +count, 0)),
+                    }}
+                />
+
+            ]
+        }
+        >
+            <YearlyChart theme={theme} yearData={yearData} date={date}/>
+        </GraphWithStatCard>)
 }
 
 export default YearlyView;

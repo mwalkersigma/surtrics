@@ -22,6 +22,7 @@ import {useMantineColorScheme, Container, Title, Grid, Skeleton, Stack} from "@m
 import {DatePickerInput} from "@mantine/dates";
 import LineGraph from "../../../components/lineGraph";
 import StatsCard from "../../../components/mantine/StatsCard";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 
 ChartJS.register(
     CategoryScale,
@@ -252,99 +253,66 @@ function WeeklyView() {
     let weekData = useUpdates("/api/views/increments",{date:formatDateWithZeros(addDays(findStartOfWeek(new Date(date)),1)),interval:"1 week",increment:"day"});
 
 
-     if(weekData.length === 0) return (
-         <Container fluid>
-             <Title ta={"center"}>Surplus Increments Weekly View</Title>
-             <Grid spacing={"xl"}>
-                 <Grid.Col span={1}></Grid.Col>
-                 <Grid.Col span={8}>
-                     <DatePickerInput
-                         mt={"xl"}
-                         mb={"xl"}
-                         label={"Date"}
-                         value={date}
-                         onChange={(e) => setDate(e)}
-                     />
-                 </Grid.Col>
-                 <Grid.Col span={3}></Grid.Col>
-             </Grid>
-             <Grid spacing={"xl"}>
-                 <Grid.Col span={1}></Grid.Col>
-                 <Grid.Col span={8}>
-                     <Skeleton height={"65vh"} radius="md" animate={false}/>
-                 </Grid.Col>
-                 <Grid.Col span={2}>
-                     <Stack>
-                         <Skeleton height={110} radius="md" animate={false}/>
-                         <Skeleton height={110} radius="md" animate={false}/>
-                         <Skeleton height={110} radius="md" animate={false}/>
-                         <Skeleton height={110} radius="md" animate={false}/>
-                         <Skeleton height={110} radius="md" animate={false}/>
-                     </Stack>
-                 </Grid.Col>
-             </Grid>
-         </Container>
-     );
 
     weekData = processWeekData(weekData)
     weekData = makeWeekArray(weekData,new Date(date));
+
     return (
-        <Container fluid>
-            <Title ta={"center"}>Surplus Increments Weekly View</Title>
-            <Grid spacing={"xl"}>
-                <Grid.Col span={1}></Grid.Col>
-                <Grid.Col span={8}>
-                    <DatePickerInput
-                        mt={"xl"}
-                        mb={"xl"}
-                        label={"Date"}
-                        value={date}
-                        onChange={(e) => setDate(e)}
+        <GraphWithStatCard
+            title={"Surplus Increments Weekly View"}
+            dateInput={
+                <DatePickerInput
+                    mt={"xl"}
+                    mb={"xl"}
+                    label={"Date"}
+                    value={date}
+                    onChange={(e) => setDate(e)}
+                />
+            }
+            isLoading={weekData.length === 0}
+            cards={
+                [
+                    <StatsCard
+                        key={0}
+                        stat={{
+                            title: "Total",
+                            value: (weekData.reduce((a, b) => a + b.count, 0)),
+                        }}/>,
+                    <StatsCard
+                        key={1}
+                        stat={{
+                            title: "Average",
+                            value: (Math.round(weekData.reduce((a, b) => a + b.count, 0) / weekData.length)),
+                        }}/>,
+                    <StatsCard
+                        key={2}
+                        stat={{
+                            title: "Best Day", value: (weekData.reduce((a, b) => a > b.count ? a : b.count, 0)),
+                        }}/>,
+                    <StatsCard
+                        key={3}
+                        stat={{
+                            title: "New Inbound",
+                            value: (weekData
+                                .filter((item) => (item["Add"] || item["Add on Receiving"]))
+                                .reduce((acc, {count}) => acc + +count, 0)),
+                        }}
+                    />,
+                    <StatsCard
+                        key={4}
+                        stat={{
+                            title: "Re-listings",
+                            value: (weekData
+                                .filter((item) => (item["Relisting"]))
+                                .reduce((acc, {count}) => acc + +count, 0)),
+                        }}
                     />
-                </Grid.Col>
-                <Grid.Col span={3}></Grid.Col>
-            </Grid>
-            <Grid spacing={"xl"}>
-                <Grid.Col span={1}></Grid.Col>
-                <Grid.Col span={8}>
-                    <div style={{position: "relative", height: "100%"}} className={"chart-container"}>
-                        <WeeklyChart theme={theme} weekData={weekData} date={date}/>
-                    </div>
-                </Grid.Col>
-                <Grid.Col span={2}>
-                    <Stack>
-                        <StatsCard
-                            stat={{
-                                title: "Total",
-                                value: weekData.reduce((a,b)=>a+b.count,0),
-                            }}/>
-                        <StatsCard
-                            stat={{
-                                title: "Average",
-                                value: weekData.reduce((a, b) => a + b.count, 0) / weekData.length
-                            }}/>
-                        <StatsCard
-                            stat={{
-                                title: "Best Day", value: Math.max(...weekData.map(({count}) => count)),
-                            }}/>
-                        <StatsCard
-                            stat={{
-                                title: "New Inbound", value: weekData
-                                    .filter((item) => (item["Add"] || item["Add on Receiving"]))
-                                    .reduce((acc,item)=>acc + (+item["Add"] || 0) + (+item["Add on Receiving"] || 0),0),
-                            }}
-                        />
-                        <StatsCard
-                            stat={{
-                                title: "Re-listings", value:weekData
-                                        .filter((item) => (item["Relisting"]))
-                                        .reduce((acc,item)=>acc + (+item["Relisting"] || 0),0),
-                            }}/>
-                    </Stack>
-                </Grid.Col>
-            </Grid>
-        </Container>
-    )
+                ]
+            }
+        >
+            <WeeklyChart date={date} weekData={weekData} theme={theme}/>
+        </GraphWithStatCard>
+    );
 }
 
 export default WeeklyView;

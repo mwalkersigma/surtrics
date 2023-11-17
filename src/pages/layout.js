@@ -12,7 +12,7 @@ import {
     UnstyledButton,
     Avatar,
     useMantineColorScheme,
-    NavLink, ScrollArea,
+    NavLink, ScrollArea, Space,
 } from '@mantine/core';
 import {
     IconChevronDown,
@@ -222,7 +222,11 @@ export default function Layout({children}) {
             <SurtricsHeader{...toggleProps}/>
             <SurtricsNavbar/>
             <AppShell.Main>
-                {children}
+                <ScrollArea>
+                    {children}
+                    <Space h={"xl"}/>
+                    <Space h={"xl"}/>
+                </ScrollArea>
             </AppShell.Main>
             <AppShell.Footer p="md">
                 <Text fz={"xs"}>

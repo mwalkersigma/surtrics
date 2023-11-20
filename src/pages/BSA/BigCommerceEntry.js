@@ -144,7 +144,7 @@ const BigCommerceEntry = () => {
                                 type={"text"}
                                 disabled
                                 readOnly
-                                value={values.user_who_submitted}
+                                placeholder={values.user_who_submitted}
                             />
                         </Grid.Col>
                         <Grid.Col span={6}>

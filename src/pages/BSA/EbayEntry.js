@@ -23,7 +23,7 @@ const EbayEntry = () => {
             impressions: 0,
             page_views: 0,
             date_for_week: new Date(),
-            user_who_submitted: userName || "",
+            user_who_submitted: "",
         }
     })
 
@@ -39,6 +39,7 @@ const EbayEntry = () => {
         form.resetDirty(values)
 
     }, [status]);
+
     function handleSubmit(values) {
         setLoading(true)
         fetch(`${window.location.origin}/api/dataEntry/ebay`, {
@@ -92,7 +93,7 @@ const EbayEntry = () => {
                             label={"Who Submitted"}
                             disabled
                             readOnly
-                            value={form.values.user_who_submitted}
+                            placeholder={form.values.user_who_submitted}
                         />
                     </Grid.Col>
                     <Grid.Col span={6}>

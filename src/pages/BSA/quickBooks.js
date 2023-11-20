@@ -1,120 +1,118 @@
-import React, {useEffect} from 'react';
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import {Col, InputGroup, Row} from "react-bootstrap";
-import Stack from "react-bootstrap/Stack";
-import Button from "react-bootstrap/Button";
-import useBasicForm from "../../modules/hooks/useBasicForm";
+import React, {useEffect, useState} from 'react';
 import {useSession} from "next-auth/react";
-import useToastContainer from "../../modules/hooks/useToast";
-import ToastContainerWrapper from "../../components/toast/toastContainerWrapper";
-import createSuccessMessage from "../../modules/serverMessageFactories/createSuccessMessage";
-import createErrorMessage from "../../modules/serverMessageFactories/createErrorMessage";
+import {Notifications} from "@mantine/notifications";
+import {useForm} from "@mantine/form";
+import {Button, Container, Grid, NativeSelect, NumberInput, Stack, TextInput, Title} from "@mantine/core";
+import {DatePickerInput} from "@mantine/dates";
 
-
-// purchase types are: auction, no list , targetted;
 const QuickBooks = () => {
-    const {data: session} = useSession();
+    const {data: session, status} = useSession();
     const userName = session?.user?.name;
+    const [loading, setLoading] = useState(true);
 
-    const [formState, handleChange,handleReset] = useBasicForm({
-        customer_name: "",
-        po_number: "",
-        date_of_sale: "",
-        purchase_type: "",
-        total_amount: 0,
+    const form = useForm({
+        initialValues: {
+            customer_name: "",
+            po_number: "",
+            date_of_sale: new Date(),
+            purchase_type: "",
+            total_amount: 0,
+            user_who_submitted: userName || "",
+        }
     });
 
-    const [serverMessages, setServerMessage, removeServerMessage] = useToastContainer();
+    useEffect(() => {
+        if(status === "loading"){
+            setLoading(true)
+        }
+        if(status === "authenticated"){
+            setLoading(false)
+        }
+        let values = {user_who_submitted: userName}
+        form.setValues((prevValues) => ({...prevValues, ...values}));
+        form.resetDirty(values)
+
+    }, [status]);
 
 
-    function handleSubmit () {
+    function handleSubmit (values) {
         fetch(`${window.location.origin}/api/dataEntry/quickBooks`,{
             method:"PUT",
-            body:JSON.stringify(formState)
+            body:JSON.stringify(values)
         })
             .then((res)=>res.json())
             .then(({message})=>{
-                setServerMessage(createSuccessMessage(message))
-                handleReset();
+                Notifications.show({autoClose: 5000, title: "Success", message, type: "success"})
             })
             .catch((err)=>{
-                setServerMessage(createErrorMessage(err.message))
+                Notifications.show({autoClose: 5000, title: "Error", message: err.message, type: "error"})
+            })
+            .finally(()=>{
+                setLoading(false)
+                form.reset()
             })
     }
 
     return (
         <Container>
-            <ToastContainerWrapper serverMessages={serverMessages} removeServerMessages={removeServerMessage}/>
             <h1 className={"my-5 text-center"}>Quick Books</h1>
-            <Form>
-                <Row className={"my-3"}>
-                    <Form.Group as={Col} controlId={"form_control_name"}>
-                        <Form.Label>Customer Name</Form.Label>
-                        <Form.Control
-                            type={"text"}
+            <form>
+                <Grid>
+                   <Grid.Col span={12}>
+                       <Title>Quick Books</Title>
+                   </Grid.Col>
+                    <Grid.Col span={4}>
+                        <TextInput
+                            label={"Customer Name"}
                             placeholder={"Name"}
-                            value={formState.customer_name}
-                            onChange={handleChange("customer_name")}
+                            {...form.getInputProps("customer_name")}
                         />
-                    </Form.Group>
-                    <Form.Group as={Col} controlId={"form_control_po"}>
-                        <Form.Label>PO Number</Form.Label>
-                        <Form.Control
-                            type={"text"}
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                        <TextInput
+                            label={"PO Number"}
                             placeholder={"PO Number"}
-                            value={formState.po_number}
-                            onChange={handleChange("po_number")}
+                            {...form.getInputProps("po_number")}
                         />
-                    </Form.Group>
-                    <Form.Group as={Col} controlId={"form_control_date"}>
-                        <Form.Label>Date Of Sales</Form.Label>
-                        <Form.Control
-                            type={"date"}
-                            value={formState.date_of_sale}
-                            onChange={handleChange("date_of_sale")}
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                        <DatePickerInput
+                            label={"Date"}
+                            {...form.getInputProps("date_of_sale")}
                         />
-                    </Form.Group>
-                </Row>
-                <Row className={"my-3"}>
-                    <Form.Group as={Col} controlId={"form_control_total"}>
-                        <Form.Label>Total Amount</Form.Label>
-                        <InputGroup>
-                            <InputGroup.Text>$</InputGroup.Text>
-                            <Form.Control
-                                type={"currency"}
-                                placeholder={"Total"}
-                                value={formState.total_amount}
-                                onChange={handleChange("total_amount")}
-                            />
-                        </InputGroup>
-                    </Form.Group>
-                    <Form.Group as={Col} controlId={"form_control_purchase_type"}>
-                        <Form.Label>Purchase Type</Form.Label>
-                        <Form.Select
-                            type={"select"}
-                            value={formState.purchase_type}
-                            onChange={handleChange("purchase_type")}
-                        >
-                            <option>----------------- Select option ------------------</option>
-                            <option value={"auction"}>Auction</option>
-                            <option value={"no_list"}>No List</option>
-                            <option value={"targeted"}>Targeted</option>
-                        </Form.Select>
-                    </Form.Group>
-                </Row>
-                <Row className={"my-3"}>
-                    <Form.Group as={Col} controlId={"form_control_user_who_submitted"}>
-                        <Form.Label>User Who Submitted</Form.Label>
-                        <Form.Control type={"text"} disabled readOnly placeholder={userName}/>
-                    </Form.Group>
-                    <Col>
-                        <Stack className={"justify-content-end align-items-lg-stretch h-100"}>
-                            <Button onClick={handleSubmit} variant={"primary"}>Submit</Button>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                        <NumberInput
+                            label={"Total Amount"}
+                            prefix={"$"}
+                            {...form.getInputProps("total_amount")}
+                        />
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                         <NativeSelect label={"Purchase Type"}{...form.getInputProps("purchase_type")}>
+                                <option>----------------- Select option ------------------</option>
+                                <option value={"auction"}>Auction</option>
+                                <option value={"no_list"}>Non-List</option>
+                                <option value={"targeted"}>List Buy</option>
+                                <option value={"N/A"} >N/A</option>
+                            </NativeSelect>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                        <TextInput
+                            label={"Who Submitted"}
+                            disabled
+                            readOnly
+                            placeholder={form.values.user_who_submitted}
+                        />
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                        <Stack h={"100%"} justify={"flex-end"}>
+                            <Button loading={loading} type={"submit"} variant={"primary"}>Submit</Button>
                         </Stack>
-                    </Col>
-                </Row>
-            </Form>
+                    </Grid.Col>
+
+                </Grid>
+            </form>
         </Container>
     );
 };

@@ -6,9 +6,10 @@ import {useSession} from "next-auth/react";
 import RoleWrapper from "../../components/RoleWrapper";
 
 import {useForm} from "@mantine/form";
-import {Grid, Container, NativeSelect, Title, TextInput, Textarea, Button, Text, Stack, Skeleton} from "@mantine/core";
+import {Grid, Container, NativeSelect, Title, TextInput, Textarea, Button, Text, Stack, Skeleton, Tooltip} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
 import {Notifications} from "@mantine/notifications";
+
 
 const ignoreList = [
     "BSA",
@@ -79,10 +80,12 @@ const ErrorReporting = () => {
 
 
     useEffect(() => {
+        setLoading(true)
         fetch(`${window.location.origin}/api/getUsers`)
             .then((res) => res.json())
             .then((res) => setUsers(res))
             .catch((err) => console.log(err))
+            .finally(() => setLoading(false))
     }, []);
 
     function handleSubmit({user, reason, notes, date}) {
@@ -94,10 +97,10 @@ const ErrorReporting = () => {
         })
             .then((res) => res.text())
             .then((res) => {
-                Notifications.show({autoClose:5000, title: "Success", message: res, type: "success"})
+                Notifications.show({autoClose: 5000, title: "Success", message: res, type: "success"})
             })
             .catch((err) => {
-                Notifications.show({autoClose:5000, title: "Error", message: err, type: "error"})
+                Notifications.show({autoClose: 5000, title: "Error", message: err, type: "error"})
             })
             .finally(() => {
                 setLoading(false);
@@ -131,14 +134,23 @@ const ErrorReporting = () => {
                                 {...getInputProps("reason")}
                             >
                                 <option value={""}>Choose a reason</option>
-                                <option value={"no photo"}>No Photo</option>
-                                <option value={"not approved"}>Not Approved</option>
-                                <option value={"wrong label"}>Wrong Label</option>
-                                <option value={"no location"}>No Location</option>
-                                <option value={"Typo"}> Typo</option>
-                                <option value={"listing Error"}> Listing Error</option>
-                                <option value={"Wrong Condition"}> Wrong Condition</option>
-                                <option value={"Mixed Bag"}> Mixed Bag</option>
+                                <option onMouseOver={()=>console.log("Hover")} value={"Banned"}>Banned</option>
+                                <option value={"Breakdown"}>Breakdown</option>
+                                <option value={"Condition"}>Condition</option>
+                                <option value={"Location"}>Location</option>
+                                <option value={"Mixed Bag"}>Mixed Bag</option>
+                                <option value={"Model Classification"}>Model Classification</option>
+                                <option value={"Model ID"}>Model ID</option>
+                                <option value={"Printing"}>Printing</option>
+                                <option value={"Quantity"}>Quantity</option>
+                                {/*<option value={"no photo"}>No Photo</option>*/}
+                                {/*<option value={"not approved"}>Not Approved</option>*/}
+                                {/*<option value={"wrong label"}>Wrong Label</option>*/}
+                                {/*<option value={"no location"}>No Location</option>*/}
+                                {/*<option value={"Typo"}> Typo</option>*/}
+                                {/*<option value={"listing Error"}> Listing Error</option>*/}
+                                {/*<option value={"Wrong Condition"}> Wrong Condition</option>*/}
+                                {/*<option value={"Mixed Bag"}> Mixed Bag</option>*/}
                             </NativeSelect>
                         </Grid.Col>
                         <Grid.Col span={4}>
@@ -159,7 +171,6 @@ const ErrorReporting = () => {
                                 {...getInputProps("notes")}
                             />
                         </Grid.Col>
-
                         <Grid.Col span={6}>
                             <TextInput
                                 defaultValue={session?.user?.email}
@@ -167,12 +178,12 @@ const ErrorReporting = () => {
                                 label={"User who reported error"}
                             />
                         </Grid.Col>
-
                         <Grid.Col span={6}>
                             <Stack h={"100%"} justify={"flex-end"}>
                                 <Button
                                     type={"submit"}
                                     disabled={loading}
+                                    loading={loading}
                                     variant="gradient"
                                     gradient={{from: 'red', to: 'grape', deg: 90}}
                                 >

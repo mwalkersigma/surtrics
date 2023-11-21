@@ -1,43 +1,41 @@
 import React from 'react';
-import Container from "react-bootstrap/Container";
-import useTableHandle from "../../modules/hooks/useTableHandle";
-import useUpdates from "../../modules/hooks/useUpdates";
-import Table from "react-bootstrap/Table";
-import Button from "react-bootstrap/Button";
-import {format} from "date-fns";
+import {Button, rem} from '@mantine/core';
+import {TableSort} from "../../components/mantine/TableSort";
+import ViewerLayout from "../../components/mantine/ViewerLayout";
+import useTable from "../../modules/hooks/useTable";
+import {IconTrash} from "@tabler/icons-react";
+
+
+
+
+
+
+
 
 const Event = () => {
-    const events = useUpdates("/api/admin/event");
-    const {headers,rows,removeHandler} = useTableHandle(events,"event_id");
-    const handleRemove = removeHandler("/api/admin/event")
-    return (
-        <Container>
-            <h1 className={"text-center my-4"}>Your Events</h1>
+    const {tableData,removeHandler,status} = useTable({route:"/api/admin/event",idField:"event_id"})
+    console.log(tableData)
+    let removeEntry = removeHandler("/api/admin/event");
 
-            <Table bordered hover striped>
-                <thead>
-                    <tr>
-                        {headers.map((header)=>{
-                            return <th key={header.displayName}>{header.displayName}</th>
-                        })}
-                        <th>Remove</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows.map((row)=>{
-                        return <tr key={row.id}>
-                            <td>{row.id}</td>
-                            <td>{row.event_name}</td>
-                            <td>{format(new Date(row.event_date),"MM/dd/yyyy")}</td>
-                            <td>{row.event_notes}</td>
-                            <td>{row.affected_categories}</td>
-                            <td>{row.user_who_submitted}</td>
-                            <td><Button variant={"outline-danger"} onClick={()=>handleRemove(row.id)}>Remove</Button></td>
-                        </tr>
-                    })}
-                </tbody>
-            </Table>
-        </Container>
+    return (
+        <ViewerLayout title={"Errors"} isLoading={status === "loading"}>
+            <TableSort
+                data={tableData.map((row) => ({
+                    event_id: row.event_id,
+                    event_date: new Date(row.event_date).toLocaleDateString(),
+                    event_name: row.event_name,
+                    event_notes: row.event_notes,
+                    affected_categories: row.affected_categories.join(", "),
+                    remove: <Button
+                        variant="filled"
+                        color="red"
+                        onClick={() => removeEntry(row.event_id)}
+                        leftSection={<IconTrash style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+
+                    >Remove</Button>,
+                }))}
+            />
+        </ViewerLayout>
     );
 };
 

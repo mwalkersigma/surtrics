@@ -55,7 +55,6 @@ const QuickBooks = () => {
 
     return (
         <Container>
-            <h1 className={"my-5 text-center"}>Quick Books</h1>
             <form>
                 <Grid>
                    <Grid.Col span={12}>

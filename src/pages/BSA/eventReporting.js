@@ -39,6 +39,7 @@ const EventReporting = () => {
             session
         }
     })
+    console.log(form.getInputProps("affected_categories"))
 
     useEffect(() => {
         if(status === "loading"){
@@ -147,86 +148,6 @@ const EventReporting = () => {
             </Container>
         </RoleWrapper>
     )
-
-    // return (
-    //     <RoleWrapper altRoles={["bsa","surplus director"]}>
-    //         <ToastContainerWrapper serverMessages={serverMessages} removeServerMessages={removeServerMessage}/>
-    //         <Container>
-    //             <h1>Event Reporting</h1>
-    //             <Form>
-    //                 <Row>
-    //                     <Form.Group as={Col}>
-    //                         <Form.Label>Event Name </Form.Label>
-    //                         <Form.Text> This is meant to be a short title</Form.Text>
-    //                         <Form.Control
-    //                             onChange={(e)=>setEventTitle(e.target.value)}
-    //                             value={eventTitle}
-    //                             type={"text"}
-    //                             placeholder={"Event Title"}
-    //                         />
-    //                     </Form.Group>
-    //                     <Form.Group as={Col}>
-    //                         <Form.Label>Event Date</Form.Label>
-    //                         <Form.Control value={eventDate} onChange={(e)=>setEventDate(e.target.value)} type={"date"} placeholder={"Event Date"}/>
-    //                     </Form.Group>
-    //                     <Form.Group as={Col}>
-    //                         <Form.Label>User Who Submitted</Form.Label>
-    //                         <Form.Control type={"text"} value={userName} disabled/>
-    //                     </Form.Group>
-    //                 </Row>
-    //                 <Row className={"my-3"}>
-    //                     <Form.Group as={Col}>
-    //                         <Form.Label>Affected Categories</Form.Label>
-    //                         <Stack direction={"horizontal"} className={"justify-content-evenly"}>
-    //                             {Object.keys(categoryState).map((category)=>(
-    //                                 <Form.Check
-    //                                     key={category}
-    //                                     type={"checkbox"}
-    //                                     label={category}
-    //                                     checked={categoryState[category]}
-    //                                     onChange={()=>toggleCategory(category)}
-    //                                 />
-    //                             ))}
-    //                             <Form.Check>
-    //                                 <Stack direction={'horizontal'} className={"justify-content-evenly"}>
-    //                                     <Form.Check.Input
-    //                                         onChange={()=>setOtherCategory({
-    //                                             name:otherCategory.name,
-    //                                             checked:!otherCategory.checked
-    //                                         })}
-    //                                         checked={otherCategory.checked} className={""} type={"checkbox"}/>
-    //                                     <div className="spacer" style={{margin:"0 .25rem"}}></div>
-    //                                     <Form.Control type={"text"} placeholder={"Other"} onChange={(e)=>setOtherCategory({
-    //                                         name:e.target.value,
-    //                                         checked:true
-    //                                     })}/>
-    //                                 </Stack>
-    //                             </Form.Check>
-    //                         </Stack>
-    //                     </Form.Group>
-    //                 </Row>
-    //                 <Row className={"my-3"}>
-    //                     <Form.Group as={Col}>
-    //                         <Form.Label>Event Notes</Form.Label>
-    //                         <Form.Control
-    //                             onChange={(e)=>setEventNotes(e.target.value)}
-    //                             value={eventNotes}
-    //                             as={"textarea"}
-    //                             placeholder={"Event Notes"}
-    //                         />
-    //                     </Form.Group>
-    //                 </Row>
-    //                 <Row>
-    //                     <Button
-    //                         onClick={handleSubmit}
-    //                         size={'lg'}
-    //                         className={"mx-2 mt-3"}
-    //                     >Submit</Button>
-    //                 </Row>
-    //             </Form>
-    //         </Container>
-    //     </RoleWrapper>
-    // );
 };
 
 export default EventReporting;

@@ -19,8 +19,8 @@ function Th({children, reversed, sorted, onSort}) {
         </UnstyledButton>
     </Table.Th>);
 }
-function Td({property,children}) {
-    if(property.toLowerCase() === "remove"){
+function Td({property,children, ignoreList = []}) {
+    if(ignoreList.includes(property.toString())){
         return (
             <Table.Td>
                 <Center>
@@ -86,7 +86,7 @@ function sortData(data, payload) {
     }), payload.search);
 }
 
-export function TableSort({data}) {
+export function TableSort({data, noToolTip=[]}) {
     const [search, setSearch] = useState('');
     const [sortedData, setSortedData] = useState(data);
     const [sortBy, setSortBy] = useState(null);
@@ -120,7 +120,7 @@ export function TableSort({data}) {
         }, [])
 
     const rows = sortedData.map(row => (<Table.Tr key={row.id}>
-        {headers.map((key) => (<Td key={key} property={key}> {row[key]}</Td>))}
+        {headers.map((key) => (<Td key={key} ignoreList={["remove",...noToolTip]} property={key}> {row[key]}</Td>))}
     </Table.Tr>));
 
 

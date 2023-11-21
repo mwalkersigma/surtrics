@@ -41,11 +41,24 @@ export default function useTable ({route,idField,options}) {
         }
     }
 
+    function putHandler(endpoint){
+        return (newState) => {
+            return fetch(`${window.location.origin}${endpoint}`,{
+                method:"PUT",
+                body:JSON.stringify({newState})
+            })
+                .then(data=>{
+                    handlers.setState(newState);
+                    return data;
+                })
+        }
+    }
+
     useEffect(() => {
         handlers.setState(updates);
     }, [updates]);
 
     const status = tableData.length === 0 ? "loading" : "Ready";
 
-    return {tableData, handlers, status, removeHandler, updateHandler};
+    return {tableData, handlers, status, removeHandler, updateHandler, putHandler};
 }

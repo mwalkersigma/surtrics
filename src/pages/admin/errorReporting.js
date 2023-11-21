@@ -1,6 +1,4 @@
 import React, {useEffect, useState} from 'react';
-
-
 import {useSession} from "next-auth/react";
 
 import RoleWrapper from "../../components/RoleWrapper";
@@ -23,11 +21,6 @@ const ignoreList = [
     "Testing Shared Account"
 ]
 
-function validate(state) {
-    const {user, reason, notes} = state;
-    const noteLength = notes.length;
-    return !(!user || !reason || noteLength > 255);
-}
 
 function SkeletonLoader() {
     return (

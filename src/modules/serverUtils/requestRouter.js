@@ -5,6 +5,7 @@ export default function router (routes) {
         if(!handler) {
             res.status(405).send(`Method ${method} Not Allowed or Not Implemented`);
         }
+
         return handler(req,res,...rest);
     }
 }

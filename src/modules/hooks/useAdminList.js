@@ -1,12 +1,13 @@
-import React from "react";
 import useUpdates from "./useUpdates";
 
 export default function useAdminList () {
     const roleList = useUpdates("/api/admin/user");
     function isRole (role){
         return(session)=>{
-            if(!roleList || !roleList.length > 0) return false;
+            if(!roleList) return false;
             if(!session) return false;
+            if(!roleList.length) return false;
+            if(!roleList.length > 0) return false;
             let emailLowerCase = session.user.email.toLowerCase();
             let lowerCaseAdminList = roleList.map(user=>{
                 let hasRole = user.roles.includes(role);

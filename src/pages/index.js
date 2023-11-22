@@ -2,16 +2,15 @@ import React from "react";
 import {
     Group,
     Text,
-    Container,
     Paper,
     Title,
     Grid,
     Space,
     Badge,
-    Progress, useMantineColorScheme, NumberFormatter
+    Progress, useMantineColorScheme, Center
 } from '@mantine/core';
 import formatter from "../modules/utils/numberFormatter";
-import {addDays, addHours, format, isWeekend, subHours} from "date-fns";
+import {addDays, addHours, format, isWeekend} from "date-fns";
 import {Bar, Line} from "react-chartjs-2";
 import {colorScheme} from "./_app";
 import useUpdates from "../modules/hooks/useUpdates";
@@ -23,6 +22,7 @@ import makeWeekArray from "../modules/utils/makeWeekArray";
 import {BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import StatsCard from "../components/mantine/StatsCard";
+import useNav from "../modules/hooks/useNav";
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -33,11 +33,11 @@ ChartJS.register(
 );
 
 
-function DashboardCard({title, category, value , goal, errors,threshold,badgeText}) {
+function DashboardCard({title, category, value , goal, errors,threshold,badgeText,  hasNav}) {
     let errorRate = (Math.round(errors / value * 100) / 100) * 100;
     return (<Paper withBorder p="md" radius="md">
         <Group align={'flex-start'} justify={'space-between'} mb={'xl'}>
-            <Text size="md" c="dimmed">
+            <Text size={hasNav ? "md" : "xl"} c="dimmed">
                 {title}
             </Text>
             <Badge color="teal" variant="light">
@@ -46,7 +46,7 @@ function DashboardCard({title, category, value , goal, errors,threshold,badgeTex
         </Group>
 
         <Group align={'flex-end'} justify={'space-between'}>
-            <Title order={1}>
+            <Title order={1} style={{fontSize:`${hasNav ? "" : "56px"}`}}>
                 {formatter(value)}
             </Title>
             { errors && errors > 0 && <Text fz="xs" c="dimmed">
@@ -66,7 +66,7 @@ function DashboardCard({title, category, value , goal, errors,threshold,badgeTex
                 {formatter((value / goal) * 100)} %
             </Text>
         </Group>
-        <Progress value={(value / goal) * 100} mt={'sm'} mb={'lg'}/>
+        <Progress size={20} value={(value / goal) * 100} mt={'sm'} mb={'lg'}/>
         <Group justify="space-between" mt="md">
             <Text fz="sm" c="dimmed">
                 {value} / {goal} {category}
@@ -77,7 +77,7 @@ function DashboardCard({title, category, value , goal, errors,threshold,badgeTex
 
     </Paper>)
 }
-function WeekGraph ({weekSeed,goal,theme,shadowColor}){
+function WeekGraph ({weekSeed,goal}){
     let dateLabels = weekSeed.map(({date}) => format(addHours(new Date(date),6),"EEE MM/dd"));
     return <Bar
         data={{
@@ -130,7 +130,7 @@ const times = [
     "4 PM"
 ]
 
-function DailyGraph ({dailyData,theme,shadowColor}){
+function DailyGraph ({dailyData,theme}){
     return <Line
         data={{
             labels: times.slice(0,dailyData.length),
@@ -167,7 +167,9 @@ function DailyGraph ({dailyData,theme,shadowColor}){
     />
 }
 
-export default function ManLayout({children}) {
+export default function ManLayout({}) {
+    const hasNav = useNav();
+
     const {colorScheme:theme} = useMantineColorScheme();
     const shadowColor = theme === "dark" ? colorScheme.white : colorScheme.dark;
     let date = new Date().toLocaleString().split("T")[0];
@@ -246,61 +248,63 @@ export default function ManLayout({children}) {
     ]
 
     return (
-        <Grid py={'xl'}>
-            <Grid.Col span={1}></Grid.Col>
-            <Grid.Col span={10}>
-                <Grid>
-                    {cards.map((test,index) => (
-                        <Grid.Col key={index} span={4}>
-                            <DashboardCard {...test} />
+        <Center h={`${!hasNav && "100vh"}`}>
+            <Grid py={'xl'}>
+                <Grid.Col span={1}></Grid.Col>
+                <Grid.Col span={10}>
+                    <Grid>
+                        {cards.map((test,index) => (
+                            <Grid.Col key={index} span={4}>
+                                <DashboardCard hasNav={hasNav} {...test} />
+                            </Grid.Col>
+                        ))}
+                        <Grid.Col  span={6}>
+                            <Paper withBorder p="md" radius="md">
+                                <WeekGraph weekSeed={weekSeed} shadowColor={shadowColor} goal={goal} theme={theme}/>
+                            </Paper>
                         </Grid.Col>
-                    ))}
-                    <Grid.Col  span={6}>
-                        <Paper withBorder p="md" radius="md">
-                            <WeekGraph weekSeed={weekSeed} shadowColor={shadowColor} goal={goal} theme={theme}/>
-                        </Paper>
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                        <Paper withBorder p="md" radius="md">
-                            <DailyGraph dailyData={dailyData} shadowColor={shadowColor} theme={theme}/>
-                        </Paper>
-                    </Grid.Col>
-                    <Grid.Col span={3}>
-                        <StatsCard
-                            stat={{
-                                title:"Best Day",
-                                value:bestDay,
-                            }}
-                        />
-                    </Grid.Col>
-                    <Grid.Col span={3}>
-                        <StatsCard
-                            stat={{
-                                title:"Best Hour",
-                                value:bestHour,
-                            }}
-                        />
-                    </Grid.Col>
-                    <Grid.Col span={3}>
-                        <StatsCard
-                            stat={{
-                                title:"Errors for week",
-                                value:weeklyErrors,
-                            }}
-                        />
-                    </Grid.Col>
-                    <Grid.Col span={3}>
-                        <StatsCard
-                            stat={{
-                                title:"Errors for day",
-                                value:errorsToday,
-                            }}
-                        />
-                    </Grid.Col>
-                </Grid>
-            </Grid.Col>
-            <Grid.Col span={1}></Grid.Col>
-        </Grid>
+                        <Grid.Col span={6}>
+                            <Paper withBorder p="md" radius="md">
+                                <DailyGraph dailyData={dailyData} shadowColor={shadowColor} theme={theme}/>
+                            </Paper>
+                        </Grid.Col>
+                        <Grid.Col span={3}>
+                            <StatsCard
+                                stat={{
+                                    title:"Best Day",
+                                    value:bestDay,
+                                }}
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={3}>
+                            <StatsCard
+                                stat={{
+                                    title:"Best Hour",
+                                    value:bestHour,
+                                }}
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={3}>
+                            <StatsCard
+                                stat={{
+                                    title:"Errors for week",
+                                    value:weeklyErrors,
+                                }}
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={3}>
+                            <StatsCard
+                                stat={{
+                                    title:"Errors for day",
+                                    value:errorsToday,
+                                }}
+                            />
+                        </Grid.Col>
+                    </Grid>
+                </Grid.Col>
+                <Grid.Col span={1}></Grid.Col>
+            </Grid>
+        </Center>
     );
 }
 

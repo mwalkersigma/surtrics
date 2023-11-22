@@ -1,9 +1,5 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
-import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
-import { ThemeContext} from "../../layout";
-import {Row} from "react-bootstrap";
-import Form from "react-bootstrap/Form";
 
 import {Chart} from "react-chartjs-2";
 import makeDateArray from "../../../modules/utils/makeDateArray";
@@ -20,7 +16,9 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../_app";
-import Container from "react-bootstrap/Container";
+import {useMantineColorScheme} from "@mantine/core";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import {DatePickerInput} from "@mantine/dates";
 
 
 
@@ -45,25 +43,9 @@ let colorPalette = [
 
 const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 const WeeklyView = () => {
-    const [date, setDate] = useState(formatDateWithZeros(new Date()));
-    const theme = useContext(ThemeContext);
+    const [date, setDate] = useState(new Date());
     let quantity = useUpdates("/api/views/quantity/weeklyViewTotalOnly", {date});
-    if(quantity.length === 0) return (
-        <Container>
-            <h1 className={"text-center"}>Quantity Week View</h1>
-            <Row>
-                <Form.Control
-                    className={"mb-3"}
-                    value={date}
-                    onChange={(e)=>setDate(e.target.value)}
-                    type="date"
-                />
-            </Row>
-            <h4 className={"text-center"}>
-                No Data for the week found.
-            </h4>
-        </Container>
-    );
+    const {colorScheme: theme} = useMantineColorScheme();
 
     quantity = quantity.map((quantity) => ({...quantity, date: quantity.date.split("T")[0]}));
 
@@ -100,6 +82,9 @@ const WeeklyView = () => {
         },[0,0,0,0,0,0,0])
     max = Math.ceil(Math.max(...max)*2)
     const options = {
+        devicePixelRatio: 4,
+        responsive: true,
+        maintainAspectRatio: false,
         plugins:{
             tooltip:{
                 color:parseTheme(theme),
@@ -141,19 +126,23 @@ const WeeklyView = () => {
         })
     };
     return (
-        <Container>
-            <h1 className={"text-center"}>Quantity Week View</h1>
-            <Row>
-                <Form.Control
-                    className={"mb-3"}
+        <GraphWithStatCard
+            title={"Surplus Quantity Weekly View"}
+            isLoading={quantity.length === 0}
+            dateInput={
+                <DatePickerInput
+                    mb={"xl"}
+                    label={"Date"}
                     value={date}
-                    onChange={(e)=>setDate(e.target.value)}
-                    type="date"
+                    onChange={(e) => setDate(e)}
                 />
-            </Row>
+            }
+            cards={[]}
+            >
             <Chart data={data} type={"bar"} height={150} options={options}/>
-        </Container>
-    );
+        </GraphWithStatCard>
+    )
+
 };
 
 export default WeeklyView;

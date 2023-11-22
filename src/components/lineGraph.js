@@ -14,6 +14,7 @@ export default function LineGraph (props) {
     const options = {
         devicePixelRatio: 4,
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             datalabels:{
                 display: false,
@@ -23,14 +24,6 @@ export default function LineGraph (props) {
                 color: theme,
                 labels:{
                     color: theme + "A",
-                }
-            },
-            title: {
-                display: true,
-                text: 'Surplus Metrics Daily View',
-                color: theme,
-                font: {
-                    size: 30,
                 }
             },
         },

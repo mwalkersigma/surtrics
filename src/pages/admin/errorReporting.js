@@ -1,20 +1,13 @@
 import React, {useEffect, useState} from 'react';
-
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import Button from "react-bootstrap/Button";
-import Stack from "react-bootstrap/Stack"
-
 import {useSession} from "next-auth/react";
 
 import RoleWrapper from "../../components/RoleWrapper";
-import ToastContainerWrapper from "../../components/toast/toastContainerWrapper";
 
-import useToastContainer from "../../modules/hooks/useToast";
-import createErrorMessage from "../../modules/serverMessageFactories/createErrorMessage";
-import createSuccessMessage from "../../modules/serverMessageFactories/createSuccessMessage";
+import {useForm} from "@mantine/form";
+import {Grid, Container, NativeSelect, Title, TextInput, Textarea, Button, Text, Stack, Skeleton, Tooltip} from "@mantine/core";
+import {DatePickerInput} from "@mantine/dates";
+import {Notifications} from "@mantine/notifications";
+
 
 const ignoreList = [
     "BSA",
@@ -27,110 +20,175 @@ const ignoreList = [
     "System",
     "Testing Shared Account"
 ]
-function validate(state){
-    const {user,reason,notes} = state;
-    const noteLength = notes.length;
-    return !(!user || !reason || noteLength > 255);
+
+
+function SkeletonLoader() {
+    return (
+        <Container>
+            <Grid>
+                <Grid.Col span={12}><Title> Error Reporting </Title></Grid.Col>
+                <Grid.Col span={4}>
+                    <Skeleton height={40}/>
+                </Grid.Col>
+                <Grid.Col span={4}>
+                    <Skeleton height={40}/>
+                </Grid.Col>
+                <Grid.Col span={4}>
+                    <Skeleton height={40}/>
+                </Grid.Col>
+                <Grid.Col span={12}>
+                    <Skeleton height={160}/>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                    <Skeleton height={40}/>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                    <Stack h={"100%"} justify={"flex-end"}>
+                        <Skeleton height={40}/>
+                    </Stack>
+                </Grid.Col>
+            </Grid>
+        </Container>
+    )
 }
 
-const ErrorReporting = () => {
-    const [users, setUsers] = useState([]);
-    const [date, setDate] = useState(new Date());
-    const [user, setUser] = useState("");
-    const [reason, setReason] = useState("");
-    const [notes, setNotes] = useState("");
-    const [loading, setLoading] = useState(false);
-    const {data:session,status} = useSession();
 
-    const [serverMessages, setServerMessage, removeServerMessage] = useToastContainer();
+const ErrorReporting = () => {
+    const {onSubmit, getInputProps} = useForm({
+        initialValues: {
+            user: "",
+            reason: "",
+            notes: "",
+            date: new Date(),
+        },
+        validate: {
+            user: (value) => (value ? null : 'User is required'),
+            reason: (value) => (value ? null : 'Reason is required'),
+            date: (value) => (value ? null : 'Date is required'),
+        }
+    });
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const {data: session, status} = useSession();
+
 
     useEffect(() => {
-        fetch(`${window.location.origin}/api/getUsers`)
-            .then((res)=>res.json())
-            .then((res)=>setUsers(res))
-            .catch((err)=>console.log(err))
-    }, []);
-    function handleSubmit () {
-        const state = JSON.stringify({user,reason,notes,session,date});
         setLoading(true)
-        if(!validate({user,reason,notes})){
-            setLoading(false);
-            return setServerMessage(createErrorMessage("Please fill out all fields"))
-        }
-        fetch(`${window.location.origin}/api/admin/error`,{
-            method:"PUT",
-            body:state
+        fetch(`${window.location.origin}/api/getUsers`)
+            .then((res) => res.json())
+            .then((res) => setUsers(res))
+            .catch((err) => console.log(err))
+            .finally(() => setLoading(false))
+    }, []);
+
+    function handleSubmit({user, reason, notes, date}) {
+        const state = JSON.stringify({user, reason, notes, session, date});
+        setLoading(true);
+        fetch(`${window.location.origin}/api/dataEntry/error`, {
+            method: "PUT",
+            body: state
         })
-        .then((res)=>res.text())
-        .then((res)=>{setServerMessage(createSuccessMessage(res))})
-        .catch((err)=>{setServerMessage(createErrorMessage(err))})
-        .finally(()=>{
-            setUser("");
-            setReason("");
-            setNotes("");
-            setLoading(false);
-        })
+            .then((res) => res.text())
+            .then((res) => {
+                Notifications.show({autoClose: 5000, title: "Success", message: res, type: "success"})
+            })
+            .catch((err) => {
+                Notifications.show({autoClose: 5000, title: "Error", message: err, type: "error"})
+            })
+            .finally(() => {
+                setLoading(false);
+            })
     }
 
     return (
-        <RoleWrapper altRoles={["surplus director","bsa"]}>
-            <ToastContainerWrapper serverMessages={serverMessages} removeServerMessages={removeServerMessage}/>
-                <Container>
-                    <h1>Error Reporting</h1>
-                    <Form>
-                        <Row>
-                            <Form.Group as={Col} className="mb-3" controlId="exampleForm.ControlTextarea1">
-                                <Form.Label>User</Form.Label>
-                                <Form.Select value={user} onChange={(e)=>setUser(e.target.value)}>
-                                    <option>Choose a user</option>
-                                    {users.filter((user)=>!ignoreList.includes(user.user_name)).map((user)=>(
-                                        <option key={user.user_name} value={user.user_name}>{user.user_name}</option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                            <Form.Group as={Col} className="mb-3" controlId="exampleForm.ControlTextarea1">
-                                <Form.Label>Reason</Form.Label>
-                                <Form.Select value={reason} onChange={(e)=>setReason(e.target.value)}>
-                                    <option>Choose a reason</option>
-                                    <option value={"no photo"}>No Photo</option>
-                                    <option value={"not approved"}>Not Approved</option>
-                                    <option value={"wrong label"}>Wrong Label</option>
-                                    <option value={"no location"} >No Location</option>
-                                    <option value={"Typo"} > Typo </option>
-                                    <option value={"listing Error"}> Listing Error </option>
-                                    <option value={"Wrong Condition"}> Wrong Condition </option>
-                                    <option value={"Mixed Bag"}> Mixed Bag </option>
-                                </Form.Select>
-                            </Form.Group>
-
-                            <Form.Group as={Col} class={"mb-4 "}>
-                                <Form.Label>Date</Form.Label>
-                                <Form.Control value={date} onChange={(e)=>setDate(e.target.value)} type={"date"}/>
-                            </Form.Group>
-                        </Row>
-                        <Row>
-                            <Form.Group as={Col} className="mb-3" controlId="exampleForm.ControlTextarea1">
-                                <Form.Label>
-                                    Notes <small className={"text-sm-start text-secondary"}>( 255 char max )</small>
-                                </Form.Label>
-                                <Form.Control
-                                    value={notes}
-                                    onChange={(e)=>setNotes(e.target.value)}
-                                    as="textarea"
-                                    rows={3}
-                                />
-                            </Form.Group>
-                        </Row>
-                        <hr/>
-                        <Row>
-                            <Stack>
-                                <Button disabled={loading} onClick={handleSubmit} size={"lg"} variant={"primary"}>Submit</Button>
+        <RoleWrapper LoadingComponent={<SkeletonLoader/>} altRoles={["surplus director", "bsa"]}>
+            <Container>
+                <form onSubmit={onSubmit(handleSubmit)}>
+                    <Grid>
+                        <Grid.Col span={12}><Title> Error Reporting </Title></Grid.Col>
+                        <Grid.Col span={4}>
+                            <NativeSelect
+                                required
+                                label={"User"}
+                                placeholder={"Choose a user"}
+                                {...getInputProps("user")}
+                            >
+                                <option value={""}>Choose a user</option>
+                                {users.filter((user) => !ignoreList.includes(user.user_name)).map((user) => (
+                                    <option key={user.user_name} value={user.user_name}>{user.user_name}</option>
+                                ))}
+                            </NativeSelect>
+                        </Grid.Col>
+                        <Grid.Col span={4}>
+                            <NativeSelect
+                                required
+                                label={"Reason"}
+                                placeholder={"Choose a reason"}
+                                {...getInputProps("reason")}
+                            >
+                                <option value={""}>Choose a reason</option>
+                                <option onMouseOver={()=>console.log("Hover")} value={"Banned"}>Banned</option>
+                                <option value={"Breakdown"}>Breakdown</option>
+                                <option value={"Condition"}>Condition</option>
+                                <option value={"Location"}>Location</option>
+                                <option value={"Mixed Bag"}>Mixed Bag</option>
+                                <option value={"Model Classification"}>Model Classification</option>
+                                <option value={"Model ID"}>Model ID</option>
+                                <option value={"Printing"}>Printing</option>
+                                <option value={"Quantity"}>Quantity</option>
+                                {/*<option value={"no photo"}>No Photo</option>*/}
+                                {/*<option value={"not approved"}>Not Approved</option>*/}
+                                {/*<option value={"wrong label"}>Wrong Label</option>*/}
+                                {/*<option value={"no location"}>No Location</option>*/}
+                                {/*<option value={"Typo"}> Typo</option>*/}
+                                {/*<option value={"listing Error"}> Listing Error</option>*/}
+                                {/*<option value={"Wrong Condition"}> Wrong Condition</option>*/}
+                                {/*<option value={"Mixed Bag"}> Mixed Bag</option>*/}
+                            </NativeSelect>
+                        </Grid.Col>
+                        <Grid.Col span={4}>
+                            <DatePickerInput
+                                required
+                                label={"Date"}
+                                placeholder={"Choose a date"}
+                                {...getInputProps("date")}
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={12}>
+                            <Textarea
+                                required
+                                autosize
+                                minRows={3}
+                                label={"Notes"}
+                                placeholder={"Enter notes"}
+                                {...getInputProps("notes")}
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                            <TextInput
+                                defaultValue={session?.user?.email}
+                                disabled
+                                label={"User who reported error"}
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                            <Stack h={"100%"} justify={"flex-end"}>
+                                <Button
+                                    type={"submit"}
+                                    disabled={loading}
+                                    loading={loading}
+                                    variant="gradient"
+                                    gradient={{from: 'red', to: 'grape', deg: 90}}
+                                >
+                                    Submit
+                                </Button>
                             </Stack>
-                        </Row>
-                    </Form>
-                </Container>
+                        </Grid.Col>
+                    </Grid>
+                </form>
+            </Container>
         </RoleWrapper>
-    );
+    )
 };
 
 export default ErrorReporting;

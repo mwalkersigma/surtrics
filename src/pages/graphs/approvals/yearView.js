@@ -1,8 +1,5 @@
 import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
-import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
 import {
     CategoryScale,
     Chart as ChartJS,
@@ -15,8 +12,10 @@ import {
 } from "chart.js";
 import {Line} from "react-chartjs-2";
 import {colorScheme} from "../../_app";
-import {Col, Row} from "react-bootstrap";
 import {setDate, setMonth} from "date-fns";
+import {YearPickerInput} from "@mantine/dates";
+import {NativeSelect, Slider, Text} from "@mantine/core";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 
 const ignoredNames = [
     "Bail", "" , "Whit","Finley Aldrid"
@@ -65,19 +64,9 @@ function smoothData(data,adjCount=3) {
 const dateSet = setDate
 const ApprovalsView = () => {
     let [user, setUser] = useState("Total");
-    const [date, setDate] = useState(formatDateWithZeros(dateSet(setMonth(new Date(),0),1)));
+    const [date,setDate] = useState(dateSet(setMonth(new Date(),0),1));
     const [resolution, setResolution] = useState(4);
     const updates = useUpdates("/api/views/approvals", {date, interval:"1 year"});
-    console.log(updates)
-    if(!(updates.length > 0)) return <Container>
-        <Form.Control
-            className={"my-2"}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            type="date"
-        />
-        Loading...
-    </Container>;
 
     let mappedUpdates = {Total:{}};
     updates
@@ -103,6 +92,7 @@ const ApprovalsView = () => {
     const options = {
         devicePixelRatio: 4,
         responsive: true,
+        maintainAspectRatio: false,
         tension: 0.1,
         interaction: {
             mode: 'index',
@@ -136,40 +126,102 @@ const ApprovalsView = () => {
         ]
     }
     return (
-            <Container>
-                <h1 className={"text-center"}>Approvals View</h1>
-                <Form.Select value={user} onChange={(e) => setUser(e.target.value)}>
-                    {Object.keys(mappedUpdates).map((name) => {
-                        if(ignoredNames.includes(name)) return null;
-                        return <option key={name} value={name}>{name}</option>
-                    })}
-                </Form.Select>
-                <Row className={"my-3"}>
-                    <Col sm={2}>
-                        <Form.Label>Year Select</Form.Label>
-                        <Form.Control
-                            value={date}
-                            onChange={(e) => setDate(formatDateWithZeros(dateSet(setMonth(new Date(e.target.value),0),1)))}
-                            type="date"
-                        />
-                    </Col>
-                    <Col sm={8}></Col>
-                    <Col sm={2}>
-                        <Form.Label>Trend Line Resolution</Form.Label>
-                        <Form.Control
-                            type={'number'}
-                            step={1}
-                            min={1}
-                            max={Math.min(graphData.datasets[0].data.length / 8, 5)}
-                            value={resolution}
-                            onChange={(e) => setResolution(+e.target.value)}
-                        />
-                    </Col>
-                </Row>
+        <GraphWithStatCard
+            isLoading={updates.length === 0}
+            title={"Approvals View"}
+            dateInput={
+            <NativeSelect
+                mt={"xl"}
+                mb={"xl"}
+                label={"User"}
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
+                >
+                {Object
+                    .keys(mappedUpdates)
+                    .map((name) => {
+                    if(ignoredNames.includes(name)) return null;
+                    return <option key={name} value={name}>{name}</option>
+                    })
+                }
+            </NativeSelect>
+            }
+            slotOne={
+                <YearPickerInput
+                    mt={"xl"}
+                    mb={"xl"}
+                    label={"Year"}
+                    value={date}
+                    onChange={(e) => setDate(e)}
+                />
+            }
+            slotTwo={
+            <>
+                <Text mt={"xl"}>Resolution</Text>
+                <Slider
+                    mb={"xl"}
+                    label={"Trend Line Resolution"}
+                    color="blue"
+                    marks={[
 
-                <Line data={graphData} options={options} />
-            </Container>
-    );
+                        { value: 2, label: '1' },
+                        { value: 3, label: '2' },
+                        { value: 4, label: '3' },
+                        { value: 5, label: '4' },
+                        { value: 6, label: '5' },
+                        { value: 7, label: '6' },
+                    ]}
+                    min={1}
+                    max={8}
+                    value={resolution}
+                    onChange={(e) => setResolution(e)}
+                />
+            </>
+
+            }
+            cards={[]}
+            >
+            <Line data={graphData} options={options} />
+        </GraphWithStatCard>
+    )
+
+
+
+    // return (
+    //         <Container>
+    //             <h1 className={"text-center"}>Approvals View</h1>
+    //             <Form.Select value={user} onChange={(e) => setUser(e.target.value)}>
+    //                 {Object.keys(mappedUpdates).map((name) => {
+    //                     if(ignoredNames.includes(name)) return null;
+    //                     return <option key={name} value={name}>{name}</option>
+    //                 })}
+    //             </Form.Select>
+    //             <Row className={"my-3"}>
+    //                 <Col sm={2}>
+    //                     <Form.Label>Year Select</Form.Label>
+    //                     <Form.Control
+    //                         value={date}
+    //                         onChange={(e) => setDate(formatDateWithZeros(dateSet(setMonth(new Date(e.target.value),0),1)))}
+    //                         type="date"
+    //                     />
+    //                 </Col>
+    //                 <Col sm={8}></Col>
+    //                 <Col sm={2}>
+    //                     <Form.Label>Trend Line Resolution</Form.Label>
+    //                     <Form.Control
+    //                         type={'number'}
+    //                         step={1}
+    //                         min={1}
+    //                         max={Math.min(graphData.datasets[0].data.length / 8, 5)}
+    //                         value={resolution}
+    //                         onChange={(e) => setResolution(+e.target.value)}
+    //                     />
+    //                 </Col>
+    //             </Row>
+    //
+    //
+    //         </Container>
+    // );
 };
 
 export default ApprovalsView;

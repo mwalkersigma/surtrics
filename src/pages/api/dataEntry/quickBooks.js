@@ -29,8 +29,10 @@ function getHandler(req, res) {
     return serverAdminWrapper(async (req, res, {user:{name}}) => {
     return db.query(`
         SELECT * FROM surtrics.surplus_quickbooks_data
-        WHERE user_who_submitted = $1
-    `,[name])
+        --WHERE user_who_submitted = $1
+    `,[
+    //    name
+    ])
     },"bsa","surplus director")(req,res)
         .then(({rows}) => {
             res.status(200).json(rows);

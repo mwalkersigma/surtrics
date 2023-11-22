@@ -1,121 +1,159 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import RoleWrapper from "../../components/RoleWrapper";
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import {useSession} from "next-auth/react";
 import findStartOfWeek from "../../modules/utils/findSundayFromDate";
-import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import {addDays} from "date-fns";
-import Button from "react-bootstrap/Button";
-import Stack from "react-bootstrap/Stack";
-import createSuccessMessage from "../../modules/serverMessageFactories/createSuccessMessage";
-import createErrorMessage from "../../modules/serverMessageFactories/createErrorMessage";
-import useToastContainer from "../../modules/hooks/useToast";
-import useBasicForm from "../../modules/hooks/useBasicForm";
-import ToastContainerWrapper from "../../components/toast/toastContainerWrapper";
+import {Notifications} from "@mantine/notifications";
+import {useForm} from "@mantine/form";
+import {Container, Grid, Title, TextInput, Button, Stack, Skeleton, NumberInput} from "@mantine/core";
+import {DatePickerInput} from "@mantine/dates";
+
+
+function BigCommerceSkeleton() {
+    return (
+        <Container>
+            <Grid>
+                <Grid.Col span={12}><Title> Big Commerce </Title></Grid.Col>
+                <Grid.Col span={4}>
+                    <Skeleton height={40}/>
+                </Grid.Col>
+                <Grid.Col span={4}>
+                    <Skeleton height={40}/>
+                </Grid.Col>
+                <Grid.Col span={4}>
+                    <Skeleton height={40}/>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                    <Skeleton height={40}/>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                    <Skeleton height={40}/>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                    <Skeleton height={40}/>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                    <Stack h={"100%"} justify={"flex-end"}>
+                        <Skeleton height={40}/>
+                    </Stack>
+                </Grid.Col>
+            </Grid>
+        </Container>
+    )
+
+}
 
 const BigCommerceEntry = () => {
-    const {data: session} = useSession();
+    const {data: session,status} = useSession();
     const userName = session?.user?.name;
-    const [serverMessages, setServerMessage, removeServerMessage] = useToastContainer();
-    const [formState, handleChange,handleReset] = useBasicForm({
-        visits: 0,
-        shopped: 0,
-        add_to_cart: 0,
-        web_leads: 0,
-        date_for_week: formatDateWithZeros(addDays(findStartOfWeek(new Date()),1)),
-        user_who_submitted: "",
+    const [loading, setLoading] = useState(true);
+    const {onSubmit, getInputProps,setValues,resetDirty,reset,values} = useForm({
+        initialValues: {
+            visits: 0,
+            shopped: 0,
+            add_to_cart: 0,
+            web_leads: 0,
+            date_for_week: new Date(),
+            user_who_submitted: userName || "",
+        },
     });
-    function handleDate(e){
-        let update = {target:{value:formatDateWithZeros(addDays(findStartOfWeek(new Date(e.target.value)),1))}};
-        handleChange("date_for_week")
-        (update);
-    }
 
-    function handleSubmit(){
+    useEffect(() => {
+        if(status === "loading"){
+            setLoading(true)
+        }
+        if(status === "authenticated"){
+            setLoading(false)
+        }
+        let values = {user_who_submitted: userName}
+        setValues((prevValues) => ({...prevValues, ...values}));
+        resetDirty(values)
+
+    }, [status]);
+
+
+
+
+    function handleSubmit(values) {
+        console.log(values)
+        setLoading(true)
         fetch(`${window.location.origin}/api/dataEntry/bigCommerce`,{
             method:"PUT",
-            body:JSON.stringify(formState)
+            body:JSON.stringify(values)
         })
             .then((res)=>res.json())
             .then(({message,response})=>{
-                console.log(response)
-                setServerMessage(createSuccessMessage(message))
-                handleReset();
+                Notifications.show({autoClose: 5000, title: "Success", message, type: "success"})
             })
             .catch((err)=>{
-                setServerMessage(createErrorMessage(err.message))
+                Notifications.show({autoClose: 5000, title: "Error", message: err.message, type: "error"})
+            })
+            .finally(()=>{
+                setLoading(false)
+                reset()
             })
     }
 
-    useEffect(() => {
-        handleChange("user_who_submitted")({target:{value:userName}});
-    }, [userName,formState.user_who_submitted]);
-
     return (
-        <RoleWrapper altRoles={"bsa"}>
-            <ToastContainerWrapper serverMessages={serverMessages} removeServerMessages={removeServerMessage}/>
+        <RoleWrapper altRoles={"bsa"} LoadingComponent={<BigCommerceSkeleton/>}>
             <Container>
-                <h1 className={"text-center my-4"}>Big Commerce </h1>
-                <Form>
-                    <Row className={"my-3"}>
-                        <Form.Group as={Col} controlId={"form_control_visits"}>
-                            <Form.Label>Visits</Form.Label>
-                            <Form.Control
+                <form onSubmit={onSubmit(handleSubmit)}>
+                    <Grid>
+                        <Grid.Col span={12}><Title> Big Commerce </Title></Grid.Col>
+                        <Grid.Col span={4}>
+                            <NumberInput
+                                label={"Visits"}
                                 type={"number"}
                                 placeholder={"Visits"}
-                                value={formState.visits}
-                                onChange={handleChange("visits")}
+                                {...getInputProps("visits")}
                             />
-                        </Form.Group>
-                        <Form.Group as={Col} controlId={"form_control_shopped"}>
-                            <Form.Label>Shopped</Form.Label>
-                            <Form.Control
+                        </Grid.Col>
+                        <Grid.Col span={4}>
+                            <NumberInput
+                                label={"Shopped"}
                                 type={"number"}
                                 placeholder={"Shopped"}
-                                value={formState.shopped}
-                                onChange={handleChange("shopped")}
+                                {...getInputProps("shopped")}
                             />
-                        </Form.Group>
-                        <Form.Group as={Col} controlId={"form_control_add_to_cart"}>
-                            <Form.Label>Add to Cart</Form.Label>
-                            <Form.Control
+                        </Grid.Col>
+                        <Grid.Col span={4}>
+                            <NumberInput
+                                label={"Add to Cart"}
                                 type={"number"}
                                 placeholder={"Add to Cart"}
-                                value={formState.add_to_cart}
-                                onChange={handleChange("add_to_cart")}
+                                {...getInputProps("add_to_cart")}
                             />
-                        </Form.Group>
-                    </Row>
-                    <Row className={"my-3"}>
-                        <Form.Group as={Col} controlId={"form_control_web_leads"}>
-                            <Form.Label>Web Leads</Form.Label>
-                            <Form.Control
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                            <NumberInput
+                                label={"Web Leads"}
                                 type={"number"}
                                 placeholder={"Web Leads"}
-                                value={formState.web_leads}
-                                onChange={handleChange("web_leads")}
+                                {...getInputProps("web_leads")}
                             />
-                        </Form.Group>
-                        <Form.Group as={Col} controlId={"form_control_for_Week"}>
-                            <Form.Label>For Week of</Form.Label>
-                            <Form.Control type={"date"} onChange={handleDate} value={formState.date_for_week}/>
-                        </Form.Group>
-                    </Row>
-                    <Row className={"my-3"}>
-                        <Form.Group as={Col} controlId={"form_control_user_who_submitted"}>
-                            <Form.Label>User Who Submitted</Form.Label>
-                            <Form.Control type={"text"} disabled readOnly placeholder={formState.user_who_submitted}/>
-                        </Form.Group>
-                        <Col>
-                            <Stack className={"justify-content-end align-items-lg-stretch h-100"}>
-                                <Button onClick={handleSubmit} variant={"primary"}>Submit</Button>
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                            <DatePickerInput
+                                label={"For Week of"}
+                                {...getInputProps("date_for_week")}
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                            <TextInput
+                                label={"User Who Submitted"}
+                                type={"text"}
+                                disabled
+                                readOnly
+                                placeholder={values.user_who_submitted}
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                            <Stack h={"100%"} justify={"flex-end"}>
+                                <Button loading={loading} type={"submit"} variant={"primary"}>Submit</Button>
                             </Stack>
-                        </Col>
-                    </Row>
-                </Form>
+                        </Grid.Col>
+                    </Grid>
+                </form>
             </Container>
         </RoleWrapper>
     );

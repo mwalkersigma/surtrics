@@ -1,10 +1,5 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
-import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Form from "react-bootstrap/Form";
-import {ThemeContext} from "../../layout";
 import {colorScheme} from "../../_app";
 import {Chart} from "react-chartjs-2";
 
@@ -20,6 +15,9 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {setDate} from "date-fns";
+import {useMantineColorScheme} from "@mantine/core";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import {MonthPickerInput} from "@mantine/dates";
 
 ChartJS.register(
     CategoryScale,
@@ -41,32 +39,8 @@ let colorPalette = [
 ]
 const dateSet = setDate
 
-const MonthlyView = () => {
-    const [date, setDate] = useState(formatDateWithZeros(dateSet(new Date(),1)));
-    const theme = useContext(ThemeContext);
-    let approvals = useUpdates("/api/views/approvals", {date, interval: "1 month"});
-    console.log(approvals)
 
-
-    if(approvals.length === 0) return (
-        <Container>
-            <h1 className={"text-center"}>Approvals Monthly View</h1>
-            <Row>
-                <Form.Control
-                    className={"mb-3"}
-                    value={date}
-                    onChange={(e)=>setDate(e.target.value)}
-                    type="date"
-                />
-            </Row>
-            <h4 className={"text-center"}>
-                No Data for the month found.
-            </h4>
-        </Container>
-    );
-
-    approvals = approvals.map((approval) => ({...approval, date_of_final_approval: approval.date_of_final_approval.split("T")[0]}));
-
+function MonthlyApprovalsChart({approvals,theme}){
     const names = [...new Set(approvals.map(({name}) => name))];
     let dateArr = approvals
         .map((approval) => approval.date_of_final_approval.split("T")[0])
@@ -116,15 +90,19 @@ const MonthlyView = () => {
         }
     });
     let totalData = dateArr.reduce((acc,cur)=>{
-       if(!acc[cur]) acc[cur] = 0;
-       approvals.forEach((approval)=>{
-           if(approval.date_of_final_approval === cur){
-               acc[cur] += +approval.count;
-           }
-       })
+        if(!acc[cur]) acc[cur] = 0;
+        approvals.forEach((approval)=>{
+            if(approval.date_of_final_approval === cur){
+                acc[cur] += +approval.count;
+            }
+        })
         return acc;
     },{});
+    console.log(theme)
     const options = {
+        devicePixelRatio: 4,
+        responsive: true,
+        maintainAspectRatio: false,
         plugins:{
             tooltip:{
                 color:parseTheme(theme),
@@ -138,9 +116,6 @@ const MonthlyView = () => {
             datalabels:{
                 color:parseTheme(theme),
             },
-            title:{
-                text:"Week View"
-            }
         },
         interaction:{
             intersect:false,
@@ -148,7 +123,21 @@ const MonthlyView = () => {
         },
         scales:{
             y:{
-                max:Math.ceil(Math.max(...max)*1.5)
+                max:Math.ceil(Math.max(...max)*3),
+                ticks: {
+                    color: parseTheme(theme) + "3"
+                },
+                grid: {
+                    color: parseTheme(theme) + "3"
+                }
+            },
+            x:{
+                ticks: {
+                    color: parseTheme(theme) + "3"
+                },
+                grid: {
+                    color: parseTheme(theme) + "3"
+                }
             }
         }
     }
@@ -167,20 +156,37 @@ const MonthlyView = () => {
             }
         ]
     };
+    return (
+        <Chart data={data} height={150} options={options}/>
+    )
+}
+
+const MonthlyView = () => {
+    const [date,setDate] = useState(dateSet(new Date(),1))
+    const {colorScheme:theme} = useMantineColorScheme();
+    let approvals = useUpdates("/api/views/approvals", {date, interval: "1 month"});
+    approvals = approvals.map((approval) => ({...approval, date_of_final_approval: approval.date_of_final_approval.split("T")[0]}));
+
+
 
     return (
-        <Container>
-            <h1 className={"text-center"}>Approvals Month View</h1>
-            <Row>
-                <Form.Control
-                    className={"mb-3"}
+        <GraphWithStatCard
+            title={"Surplus Approvals Monthly View"}
+            isLoading={approvals.length === 0}
+            dateInput={
+                <MonthPickerInput
+                    mt={"xl"}
+                    mb={"xl"}
+                    label={"Month"}
                     value={date}
-                    onChange={(e)=>setDate(e.target.value)}
-                    type="date"
+                    onChange={(e) => setDate(e)}
                 />
-            </Row>
-            <Chart data={data} height={150} options={options}/>
-        </Container>
+            }
+            cards={[]}
+        >
+            <MonthlyApprovalsChart approvals={approvals} theme={theme}/>
+        </GraphWithStatCard>
+
     );
 };
 

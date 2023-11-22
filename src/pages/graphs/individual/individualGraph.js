@@ -1,9 +1,6 @@
-import React, {useContext, useState} from 'react';
-import Container from "react-bootstrap/Container";
+import React, {useState} from 'react';
 import {Chart} from "react-chartjs-2";
 import useUpdates from "../../../modules/hooks/useUpdates";
-import {ThemeContext} from "../../layout";
-
 import {
     BarElement,
     CategoryScale,
@@ -15,10 +12,11 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
-import Form from "react-bootstrap/Form";
-import {Col, Row} from "react-bootstrap";
 import formatter from "../../../modules/utils/numberFormatter";
 import {colorScheme} from "../../_app";
+import {useMantineColorScheme} from "@mantine/core";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import {DatePickerInput} from "@mantine/dates";
 
 ChartJS.register(
     CategoryScale,
@@ -59,6 +57,8 @@ function IndividualChart(props){
 
     const options = {
         devicePixelRatio: 4,
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             tooltip: {
                 callbacks: {
@@ -160,38 +160,27 @@ function IndividualChart(props){
 
 
 function UserGraph() {
-    const [date,setDate] = useState(formatDateWithZeros(new Date()));
-    let individualData = useUpdates("/api/views/individualView",{date});
+    const [date, setDate] = useState(new Date());
+    let individualData = useUpdates("/api/views/individualView", {date});
+    const {colorScheme: theme} = useMantineColorScheme();
 
-    const theme = useContext(ThemeContext);
 
-    function handleDateChange(e) {
-        setDate(e.target.value);
-    }
-    if(individualData.length === 0)return(
-        <Container className={"text-center"}>
-            <Form.Control className={"mb-5"} value={date} onChange={handleDateChange} type="date" />
-            Loading...
-        </Container>
-    );
+
     return (
-        <main>
-            <Container>
-                <Row>
-                    <Form.Control
-                        className={"mb-3"}
-                        value={date}
-                        onChange={handleDateChange}
-                        type="date"
-                    />
-                </Row>
-                <Row>
-                    <Col sm={12} className={`p-1 themed-drop-shadow ${theme}`} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}}>
-                        {individualData.length > 0 && <IndividualChart theme={theme} individualData={individualData} date={date} />}
-                    </Col>
-                </Row>
-            </Container>
-        </main>
+        <GraphWithStatCard
+            title={"User View"}
+            isLoading={individualData.length === 0}
+            dateInput={
+                <DatePickerInput
+                    mb={"xl"}
+                    label={"Date"}
+                    value={date}
+                    onChange={(e) => setDate(e)}
+                />
+            }
+            cards={[]}>
+            <IndividualChart theme={theme} individualData={individualData} date={date}/>
+        </GraphWithStatCard>
     )
 }
 

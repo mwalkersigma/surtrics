@@ -2,14 +2,15 @@ import React, {useState} from 'react';
 import useUpdates from "../../modules/hooks/useUpdates";
 import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import makeDateArray from "../../modules/utils/makeDateArray";
-import Table from "react-bootstrap/Table";
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import yymmddTommddyy from "../../modules/utils/yymmddconverter";
+import {addDays} from "date-fns";
+import findStartOfWeek from "../../modules/utils/findSundayFromDate";
+import { Table } from "@mantine/core";
+import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
+import {DatePickerInput} from "@mantine/dates";
 
 const ApprovalsView = () => {
-    const [date, setDate] = useState(formatDateWithZeros(new Date()));
-    const updates = useUpdates("/api/views/approvals/weeklyView", {date});
+    const [date, setDate] = useState(new Date());
+    let updates = useUpdates("/api/views/approvals", {date:findStartOfWeek(new Date(date)),interval:"1 week"});
     let mappedUpdates = {};
     updates.forEach((update) => {
         let name = update.name;
@@ -19,61 +20,68 @@ const ApprovalsView = () => {
         mappedUpdates[name][date] += parseInt(update.count);
     })
     let weekArr = makeDateArray(date);
+
     return (
-        <Container>
-            <h1 className={"text-center"}>Approvals View</h1>
-            <Form.Control
-                className={"my-3"}
-                onChange={(e) => setDate(e.target.value)}
-                type="date"
-                value={date}
-            />
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        {weekArr.map((date) => <th key={`${date}`}>{yymmddTommddyy(date)}</th>)}
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <GraphWithStatCard
+            title={"Surplus Approvals Weekly View"}
+            isLoading={updates.length === 0}
+            dateInput={
+                <DatePickerInput
+                    mb={"xl"}
+                    label={"Date"}
+                    value={date}
+                    onChange={(e) => setDate(e)}
+                />
+            }
+            cards={[]}
+            >
+            <Table striped highlightOnHover withTableBorder withColumnBorders verticalSpacing={"sm"}>
+                <Table.Thead>
+                    <Table.Tr>
+                        <Table.Th>Name</Table.Th>
+                        {weekArr.map((date) => <Table.Th key={`${date}`}>{date}</Table.Th>)}
+                        <Table.Th>Total</Table.Th>
+                    </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
                     {Object.keys(mappedUpdates).map((name) => {
                         return (
-                            <tr key={name}>
-                                <td>{name}</td>
+                            <Table.Tr key={name}>
+                                <Table.Td>{name}</Table.Td>
                                 {weekArr.map((date) => {
                                     return (
-                                        <td key={date}>
+                                        <Table.Td key={date}>
                                             {mappedUpdates[name][date] ? mappedUpdates[name][date] : 0}
-                                        </td>
+                                        </Table.Td>
                                     )
                                 })}
-                                <td>{Object.values(mappedUpdates[name]).reduce((a,b) => a+b,0)}</td>
-                            </tr>
+                                <Table.Td>{Object.values(mappedUpdates[name]).reduce((a,b) => a+b,0)}</Table.Td>
+                            </Table.Tr>
                         )}
                     )}
-                    <tr>
-                        <td>Total</td>
+                </Table.Tbody>
+                <Table.Tfoot>
+                    <Table.Tr>
+                        <Table.Th>Total</Table.Th>
                         {weekArr.map((date) => {
                             let total = 0;
                             Object.keys(mappedUpdates).forEach((name) => {
                                 if(mappedUpdates[name][date]) total += mappedUpdates[name][date]
                             })
                             return (
-                                <td key={date}>
+                                <Table.Th key={date}>
                                     {total}
-                                </td>
+                                </Table.Th>
                             )
                         })}
-                        <td>{Object.values(mappedUpdates).reduce((a,b) => {
+                        <Table.Th>{Object.values(mappedUpdates).reduce((a,b) => {
                             return a + Object.values(b).reduce((c,d) => c+d,0)
-                        },0)}</td>
-                    </tr>
-                </tbody>
-
+                        },0)}</Table.Th>
+                    </Table.Tr>
+                </Table.Tfoot>
             </Table>
-        </Container>
-    );
+        </GraphWithStatCard>
+    )
 };
 
 export default ApprovalsView;

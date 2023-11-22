@@ -1,12 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
+import useUpdates from "./useUpdates";
 
 export default function useAdminList () {
-    const [roleList, setRoleList] = useState(null);
-    useEffect(()=>{
-        fetch(`${window.location.origin}/api/getAdminList`)
-            .then((res)=>res.json())
-            .then((data)=>setRoleList(data));
-    },[])
+    const roleList = useUpdates("/api/admin/user");
     function isRole (role){
         return(session)=>{
             if(!roleList) return false;

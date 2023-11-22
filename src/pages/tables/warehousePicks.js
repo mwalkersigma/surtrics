@@ -1,58 +1,62 @@
 import React, {useState} from 'react';
 
-import Container from "react-bootstrap/Container";
-import Table from "react-bootstrap/Table";
-import Form from "react-bootstrap/Form";
 
 import useUpdates from "../../modules/hooks/useUpdates";
 
 import makeDateArray from "../../modules/utils/makeDateArray";
 import formatDatabaseRows from "../../modules/utils/formatDatabaseRows";
-import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
-import yymmddTommddyy from "../../modules/utils/yymmddconverter";
+
+import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
+import {Table} from "@mantine/core";
+import {DatePickerInput} from "@mantine/dates";
 
 const WarehousePicks = () => {
-    const [date, setDate] = useState(formatDateWithZeros(new Date()));
+    const [date, setDate] = useState(new Date());
     const updates = useUpdates("/api/views/picks/warehousePicks",{date});
     const dates = makeDateArray(date);
     let rows = formatDatabaseRows(updates);
-    return (
-        <Container>
-            <h1 className={"text-center"}>Warehouse Picks</h1>
-            <Form.Control
-                className={"mb-3"}
-                value={date}
-                onChange={(e)=>setDate(e.target.value)}
-                type="date"
-            />
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>Employee</th>
-                        {dates.map((date) => <th key={`${date}`}>{yymmddTommddyy(date)}</th>)}
-                    </tr>
-                </thead>
-                <tbody>
-                    {Object.keys(rows).map((employee) => {
-                        return (
-                            <tr key={employee}>
-                                <td>{employee}</td>
-                                {dates.map((rowDate) => {
 
+    return (
+        <GraphWithStatCard
+            title={"Surplus Warehouse Picks Weekly View"}
+            isLoading={updates.length === 0}
+            dateInput={
+                <DatePickerInput
+                    mb={"xl"}
+                    label={"Date"}
+                    value={date}
+                    onChange={(e) => setDate(e)}
+                />
+            }
+            cards={[]}
+        >
+            <Table striped highlightOnHover withTableBorder withColumnBorders verticalSpacing={"sm"}>
+                <Table.Thead>
+                    <Table.Tr>
+                        <Table.Th>Name</Table.Th>
+                        {dates.map((date) => <Table.Th key={`${date}`}>{date}</Table.Th>)}
+                    </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                    {Object.keys(rows).map((name) => {
+                        return (
+                            <Table.Tr key={name}>
+                                <Table.Td>{name}</Table.Td>
+                                {dates.map((rowDate) => {
                                     return (
-                                        <td key={`${employee}-${rowDate}`}>
-                                            {rows[employee][rowDate]?.Total ?? 0}
-                                        </td>
+                                        <Table.Td key={`${name}-${rowDate}`}>
+                                            {rows[name][rowDate]?.Total ?? 0}
+                                        </Table.Td>
                                     )
                                 })}
-                            </tr>
-                        )
-                    }
+                            </Table.Tr>
+                        )}
                     )}
-                </tbody>
+                </Table.Tbody>
             </Table>
-        </Container>
-    );
+        </GraphWithStatCard>
+
+    )
 };
 
 export default WarehousePicks;

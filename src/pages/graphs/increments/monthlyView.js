@@ -1,34 +1,30 @@
-import React, {useContext, useState} from 'react';
-import Form from "react-bootstrap/Form";
+import React, {useState} from 'react';
+import yymmddTommddyy from "../../../modules/utils/yymmddconverter";
 import useUpdates from "../../../modules/hooks/useUpdates";
-import {ThemeContext} from "../../layout";
-import Container from "react-bootstrap/Container";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
-import InfoCard from "../../../components/infoCards/infocard";
 import {
     CategoryScale,
     Chart as ChartJS,
     Legend,
     LinearScale,
     LineElement, PointElement,
-    Title,
+    Title as chartTitle,
     Tooltip
 } from "chart.js";
 import {Line} from "react-chartjs-2";
-import formatter from "../../../modules/utils/numberFormatter";
 import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../_app";
-import yymmddTommddyy from "../../../modules/utils/yymmddconverter";
 import {setDate} from "date-fns";
+import {useMantineColorScheme} from "@mantine/core";
+import {MonthPickerInput} from "@mantine/dates";
+import StatsCard from "../../../components/mantine/StatsCard";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 
 
 
 ChartJS.register(
     CategoryScale,
     LinearScale,
-    Title,
+    chartTitle,
     Tooltip,
     Legend,
     LineElement,
@@ -40,11 +36,11 @@ ChartJS.register(
 
 
 function LineGraphMonthly ({monthData,theme}) {
-    console.log(monthData)
     theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     const options = {
         devicePixelRatio: 4,
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             datalabels: {
                 color: theme,
@@ -60,14 +56,6 @@ function LineGraphMonthly ({monthData,theme}) {
                     color: theme + "A",
                     borderRadius: 10,
                     usePointStyle: true,
-                }
-            },
-            title: {
-                display: true,
-                text: 'Surplus Metrics Monthly View',
-                color: theme,
-                font: {
-                    size: 30,
                 }
             },
         },
@@ -109,8 +97,6 @@ function LineGraphMonthly ({monthData,theme}) {
         acc[date][curr['transaction_reason']] = +curr.count;
         return acc
     },{})
-
-
     const graphData = {
         labels: Array
             .from(new Set(monthData.map(({date_of_transaction}) => date_of_transaction.split("T")[0])))
@@ -175,57 +161,82 @@ function LineGraphMonthly ({monthData,theme}) {
         <Line data={graphData} height={150} title={"Monthly View"} options={options} />
     )
 }
+const dateSet = setDate;
 const MonthlyView = () => {
-    const [date,setStateDate] = useState(formatDateWithZeros(setDate(new Date(),1)))
-    //useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
+
+    const [date,setDate] = useState(dateSet(new Date(),1))
     let monthData = useUpdates("/api/views/increments",{date,interval:"1 month",increment:"day"});
-    const theme = useContext(ThemeContext)
+    const {colorScheme:theme} = useMantineColorScheme();
 
-    if(monthData.length === 0)return(
-        <Container className={"text-center"}>
-            <Form.Control className={"mb-5"} value={date} onChange={(e)=>setDate(e.target.value)} type="date" />
-            Loading... ( If this takes more than 10 seconds, there is probably no data for this date )
-        </Container>
-    );
-    let cardData = monthData.map(({transactions}) => +transactions);
-    let margin = "3rem";
+
+    // group by date
+    // add a total field
+    let cardData = monthData?.reduce((acc,curr)=>{
+        let date = curr.date_of_transaction.split("T")[0];
+        if(!acc[date]){
+            acc[date] = {
+                day: date,
+                total: +curr.count,
+                [curr['transaction_reason']]: +curr.count
+            }
+            return acc;
+        }
+        acc[date].total += +curr.count;
+        acc[date][curr['transaction_reason']] = +curr.count;
+        return acc
+    },{})
+    cardData = Object?.values(cardData);
+
     return (
-        <Container>
-            <Form.Control
-                className={"mb-3"}
-                value={date}
-                onChange={(e)=>setStateDate(formatDateWithZeros(setDate(new Date(e.target.value),1)))}
-                type="date"
-            />
-            <Row>
-                <Col sm={10} style={{border:`1px ${theme === "dark" ? "white" : "black" } solid`}} >
-                    <LineGraphMonthly monthData={monthData} theme={theme} />
-                </Col>
-                <Col sm={2}>
-                    <InfoCard style={{marginBottom:margin}}  title={"Total Increments"} theme={theme}>
-                        {formatter(cardData.reduce((a,b) => a + b,0))}
-                    </InfoCard>
-                    <InfoCard style={{marginBottom:margin}} title={"New Inbound"} theme={theme}>
-                        {
-                            formatter(monthData
-                                .filter((item) => (item.transaction_reason === "Add on Receiving" || item.transaction_reason === "Add"))
-                                .reduce((acc, {transactions})=>acc + +transactions ,0)
-                            )
-                        }
-                    </InfoCard>
-                    <InfoCard style={{marginBottom:0}} title={"Re-listings"} theme={theme}>
-                        {
-                            formatter(monthData
-                                .filter((item) => (item.transaction_reason === "Relisting"))
-                                .reduce((acc, {transactions})=>acc + +transactions ,0)
-                            )
-                        }
-                    </InfoCard>
-                </Col>
-            </Row>
-
-        </Container>
-    );
+        <GraphWithStatCard
+            title={"Surplus Increments Monthly View"}
+            dateInput={
+                <MonthPickerInput
+                    mb={"xl"}
+                    label={"Month"}
+                    value={date}
+                    onChange={(e) => setDate(e)}
+                />
+            }
+            isLoading={monthData.length === 0}
+            cards={
+                [
+                    <StatsCard
+                        key={0}
+                        stat={{
+                            title: "Total",
+                            value: (cardData.reduce((a, {total}) => a + total, 0)),
+                        }}/>,
+                    <StatsCard
+                        key={1}
+                        stat={{
+                            title: "Average",
+                            value: (Math.round(cardData.reduce((a, {total}) => a + total, 0) / cardData.length)),
+                        }}/>,
+                    <StatsCard
+                        key={2}
+                        stat={{
+                            title: "Best Day", value: (cardData.reduce((a, {total}) => a > total ? a : total, 0)),
+                        }}/>,
+                    <StatsCard
+                        key={3}
+                        stat={{
+                            title: "New Inbound",
+                            value: cardData.reduce((acc,cur)=>acc + ((+cur["Add"] || 0) + (+cur["Add on Receiving"] || 0)),0),
+                        }}
+                    />,
+                    <StatsCard
+                        key={4}
+                        stat={{
+                            title: "Re-listings",
+                            value: cardData.reduce((acc,cur)=>acc + (+cur["Relisting"] || 0),0),
+                        }}/>
+                ]
+            }
+        >
+            <LineGraphMonthly monthData={monthData} theme={theme}/>
+        </GraphWithStatCard>
+    )
 };
 
 

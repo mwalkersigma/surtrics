@@ -6,7 +6,7 @@ import fs from "fs";
 function getHandler(req,res,...options){
     let userList = fs.readFileSync("./src/json/adminList.json")
         userList = JSON.parse(`${userList}`);
-
+        console.log(userList)
     return userList;
 }
 function postHandler(req,res,...options){

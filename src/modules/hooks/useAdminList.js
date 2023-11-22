@@ -10,14 +10,19 @@ export default function useAdminList () {
             if(!roleList.length > 0) return false;
             console.log(roleList)
             console.log(typeof roleList.map)
-            let emailLowerCase = session.user.email.toLowerCase();
-            let lowerCaseAdminList = roleList.map(user=>{
-                let hasRole = user.roles.includes(role);
-                if(hasRole){
-                    return user.email.toLowerCase();
-                }
-            });
-            return lowerCaseAdminList.includes(emailLowerCase);
+            try {
+                let emailLowerCase = session.user.email.toLowerCase();
+                let lowerCaseAdminList = roleList.map(user => {
+                    let hasRole = user.roles.includes(role);
+                    if (hasRole) {
+                        return user.email.toLowerCase();
+                    }
+                });
+                return lowerCaseAdminList.includes(emailLowerCase);
+            } catch (e) {
+                console.log(e);
+                return false;
+            }
         }
     }
     function getRoles (session){

@@ -5,7 +5,7 @@ export default function useAdminList () {
     const roleList = useUpdates("/api/admin/user");
     function isRole (role){
         return(session)=>{
-            if(!roleList) return false;
+            if(!roleList || !roleList.length > 0) return false;
             if(!session) return false;
             let emailLowerCase = session.user.email.toLowerCase();
             let lowerCaseAdminList = roleList.map(user=>{

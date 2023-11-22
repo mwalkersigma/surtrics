@@ -116,10 +116,24 @@ function WeekGraph ({weekSeed,goal,theme,shadowColor}){
     />
 }
 
+const times = [
+    "6 AM",
+    "7 AM",
+    "8 AM",
+    "9 AM",
+    "10 AM",
+    "11 AM",
+    "12 PM",
+    "1 PM",
+    "2 PM",
+    "3 PM",
+    "4 PM"
+]
+
 function DailyGraph ({dailyData,theme,shadowColor}){
     return <Line
         data={{
-            labels: dailyData.map(({date_of_transaction}) => +(subHours(new Date(date_of_transaction),7).toLocaleTimeString().split(":")[0])),
+            labels: times.slice(0,dailyData.length),
             datasets:[
                 {
                     data:dailyData.map(({count}) => +count),

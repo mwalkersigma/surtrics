@@ -8,6 +8,8 @@ export default function useAdminList () {
             if(!session) return false;
             if(!roleList.length) return false;
             if(!roleList.length > 0) return false;
+            console.log(roleList)
+            console.log(typeof roleList.map)
             let emailLowerCase = session.user.email.toLowerCase();
             let lowerCaseAdminList = roleList.map(user=>{
                 let hasRole = user.roles.includes(role);

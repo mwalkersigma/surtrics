@@ -1,8 +1,6 @@
 import React from 'react';
-import Container from "react-bootstrap/Container";
 import useUpdates from "../../modules/hooks/useUpdates";
 import {format} from "date-fns";
-import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import {NativeSelect, Table} from "@mantine/core";
 import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";

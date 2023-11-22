@@ -171,14 +171,14 @@ function YearlyView() {
                 <StatsCard
                     key={0}
                     stat={{
-                        title: "Total",
+                        title: "Total Increments",
                         value: (cardData.reduce((a, {count}) => a + count, 0)),
                     }}
                 />,
                 <StatsCard
                     key={1}
                     stat={{
-                        title: "Average",
+                        title: "Average Increments",
                         value: (Math.round(cardData.reduce((a, {count}) => a + count, 0) / cardData.length)),
                     }}
                 />,

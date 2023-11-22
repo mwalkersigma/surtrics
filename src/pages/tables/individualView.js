@@ -61,7 +61,7 @@ const IndividualView = () => {
                                         <Table.Td>{row}</Table.Td>
                                         <Table.Td>{transaction_type}</Table.Td>
                                         <Table.Td>{transaction_reason}</Table.Td>
-                                        <Table.Td>{+value}</Table.Td>
+                                        <Table.Td>{((+value) / 4)}</Table.Td>
                                     </Table.Tr>
                                 )
                             })

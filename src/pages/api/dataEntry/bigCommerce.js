@@ -36,7 +36,7 @@ function putHandler(req, res) {
         return db.query(`
         INSERT INTO surtrics.surplus_big_commerce_data (visits, shopped, add_to_cart, web_leads, date_for_week, user_who_entered) 
         VALUES ($1, $2, $3, $4, $5, $6)
-        `,[visits, shopped,web_leads, add_to_cart, date_for_week, user_who_submitted ])
+        `,[visits, shopped,add_to_cart, web_leads, date_for_week, user_who_submitted ])
     },"bsa","surplus director")(req,res)
         .then((response) => {
             console.log(response)

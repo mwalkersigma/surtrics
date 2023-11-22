@@ -47,19 +47,20 @@ const DailyView = () => {
                     <StatsCard
                         key={0}
                         stat={{
-                            title: "Total",
+                            title: "Total Increments",
                             value: (chartData.reduce((a, b) => a + b, 0)),
                         }}/>,
                     <StatsCard
                         key={1}
                         stat={{
-                            title: "Average",
+                            title: "Average Increments",
                             value: (Math.round(chartData.reduce((a, b) => a + b, 0) / chartData.length)),
                         }}/>,
                     <StatsCard
                         key={2}
                         stat={{
-                            title: "Best Hour", value: (chartData.reduce((a, b) => a > b ? a : b, 0)),
+                            title: "Best Hour",
+                            value: (chartData.reduce((a, b) => a > b ? a : b, 0)),
                         }}/>,
                     <StatsCard
                         key={3}

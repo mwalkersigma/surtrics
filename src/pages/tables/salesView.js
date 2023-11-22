@@ -129,7 +129,7 @@ const SalesView = () => {
                         <Table.Th>Total</Table.Th>
                         <Table.Th></Table.Th>
                         <Table.Th>{chosenStore && chosenStore.reduce((total, sale) => total + sale.items.reduce((total, item) => total + item.quantity, 0), 0)}</Table.Th>
-                        <Table.Th>{chosenStore && Math.round(chosenStore.reduce((total, sale) => total + sale.total, 0) * 100) / 100}</Table.Th>
+                        <Table.Th>{chosenStore && formatter(Math.round(chosenStore.reduce((total, sale) => total + sale.total, 0) * 100) / 100,'currency')}</Table.Th>
                     </Table.Tr>
                 </Table.Tfoot>
             </Table>

@@ -21,7 +21,6 @@ import useGoal from "../modules/hooks/useGoal";
 import makeWeekArray from "../modules/utils/makeWeekArray";
 import {BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
-import StatsCard from "../components/mantine/StatsCard";
 import useNav from "../modules/hooks/useNav";
 ChartJS.register(
     CategoryScale,
@@ -31,7 +30,20 @@ ChartJS.register(
     PointElement,
     LineElement,
 );
-
+const Theme = (theme) => theme === "dark" ? colorScheme.light : colorScheme.dark;
+const times = [
+    "6 AM",
+    "7 AM",
+    "8 AM",
+    "9 AM",
+    "10 AM",
+    "11 AM",
+    "12 PM",
+    "1 PM",
+    "2 PM",
+    "3 PM",
+    "4 PM"
+];
 
 function DashboardCard({title, category, value , goal, errors,threshold,badgeText,  hasNav}) {
     let errorRate = (Math.round(errors / value * 100) / 100) * 100;
@@ -77,7 +89,7 @@ function DashboardCard({title, category, value , goal, errors,threshold,badgeTex
 
     </Paper>)
 }
-function WeekGraph ({weekSeed,goal}){
+function WeekGraph ({weekSeed,goal,theme, height}){
     let dateLabels = weekSeed.map(({date}) => format(addHours(new Date(date),6),"EEE MM/dd"));
     return <Bar
         data={{
@@ -102,35 +114,29 @@ function WeekGraph ({weekSeed,goal}){
                 },
             },
             scales: {
-                y:{
-                    min: 0,
-                    max: goal * 2,
-                    display: false,
+                x:{
                     ticks: {
-                        color: "#FFF"
+                        color: Theme(theme) + "AA"
+                    },
+                    grid: {
+                        color: Theme(theme) + "AA"
+                    }
+                },
+                y:{
+                    max : goal * 2,
+                    ticks: {
+                        color: Theme(theme) + "AA"
+                    },
+                    grid: {
+                        color: Theme(theme) + "AA"
                     }
                 },
             },
         }}
-        height={150}
+        height={height}
     />
 }
-
-const times = [
-    "6 AM",
-    "7 AM",
-    "8 AM",
-    "9 AM",
-    "10 AM",
-    "11 AM",
-    "12 PM",
-    "1 PM",
-    "2 PM",
-    "3 PM",
-    "4 PM"
-]
-
-function DailyGraph ({dailyData,theme}){
+function DailyGraph ({dailyData,theme,height}){
     return <Line
         data={{
             labels: times.slice(0,dailyData.length),
@@ -156,14 +162,25 @@ function DailyGraph ({dailyData,theme}){
                 },
             },
             scales: {
+                x:{
+                    ticks: {
+                        color: Theme(theme) + "AA"
+                    },
+                    grid: {
+                        color: Theme(theme) + "AA"
+                    }
+                },
                 y:{
                     ticks: {
-                        color: theme === "dark" ? "#FFF" : "#000"
+                        color: Theme(theme) + "AA"
+                    },
+                    grid: {
+                        color: Theme(theme) + "AA"
                     }
                 },
             },
         }}
-        height={150}
+        height={height}
     />
 }
 
@@ -171,7 +188,6 @@ export default function ManLayout({}) {
     const hasNav = useNav();
 
     const {colorScheme:theme} = useMantineColorScheme();
-    const shadowColor = theme === "dark" ? colorScheme.white : colorScheme.dark;
     let date = new Date().toLocaleString().split("T")[0];
     const errorUpdates = useUpdates("/api/views/errors");
 
@@ -260,45 +276,53 @@ export default function ManLayout({}) {
                         ))}
                         <Grid.Col  span={6}>
                             <Paper withBorder p="md" radius="md">
-                                <WeekGraph weekSeed={weekSeed} shadowColor={shadowColor} goal={goal} theme={theme}/>
+                                <WeekGraph height={150} weekSeed={weekSeed}  goal={goal} theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={6}>
                             <Paper withBorder p="md" radius="md">
-                                <DailyGraph dailyData={dailyData} shadowColor={shadowColor} theme={theme}/>
+                                <DailyGraph height={150} dailyData={dailyData}  theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>
-                            <StatsCard
-                                stat={{
-                                    title:"Best Day",
-                                    value:bestDay,
-                                }}
-                            />
+                            <Paper withBorder p="md" radius="md">
+                                <Text fz="lg" c="dimmed">
+                                    Best Day
+                                </Text>
+                                <Title fz={'56px'}>
+                                    {formatter(bestDay)}
+                                </Title>
+                            </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>
-                            <StatsCard
-                                stat={{
-                                    title:"Best Hour",
-                                    value:bestHour,
-                                }}
-                            />
+                            <Paper withBorder p="md" radius="md">
+                                <Text fz="lg" c="dimmed">
+                                    Best Hour
+                                </Text>
+                                <Title fz={'56px'}>
+                                    {formatter(bestHour)}
+                                </Title>
+                            </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>
-                            <StatsCard
-                                stat={{
-                                    title:"Errors for week",
-                                    value:weeklyErrors,
-                                }}
-                            />
+                            <Paper withBorder p="md" radius="md">
+                                <Text fz="lg" c="dimmed">
+                                    Errors for week
+                                </Text>
+                                <Title fz={'56px'}>
+                                    {formatter(weeklyErrors)}
+                                </Title>
+                            </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>
-                            <StatsCard
-                                stat={{
-                                    title:"Errors for day",
-                                    value:errorsToday,
-                                }}
-                            />
+                            <Paper withBorder p="md" radius="md">
+                                <Text fz="lg" c="dimmed">
+                                    Errors for day
+                                </Text>
+                                <Title fz={'56px'}>
+                                    {formatter(errorsToday)}
+                                </Title>
+                            </Paper>
                         </Grid.Col>
                     </Grid>
                 </Grid.Col>

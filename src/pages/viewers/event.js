@@ -17,7 +17,7 @@ const Event = () => {
     let removeEntry = removeHandler("/api/admin/event");
 
     return (
-        <ViewerLayout title={"Errors"} isLoading={status === "loading"}>
+        <ViewerLayout title={"Events"} isLoading={status === "loading"}>
             <TableSort
                 data={tableData.map((row) => ({
                     event_id: row.event_id,

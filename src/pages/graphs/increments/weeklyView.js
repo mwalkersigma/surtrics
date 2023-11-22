@@ -263,13 +263,13 @@ function WeeklyView() {
                     <StatsCard
                         key={0}
                         stat={{
-                            title: "Total",
+                            title: "Total Increments",
                             value: (weekData.reduce((a, b) => a + b.count, 0)),
                         }}/>,
                     <StatsCard
                         key={1}
                         stat={{
-                            title: "Average",
+                            title: "Average Increments",
                             value: (Math.round(weekData.reduce((a, b) => a + b.count, 0) / weekData.length)),
                         }}/>,
                     <StatsCard

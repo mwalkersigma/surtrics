@@ -204,19 +204,19 @@ const MonthlyView = () => {
                     <StatsCard
                         key={0}
                         stat={{
-                            title: "Total",
+                            title: "Total Increments",
                             value: (cardData.reduce((a, {total}) => a + total, 0)),
                         }}/>,
                     <StatsCard
                         key={1}
                         stat={{
-                            title: "Average",
+                            title: "Average Increments",
                             value: (Math.round(cardData.reduce((a, {total}) => a + total, 0) / cardData.length)),
                         }}/>,
                     <StatsCard
                         key={2}
                         stat={{
-                            title: "Best Day", value: (cardData.reduce((a, {total}) => a > total ? a : total, 0)),
+                            title: "Best Day ", value: (cardData.reduce((a, {total}) => a > total ? a : total, 0)),
                         }}/>,
                     <StatsCard
                         key={3}

@@ -58,6 +58,7 @@ export default function SurtricsNavbar ({}) {
                         </RoleWrapper>
                         <RoleWrapper invisible altRoles={["surplus director"]}>
                             <NavLink label={"Quick Book"} href={"/BSA/quickBooks"}/>
+                            <NavLink label={"Submit Error Type"} href={"/BSA/createErrorType"}/>
                         </RoleWrapper>
                         <NavLink label={"Submit Event"} href={"/BSA/eventReporting"}/>
                         <NavLink label={"Submit Error"} href={"/admin/errorReporting"}/>
@@ -71,6 +72,9 @@ export default function SurtricsNavbar ({}) {
                         <NavLink label={"Big Commerce Viewer"} href={"/viewers/bigCommerce"}/>
                         <NavLink label={"Quick Books Viewer"} href={"/viewers/quickBooks"}/>
                         <NavLink label={"E-Commerce Viewer"} href={"/viewers/ecommerce"}/>
+                        <RoleWrapper invisible altRoles={["surplus director"]}>
+                            <NavLink label={"Error type Viewer"} href={"/admin/ErrorPanel"}/>
+                        </RoleWrapper>
                     </NavLink>
                 </RoleWrapper>
                 <RoleWrapper invisible altRoles={["surplus director"]}>

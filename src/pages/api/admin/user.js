@@ -2,12 +2,11 @@ import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
 import router from "../../../modules/serverUtils/requestRouter";
 import {parseBody} from "../../../modules/serverUtils/parseBody";
 import fs from "fs";
-import {server} from "next-auth/client/__tests__/helpers/mocks";
 
-function getHandler(req,res,...options){
-    let userList = fs.readFileSync("./src/json/adminList.json")
-        userList = JSON.parse(`${userList}`);
-    return userList;
+async function getHandler(){
+        let adminList = fs.readFileSync("./src/json/adminList.json")
+        adminList = JSON.parse(`${adminList}`);
+        return (adminList)
 }
 function postHandler(req,res,...options){
     serverAdminWrapper((req)=>{
@@ -42,13 +41,13 @@ function putHandler(req,res,...options){
         return newState
     })(req,res,...options)
 }
-function patchHandler(req,res,...options){
+function patchHandler(){
     // update single user
     return {message:"User updated"}
 }
-function deleteHandler(req,res,...options){
+function deleteHandler(req,res){
     // delete single user
-    return serverAdminWrapper((req,res)=>{
+    return serverAdminWrapper((req)=>{
         req.body = parseBody(req);
         let adminList = fs.readFileSync("./src/json/adminList.json")
         adminList = JSON.parse(`${adminList}`);
@@ -76,10 +75,10 @@ export default function handler ( req, res ) {
         PATCH: patchHandler,
         DELETE: deleteHandler,
     })(req, res)
-        .then((response) => {
-            res.status(200).json(response);
-        })
-        .catch((error) => {
-            res.status(500).json({error});
-        });
+    .then((response) => {
+        res.status(200).json(response);
+    })
+    .catch((error) => {
+        res.status(500).json(error);
+    });
 }

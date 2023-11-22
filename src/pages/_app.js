@@ -1,4 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import "../styles/style.scss";
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';

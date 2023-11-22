@@ -46,14 +46,14 @@ function putHandler(req,res){
 function deleteHandler (req,res) {
     return serverAdminWrapper(async (req) => {
         const body = parseBody(req)
-        const {id} = body;
+        const {event_id} = body;
         return db.query(`
         DELETE FROM surtrics.surplus_event_data WHERE event_id = $1;
-        `,[id])
+        `,[event_id])
     },"bsa","surplus director")(req,res)
         .then((response)=>{
             let message = "Success! Event was deleted."
-            res.status(200).json({message,response})
+            res.status(200).json(message)
         })
         .catch((err)=>res.status(500).json({message:"Error",err}))
 }

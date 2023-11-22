@@ -12,7 +12,6 @@ import {
 } from '@mantine/core';
 import formatter from "../modules/utils/numberFormatter";
 import {addDays, addHours, format, isWeekend, subHours} from "date-fns";
-import {Col} from "react-bootstrap";
 import {Bar, Line} from "react-chartjs-2";
 import {colorScheme} from "./_app";
 import useUpdates from "../modules/hooks/useUpdates";

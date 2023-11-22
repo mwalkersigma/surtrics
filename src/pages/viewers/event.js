@@ -14,7 +14,6 @@ import {IconTrash} from "@tabler/icons-react";
 
 const Event = () => {
     const {tableData,removeHandler,status} = useTable({route:"/api/admin/event",idField:"event_id"})
-    console.log(tableData)
     let removeEntry = removeHandler("/api/admin/event");
 
     return (

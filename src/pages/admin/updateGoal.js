@@ -1,22 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import RoleWrapper from "../../components/RoleWrapper";
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
 import {useSession} from "next-auth/react";
-import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
 import useGoal from "../../modules/hooks/useGoal";
-import ToastContainerWrapper from "../../components/toast/toastContainerWrapper";
-import useToastContainer from "../../modules/hooks/useToast";
-import createSuccessMessage from "../../modules/serverMessageFactories/createSuccessMessage";
-
+import {Notifications} from "@mantine/notifications";
+import {Container, Grid, NumberInput, TextInput, Title, Button, Stack} from "@mantine/core";
+import {DatePickerInput} from "@mantine/dates";
 
 const UpdateGoal = () => {
     const {data: session} = useSession();
-    const [eventDate,setEventDate] = useState(formatDateWithZeros(new Date()));
-    const [messages,set,remove] = useToastContainer();
+    const [eventDate,setEventDate] = useState(new Date());
     let goal = useGoal();
     const [newGoal, setNewGoal] = useState('');
     const [displayGoal,setDisplayGoal] = useState(goal * 5);
@@ -39,7 +31,7 @@ const UpdateGoal = () => {
         })
         .then((res)=>res.text())
         .then((text) => {
-            set(createSuccessMessage(text))
+            Notifications.show({title: "Success", message: text})
             setDisplayGoal(newGoal)
         })
     }
@@ -48,38 +40,52 @@ const UpdateGoal = () => {
     const userName = session?.user?.name;
     return (
         <RoleWrapper altRoles={["surplus director"]}>
-            <ToastContainerWrapper serverMessages={messages} removeServerMessages={remove} />
             <Container>
-                <h1 className={"text-center my-5"}>Update Goal</h1>
-                <Form>
-                    <Row>
-                        <Form.Group as={Col}>
-                            <Form.Label>Date Of Change</Form.Label>
-                            <Form.Control value={eventDate} onChange={(e)=>setEventDate(e.target.value)} type={"date"} placeholder={"Event Date"}/>
-                        </Form.Group>
-                        <Form.Group as={Col}>
-                            <Form.Label>User Who Submitted</Form.Label>
-                            <Form.Control type={"text"} value={userName} disabled/>
-                        </Form.Group>
-                    </Row>
-                    <Row className={"my-3"}>
-                        <Form.Group as={Col}>
-                            <Form.Label>Goal Amount</Form.Label>
-                            <Form.Control type={"number"} onChange={(e)=>setNewGoal(e.target.value)} value={newGoal} placeholder={displayGoal} />
-                        </Form.Group>
-                        <Form.Group as={Col}>
-                            <Form.Label>Current Goal</Form.Label>
-                            <Form.Control disabled readOnly placeholder={newGoal} value={displayGoal} type={"number"} />
-                        </Form.Group>
-                    </Row>
-                    <Row>
-                        <Button
-                            onClick={handleSubmit}
-                            size={'lg'}
-                            className={"mx-2 mt-3"}
-                        >Submit</Button>
-                    </Row>
-                </Form>
+                <Title className={"text-center my-5"}>Update Goal</Title>
+                <form>
+                    <Grid>
+                        <Grid.Col span={6}>
+                            <DatePickerInput
+                                label={"Date Of Change"}
+                                value={eventDate}
+                                onChange={(e)=>setEventDate(e.target.value)}
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                            <TextInput
+                                label={"User Who Submitted"}
+                                placeholder={userName}
+                                disabled
+                                readOnly
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                            <NumberInput
+                                label={"Goal Amount"}
+                                placeholder={displayGoal}
+                                value={newGoal}
+                                onChange={(e)=>setNewGoal(e.target.value)}
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                            <NumberInput
+                                label={"Current Goal"}
+                                placeholder={displayGoal}
+                                value={displayGoal}
+                                disabled
+                                readOnly
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={12}>
+                            <Stack justify={"flex-end"}>
+                                <Button
+                                    onClick={handleSubmit}
+                                    size={'lg'}
+                                >Submit</Button>
+                            </Stack>
+                        </Grid.Col>
+                    </Grid>
+                </form>
             </Container>
         </RoleWrapper>
     );

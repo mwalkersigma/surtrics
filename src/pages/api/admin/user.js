@@ -61,18 +61,8 @@ function deleteHandler(req,res,...options){
     return "User deleted"
 }
 
-/*
-  {
-    "name": "Mike Walker",
-    "email": "mwalker@sigmaequipment.com",
-    "roles": ["admin","dev"]
-  }
-*/
-
-
 export default function handler ( req, res ) {
     return serverAdminWrapper((req, res) => {
-
         return router({
             GET: getHandler,
             POST: postHandler,

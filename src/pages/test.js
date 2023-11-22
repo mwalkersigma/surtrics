@@ -1,204 +1,276 @@
-import cx from 'clsx';
-import {useState} from "react";
-import classes from '../styles/HeaderTabs.module.css';
-import {useDisclosure} from '@mantine/hooks';
+import React from "react";
 import {
-    AppShell,
-    Burger,
     Group,
-    rem,
     Text,
-    Menu,
-    UnstyledButton,
-    Avatar,
-    useMantineTheme,
-    useMantineColorScheme,
-    NavLink,
+    Container,
+    Paper,
+    Title,
+    Grid,
+    Space,
+    Badge,
+    Progress, useMantineColorScheme, NumberFormatter
 } from '@mantine/core';
-import {
-    IconChevronDown,
-    IconSwitchHorizontal,
-} from "@tabler/icons-react";
-import {signIn, signOut, useSession} from "next-auth/react";
-import Button from "react-bootstrap/Button";
-import RoleWrapper from "../components/RoleWrapper";
+import formatter from "../modules/utils/numberFormatter";
+import {addDays, addHours, format, isWeekend, subHours} from "date-fns";
+import {Col} from "react-bootstrap";
+import {Bar, Line} from "react-chartjs-2";
+import {colorScheme} from "./_app";
+import useUpdates from "../modules/hooks/useUpdates";
+import formatDateWithZeros from "../modules/utils/formatDateWithZeros";
+import findStartOfWeek from "../modules/utils/findSundayFromDate";
+import processWeekData from "../modules/utils/processWeekData";
+import useGoal from "../modules/hooks/useGoal";
+import makeWeekArray from "../modules/utils/makeWeekArray";
+import {BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement} from "chart.js";
+import DataLabels from "chartjs-plugin-datalabels";
+import StatsCard from "../components/mantine/StatsCard";
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    DataLabels,
+    PointElement,
+    LineElement,
+);
 
 
-export default function ManLayout({ children }) {
-    const theme = useMantineTheme();
-    const {colorScheme, setColorScheme} = useMantineColorScheme();
+function DashboardCard({title, category, value , goal, errors,threshold,badgeText}) {
+    let errorRate = (Math.round(errors / value * 100) / 100) * 100;
+    console.log(errorRate)
+    return (<Paper withBorder p="md" radius="md">
+        <Group align={'flex-start'} justify={'space-between'} mb={'xl'}>
+            <Text size="md" c="dimmed">
+                {title}
+            </Text>
+            <Badge color="teal" variant="light">
+                {category}
+            </Badge>
+        </Group>
 
-    const [mobileOpened, {toggle: toggleMobile}] = useDisclosure();
-    const [desktopOpened, {toggle: toggleDesktop}] = useDisclosure(true);
+        <Group align={'flex-end'} justify={'space-between'}>
+            <Title order={1}>
+                {formatter(value)}
+            </Title>
+            { errors && errors > 0 && <Text fz="xs" c="dimmed">
+                Error Rate :
+                <span inline style={{color: `${errorRate < threshold ? 'teal' : 'red'}`}}> {errorRate}</span>
+                %
+            </Text>}
+        </Group>
 
-    const [opened, {toggle}] = useDisclosure(false);
-    const [userMenuOpened, setUserMenuOpened] = useState(false);
+        <Space h={'lg'}/>
 
-    const {data: session} = useSession();
-    const user = session?.user;
+        <Group justify={'space-between'}>
+            <Text size="md" c="dimmed">
+                Progress
+            </Text>
+            <Text size="md" c="dimmed">
+                {formatter((value / goal) * 100)} %
+            </Text>
+        </Group>
+        <Progress value={(value / goal) * 100} mt={'sm'} mb={'lg'}/>
+        <Group justify="space-between" mt="md">
+            <Text fz="sm" c="dimmed">
+                {value} / {goal} {category}
+            </Text>
+            {badgeText}
+        </Group>
 
+
+    </Paper>)
+}
+function WeekGraph ({weekSeed,goal,theme,shadowColor}){
+    let dateLabels = weekSeed.map(({date}) => format(addHours(new Date(date),6),"EEE MM/dd"));
+    return <Bar
+                data={{
+                    labels: dateLabels,
+                    datasets:[
+                        {
+                            data:weekSeed.map(({count}) => +count),
+                            borderColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
+                            backgroundColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
+                        }
+                    ]
+                }}
+                options={{
+                    devicePixelRatio: 4,
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        datalabels: {
+                            color: "#FFF",
+                        },
+                    },
+                    scales: {
+                        y:{
+                            min: 0,
+                            max: goal * 2,
+                            display: false,
+                            ticks: {
+                                color: "#FFF"
+                            }
+                        },
+                    },
+                }}
+                height={150}
+            />
+}
+
+function DailyGraph ({dailyData,theme,shadowColor}){
+    return <Line
+                data={{
+                    labels: dailyData.map(({date_of_transaction}) => +(subHours(new Date(date_of_transaction),7).toLocaleTimeString().split(":")[0])),
+                    datasets:[
+                        {
+                            data:dailyData.map(({count}) => +count),
+                            borderColor:'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        }
+                    ]
+                }}
+                options={{
+                    devicePixelRatio: 4,
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        datalabels: {
+                            display: false,
+                            color: theme === "dark" ? "#fff" : "#000",
+                            align: "top",
+                        },
+                    },
+                    scales: {
+                        y:{
+                            ticks: {
+                                color: theme === "dark" ? "#FFF" : "#000"
+                            }
+                        },
+                    },
+                }}
+                height={150}
+            />
+}
+
+export default function ManLayout({children}) {
+    const {colorScheme:theme} = useMantineColorScheme();
+    const shadowColor = theme === "dark" ? colorScheme.white : colorScheme.dark;
+    let date = new Date().toLocaleString().split("T")[0];
+    let dailyData = useUpdates("/api/views/increments",{date, interval:"1 day", increment: "hour"});
+    dailyData = dailyData
+        .reduce((acc,curr) => {
+            let date = new Date(curr.date_of_transaction).toLocaleString().split("T")[0];
+            if (!acc[date]) acc[date] = 0;
+            acc[date] += +curr.count;
+            return acc
+        },{})
+    dailyData = Object.entries(dailyData).map(([date,count]) => ({date_of_transaction:date,count}));
+    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()),1))
+    let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
+    weekData = processWeekData(weekData);
+
+    let weekDays = weekData.filter(({date}) => !isWeekend(new Date(date)))
+
+    const goal = useGoal();
+    const hourlyGoal = goal / 7;
+
+    let weekSeed = makeWeekArray(weekData,new Date(date));
+    if (weekData.length === 0) return <div className={"text-center"}>Loading...</div>
+
+    const totalIncrements = weekSeed.map(({count}) => +count).reduce((a,b)=>a+b,0);
+    const totalForToday = dailyData.reduce((a,b) => a + +b.count,0);
+
+    const dailyAverage = Math.round(totalIncrements / weekDays.length || 1);
+    const hourlyAverage = Math.round(dailyAverage / 7 || 1);
+
+
+
+    const bestDay = Math.max(...weekData.map(({count}) => +count));
+    const bestHour = Math.max(...dailyData.map(({count}) => +count));
+
+    let cards = [
+        {
+            title: "Hourly",
+            category: "Increments",
+            value: formatter(dailyData.slice(-1)[0]?.count),
+            goal: formatter(Math.round(hourlyGoal)),
+            errors: 0,
+            threshold: 10,
+        },
+        {
+            title: "Daily",
+            category: "Increments",
+            value: totalForToday,
+            goal: formatter(goal),
+            errors: 0,
+            threshold: 10,
+            badgeText: `Average: ${hourlyAverage} /hr`
+        },
+        {
+            title: "Total",
+            category: "Increments",
+            value: totalIncrements,
+            goal: goal * 5,
+            errors: 0,
+            threshold: 10,
+            badgeText: `Average: ${dailyAverage} /day`
+        },
+    ]
 
     return (
-        <AppShell
-            header={{height: 60}}
-            navbar={{
-                width: 300,
-                breakpoint: 'sm',
-                collapsed: {mobile: !mobileOpened, desktop: !desktopOpened},
-            }}
-            padding="md"
-        >
-            <AppShell.Header>
-                <Group h="100%" justify="space-between">
-                    <Group h="100%" px="md">
-                        <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm"/>
-                        <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm"/>
-                        <Text href={"/"} size="xl">Surtrics</Text>
-                    </Group>
+         <Grid>
+             <Grid.Col span={1}></Grid.Col>
+             <Grid.Col span={10}>
+                 <Grid>
+                     {cards.map((test,index) => (
+                         <Grid.Col key={index} span={4}>
+                             <DashboardCard {...test} />
+                         </Grid.Col>
+                     ))}
+                     <Grid.Col  span={6}>
+                         <Paper withBorder p="md" radius="md">
+                            <WeekGraph weekSeed={weekSeed} shadowColor={shadowColor} goal={goal} theme={theme}/>
+                         </Paper>
+                     </Grid.Col>
+                     <Grid.Col span={6}>
+                         <Paper withBorder p="md" radius="md">
+                             <DailyGraph dailyData={dailyData} shadowColor={shadowColor} theme={theme}/>
+                         </Paper>
+                     </Grid.Col>
+                     <Grid.Col span={4}>
+                        <StatsCard
+                           stat={{
+                               title:"Best Day",
+                               value:bestDay,
+                           }}
+                        />
+                     </Grid.Col>
+                     <Grid.Col span={4}>
+                         <StatsCard
+                             stat={{
+                                 title:"Errors for week",
+                                 value:0,
+                             }}
+                         />
+                     </Grid.Col>
+                     <Grid.Col span={4}>
+                         <StatsCard
+                             stat={{
+                                 title:"Best Hour",
+                                 value:bestHour,
+                             }}
+                         />
+                     </Grid.Col>
 
-                    <Group h="100%">
-                        {!user && <Button
-                            onClick={() => signIn("google")}
-                            variant="default"
-                        >
-                            Sign In
-                        </Button>}
-                        {user && (
-                            <Menu
-                                style={{justifySelf: "flex-end"}}
-                                width={260}
-                                position="bottom-end"
-                                transitionProps={{transition: 'pop-top-right'}}
-                                onClose={() => setUserMenuOpened(false)}
-                                onOpen={() => setUserMenuOpened(true)}
-                                withinPortal
-                            >
-                                <Menu.Target>
-                                    <UnstyledButton
-                                        className={cx(classes.user, {[classes.userActive]: userMenuOpened})}
-                                    >
-                                        <Group gap={7}>
-                                            <Avatar src={user.image} alt={user.name} radius="xl" size={20}/>
-                                            <Text fw={500} size="sm" lh={1} mr={3}>
-                                                {user.name}
-                                            </Text>
-                                            <IconChevronDown style={{width: rem(12), height: rem(12)}} stroke={1.5}/>
-                                        </Group>
-                                    </UnstyledButton>
-                                </Menu.Target>
-                                <Menu.Dropdown>
-                                    <Menu.Label>Settings</Menu.Label>
-                                    <Menu.Item
-                                        onClick={() => setColorScheme(colorScheme === 'dark' ? 'light' : 'dark')}>
-                                        <Group gap={7}>
-                                            <IconSwitchHorizontal style={{width: rem(16), height: rem(16)}}
-                                                                  stroke={1.5}/>
-                                            <Text>Toggle theme</Text>
-                                        </Group>
-                                    </Menu.Item>
 
-                                    <Menu.Item
-                                        onClick={() => signOut()}
-                                        leftSection={
-                                            <IconLogout style={{width: rem(16), height: rem(16)}} stroke={1.5}/>
-                                        }
-                                    >
-                                        Logout
-                                    </Menu.Item>
-                                    {/*<Menu.Divider />*/}
-                                </Menu.Dropdown>
-                            </Menu>
-                        )}
 
-                    </Group>
-                </Group>
-
-            </AppShell.Header>
-            <AppShell.Navbar p="md">
-                <NavLink label={"Dashboard"} href={"/"}/>
-                <NavLink label={"Increments"}>
-                    <NavLink label={"Graphs"}>
-                        <NavLink href={"/graphs/increments/dailyView"} label={"Daily View"}/>
-                        <NavLink href="/graphs/increments/yearlyView" label={"Yearly View"}/>
-                        <NavLink href="/graphs/increments/monthlyView" label={"Monthly View"}/>
-                        <NavLink href="/graphs/increments/weeklyView" label={"Weekly View"}/>
-                        <NavLink href="/graphs/increments/dailyView" label={"Daily View"}/>
-                    </NavLink>
-                </NavLink>
-                <NavLink label={"Approvals"}>
-                    <NavLink label={"Graphs"}>
-                        <NavLink href="/graphs/approvals/yearView" label={"Yearly View"}/>
-                        <NavLink href="/graphs/approvals/monthlyView" label={"Monthly View"}/>
-                        <NavLink href="/graphs/approvals/weekView" label={"Weekly View"}/>
-                    </NavLink>
-                    <NavLink label={"Tables"}>
-                        <NavLink href="/tables/approvalsView" label={"Weekly View"}/>
-                    </NavLink>
-                </NavLink>
-                <NavLink label={"Quantity"}>
-                    <NavLink label={"Graphs"}>
-                        <NavLink href="/graphs/quantity/weeklyView" label={"Weekly View"}/>
-                    </NavLink>
-                    <NavLink label={"Tables"}>
-                        <NavLink href="/tables/quantityView" label={"Weekly View"}/>
-                    </NavLink>
-                </NavLink>
-                <NavLink label={"Sales"}>
-                    <NavLink label={"Tables"}>
-                        <NavLink href="/tables/salesView" label={"Daily View"}/>
-                    </NavLink>
-                </NavLink>
-                <NavLink label={"Individual"}>
-                    <NavLink label={"Graphs"}>
-                        <NavLink href="/graphs/individual/individualGraph" label={"Daily View"}/>
-                    </NavLink>
-                    <NavLink label={"Tables"}>
-                        <NavLink href="/tables/individualView" label={"Daily View"}/>
-                    </NavLink>
-                </NavLink>
-                <NavLink label={"Warehouse"}>
-                    <NavLink label={"Tables"}>
-                        <NavLink href="/tables/warehousePicks" label={"Weekly View"}/>
-                    </NavLink>
-                </NavLink>
-                <RoleWrapper invisible altRoles={["bsa", "surplus director"]}>
-                    <NavLink label={"Data Entry"}>
-                        <RoleWrapper invisible altRoles={["bsa"]}>
-                            <NavLink label={"Big Commerce"} href={"/BSA/BigCommerceEntry"}/>
-                            <NavLink label={"Ebay"} href={"/BSA/EbayEntry"}/>
-                        </RoleWrapper>
-                        <RoleWrapper invisible altRoles={["surplus director"]}>
-                            <NavLink label={"Surplus"} href={"/surplusEntry"}/>
-                        </RoleWrapper>
-                        <NavLink label={"Submit Event"} href={"/BSA/eventReporting"}/>
-                        <NavLink label={"Submit Error"} href={"/admin/errorReporting"}/>
-                    </NavLink>
-                </RoleWrapper>
-                <RoleWrapper invisible altRoles={["bsa","surplus director"]}>
-                    <NavLink label={"Viewers"}>
-                        <NavLink label={"Error Viewer"} href={"/viewers/error"}/>
-                        <NavLink label={"Event Viewer"} href={"/viewers/event"}/>
-                        <NavLink label={"Ebay Viewer"} href={"/viewers/ebay"}/>
-                        <NavLink label={"Big Commerce Viewer"} href={"/viewers/bigCommerce"}/>
-                        <NavLink label={"Quick Books Viewer"} href={"/viewers/quickBooks"}/>
-                        <NavLink label={"E-Commerce Viewer"} href={"/viewers/ecommerce"}/>
-                    </NavLink>
-                </RoleWrapper>
-                <RoleWrapper invisible altRoles={["surplus director"]}>
-                    <NavLink label={"Admin"}>
-                        <NavLink label={"Admin Settings"} href={"/admin"}/>
-                        <NavLink label={"Update Goals"} href={"/admin/updateGoal"}/>
-                    </NavLink>
-                </RoleWrapper>
-            </AppShell.Navbar>
-            <AppShell.Main>{children}</AppShell.Main>
-            <AppShell.Footer p="md">
-                <Text fz={"xs"}>
-                    Surtrics 2023 Built By Michael Walker.
-                    Proud to be employee owned.
-                </Text>
-            </AppShell.Footer>
-        </AppShell>
+                 </Grid>
+             </Grid.Col>
+             <Grid.Col span={1}></Grid.Col>
+         </Grid>
     );
 }
 

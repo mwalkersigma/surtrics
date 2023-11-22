@@ -1,0 +1,40 @@
+import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
+import router from "../../../modules/serverUtils/requestRouter";
+
+
+function getHandler(req,res,...options){
+    return {message:"Not Implemented Yet"}
+}
+function postHandler(req,res,...options){
+    return {message:"Not Implemented Yet"}
+}
+function putHandler(req,res,...options){
+    return {message:"Not Implemented Yet"}
+}
+function patchHandler(req,res,...options){
+    return {message:"Not Implemented Yet"}
+}
+function deleteHandler(req,res,...options){
+    return {message:"Not Implemented Yet"}
+}
+
+
+
+
+export default function handler ( req, res ) {
+    return serverAdminWrapper(async ( req, res ) => {
+        return router({
+            GET: getHandler,
+            POST: postHandler,
+            PUT: putHandler,
+            PATCH: patchHandler,
+            DELETE: deleteHandler
+        })(req,res)
+    })(req,res)
+        .then((response) => {
+            res.status(200).json(response);
+        })
+        .catch((error) => {
+            res.status(500).json({error});
+        });
+}

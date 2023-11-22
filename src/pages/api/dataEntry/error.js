@@ -1,7 +1,7 @@
 import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
 import {subBusinessDays} from "date-fns";
 import Logger from "sigma-logger";
-import db from "../../../db/index";
+import db from "../../../db";
 import router from "../../../modules/serverUtils/requestRouter";
 
 async function getHandler(req,res,...options){
@@ -62,6 +62,7 @@ async function deleteHandler(req,res,...options){
     return serverAdminWrapper(async (req) => {
         const body = JSON.parse(req.body);
         const {id} = body;
+        if(!id) throw new Error("No ID provided");
         await db.query(`
             DELETE FROM
                 surtrics.surplus_metrics_data
@@ -85,6 +86,6 @@ export default function handler(req,res) {
         res.status(200).json(result);
     })
     .catch((error) => {
-        res.status(500).json({error});
+        res.status(500).json(error);
     })
 }

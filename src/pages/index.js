@@ -1,35 +1,29 @@
-import Head from 'next/head'
-import {Col, Row} from "react-bootstrap";
 import React from "react";
-import Container from "react-bootstrap/Container";
-
-import useUpdates from "../modules/hooks/useUpdates";
-import useGoal from "../modules/hooks/useGoal";
-import formatter from "../modules/utils/numberFormatter";
-import makeWeekArray from "../modules/utils/makeWeekArray";
-import processWeekData from "../modules/utils/processWeekData";
-
-import {Bar, Line} from "react-chartjs-2";
 import {
-    BarElement,
-    CategoryScale,
-    Chart as ChartJS,
-    LinearScale, LineElement, PointElement,
-} from "chart.js";
-import DataLabels from "chartjs-plugin-datalabels";
-
-import InfoCard from "../components/infoCards/infocard";
-import BigInfoCard from "../components/infoCards/bigInfoCards";
-
-
-
-import {subHours, format, addHours, isWeekend, addDays} from "date-fns";
+    Group,
+    Text,
+    Container,
+    Paper,
+    Title,
+    Grid,
+    Space,
+    Badge,
+    Progress, useMantineColorScheme, NumberFormatter
+} from '@mantine/core';
+import formatter from "../modules/utils/numberFormatter";
+import {addDays, addHours, format, isWeekend, subHours} from "date-fns";
+import {Col} from "react-bootstrap";
+import {Bar, Line} from "react-chartjs-2";
 import {colorScheme} from "./_app";
-import useNav from "../modules/hooks/useNav";
+import useUpdates from "../modules/hooks/useUpdates";
 import formatDateWithZeros from "../modules/utils/formatDateWithZeros";
 import findStartOfWeek from "../modules/utils/findSundayFromDate";
-import {useMantineColorScheme} from "@mantine/core";
-
+import processWeekData from "../modules/utils/processWeekData";
+import useGoal from "../modules/hooks/useGoal";
+import makeWeekArray from "../modules/utils/makeWeekArray";
+import {BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement} from "chart.js";
+import DataLabels from "chartjs-plugin-datalabels";
+import StatsCard from "../components/mantine/StatsCard";
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -39,109 +33,133 @@ ChartJS.register(
     LineElement,
 );
 
+
+function DashboardCard({title, category, value , goal, errors,threshold,badgeText}) {
+    let errorRate = (Math.round(errors / value * 100) / 100) * 100;
+    return (<Paper withBorder p="md" radius="md">
+        <Group align={'flex-start'} justify={'space-between'} mb={'xl'}>
+            <Text size="md" c="dimmed">
+                {title}
+            </Text>
+            <Badge color="teal" variant="light">
+                {category}
+            </Badge>
+        </Group>
+
+        <Group align={'flex-end'} justify={'space-between'}>
+            <Title order={1}>
+                {formatter(value)}
+            </Title>
+            { errors && errors > 0 && <Text fz="xs" c="dimmed">
+                Error Rate :
+                <span style={{color: `${errorRate < threshold ? 'teal' : 'red'}`}}> {errorRate}</span>
+                %
+            </Text>}
+        </Group>
+
+        <Space h={'lg'}/>
+
+        <Group justify={'space-between'}>
+            <Text size="md" c="dimmed">
+                Progress
+            </Text>
+            <Text size="md" c="dimmed">
+                {formatter((value / goal) * 100)} %
+            </Text>
+        </Group>
+        <Progress value={(value / goal) * 100} mt={'sm'} mb={'lg'}/>
+        <Group justify="space-between" mt="md">
+            <Text fz="sm" c="dimmed">
+                {value} / {goal} {category}
+            </Text>
+            {badgeText}
+        </Group>
+
+
+    </Paper>)
+}
 function WeekGraph ({weekSeed,goal,theme,shadowColor}){
     let dateLabels = weekSeed.map(({date}) => format(addHours(new Date(date),6),"EEE MM/dd"));
-    return <Col sm={4}>
-        <div
-            className={`graph-card text-center`}
-            style={{
-                border: `1px solid ${theme === "dark" ? "#FFF" : "#000"}`,
-                boxShadow: `3px 3px ${shadowColor}`,
-                fontSize: "1.5rem",
-            }}
-        >
-            <p>Daily Snapshot</p>
-            <Bar
-                data={{
-                    labels: dateLabels,
-                    datasets:[
-                        {
-                            data:weekSeed.map(({count}) => +count),
-                            borderColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
-                            backgroundColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
-                        }
-                    ]
-                }}
-                options={{
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        datalabels: {
-                            color: "#FFF",
-                        },
-                    },
-                    scales: {
-                        y:{
-                            min: 0,
-                            max: goal * 2,
-                            display: false,
-                            ticks: {
-                                color: "#FFF"
-                            }
-                        },
-                    },
-                }}
-                height={190}
-            />
-        </div>
-    </Col>
+    return <Bar
+        data={{
+            labels: dateLabels,
+            datasets:[
+                {
+                    data:weekSeed.map(({count}) => +count),
+                    borderColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
+                    backgroundColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
+                }
+            ]
+        }}
+        options={{
+            devicePixelRatio: 4,
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+                datalabels: {
+                    color: "#FFF",
+                },
+            },
+            scales: {
+                y:{
+                    min: 0,
+                    max: goal * 2,
+                    display: false,
+                    ticks: {
+                        color: "#FFF"
+                    }
+                },
+            },
+        }}
+        height={150}
+    />
 }
 
 function DailyGraph ({dailyData,theme,shadowColor}){
-    return <Col sm={4}>
-        <div
-            className={"graph-card text-center"}
-            style={{
-                border: `1px solid ${theme === "dark" ? "#FFF" : "#000"}`,
-                fontSize: "1.5rem",
-                boxShadow: `3px 3px ${shadowColor}`,
-            }}
-        >
-            <p>Hourly Snapshot</p>
-            <Line
-                data={{
-                    labels: dailyData.map(({date_of_transaction}) => +(subHours(new Date(date_of_transaction),7).toLocaleTimeString().split(":")[0])),
-                    datasets:[
-                        {
-                            data:dailyData.map(({count}) => +count),
-                            borderColor:'rgba(54, 162, 235, 1)',
-                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        }
-                    ]
-                }}
-                options={{
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        datalabels: {
-                            display: false,
-                            color: theme === "dark" ? "#fff" : "#000",
-                            align: "top",
-                        },
-                    },
-                    scales: {
-                        y:{
-                            ticks: {
-                                color: theme === "dark" ? "#FFF" : "#000"
-                            }
-                        },
-                    },
-                }}
-                height={190}
-            />
-        </div>
-    </Col>
+    return <Line
+        data={{
+            labels: dailyData.map(({date_of_transaction}) => +(subHours(new Date(date_of_transaction),7).toLocaleTimeString().split(":")[0])),
+            datasets:[
+                {
+                    data:dailyData.map(({count}) => +count),
+                    borderColor:'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                }
+            ]
+        }}
+        options={{
+            devicePixelRatio: 4,
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+                datalabels: {
+                    display: false,
+                    color: theme === "dark" ? "#fff" : "#000",
+                    align: "top",
+                },
+            },
+            scales: {
+                y:{
+                    ticks: {
+                        color: theme === "dark" ? "#FFF" : "#000"
+                    }
+                },
+            },
+        }}
+        height={150}
+    />
 }
 
-
-
-function HomeDisplay(){
+export default function ManLayout({children}) {
     const {colorScheme:theme} = useMantineColorScheme();
     const shadowColor = theme === "dark" ? colorScheme.white : colorScheme.dark;
-
     let date = new Date().toLocaleString().split("T")[0];
+    const errorUpdates = useUpdates("/api/views/errors");
+
     let dailyData = useUpdates("/api/views/increments",{date, interval:"1 day", increment: "hour"});
     dailyData = dailyData
         .reduce((acc,curr) => {
@@ -162,6 +180,15 @@ function HomeDisplay(){
 
     let weekSeed = makeWeekArray(weekData,new Date(date));
 
+    let weeklyErrors = errorUpdates
+            .map((item)=>({...item,date_of_transaction:item.date_of_transaction.split("T")[0]}))
+            .filter(({date_of_transaction}) => weekSeed.map(item=>item.date).includes(date_of_transaction))
+            .reduce((acc,{count}) => acc + +count,0);
+
+    let errorsToday = errorUpdates
+        .map((item)=>({...item,date_of_transaction:item.date_of_transaction.split("T")[0]}))
+        .filter(({date_of_transaction}) => date_of_transaction === new Date().toISOString().split("T")[0])
+        .reduce((acc,{count}) => acc + +count,0);
 
     if (weekData.length === 0) return <div className={"text-center"}>Loading...</div>
 
@@ -171,113 +198,96 @@ function HomeDisplay(){
     const dailyAverage = Math.round(totalIncrements / weekDays.length || 1);
     const hourlyAverage = Math.round(dailyAverage / 7 || 1);
 
-    const expectedTotal = goal * weekDays.length;
 
-    const dailyDifference = weekData.slice(-1)[0].count - goal;
-    const hourlyDifference = Math.round(dailyData.slice(-1)[0]?.count - hourlyGoal)
-    const totalDifference = expectedTotal - totalIncrements;
 
     const bestDay = Math.max(...weekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
 
-    return (<>
-        <Row className={"pb-3"}>
-            <Col sm={2}>
-                <InfoCard formatter={(value)=>value > goal} theme={theme} title={"Daily Total"} >
-                    {(formatter(totalForToday))}
-                </InfoCard>
-                <InfoCard formatter={(value)=>value > hourlyGoal} theme={theme} style={{marginBottom:0}} title={"Hourly total"} >
-                    {formatter(dailyData.slice(-1)[0]?.count)}
-                </InfoCard>
-            </Col>
-            <Col sm={2}>
-                <InfoCard formatter={(value)=>value > goal} theme={theme}  title={"Daily Average"}>
-                    {formatter(dailyAverage)}
-                </InfoCard>
-                <InfoCard formatter={(value)=>value > hourlyGoal} theme={theme} style={{marginBottom:0}} title={"Hourly Average"}>
-                    {formatter(hourlyAverage)}
-                </InfoCard>
+    let cards = [
+        {
+            title: "Hourly",
+            category: "Increments",
+            value: formatter(dailyData.slice(-1)[0]?.count),
+            goal: formatter(Math.round(hourlyGoal)),
+            errors: 0,
+            threshold: 10,
+        },
+        {
+            title: "Daily",
+            category: "Increments",
+            value: totalForToday,
+            goal: formatter(goal),
+            errors: errorsToday,
+            threshold: 10,
+            badgeText: `Average: ${hourlyAverage} /hr`
+        },
+        {
+            title: "Total",
+            category: "Increments",
+            value: totalIncrements,
+            goal: goal * 5,
+            errors: weeklyErrors,
+            threshold: 10,
+            badgeText: `Average: ${dailyAverage} /day`
+        },
+    ]
 
-            </Col>
-            <Col sm={2}>
-                <InfoCard theme={theme} title={"Daily Goal"}>
-                    {formatter(goal)}
-                </InfoCard>
-                <InfoCard theme={theme} style={{marginBottom:0}} title={"Hourly Goal"}>
-                    {formatter(Math.round(hourlyGoal))}
-                </InfoCard>
-            </Col>
-            <Col sm={2}>
-                <InfoCard formatter={(value)=> value > 0} theme={theme}  title={"Daily Difference"}>
-                    {formatter(dailyDifference)}
-                </InfoCard>
-                <InfoCard formatter={(value)=> value > 0} theme={theme} style={{marginBottom:0}} title={"Hourly Difference"}>
-                    {formatter(hourlyDifference)}
-                </InfoCard>
-            </Col>
-            <Col sm={4}>
-                <BigInfoCard theme={theme} title={"Total Increments"}>
-                    {formatter(totalIncrements)}
-                </BigInfoCard>
-            </Col>
-        </Row>
-        <Row className={"pb-3"}>
-            <WeekGraph weekSeed={weekSeed} shadowColor={shadowColor} goal={goal} theme={theme}/>
-            <Col sm={4}>
-                <BigInfoCard theme={theme} title={"Weekly Goal"}>
-                    {formatter(goal * 5)}
-                </BigInfoCard>
-            </Col>
-            <DailyGraph dailyData={dailyData} shadowColor={shadowColor} theme={theme}/>
-        </Row>
-        <Row style={{marginBottom:'5rem'}}>
-            <Col sm={4}>
-                <BigInfoCard formatter={(value)=>value > goal} theme={theme} title={"Best Day"}>
-                    {formatter(bestDay)}
-                </BigInfoCard>
-            </Col>
-            <Col sm={2} className={"gap-2"}>
-                <InfoCard theme={theme} title={"Planned Total"} subtitle={"By end of day"}>
-                    {formatter(expectedTotal)}
-                </InfoCard>
-                <InfoCard formatter={()=> totalDifference < 0} theme={theme} style={{marginBottom:0}} title={"Total Difference"}>
-                    {formatter(totalDifference) > 0 ? formatter(totalDifference):0}
-                </InfoCard>
-            </Col>
-            <Col sm={2}>
-                <InfoCard formatter={(value)=> value <= 0} theme={theme} title={"Best VS Today"} >
-                    {formatter(bestDay - totalForToday)}
-                </InfoCard>
-                <InfoCard formatter={()=>{
-                    return bestHour - dailyData.slice(-1)[0]?.count <= 0
-                }} theme={theme} style={{marginBottom:0}} title={"Best HR VS Now"}>
-                    {formatter(bestHour - dailyData.slice(-1)[0]?.count)}
-                </InfoCard>
-            </Col>
-            <Col sm={4}>
-                <BigInfoCard formatter={(value)=>value > hourlyGoal} theme={theme} title={"Best Hour"}>
-                    {formatter(bestHour)}
-                </BigInfoCard>
-            </Col>
-        </Row>
-    </>)
+    return (
+        <Grid py={'xl'}>
+            <Grid.Col span={1}></Grid.Col>
+            <Grid.Col span={10}>
+                <Grid>
+                    {cards.map((test,index) => (
+                        <Grid.Col key={index} span={4}>
+                            <DashboardCard {...test} />
+                        </Grid.Col>
+                    ))}
+                    <Grid.Col  span={6}>
+                        <Paper withBorder p="md" radius="md">
+                            <WeekGraph weekSeed={weekSeed} shadowColor={shadowColor} goal={goal} theme={theme}/>
+                        </Paper>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                        <Paper withBorder p="md" radius="md">
+                            <DailyGraph dailyData={dailyData} shadowColor={shadowColor} theme={theme}/>
+                        </Paper>
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                        <StatsCard
+                            stat={{
+                                title:"Best Day",
+                                value:bestDay,
+                            }}
+                        />
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                        <StatsCard
+                            stat={{
+                                title:"Best Hour",
+                                value:bestHour,
+                            }}
+                        />
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                        <StatsCard
+                            stat={{
+                                title:"Errors for week",
+                                value:weeklyErrors,
+                            }}
+                        />
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                        <StatsCard
+                            stat={{
+                                title:"Errors for day",
+                                value:errorsToday,
+                            }}
+                        />
+                    </Grid.Col>
+                </Grid>
+            </Grid.Col>
+            <Grid.Col span={1}></Grid.Col>
+        </Grid>
+    );
 }
 
-
-
-export default function Home() {
-    const hasNavBar = useNav();
-  return (
-    <>
-      <Head>
-        <title>Surtrics</title>
-        <meta name="description" content="Generated by create next app" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-        <Container className={"mt-5"}>
-            {hasNavBar && <h3 className={"text-center"}>Surplus Metrics Dashboard</h3> }
-        </Container>
-        <Container className={`${hasNavBar ? "mt-5" : "mt-3"}`} ><HomeDisplay/></Container>
-    </>
-  )
-}

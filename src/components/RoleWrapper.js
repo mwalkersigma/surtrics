@@ -1,6 +1,6 @@
 import {useSession} from "next-auth/react";
 import useAdminList from "../modules/hooks/useAdminList";
-import Container from "react-bootstrap/Container";
+import {Container, Text, Title} from "@mantine/core";
 import React from "react";
 
 function RoleWrapperInvisible({children,altRoles}){
@@ -21,8 +21,8 @@ function Loading(){
 }
 function Unauthorized(){
     return <Container>
-        <h2 className={"text-center"}>Not an Authorized User.</h2>
-        <p className={"text-center"}>If you feel like you should be reach out to michael walker</p>
+        <Title className={"text-center"}>Not an Authorized User.</Title>
+        <Text className={"text-center"}>If you feel like you should be reach out to michael walker</Text>
     </Container>;
 
 }
@@ -31,8 +31,8 @@ function RoleWrapper({children,altRoles,invisible,LoadingComponent = <Loading/>}
     const {adminList, isAdmin,isRole} = useAdminList();
     if(invisible)return <RoleWrapperInvisible altRoles={altRoles}>{children}</RoleWrapperInvisible>
     if(status === "loading" || !adminList ) return<>{LoadingComponent}</>  ;
-    if(status === "error") return <Container><h2>Error</h2></Container>;
-    if(!session)return <Container><h2>Not logged in</h2></Container>;
+    if(status === "error") return <Container><Title>Error</Title></Container>;
+    if(!session)return <Container><Title>Not logged in</Title></Container>;
     if(Array.isArray(altRoles)) {
         let hasAuthorizedRole = altRoles.map(role => isRole(role)(session)).includes(true);
         if (!isAdmin(session) && !hasAuthorizedRole) return <Unauthorized/>;

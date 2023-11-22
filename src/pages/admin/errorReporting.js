@@ -84,7 +84,7 @@ const ErrorReporting = () => {
     function handleSubmit({user, reason, notes, date}) {
         const state = JSON.stringify({user, reason, notes, session, date});
         setLoading(true);
-        fetch(`${window.location.origin}/api/admin/error`, {
+        fetch(`${window.location.origin}/api/dataEntry/error`, {
             method: "PUT",
             body: state
         })

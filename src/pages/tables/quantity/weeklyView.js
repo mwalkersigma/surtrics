@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 
-import useUpdates from "../../modules/hooks/useUpdates";
-import makeDateArray from "../../modules/utils/makeDateArray";
-import formatDatabaseRows from "../../modules/utils/formatDatabaseRows";
-import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
+import useUpdates from "../../../modules/hooks/useUpdates";
+import makeDateArray from "../../../modules/utils/makeDateArray";
+import formatDatabaseRows from "../../../modules/utils/formatDatabaseRows";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 import {Table} from "@mantine/core";
 
@@ -17,7 +17,7 @@ const conversionTable = {
 
 }
 
-export default function QuantityView() {
+export default function WeeklyView() {
     const [field, setField] = useState("Total");
     const [date, setDate] = useState(new Date());
     const databaseRows = useUpdates("/api/views/quantity/weeklyView", {date});

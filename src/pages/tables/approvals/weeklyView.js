@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
-import useUpdates from "../../modules/hooks/useUpdates";
-import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
-import makeDateArray from "../../modules/utils/makeDateArray";
+import useUpdates from "../../../modules/hooks/useUpdates";
+import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
+import makeDateArray from "../../../modules/utils/makeDateArray";
 import {addDays} from "date-fns";
-import findStartOfWeek from "../../modules/utils/findSundayFromDate";
+import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 import { Table } from "@mantine/core";
-import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 
-const ApprovalsView = () => {
+const WeeklyView = () => {
     const [date, setDate] = useState(new Date());
     let updates = useUpdates("/api/views/approvals", {date:findStartOfWeek(new Date(date)),interval:"1 week"});
     let mappedUpdates = {};
@@ -84,4 +84,4 @@ const ApprovalsView = () => {
     )
 };
 
-export default ApprovalsView;
+export default WeeklyView;

@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import useUpdates from "../../modules/hooks/useUpdates";
-import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
+import useUpdates from "../../../modules/hooks/useUpdates";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {NativeSelect, Table} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
 
 
-const IndividualView = () => {
+const DailyView = () => {
     const [user, setUser] = useState("");
     const [date, setDate] = useState(new Date());
     let individualData = useUpdates("/api/views/individualView",{date,user});
@@ -73,4 +73,4 @@ const IndividualView = () => {
     </GraphWithStatCard>
 };
 
-export default IndividualView;
+export default DailyView;

@@ -1,10 +1,10 @@
 import React from 'react';
-import useUpdates from "../../modules/hooks/useUpdates";
+import useUpdates from "../../../modules/hooks/useUpdates";
 import {format} from "date-fns";
 import {NativeSelect, Table} from "@mantine/core";
-import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
-import formatter from "../../modules/utils/numberFormatter";
+import formatter from "../../../modules/utils/numberFormatter";
 
 
 const storeNames = {
@@ -41,7 +41,7 @@ class Order {
     }
 }
 
-const SalesView = () => {
+const DailyView = () => {
     let [date, setDate] = React.useState(new Date());
     const [store, setStore] = React.useState("225004");
     let sales = useUpdates("/api/views/sales/sales", {date});
@@ -139,4 +139,4 @@ const SalesView = () => {
         </GraphWithStatCard>
     )
 };
-export default SalesView;
+export default DailyView;

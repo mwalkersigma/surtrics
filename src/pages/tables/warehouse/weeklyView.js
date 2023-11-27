@@ -1,16 +1,16 @@
 import React, {useState} from 'react';
 
 
-import useUpdates from "../../modules/hooks/useUpdates";
+import useUpdates from "../../../modules/hooks/useUpdates";
 
-import makeDateArray from "../../modules/utils/makeDateArray";
-import formatDatabaseRows from "../../modules/utils/formatDatabaseRows";
+import makeDateArray from "../../../modules/utils/makeDateArray";
+import formatDatabaseRows from "../../../modules/utils/formatDatabaseRows";
 
-import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {Table} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
 
-const WarehousePicks = () => {
+const WeeklyView = () => {
     const [date, setDate] = useState(new Date());
     const updates = useUpdates("/api/views/picks/warehousePicks",{date});
     const dates = makeDateArray(date);
@@ -59,4 +59,4 @@ const WarehousePicks = () => {
     )
 };
 
-export default WarehousePicks;
+export default WeeklyView;

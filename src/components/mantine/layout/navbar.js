@@ -21,7 +21,7 @@ export default function SurtricsNavbar ({}) {
                         <NavLink href="/graphs/approvals/yearView" label={"Yearly View"}/>
                     </NavLink>
                     <NavLink label={"Tables"}>
-                        <NavLink href="/tables/approvalsView" label={"Weekly View"}/>
+                        <NavLink href="/tables/approvals/weeklyView" label={"Weekly View"}/>
                     </NavLink>
                 </NavLink>
                 <NavLink label={"Quantity"}>
@@ -29,12 +29,12 @@ export default function SurtricsNavbar ({}) {
                         <NavLink href="/graphs/quantity/weeklyView" label={"Weekly View"}/>
                     </NavLink>
                     <NavLink label={"Tables"}>
-                        <NavLink href="/tables/quantityView" label={"Weekly View"}/>
+                        <NavLink href="/tables/quantity/weeklyView" label={"Weekly View"}/>
                     </NavLink>
                 </NavLink>
                 <NavLink label={"Sales"}>
                     <NavLink label={"Tables"}>
-                        <NavLink href="/tables/salesView" label={"Daily View"}/>
+                        <NavLink href="/tables/sales/dailyView" label={"Daily View"}/>
                     </NavLink>
                 </NavLink>
                 <NavLink label={"Individual"}>
@@ -42,12 +42,12 @@ export default function SurtricsNavbar ({}) {
                         <NavLink href="/graphs/individual/individualGraph" label={"Daily View"}/>
                     </NavLink>
                     <NavLink label={"Tables"}>
-                        <NavLink href="/tables/individualView" label={"Daily View"}/>
+                        <NavLink href="/tables/individual/dailyView" label={"Daily View"}/>
                     </NavLink>
                 </NavLink>
                 <NavLink label={"Warehouse"}>
                     <NavLink label={"Tables"}>
-                        <NavLink href="/tables/warehousePicks" label={"Weekly View"}/>
+                        <NavLink href="/tables/warehouse/weeklyView" label={"Weekly View"}/>
                     </NavLink>
                 </NavLink>
                 <RoleWrapper invisible altRoles={["bsa", "surplus director"]}>

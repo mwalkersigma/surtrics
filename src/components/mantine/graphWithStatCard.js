@@ -32,7 +32,7 @@ const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOn
     }
     return (
         <Container fluid>
-            <Title ta={"center"}>{title}</Title>
+            <Title mb={"md"} ta={"center"}>{title}</Title>
             <Grid spacing={"xl"}>
                 <Grid.Col span={1}></Grid.Col>
                 <Grid.Col span={3}>

@@ -5,7 +5,7 @@ import makeDateArray from "../../../modules/utils/makeDateArray";
 import formatDatabaseRows from "../../../modules/utils/formatDatabaseRows";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
-import {Table} from "@mantine/core";
+import {Group, Radio, RadioGroup, Table} from "@mantine/core";
 
 
 const formatTimeStamps = (timeStamp) => timeStamp.split("T")[0];
@@ -39,6 +39,19 @@ export default function WeeklyView() {
                     value={date}
                     onChange={(e) => setDate(e)}
                 />
+            }
+            slotTwo={
+            <RadioGroup
+                label={"Transaction Type"}
+                value={field}
+                onChange={(e) => setField(e)}
+            >
+                <Group>
+                    <Radio label={"Total"} value={"Total"} />
+                    <Radio label={"Add"} value={"Add"} />
+                    <Radio label={"Relisting"} value={"Relisting"}/>
+                </Group>
+            </RadioGroup>
             }
             cards={[]}
         >

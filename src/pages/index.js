@@ -22,6 +22,7 @@ import makeWeekArray from "../modules/utils/makeWeekArray";
 import {BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import useNav from "../modules/hooks/useNav";
+import {da} from "date-fns/locale";
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -226,10 +227,8 @@ export default function ManLayout({}) {
     const totalIncrements = weekSeed.map(({count}) => +count).reduce((a,b)=>a+b,0);
     const totalForToday = dailyData.reduce((a,b) => a + +b.count,0);
 
-    const dailyAverage = Math.round(totalIncrements / weekDays.length || 1);
+    const dailyAverage = Math.round(totalIncrements / (weekDays.length || 1));
     const hourlyAverage = Math.round(dailyAverage / 7 || 1);
-
-
 
     const bestDay = Math.max(...weekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));

@@ -7,6 +7,11 @@ import {DatePickerInput} from "@mantine/dates";
 import formatter from "../../modules/utils/numberFormatter";
 
 
+const storeNames = {
+    "225004": "Big Commerce",
+    "255895": "Ebay",
+};
+
 class Order {
     constructor(order) {
         this._order = order;
@@ -50,8 +55,6 @@ const SalesView = () => {
     storeSales["All"] = sales;
 
     const chosenStore = storeSales[store];
-    console.log(chosenStore);
-
 
     return (
         <GraphWithStatCard
@@ -73,7 +76,7 @@ const SalesView = () => {
                     onChange={(e) => setStore(e.target.value)}
                 >
                     <option>Choose a store</option>
-                    {storeIDs.map((store, index) => <option value={`${store}`} key={index}>{store}</option>)}
+                    {storeIDs.map((store, index) => <option value={`${store}`} key={index}>{storeNames[store]}</option>)}
                     <option value={"All"}>All</option>
                 </NativeSelect>
             }

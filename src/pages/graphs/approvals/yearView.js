@@ -8,14 +8,16 @@ import {
     LineElement,
     PointElement,
     Title,
-    Tooltip
+    Tooltip as ChartTooltip
 } from "chart.js";
 import {Line} from "react-chartjs-2";
 import {colorScheme} from "../../_app";
 import {setDate, setMonth} from "date-fns";
 import {YearPickerInput} from "@mantine/dates";
-import {NativeSelect, Slider, Text} from "@mantine/core";
+import {NativeSelect, Slider, Stack, Text, Tooltip} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import StatsCard from "../../../components/mantine/StatsCard";
+;
 
 const ignoredNames = [
     "Bail", "" , "Whit","Finley Aldrid"
@@ -25,7 +27,7 @@ ChartJS.register(
     CategoryScale,
     LinearScale,
     Title,
-    Tooltip,
+    ChartTooltip,
     Legend,
     LineElement,
     PointElement,
@@ -34,6 +36,11 @@ ChartJS.register(
 function smoothData(data,adjCount=3) {
     // take the average of the current, n previous, and n next data points
     // where n is the adjCount
+    if(adjCount === 0) return data;
+    if(adjCount === 8){
+        let average = data.reduce((a,b) => a + b, 0) / data.length;
+        return data.map(() => average);
+    }
     let newData = [];
     for(let i = 0; i < data.length; i++) {
         let sum = 0;
@@ -71,7 +78,6 @@ const ApprovalsView = () => {
     let mappedUpdates = {Total:{}};
     updates
         .sort((a,b) => {
-            // sort them by date
             let aDate = a["date_of_final_approval"];
             let bDate = b["date_of_final_approval"];
             if(aDate < bDate) return -1;
@@ -156,72 +162,41 @@ const ApprovalsView = () => {
                 />
             }
             slotTwo={
-            <>
-                <Text mt={"xl"}>Resolution</Text>
-                <Slider
-                    mb={"xl"}
-                    label={"Trend Line Resolution"}
-                    color="blue"
-                    marks={[
-
-                        { value: 2, label: '1' },
-                        { value: 3, label: '2' },
-                        { value: 4, label: '3' },
-                        { value: 5, label: '4' },
-                        { value: 6, label: '5' },
-                        { value: 7, label: '6' },
-                    ]}
-                    min={1}
-                    max={8}
-                    value={resolution}
-                    onChange={(e) => setResolution(e)}
-                />
-            </>
-
+                <Tooltip label={"The higher the resolution, the smoother the trend line."}>
+                    <span>
+                        <Text ml={"xs"} mt={"xl"}>Trend Line Resolution</Text>
+                        <Slider
+                            mb={"xl"}
+                            ml={"xs"}
+                            color="blue"
+                            marks={[
+                                { value: 0, label: 'none' },
+                                { value: 2, label: '2' },
+                                { value: 4, label: '4' },
+                                { value: 6, label: '6' },
+                                { value: 8, label: 'linear' },
+                            ]}
+                            min={0}
+                            max={8}
+                            value={resolution}
+                            onChange={(e) => setResolution(e)}
+                        />
+                    </span>
+                </Tooltip>
             }
-            cards={[]}
+            cards={[
+                <StatsCard
+                    key={1}
+                    stat={{
+                        title: "Total Approvals",
+                        value: graphData.datasets[0].data.reduce((a,b) => a + b, 0)
+                    }}
+                />
+            ]}
             >
             <Line data={graphData} options={options} />
         </GraphWithStatCard>
     )
-
-
-
-    // return (
-    //         <Container>
-    //             <h1 className={"text-center"}>Approvals View</h1>
-    //             <Form.Select value={user} onChange={(e) => setUser(e.target.value)}>
-    //                 {Object.keys(mappedUpdates).map((name) => {
-    //                     if(ignoredNames.includes(name)) return null;
-    //                     return <option key={name} value={name}>{name}</option>
-    //                 })}
-    //             </Form.Select>
-    //             <Row className={"my-3"}>
-    //                 <Col sm={2}>
-    //                     <Form.Label>Year Select</Form.Label>
-    //                     <Form.Control
-    //                         value={date}
-    //                         onChange={(e) => setDate(formatDateWithZeros(dateSet(setMonth(new Date(e.target.value),0),1)))}
-    //                         type="date"
-    //                     />
-    //                 </Col>
-    //                 <Col sm={8}></Col>
-    //                 <Col sm={2}>
-    //                     <Form.Label>Trend Line Resolution</Form.Label>
-    //                     <Form.Control
-    //                         type={'number'}
-    //                         step={1}
-    //                         min={1}
-    //                         max={Math.min(graphData.datasets[0].data.length / 8, 5)}
-    //                         value={resolution}
-    //                         onChange={(e) => setResolution(+e.target.value)}
-    //                     />
-    //                 </Col>
-    //             </Row>
-    //
-    //
-    //         </Container>
-    // );
 };
 
 export default ApprovalsView;

@@ -39,7 +39,8 @@ export default function LineGraph (props) {
                 },
                 grid: {
                     color: theme + "3"
-                }
+                },
+                max:150,
             },
             x:{
                 ticks: {

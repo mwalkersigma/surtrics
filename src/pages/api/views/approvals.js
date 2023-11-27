@@ -33,7 +33,7 @@ export default function handler (req,res) {
     interval = body.interval;
     return router({
         POST:getIncrements
-    })(req,res,date,interval,)
+    })(req,res,date,interval)
         .then((response) => {
             res.status(200).json(response)
         })

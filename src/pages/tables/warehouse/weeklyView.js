@@ -6,13 +6,29 @@ import formatDatabaseRows from "../../../modules/utils/formatDatabaseRows";
 
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {Table} from "@mantine/core";
-import {DatePickerInput} from "@mantine/dates";
+import {DatePickerInput, getStartOfWeek} from "@mantine/dates";
+import {formatDistanceStrict} from "date-fns";
 
 const WeeklyView = () => {
     const [date, setDate] = useState(new Date());
-    const updates = useUpdates("/api/views/picks/warehousePicks",{date});
+    const [interval, setInterval] = useState("1 week");
+    const updates = useUpdates("/api/views/picks/warehousePicks",{date:getStartOfWeek(date) ,interval,increment:"day"});
+    console.log(updates)
+
     const dates = makeDateArray(date);
     let rows = formatDatabaseRows(updates);
+
+    function handleDateUpdate(e){
+        let [start,end] = e;
+        if(!end) return;
+        if(start !== end){
+            setInterval(formatDistanceStrict(start,end))
+        }else{
+            setInterval(`1 week`);
+        }
+        setDate(start)
+
+    }
 
     return (
         <GraphWithStatCard
@@ -20,10 +36,10 @@ const WeeklyView = () => {
             isLoading={updates.length === 0}
             dateInput={
                 <DatePickerInput
-                    mb={"xl"}
+                    type={"range"}
                     label={"Date"}
-                    value={date}
-                    onChange={(e) => setDate(e)}
+                    mb={"xl"}
+                    onChange={handleDateUpdate}
                 />
             }
             cards={[]}

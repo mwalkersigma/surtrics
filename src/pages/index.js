@@ -268,12 +268,12 @@ export default function ManLayout({}) {
                         ))}
                         <Grid.Col  span={6}>
                             <Paper withBorder p="md" radius="md">
-                                <WeekGraph height={150} weekSeed={weekSeed}  goal={goal} theme={theme}/>
+                                <WeekGraph height={300} weekSeed={weekSeed}  goal={goal} theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={6}>
                             <Paper withBorder p="md" radius="md">
-                                <DailyGraph height={150} dailyData={dailyData}  theme={theme}/>
+                                <DailyGraph height={300} dailyData={dailyData}  theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>

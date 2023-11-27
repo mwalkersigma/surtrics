@@ -6,6 +6,9 @@ export default function SurtricsNavbar ({}) {
         <AppShell.Navbar p="md">
             <ScrollArea>
                 <NavLink label={"Dashboard"} href={"/"}/>
+                <RoleWrapper invisible altRoles={["bsa", "surplus director"]}>
+                    <NavLink label={"E-Commerce Dashboard"} href={"/viewers/ecommerce"}/>
+                </RoleWrapper>
                 <NavLink label={"Increments"}>
                     <NavLink label={"Graphs"}>
                         <NavLink href="/graphs/increments/dailyView" label={"Daily View"}/>
@@ -71,7 +74,6 @@ export default function SurtricsNavbar ({}) {
                         <NavLink label={"Ebay Viewer"} href={"/viewers/ebay"}/>
                         <NavLink label={"Big Commerce Viewer"} href={"/viewers/bigCommerce"}/>
                         <NavLink label={"Quick Books Viewer"} href={"/viewers/quickBooks"}/>
-                        <NavLink label={"E-Commerce Viewer"} href={"/viewers/ecommerce"}/>
                         <RoleWrapper invisible altRoles={["surplus director"]}>
                             <NavLink label={"Error type Viewer"} href={"/admin/ErrorPanel"}/>
                         </RoleWrapper>

@@ -20,7 +20,7 @@ const Event = () => {
         <ViewerLayout title={"Events"} isLoading={status === "loading"}>
             <TableSort
                 data={tableData.map((row) => ({
-                    event_id: row.event_id,
+                    id: row.event_id,
                     event_date: new Date(row.event_date).toLocaleDateString(),
                     event_name: row.event_name,
                     event_notes: row.event_notes,

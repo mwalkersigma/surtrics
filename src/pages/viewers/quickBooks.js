@@ -20,13 +20,18 @@ const Ebay = () => {
     return (
         <ViewerLayout title={"Quick Books"} isLoading={status === "loading"}>
             <TableSort
+                specialFormatting={[
+                    //{column: "impressions", fn:(value)=>formatter(value,"currency")},
+                    {column: "purchase_total", fn:(value)=>formatter(value,"currency")},
+                    {column: "po_number", fn:String}
+                ]}
                 data={tableData.map((row) => ({
                     id: row.po_id,
                     po_name: row.po_name,
                     po_number: row.po_number,
                     po_date: new Date(row.po_date).toLocaleDateString(),
                     purchase_type: row.purchase_type,
-                    purchase_total: formatter(row.purchase_total,"currency"),
+                    purchase_total: row.purchase_total,
                     remove: <Button
                         variant="filled"
                         color="red"

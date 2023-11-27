@@ -3,6 +3,7 @@ import {Center, Group, keys, rem, ScrollArea, Table, Text, TextInput, Tooltip, U
 import classes from "../../styles/TableSort.module.css";
 import React, {useEffect, useState} from "react";
 import {toHeaderCase} from "js-convert-case";
+import formatter from "../../modules/utils/numberFormatter";
 
 function Th({children, reversed, sorted, onSort}) {
     const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
@@ -51,23 +52,34 @@ function isNaN(number) {
     return !Number(number)
 }
 
+function identifyType(value) {
+    if(Number(value) || typeof value === 'number') return "number";
+    if(typeof value === 'boolean') return "boolean";
+    if(value instanceof Date || new Date(value).toString() !== 'Invalid Date') return "date";
+    if(Array.isArray(value)) return "array";
+    if(typeof value === 'object') return "object";
+    if(typeof value === 'string' && typeof +value !== 'string') return "string";
+    return "unknown";
+}
+
+
+
 function sorter(a, b) {
-    let isNumber = (!isNaN(a) && !isNaN(b));
-    if (isNumber) {
-        return a - b;
+    let type = identifyType(a);
+    console.log(type)
+    switch (type) {
+        case "number":
+            return a - b;
+        case "string":
+            return a.localeCompare(b);
+        case "date":
+            return new Date(a) - new Date(b);
+        case "boolean":
+            return a - b;
+        default:
+            return a - b;
     }
-    let isString = (typeof a === "string" && typeof b === "string");
-    if (isString) {
-        return a.localeCompare(b);
-    }
-    let isDate = (a instanceof Date && b instanceof Date) || (new Date(a).toString() !== "Invalid Date" && new Date(b).toString() !== "Invalid Date");
-    if (isDate) {
-        return new Date(a) - new Date(b);
-    }
-    let isBoolean = (typeof a === "boolean" && typeof b === "boolean");
-    if (isBoolean) {
-        return a - b;
-    }
+
 }
 
 function sortData(data, payload) {
@@ -86,7 +98,7 @@ function sortData(data, payload) {
     }), payload.search);
 }
 
-export function TableSort({data, noToolTip=[]}) {
+export function TableSort({data, noToolTip=[],specialFormatting = []}) {
     const [search, setSearch] = useState('');
     const [sortedData, setSortedData] = useState(data);
     const [sortBy, setSortBy] = useState(null);
@@ -117,11 +129,35 @@ export function TableSort({data, noToolTip=[]}) {
                 }
             }
             return acc;
-        }, [])
+        }, []);
 
-    const rows = sortedData.map(row => (<Table.Tr key={row.id}>
-        {headers.map((key) => (<Td key={key} ignoreList={["remove",...noToolTip]} property={key}> {row[key]}</Td>))}
-    </Table.Tr>));
+    function displayFormatting (value) {
+        switch (identifyType(value)){
+            case "number":
+                return formatter(value);
+            case "date":
+                return new Date(value).toLocaleDateString();
+            case "boolean":
+                return value ? "Yes" : "No";
+            case "array":
+                return value.join(", ");
+            default:
+                return value;
+        }
+    }
+
+    const rows = sortedData.map(row => (
+        <Table.Tr key={row.id}>
+            {headers.map((key) => (
+                <Td key={key} ignoreList={["remove",...noToolTip]} property={key}>
+                    { !specialFormatting.map(({column})=>column).includes(key) ?
+                        displayFormatting(row[key]) :
+                        specialFormatting.find(({column})=>column === key).fn(row[key])
+                    }
+                </Td>
+            ))}
+        </Table.Tr>
+    ));
 
 
     return (<ScrollArea>

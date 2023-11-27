@@ -21,8 +21,8 @@ const Ebay = () => {
             <TableSort
                 data={tableData.map((row) => ({
                     id: row.entry_id,
-                    impressions: formatter(row.impressions),
-                    page_views: formatter(row.page_views),
+                    impressions: row.impressions,
+                    page_views: row.page_views,
                     date_for_week: new Date(row.date_for_week).toLocaleDateString(),
                     remove: <Button
                         variant="filled"

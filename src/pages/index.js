@@ -97,7 +97,7 @@ function WeekGraph ({weekSeed,goal,theme, height}){
         options={{
             devicePixelRatio: 4,
             responsive: true,
-            maintainAspectRatio: false,
+            // maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false,
@@ -144,7 +144,7 @@ function DailyGraph ({dailyData,theme,height}){
         options={{
             devicePixelRatio: 4,
             responsive: true,
-            maintainAspectRatio: false,
+            // maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false,
@@ -268,12 +268,12 @@ export default function ManLayout({}) {
                         ))}
                         <Grid.Col  span={6}>
                             <Paper withBorder p="md" radius="md">
-                                <WeekGraph height={300} weekSeed={weekSeed}  goal={goal} theme={theme}/>
+                                <WeekGraph height={150} weekSeed={weekSeed}  goal={goal} theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={6}>
                             <Paper withBorder p="md" radius="md">
-                                <DailyGraph height={300} dailyData={dailyData}  theme={theme}/>
+                                <DailyGraph height={150} dailyData={dailyData}  theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>

@@ -2,14 +2,10 @@ import React, {useEffect, useState} from 'react';
 import RoleWrapper from "../../components/RoleWrapper";
 
 import {useSession} from "next-auth/react";
-import formatDateWithZeros from "../../modules/utils/formatDateWithZeros";
-import {addDays} from "date-fns";
-import findStartOfWeek from "../../modules/utils/findSundayFromDate";
 import {useForm} from "@mantine/form";
 import {Notifications} from "@mantine/notifications";
 import {Button, Container, Grid, NumberInput, Stack, TextInput, Title} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
-import {values} from "pg/lib/native/query";
 
 
 const EbayEntry = () => {

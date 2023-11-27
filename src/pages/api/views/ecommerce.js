@@ -149,9 +149,9 @@ ORDER BY
     month_of_transaction
     `)
 }
-function postHandler(){}
-function putHandler(){}
-function deleteHandler(){}
+// function postHandler(){}
+// function putHandler(){}
+// function deleteHandler(){}
 
 export default function handler(req, res) {
     return serverAdminWrapper((req, res) => {

@@ -26,7 +26,7 @@ const Ebay = () => {
                     {column: "po_number", fn:String}
                 ]}
                 data={tableData.map((row) => ({
-                    id: row.po_id,
+                    id: row['po_id'],
                     po_name: row.po_name,
                     po_number: row.po_number,
                     po_date: new Date(row.po_date).toLocaleDateString(),
@@ -35,7 +35,7 @@ const Ebay = () => {
                     remove: <Button
                         variant="filled"
                         color="red"
-                        onClick={() => removeEntry(row.entry_id)}
+                        onClick={() => removeEntry(row['entry_id'])}
                         leftSection={<IconTrash style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
 
                     >Remove</Button>,

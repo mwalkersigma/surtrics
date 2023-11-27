@@ -1,5 +1,5 @@
 import React from 'react';
-import {Flex, Grid, Group, Paper, SimpleGrid, Text, Title, Skeleton} from '@mantine/core';
+import {Flex, SimpleGrid, Text, Title, Skeleton} from '@mantine/core';
 import classes from '../../styles/StatsGrid.module.css';
 import {addMonths, format, setDate, setISODay} from "date-fns";
 import useUpdates from "../../modules/hooks/useUpdates";
@@ -194,7 +194,7 @@ function MasonryGrid({current,previous}){
         <Flex direction={"column"} gap={"md"}>
             {sections.map(({title,stats}) => (
                 <Flex gap={"md"} key={title} direction={"column"}>
-                    <Text  className={classes.sectionTitle} variant="h2">
+                    <Text  className={classes['sectionTitle']} variant="h2">
                         {title}
                     </Text>
                     <SimpleGrid cols={4} breakpoints={[{ maxWidth: 'sm', cols: 2 }]}>
@@ -311,7 +311,7 @@ function createData(monthData){
 
 const formatDateForEcommerce = (date) => format(setDate(new Date(date),1),"yyyy-MM-dd")
 
-function mapCommerceData (data,index,array) {
+function mapCommerceData (data) {
     let {
         big_commerce_sales,
         ebay_sales,

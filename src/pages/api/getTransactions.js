@@ -1,6 +1,5 @@
 import Db from "../../db";
 import { PromisePool} from "@supercharge/promise-pool";
-import fs from "fs/promises";
 import convertToDatabase from "../../modules/utils/convertSkuVaultToDatabaseFormat";
 import Logger from "sigma-logger";
 import {isTimeToUpdate} from "../../modules/serverUtils/isTimeToUpdate";

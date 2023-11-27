@@ -3,7 +3,8 @@
 ## Introduction
 *Why the new name?*
 
-This project was supposed to be an addition to surport. But they have wildly different data models.
+This project was supposed to be an addition to Surport. 
+But they have wildly different data models.
 Surport is a large collection of data that mutates over time and is not easily represented in a relational database.
 
 Surtrics is a large collection of similar data that is easily represented in a relational database. The proposed

@@ -1,4 +1,3 @@
-import getStartAndEndWeekString from "./getStartAndEndWeekString";
 import {addDays, addHours} from "date-fns";
 import formatDateWithZeros from "./formatDateWithZeros";
 import findStartOfWeek from "./findSundayFromDate";

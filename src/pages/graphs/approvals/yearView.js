@@ -14,10 +14,10 @@ import {Line} from "react-chartjs-2";
 import {colorScheme} from "../../_app";
 import {setDate, setMonth} from "date-fns";
 import {YearPickerInput} from "@mantine/dates";
-import {NativeSelect, Slider, Stack, Text, Tooltip} from "@mantine/core";
+import {NativeSelect, Slider, Text, Tooltip} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import StatCard from "../../../components/mantine/StatCard";
-;
+
 
 const ignoredNames = [
     "Bail", "" , "Whit","Finley Aldrid"

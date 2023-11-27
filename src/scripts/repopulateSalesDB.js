@@ -170,9 +170,9 @@ async function main () {
             let paymentDate = new Date(order.paymentDate).toISOString();
             let orderId = order.orderId;
             let orderStatus = order.orderStatus;
-            let name = order.shipTo.name.replaceAll("'","");
+            let name = order['shipTo'].name.replaceAll("'","");
             let items = processItems(order.items);
-            let storeId = order.advancedOptions.storeId;
+            let storeId = order['advancedOptions'].storeId;
             return {paymentDate, orderId, orderStatus, items, storeId , name};
         })
         .concat(ebayOrders)

@@ -10,6 +10,7 @@ export default function SurtricsHeader ({ mobileOpened, toggleMobile, desktopOpe
     const [userMenuOpened, setUserMenuOpened] = useState(false);
     const {data: session} = useSession();
     const user = session?.user;
+    // noinspection JSXUnresolvedComponent
     return (
         <AppShell.Header>
             <Group h="100%" justify="space-between">

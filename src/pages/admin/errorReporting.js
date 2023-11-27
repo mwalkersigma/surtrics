@@ -4,7 +4,7 @@ import {useSession} from "next-auth/react";
 import RoleWrapper from "../../components/RoleWrapper";
 
 import {useForm} from "@mantine/form";
-import {Grid, Container, NativeSelect, Title, TextInput, Textarea, Button, Text, Stack, Skeleton, Tooltip} from "@mantine/core";
+import {Grid, Container, NativeSelect, Title, TextInput, Textarea, Button, Stack, Skeleton} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
 import {Notifications} from "@mantine/notifications";
 
@@ -69,7 +69,7 @@ const ErrorReporting = () => {
     });
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const {data: session, status} = useSession();
+    const {data: session} = useSession();
 
 
     useEffect(() => {
@@ -114,8 +114,8 @@ const ErrorReporting = () => {
                                 {...getInputProps("user")}
                             >
                                 <option value={""}>Choose a user</option>
-                                {users.filter((user) => !ignoreList.includes(user.user_name)).map((user) => (
-                                    <option key={user.user_name} value={user.user_name}>{user.user_name}</option>
+                                {users.filter((user) => !ignoreList.includes(user['user_name'])).map((user) => (
+                                    <option key={user["user_name"]} value={user["user_name"]}>{user["user_name"]}</option>
                                 ))}
                             </NativeSelect>
                         </Grid.Col>

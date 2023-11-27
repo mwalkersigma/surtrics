@@ -20,7 +20,7 @@ const BigCommerce = () => {
         <ViewerLayout title={"Big Commerce"} isLoading={status === "loading"}>
             <TableSort
                 data={tableData.map((row) => ({
-                    id: row.entry_id,
+                    id: row['entry_id'],
                     visits: formatter(row.visits),
                     shopped: formatter(row.shopped),
                     add_to_cart: formatter(row.add_to_cart),
@@ -29,7 +29,7 @@ const BigCommerce = () => {
                     remove: <Button
                         variant="filled"
                         color="red"
-                        onClick={() => removeEntry(row.entry_id)}
+                        onClick={() => removeEntry(row['entry_id'])}
                         leftSection={<IconTrash style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
 
                     >Remove</Button>,

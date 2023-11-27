@@ -1,4 +1,4 @@
-import {describe, test, expect,it} from "vitest";
+import {describe, expect,it} from "vitest";
 import createAdjustedWeekArray from "../modules/utils/createAdjustedWeekArray";
 
 describe("Create Adjusted Week Array", () =>{

@@ -38,7 +38,7 @@ export default function StatCard ({stat,Icon:i, ...rest}){
                 <Text className={classes.value}>{formatter(stat.value,stat?.format ?? "number")}</Text>
                 {DiffIcon &&
                     <Text c={stat.diff > 0 ? 'teal' : 'red'} fz="sm" fw={500} className={classes.diff}>
-                        <span>{Math.trunc(stat.diff * 100)/100} {!stat.diffFormat && "%"} </span>
+                        <span>{Math.trunc(stat.diff * 100)/100} {!stat['diffFormat'] && "%"} </span>
                         <DiffIcon size="1rem" stroke={1.5} />
                     </Text>
                 }

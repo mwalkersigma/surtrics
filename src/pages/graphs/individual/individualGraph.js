@@ -11,7 +11,6 @@ import {
     Tooltip
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
-import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
 import formatter from "../../../modules/utils/numberFormatter";
 import {colorScheme} from "../../_app";
 import {useMantineColorScheme} from "@mantine/core";

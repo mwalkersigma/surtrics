@@ -1,9 +1,8 @@
 import React from 'react';
 import {TableSort} from "../../components/mantine/TableSort";
 import useTable from "../../modules/hooks/useTable";
-import {Button, Container, Grid, NativeSelect, rem, Stack, Textarea, TextInput, Title} from "@mantine/core";
+import {Button, rem } from "@mantine/core";
 import {IconTrash} from "@tabler/icons-react";
-import {useForm} from "@mantine/form";
 
 const ErrorPanel = () => {
     const assignedValues = {

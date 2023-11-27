@@ -6,12 +6,6 @@ import useTable from "../../modules/hooks/useTable";
 import {IconTrash} from "@tabler/icons-react";
 
 
-
-
-
-
-
-
 const Error = () => {
     const {tableData,removeHandler,status} = useTable({route:"/api/dataEntry/error",idField:"id"})
 

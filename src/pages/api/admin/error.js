@@ -5,8 +5,7 @@ const fs = require('fs');
 
 function getHandler(req,res,...options){
     let settings = JSON.parse(fs.readFileSync('./src/json/settings.json', 'utf8'));
-    let error = settings.Errors;
-    return error
+    return settings.Errors;
 }
 function postHandler(req,res,...options){
     const {name,definition,assigned} = req.body;

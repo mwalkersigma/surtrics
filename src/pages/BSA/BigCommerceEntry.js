@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import RoleWrapper from "../../components/RoleWrapper";
 import {useSession} from "next-auth/react";
-import findStartOfWeek from "../../modules/utils/findSundayFromDate";
-import {addDays} from "date-fns";
 import {Notifications} from "@mantine/notifications";
 import {useForm} from "@mantine/form";
 import {Container, Grid, Title, TextInput, Button, Stack, Skeleton, NumberInput} from "@mantine/core";
@@ -82,7 +80,7 @@ const BigCommerceEntry = () => {
             body:JSON.stringify(values)
         })
             .then((res)=>res.json())
-            .then(({message,response})=>{
+            .then(({message})=>{
                 Notifications.show({autoClose: 5000, title: "Success", message, type: "success"})
             })
             .catch((err)=>{

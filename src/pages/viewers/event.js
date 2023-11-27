@@ -20,7 +20,7 @@ const Event = () => {
         <ViewerLayout title={"Events"} isLoading={status === "loading"}>
             <TableSort
                 data={tableData.map((row) => ({
-                    id: row.event_id,
+                    id: row['event_id'],
                     event_date: new Date(row.event_date).toLocaleDateString(),
                     event_name: row.event_name,
                     event_notes: row.event_notes,
@@ -28,7 +28,7 @@ const Event = () => {
                     remove: <Button
                         variant="filled"
                         color="red"
-                        onClick={() => removeEntry(row.event_id)}
+                        onClick={() => removeEntry(row['event_id'])}
                         leftSection={<IconTrash style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
 
                     >Remove</Button>,

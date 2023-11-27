@@ -9,7 +9,7 @@ export default function serverAdminWrapper( cb , ...options ) {
                 return "You must be logged in."
             }
             let adminList = await fs.readFile("./src/json/adminList.json").then((res)=>JSON.parse(res));
-            let email = session.user.email.toLowerCase();
+            let email = session['user']email.toLowerCase();
             let user = adminList.find(admin=>admin.email.toLowerCase() === email);
             if(!user){
                 return "User doesn't have roles setup"

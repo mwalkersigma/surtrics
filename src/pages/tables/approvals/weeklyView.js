@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
-import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
 import makeDateArray from "../../../modules/utils/makeDateArray";
-import {addDays} from "date-fns";
 import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 import { Table } from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";

@@ -1,6 +1,4 @@
 import React, {useState} from 'react';
-
-
 import useUpdates from "../../../modules/hooks/useUpdates";
 
 import makeDateArray from "../../../modules/utils/makeDateArray";

@@ -46,6 +46,9 @@ export default function SurtricsNavbar ({}) {
                     </NavLink>
                     <NavLink label={"Tables"}>
                         <NavLink href="/tables/individual/dailyView" label={"Daily View"}/>
+                        <NavLink href="/tables/individual/weeklyView" label={"Weekly View"}/>
+                        <NavLink href="/tables/individual/monthlyView" label={"Monthly View"}/>
+                        <NavLink href="/tables/individual/yearlyView" label={"Yearly View"}/>
                     </NavLink>
                 </NavLink>
                 <NavLink label={"Warehouse"}>

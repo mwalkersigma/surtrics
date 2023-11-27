@@ -3,19 +3,20 @@ import useUpdates from "../../../modules/hooks/useUpdates";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {NativeSelect, Table} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
+import formatter from "../../../modules/utils/numberFormatter";
 
 
 const DailyView = () => {
     const [user, setUser] = useState("");
     const [date, setDate] = useState(new Date());
-    let individualData = useUpdates("/api/views/individualView",{date,user});
+    let individualData = useUpdates("/api/views/individualView",{date, interval: "1 day"});
     if(typeof individualData === "string") individualData = JSON.parse(individualData);
 
     let users = Object.keys(individualData);
 
 
     return <GraphWithStatCard
-            title={"Surplus Transactions Individual View"}
+            title={"Surplus Transactions Individual Daily View"}
             isLoading={users.length === 0}
             dateInput={
                 <DatePickerInput
@@ -61,7 +62,7 @@ const DailyView = () => {
                                         <Table.Td>{row}</Table.Td>
                                         <Table.Td>{transaction_type}</Table.Td>
                                         <Table.Td>{transaction_reason}</Table.Td>
-                                        <Table.Td>{((+value) / 4)}</Table.Td>
+                                        <Table.Td>{(formatter(+value))}</Table.Td>
                                     </Table.Tr>
                                 )
                             })

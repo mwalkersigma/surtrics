@@ -1,7 +1,7 @@
 import React from 'react';
 import {Flex, SimpleGrid, Text, Title, Skeleton} from '@mantine/core';
 import classes from '../../styles/StatsGrid.module.css';
-import {addMonths, format, setDate, setISODay} from "date-fns";
+import {addMonths, format, setDate, setISODay, subMonths} from "date-fns";
 import useUpdates from "../../modules/hooks/useUpdates";
 import formatter from "../../modules/utils/numberFormatter";
 import { MonthPickerInput} from '@mantine/dates';
@@ -350,9 +350,8 @@ function mapCommerceData (data) {
 }
 
 const Dashboard = () => {
-    const [month,setMonth] = React.useState(format(setDate(new Date(),1),"yyyy-MM-dd"));
+    const [month,setMonth] = React.useState(setDate(new Date,1));
     let ecommerceData = useUpdates("/api/views/ecommerce");
-
 
     if(!ecommerceData || !ecommerceData.rows || ecommerceData.rows.length === 0){
         return <SkeletonGrid setMonth={setMonth} month={month} />
@@ -361,14 +360,13 @@ const Dashboard = () => {
 
     ecommerceData = ecommerceData.rows.map(mapCommerceData);
 
-    let monthData = ecommerceData.find(({month:month_of_transaction})=>month_of_transaction === month);
+    let monthData = ecommerceData.find(({month:month_of_transaction})=>month_of_transaction === month.toISOString().split("T")[0]);
     const currentMonthData = createData(monthData);
 
-    let previousMonthDate = format(setDate(new Date(month),1),"yyyy-MM-dd");
+    let previousMonthDate = subMonths(new Date(month),1).toISOString().split("T")[0];
     let previousMonthData = ecommerceData
         .find(({month:month_of_transaction})=>month_of_transaction === previousMonthDate);
     previousMonthData = previousMonthData ? createData(previousMonthData) : null;
-
 
     return (
         <RoleWrapper LoadingComponent={<SkeletonGrid setMonth={setMonth} month={month}/> }>
@@ -377,8 +375,10 @@ const Dashboard = () => {
                 <MonthPickerInput
                     label="Pick date"
                     placeholder="Pick date"
-                    value={setISODay(addMonths(new Date(month),1),1)}
-                    onChange={(e)=>setMonth(formatDateForEcommerce(e))}
+                    value={month}
+                    onChange={setMonth}
+                    //value={setISODay(addMonths(new Date(month),1),1)}
+                    //onChange={(e)=>setMonth(formatDateForEcommerce(e))}
                     width={"50%"}
                 />
                 <div className="spacer" style={{height:"5vh"}}/>

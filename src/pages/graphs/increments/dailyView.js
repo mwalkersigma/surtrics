@@ -9,7 +9,7 @@ import {
 } from "chart.js";
 
 import {DatePickerInput} from "@mantine/dates";
-import StatsCard from "../../../components/mantine/StatsCard";
+import StatCard from "../../../components/mantine/StatCard";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 
 
@@ -44,25 +44,25 @@ const DailyView = () => {
             isLoading={dailyData.length === 0}
             cards={
                 [
-                    <StatsCard
+                    <StatCard
                         key={0}
                         stat={{
                             title: "Total Increments",
                             value: (chartData.reduce((a, b) => a + b, 0)),
                         }}/>,
-                    <StatsCard
+                    <StatCard
                         key={1}
                         stat={{
                             title: "Average Increments",
                             value: (Math.round(chartData.reduce((a, b) => a + b, 0) / chartData.length)),
                         }}/>,
-                    <StatsCard
+                    <StatCard
                         key={2}
                         stat={{
                             title: "Best Hour",
                             value: (chartData.reduce((a, b) => a > b ? a : b, 0)),
                         }}/>,
-                    <StatsCard
+                    <StatCard
                         key={3}
                         stat={{
                             title: "New Inbound",
@@ -71,7 +71,7 @@ const DailyView = () => {
                                 .reduce((acc, {count}) => acc + +count, 0)),
                         }}
                     />,
-                    <StatsCard
+                    <StatCard
                         key={4}
                         stat={{
                             title: "Re-listings",

@@ -6,7 +6,7 @@ import useUpdates from "../../modules/hooks/useUpdates";
 import formatter from "../../modules/utils/numberFormatter";
 import { MonthPickerInput} from '@mantine/dates';
 import RoleWrapper from "../../components/RoleWrapper";
-import StatsCard from "../../components/mantine/StatsCard";
+import StatCard from "../../components/mantine/StatCard";
 
 
 
@@ -198,7 +198,7 @@ function MasonryGrid({current,previous}){
                         {title}
                     </Text>
                     <SimpleGrid cols={4} breakpoints={[{ maxWidth: 'sm', cols: 2 }]}>
-                        {stats.map((cardDate,i) => <StatsCard key={i} {...cardDate} />)}
+                        {stats.map((cardDate,i) => <StatCard key={i} {...cardDate} />)}
                     </SimpleGrid>
                 </Flex>
             ))}

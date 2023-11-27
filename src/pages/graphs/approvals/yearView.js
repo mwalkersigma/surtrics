@@ -16,7 +16,7 @@ import {setDate, setMonth} from "date-fns";
 import {YearPickerInput} from "@mantine/dates";
 import {NativeSelect, Slider, Stack, Text, Tooltip} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
-import StatsCard from "../../../components/mantine/StatsCard";
+import StatCard from "../../../components/mantine/StatCard";
 ;
 
 const ignoredNames = [
@@ -185,7 +185,7 @@ const ApprovalsView = () => {
                 </Tooltip>
             }
             cards={[
-                <StatsCard
+                <StatCard
                     key={1}
                     stat={{
                         title: "Total Approvals",

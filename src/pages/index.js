@@ -106,6 +106,7 @@ function WeekGraph ({weekSeed,goal,theme, height}){
         options={{
             devicePixelRatio: 4,
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false,
@@ -152,6 +153,7 @@ function DailyGraph ({dailyData,theme,height}){
         options={{
             devicePixelRatio: 4,
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false,
@@ -264,7 +266,7 @@ export default function ManLayout({}) {
 
     return (
         <Center h={`${!hasNav && "100vh"}`}>
-            <Grid py={'xl'}>
+            <Grid py={`${!hasNav && "xl"}`} >
                 <Grid.Col span={1}></Grid.Col>
                 <Grid.Col span={10}>
                     <Grid>
@@ -284,7 +286,7 @@ export default function ManLayout({}) {
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>
-                            <Paper withBorder p="md" radius="md">
+                            <Paper ta={"center"} withBorder p="md" radius="md">
                                 <Text fz="lg" c="dimmed">
                                     Best Day
                                 </Text>
@@ -294,7 +296,7 @@ export default function ManLayout({}) {
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>
-                            <Paper withBorder p="md" radius="md">
+                            <Paper ta={"center"} withBorder p="md" radius="md">
                                 <Text fz="lg" c="dimmed">
                                     Best Hour
                                 </Text>
@@ -304,7 +306,7 @@ export default function ManLayout({}) {
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>
-                            <Paper withBorder p="md" radius="md">
+                            <Paper ta={"center"} withBorder p="md" radius="md">
                                 <Text fz="lg" c="dimmed">
                                     Errors for week
                                 </Text>
@@ -314,7 +316,7 @@ export default function ManLayout({}) {
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>
-                            <Paper withBorder p="md" radius="md">
+                            <Paper ta={"center"} withBorder p="md" radius="md">
                                 <Text fz="lg" c="dimmed">
                                     Errors for day
                                 </Text>

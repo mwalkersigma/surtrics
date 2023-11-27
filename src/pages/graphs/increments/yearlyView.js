@@ -17,7 +17,7 @@ import {getMonth, setDate, setMonth} from "date-fns";
 import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";
-import StatsCard from "../../../components/mantine/StatsCard";
+import StatCard from "../../../components/mantine/StatCard";
 
 ChartJS.register(
     CategoryScale,
@@ -168,28 +168,28 @@ function YearlyView() {
             isLoading={yearData.length === 0}
             cards={
             [
-                <StatsCard
+                <StatCard
                     key={0}
                     stat={{
                         title: "Total Increments",
                         value: (cardData.reduce((a, {count}) => a + count, 0)),
                     }}
                 />,
-                <StatsCard
+                <StatCard
                     key={1}
                     stat={{
                         title: "Average Increments",
                         value: (Math.round(cardData.reduce((a, {count}) => a + count, 0) / cardData.length)),
                     }}
                 />,
-                <StatsCard
+                <StatCard
                     key={2}
                     stat={{
                         title: "Best Month",
                         value: (cardData.reduce((a, {count}) => a > count ? a : count, 0)),
                     }}
                 />,
-                <StatsCard
+                <StatCard
                     key={3}
                     stat={{
                         title: "New Inbound",
@@ -198,7 +198,7 @@ function YearlyView() {
                             .reduce((acc, {count}) => acc + +count, 0)),
                     }}
                 />,
-                <StatsCard
+                <StatCard
                     key={4}
                     stat={{
                         title: "Re-listings",

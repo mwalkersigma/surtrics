@@ -19,7 +19,7 @@ import {colorScheme} from "../../_app";
 import {addDays} from "date-fns";
 import {useMantineColorScheme} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
-import StatsCard from "../../../components/mantine/StatsCard";
+import StatCard from "../../../components/mantine/StatCard";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 
 ChartJS.register(
@@ -260,24 +260,24 @@ function WeeklyView() {
             isLoading={weekData.length === 0}
             cards={
                 [
-                    <StatsCard
+                    <StatCard
                         key={0}
                         stat={{
                             title: "Total Increments",
                             value: (weekData.reduce((a, b) => a + b.count, 0)),
                         }}/>,
-                    <StatsCard
+                    <StatCard
                         key={1}
                         stat={{
                             title: "Average Increments",
                             value: (Math.round(weekData.reduce((a, b) => a + b.count, 0) / weekData.length)),
                         }}/>,
-                    <StatsCard
+                    <StatCard
                         key={2}
                         stat={{
                             title: "Best Day", value: (weekData.reduce((a, b) => a > b.count ? a : b.count, 0)),
                         }}/>,
-                    <StatsCard
+                    <StatCard
                         key={3}
                         stat={{
                             title: "New Inbound",
@@ -285,7 +285,7 @@ function WeeklyView() {
                                 .reduce((acc,cur)=>acc + ((+cur["Add"] || 0) + (+cur["Add on Receiving"] || 0)),0)
                             }}
                     />,
-                    <StatsCard
+                    <StatCard
                         key={4}
                         stat={{
                             title: "Relisting",

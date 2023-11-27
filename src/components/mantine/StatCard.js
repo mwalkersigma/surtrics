@@ -22,7 +22,7 @@ const icons = {
     visits: IconDirections,
 };
 
-export default function StatsCard ({stat,Icon:i, ...rest}){
+export default function StatCard ({stat,Icon:i, ...rest}){
     const Icon = icons[i] ?? null;
     const DiffIcon = stat?.diff ? stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight : null;
     return (

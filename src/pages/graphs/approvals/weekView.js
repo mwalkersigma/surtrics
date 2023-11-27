@@ -23,7 +23,7 @@ import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 import {addDays} from "date-fns";
-import StatsCard from "../../../components/mantine/StatsCard";
+import StatCard from "../../../components/mantine/StatCard";
 
 
 
@@ -180,7 +180,7 @@ const WeekView = () => {
             }
             cards={
                 [
-                    <StatsCard
+                    <StatCard
                         key={0}
                         stat={{
                             title:"Total",
@@ -188,7 +188,7 @@ const WeekView = () => {
                             subtitle:"Approvals for the week"
                         }}
                     />,
-                    <StatsCard
+                    <StatCard
                         key={1}
                         stat={{
                             title:"Average Approvals",
@@ -196,7 +196,7 @@ const WeekView = () => {
                             subtitle:"Per Person Per Day"
                         }}
                     />,
-                    <StatsCard
+                    <StatCard
                         key={2}
                         stat={{
                             title:"Best Day",
@@ -205,7 +205,7 @@ const WeekView = () => {
                         }}
                     />,
 
-                    <StatsCard
+                    <StatCard
                         key={3}
                         stat={{
                             title:"Lister of the week",

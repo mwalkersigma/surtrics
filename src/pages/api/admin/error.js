@@ -3,11 +3,11 @@ import router from "../../../modules/serverUtils/requestRouter";
 import {parseBody} from "../../../modules/serverUtils/parseBody";
 const fs = require('fs');
 
-function getHandler(req,res,...options){
+function getHandler(){
     let settings = JSON.parse(fs.readFileSync('./src/json/settings.json', 'utf8'));
     return settings.Errors;
 }
-function postHandler(req,res,...options){
+function postHandler(req){
     const {name,definition,assigned} = req.body;
     let settings = JSON.parse(fs.readFileSync('./src/json/settings.json', 'utf8'));
     let hasError = settings.Errors.filter((error)=>error.name === name);
@@ -17,13 +17,13 @@ function postHandler(req,res,...options){
     return `${name} has been added to the error list`
 
 }
-function putHandler(req,res,...options){
+function putHandler(){
     return {message:"Not Implemented Yet"}
 }
-function patchHandler(req,res,...options){
+function patchHandler(){
     return {message:"Not Implemented Yet"}
 }
-function deleteHandler(req,res,...options){
+function deleteHandler(req){
     const {name} = parseBody(req);
     let settings = JSON.parse(fs.readFileSync('./src/json/settings.json', 'utf8'));
     settings.Errors = settings.Errors.filter((error)=>error.name !== name);

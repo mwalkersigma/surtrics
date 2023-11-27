@@ -67,7 +67,7 @@ const BigCommerceEntry = () => {
         setValues((prevValues) => ({...prevValues, ...values}));
         resetDirty(values)
 
-    }, [status]);
+    }, [status,resetDirty,setValues,userName]);
 
 
 

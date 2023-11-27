@@ -133,7 +133,7 @@ function IndividualChart(props){
     const data = individualData.length > 0 && {
         labels: Object.keys(dataForChart),
         datasets:
-        types.size > 0 && [...types].map((type,index)=> {
+        types.size > 0 && [...types].map((type)=> {
             if(type === 'Create -'){
                 return {
                     type: "bar",

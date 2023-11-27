@@ -48,9 +48,6 @@ function filterData(data, search) {
     });
 }
 
-function isNaN(number) {
-    return !Number(number)
-}
 
 function identifyType(value) {
     if(Number(value) || typeof value === 'number') return "number";
@@ -106,7 +103,7 @@ export function TableSort({data, noToolTip=[],specialFormatting = []}) {
 
     useEffect(() => {
         setSortedData(sortData(data, {sortBy, reversed: reverseSortDirection, search}));
-    }, [data]);
+    }, [data, sortBy, reverseSortDirection, search]);
 
     const setSorting = (field) => {
         const reversed = field === sortBy ? !reverseSortDirection : false;

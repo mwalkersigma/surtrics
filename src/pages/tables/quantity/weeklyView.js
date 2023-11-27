@@ -28,10 +28,6 @@ export default function WeeklyView() {
     let dates = makeDateArray(date);
 
 
-    const handleChange = (name) => () => setField(name);
-    const isActiveField = (name) => field === name;
-
-
     return (
         <GraphWithStatCard
             title={"Surplus Quantity Weekly View"}

@@ -34,7 +34,7 @@ const EbayEntry = () => {
         form.setValues((prevValues) => ({...prevValues, ...values}));
         form.resetDirty(values)
 
-    }, [status]);
+    }, [status,form,userName]);
 
     function handleSubmit(values) {
         setLoading(true)

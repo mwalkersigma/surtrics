@@ -360,7 +360,6 @@ const Dashboard = () => {
 
 
     ecommerceData = ecommerceData.rows.map(mapCommerceData);
-    let dates = ecommerceData.map(({month})=>month).reverse();
 
     let monthData = ecommerceData.find(({month:month_of_transaction})=>month_of_transaction === month);
     const currentMonthData = createData(monthData);

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container, Grid, Skeleton, Stack, Title} from "@mantine/core";
+import {Container, Grid, Paper, Skeleton, Stack, Title} from "@mantine/core";
 
 
 const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOne, slotTwo}) => {
@@ -45,10 +45,9 @@ const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOn
             <Grid spacing={"xl"} style={{}}>
                 <Grid.Col span={1}></Grid.Col>
                 <Grid.Col span={9}>
-                    <div style={{position: "relative", height: "100%", minHeight: `${height}vh`}}
-                         className={"chart-container"}>
+                    <Paper style={{height: "100%", minHeight: `${height}vh`}} radius={"md"} shadow={"md"} p={5} withBorder>
                         {children}
-                    </div>
+                    </Paper>
                 </Grid.Col>
                 <Grid.Col span={2}>
                     <Stack style={{height:"100%"}} justify={"space-between"} align={"space-between"}>

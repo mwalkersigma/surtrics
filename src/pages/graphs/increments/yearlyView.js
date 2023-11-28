@@ -97,11 +97,13 @@ function YearlyChart(props){
     }
 
     const monthes = [ "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+
+
     yearData =  yearData
         .map((item)=>{
         const {date_of_transaction} = item;
         return{...item, ...{date_of_transaction: getMonth(new Date(date_of_transaction))+1}}
-    }).sort((a,b)=>a.date_of_transaction - b.date_of_transaction)
+    }).sort((a,b)=> new Date(a.date_of_transaction) - new Date(b.date_of_transaction))
 
     const data = yearData.length > 0 && {
         labels: Array.from(new Set(yearData?.map(({date_of_transaction}) => (monthes[date_of_transaction-1])))),
@@ -154,6 +156,7 @@ function YearlyView() {
         acc[date_of_transaction].count += +count;
         return acc;
     } , {}));
+
     return (
         <GraphWithStatCard
             title={"Surplus Increments Yearly View"}

@@ -4,7 +4,7 @@ import {parseBody} from "../../../modules/serverUtils/parseBody";
 
 
 
-async function PostHandler(req,res,date,interval,increment) {
+async function PostHandler(req,res,date,interval) {
 let data = await db.query(`
 SELECT
     "user" AS user_id,
@@ -43,20 +43,15 @@ GROUP BY
     return JSON.stringify(results);
 }
 export default function handler (req,res) {
-    let date,body,interval,increment;
+    let date,body;
     body = parseBody(req);
 
     date = body?.date ? new Date(body.date) : new Date();
-    if(!body?.interval){
-        return res.status(400).json({error: "No interval provided"})
-    }
-
-    interval = body.interval;
-    increment = body.increment || interval
     return router({
         POST:PostHandler
-    })(req,res,date,interval,increment)
+    })(req,res,date,'1 day')
         .then((response) => {
+            console.log(response)
             res.status(200).json(response)
         })
         .catch((error) => {

@@ -13,7 +13,7 @@ import {IconTrash} from "@tabler/icons-react";
 
 const Ebay = () => {
     const {tableData,removeHandler,status} = useTable({route:"/api/dataEntry/ebay",idField:"entry_id"})
-    let removeEntry = removeHandler("/api/admin/event");
+    let removeEntry = removeHandler("/api/dataEntry/ebay");
 
     return (
         <ViewerLayout title={"ebay"} isLoading={status === "loading"}>

@@ -14,7 +14,7 @@ import formatter from "../../modules/utils/numberFormatter";
 
 const BigCommerce = () => {
     const {tableData,removeHandler,status} = useTable({route:"/api/dataEntry/bigCommerce",idField:"entry_id"})
-    let removeEntry = removeHandler("/api/admin/event");
+    let removeEntry = removeHandler("/api/dataEntry/bigCommerce");
     console.log(tableData)
     return (
         <ViewerLayout title={"Big Commerce"} isLoading={status === "loading"}>

@@ -97,7 +97,7 @@ function WeekGraph ({weekSeed,goal,theme, height}){
         options={{
             devicePixelRatio: 4,
             responsive: true,
-            // maintainAspectRatio: false,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false,
@@ -144,7 +144,7 @@ function DailyGraph ({dailyData,theme,height}){
         options={{
             devicePixelRatio: 4,
             responsive: true,
-            // maintainAspectRatio: false,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false,

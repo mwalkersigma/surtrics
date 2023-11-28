@@ -197,6 +197,7 @@ export default function ManLayout({}) {
     date = formatDateWithZeros(addDays(findStartOfWeek(new Date()),1))
     let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
     weekData = processWeekData(weekData);
+    console.log(weekData)
 
     let weekDays = weekData.filter(({date}) => !isWeekend(new Date(date)))
 
@@ -219,8 +220,7 @@ export default function ManLayout({}) {
 
     const totalIncrements = weekSeed.map(({count}) => +count).reduce((a,b)=>a+b,0);
     const totalForToday = dailyData.reduce((a,b) => a + +b.count,0);
-
-    const dailyAverage = Math.round(totalIncrements / (weekDays.length || 1));
+    const dailyAverage = Math.round(totalIncrements / (weekData.length || 1));
     const hourlyAverage = Math.round(dailyAverage / 7 || 1);
 
     const bestDay = Math.max(...weekData.map(({count}) => +count));
@@ -254,7 +254,7 @@ export default function ManLayout({}) {
             badgeText: `Average: ${dailyAverage} /day`
         },
     ]
-
+    let height = 250;
     return (
         <Center h={`${!hasNav && "100vh"}`}>
             <Grid py={`${!hasNav && "xl"}`} >
@@ -268,12 +268,12 @@ export default function ManLayout({}) {
                         ))}
                         <Grid.Col  span={6}>
                             <Paper withBorder p="md" radius="md">
-                                <WeekGraph height={150} weekSeed={weekSeed}  goal={goal} theme={theme}/>
+                                <WeekGraph height={height} weekSeed={weekSeed}  goal={goal} theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={6}>
                             <Paper withBorder p="md" radius="md">
-                                <DailyGraph height={150} dailyData={dailyData}  theme={theme}/>
+                                <DailyGraph height={height} dailyData={dailyData}  theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>

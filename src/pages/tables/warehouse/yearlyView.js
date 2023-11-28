@@ -1,30 +1,28 @@
 import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
 
-import makeDateArray from "../../../modules/utils/makeDateArray";
 import formatDatabaseRows from "../../../modules/utils/formatDatabaseRows";
 
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {Table} from "@mantine/core";
-import {DatePickerInput, getStartOfWeek} from "@mantine/dates";
-import {formatDistanceStrict} from "date-fns";
-
+import { YearPickerInput } from "@mantine/dates";
+import {setDate, setMonth} from "date-fns";
+const dateSet = setDate;
 const WeeklyView = () => {
-    const [date, setDate] = useState(new Date());
-    const updates = useUpdates("/api/views/picks/warehousePicks",{date:getStartOfWeek(date) ,interval:"1 week",increment:"day"});
+    const [date, setDate] = useState(setMonth(dateSet(new Date(),1),0));
+    const updates = useUpdates("/api/views/picks/warehousePicks",{date ,interval:"1 year",increment:"month"});
 
-
-    const dates = makeDateArray(date);
+    const dates = [...new Set(updates.map(({date})=>date.split("T")[0]))].sort((a,b)=>new Date(a)-new Date(b));
     let rows = formatDatabaseRows(updates);
-
-
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    months.length = dates.length;
     return (
         <GraphWithStatCard
-            title={"Surplus Warehouse Picks Weekly View"}
+            title={"Surplus Warehouse Picks Monthly View"}
             isLoading={updates.length === 0}
             dateInput={
-                <DatePickerInput
-                    label={"Date"}
+                <YearPickerInput
+                    label={"Year"}
                     mb={"xl"}
                     value={date}
                     onChange={setDate}
@@ -36,7 +34,7 @@ const WeeklyView = () => {
                 <Table.Thead>
                     <Table.Tr>
                         <Table.Th>Name</Table.Th>
-                        {dates.map((date) => <Table.Th key={`${date}`}>{date}</Table.Th>)}
+                        {months.map((date) => <Table.Th key={`${date}`}>{date}</Table.Th>)}
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>

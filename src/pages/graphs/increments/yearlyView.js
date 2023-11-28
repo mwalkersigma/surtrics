@@ -103,7 +103,9 @@ function YearlyChart(props){
         .map((item)=>{
         const {date_of_transaction} = item;
         return{...item, ...{date_of_transaction: getMonth(new Date(date_of_transaction))+1}}
-    }).sort((a,b)=> new Date(a.date_of_transaction) - new Date(b.date_of_transaction))
+    }).sort((a,b)=> new Date(a.date_of_transaction) - new Date(b.date_of_transaction));
+
+    console.log(yearData)
 
     const data = yearData.length > 0 && {
         labels: Array.from(new Set(yearData?.map(({date_of_transaction}) => (monthes[date_of_transaction-1])))),

@@ -7,7 +7,6 @@ import formatDatabaseRows from "../../../modules/utils/formatDatabaseRows";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {Table} from "@mantine/core";
 import {DatePickerInput, getStartOfWeek} from "@mantine/dates";
-import {formatDistanceStrict} from "date-fns";
 
 const WeeklyView = () => {
     const [date, setDate] = useState(new Date());

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
 
-import makeDateArray from "../../../modules/utils/makeDateArray";
 import formatDatabaseRows from "../../../modules/utils/formatDatabaseRows";
 
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";

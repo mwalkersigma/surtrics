@@ -197,7 +197,6 @@ export default function ManLayout({}) {
     date = formatDateWithZeros(addDays(findStartOfWeek(new Date()),1))
     let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
     weekData = processWeekData(weekData);
-    console.log(weekData)
 
     let weekDays = weekData.filter(({date}) => !isWeekend(new Date(date)))
 
@@ -254,7 +253,7 @@ export default function ManLayout({}) {
             badgeText: `Average: ${dailyAverage} /day`
         },
     ]
-    let height = 250;
+    let height = "25vh";
     return (
         <Center h={`${!hasNav && "100vh"}`}>
             <Grid py={`${!hasNav && "xl"}`} >
@@ -266,14 +265,14 @@ export default function ManLayout({}) {
                                 <DashboardCard hasNav={hasNav} {...test} />
                             </Grid.Col>
                         ))}
-                        <Grid.Col  span={6}>
-                            <Paper withBorder p="md" radius="md">
-                                <WeekGraph height={height} weekSeed={weekSeed}  goal={goal} theme={theme}/>
+                        <Grid.Col span={6}>
+                            <Paper style={{minHeight:height}} withBorder p="md" radius="md">
+                                <WeekGraph weekSeed={weekSeed}  goal={goal} theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={6}>
-                            <Paper withBorder p="md" radius="md">
-                                <DailyGraph height={height} dailyData={dailyData}  theme={theme}/>
+                            <Paper style={{minHeight:height}} withBorder p="md" radius="md">
+                                <DailyGraph dailyData={dailyData}  theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>

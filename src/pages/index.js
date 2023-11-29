@@ -1,7 +1,7 @@
 import React from "react";
 import {Badge, Center, Grid, Group, Paper, Progress, Space, Text, Title, useMantineColorScheme} from '@mantine/core';
 import formatter from "../modules/utils/numberFormatter";
-import {addDays, addHours, format, isWeekend} from "date-fns";
+import {addDays, addHours, format} from "date-fns";
 import {Bar, Line} from "react-chartjs-2";
 import {colorScheme} from "./_app";
 import useUpdates from "../modules/hooks/useUpdates";
@@ -13,7 +13,7 @@ import makeWeekArray from "../modules/utils/makeWeekArray";
 import {BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import useNav from "../modules/hooks/useNav";
-import {useElementSize, useViewportSize} from "@mantine/hooks";
+import { useViewportSize} from "@mantine/hooks";
 
 ChartJS.register(
     CategoryScale,

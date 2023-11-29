@@ -13,7 +13,7 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../_app";
-import {getMonth, setDate, setMonth} from "date-fns";
+import { setDate, setMonth } from "date-fns";
 import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";

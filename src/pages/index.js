@@ -13,6 +13,7 @@ import makeWeekArray from "../modules/utils/makeWeekArray";
 import {BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import useNav from "../modules/hooks/useNav";
+import {useElementSize, useViewportSize} from "@mantine/hooks";
 
 ChartJS.register(
     CategoryScale,
@@ -22,6 +23,17 @@ ChartJS.register(
     PointElement,
     LineElement,
 );
+
+
+function normalize(minIn, maxIn, minOut, maxOut) {
+    return (value)=> {
+        if(value > maxIn) return maxOut;
+        if(value < minIn) return minOut;
+        return (value - minIn) * (maxOut - minOut) / (maxIn - minIn) + minOut;
+    }
+}
+
+let normalized = normalize(730, 1375, 200, 800);
 const Theme = (theme) => theme === "dark" ? colorScheme.light : colorScheme.dark;
 const times = [
     "6 AM",
@@ -180,12 +192,21 @@ function DailyGraph ({dailyData,theme,height}){
 
 export default function ManLayout({}) {
     const hasNav = useNav();
-
+    let date = new Date()
     const {colorScheme:theme} = useMantineColorScheme();
-    let date = new Date().toLocaleString().split("T")[0];
     const errorUpdates = useUpdates("/api/views/errors");
-
     let dailyData = useUpdates("/api/views/increments",{date, interval:"1 day", increment: "hour"});
+
+    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()),1))
+    let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
+
+    const {height:viewportHeight} = useViewportSize();
+
+    let height = normalized(viewportHeight)
+    if(hasNav) height = height - 50;
+    console.log(height)
+
+
     dailyData = dailyData
         .reduce((acc,curr) => {
             let date = new Date(curr.date_of_transaction).toLocaleString().split("T")[0];
@@ -194,16 +215,16 @@ export default function ManLayout({}) {
             return acc
         },{})
     dailyData = Object.entries(dailyData).map(([date,count]) => ({date_of_transaction:date,count}));
-    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()),1))
-    let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
-    weekData = processWeekData(weekData);
 
-    let weekDays = weekData.filter(({date}) => !isWeekend(new Date(date)))
+
+    weekData = processWeekData(weekData);
+    console.log(weekData)
 
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
     let weekSeed = makeWeekArray(weekData,new Date(date));
+
 
     let weeklyErrors = errorUpdates
             .map((item)=>({...item,date_of_transaction:item.date_of_transaction.split("T")[0]}))
@@ -253,25 +274,29 @@ export default function ManLayout({}) {
             badgeText: `Average: ${dailyAverage} /day`
         },
     ]
-    let height = "25vh";
+
     return (
         <Center h={`${!hasNav && "100vh"}`}>
             <Grid py={`${!hasNav && "xl"}`} >
                 <Grid.Col span={1}></Grid.Col>
                 <Grid.Col span={10}>
                     <Grid>
-                        {cards.map((test,index) => (
-                            <Grid.Col key={index} span={4}>
-                                <DashboardCard hasNav={hasNav} {...test} />
-                            </Grid.Col>
-                        ))}
+                        <Grid.Col   span={4}>
+                            <DashboardCard hasNav={hasNav} {...cards[0]} />
+                        </Grid.Col>
+                        <Grid.Col span={4}>
+                            <DashboardCard hasNav={hasNav} {...cards[1]} />
+                        </Grid.Col>
+                        <Grid.Col  span={4}>
+                            <DashboardCard hasNav={hasNav} {...cards[2]} />
+                        </Grid.Col>
                         <Grid.Col span={6}>
-                            <Paper style={{minHeight:height}} withBorder p="md" radius="md">
+                            <Paper h={height} withBorder p="md" radius="md">
                                 <WeekGraph weekSeed={weekSeed}  goal={goal} theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={6}>
-                            <Paper style={{minHeight:height}} withBorder p="md" radius="md">
+                            <Paper h={height} withBorder p="md" radius="md">
                                 <DailyGraph dailyData={dailyData}  theme={theme}/>
                             </Paper>
                         </Grid.Col>

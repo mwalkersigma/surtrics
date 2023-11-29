@@ -49,8 +49,7 @@ export default function Layout({children}) {
             <AppShell.Footer p="md">
                 <Text ta={"center"} fz={"xs"}>
                     Surtrics 2023. Proud to be employee owned.<br/>
-                    To suggest improvements, please contact <a href={"mailto:mwalker@sigmaequipment.com"}> Michael
-                    Walker</a>
+                    To suggest improvements, features, pages, or report bugs, please use the <a href={"https://surprice.productlift.dev/"}>SurSuite Product Lift page</a>
                 </Text>
             </AppShell.Footer>
         </AppShell>)

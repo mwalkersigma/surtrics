@@ -96,7 +96,7 @@ function YearlyChart(props){
         },
     }
 
-    const monthes = [ "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    const months = [ "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
 
     yearData =  yearData
@@ -104,7 +104,7 @@ function YearlyChart(props){
         .sort((a,b)=> new Date(a.date_of_transaction) - new Date(b.date_of_transaction));
 
     const data = yearData.length > 0 && {
-        labels: monthes,
+        labels: months,
         datasets: [
             {
                 type: "bar",

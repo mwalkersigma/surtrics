@@ -17,7 +17,7 @@ function getHandler(req, res) {
                 res.status(200).json(data.rows);
             })
             .catch((error) => {
-                res.status(500).json({error});
+                res.status(500).json(error);
             });
 
     },"bsa","surplus director")(req,res)
@@ -48,13 +48,14 @@ function putHandler(req, res) {
 }
 function deleteHandler(req, res) {
     return serverAdminWrapper((req,res)=> {
+        console.log(parseBody(req))
         return db.query(`
             DELETE
             FROM surtrics.surplus_big_commerce_data
             WHERE entry_id = $1
-        `, [parseBody(req).id])
+        `, [parseBody(req)['entry_id']])
             .then(() => {
-                res.status(200).json({message: "Successfully deleted data"});
+                res.status(200).json("Successfully deleted data");
             })
             .catch((error) => {
                 res.status(500).json({error});

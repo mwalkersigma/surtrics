@@ -18,7 +18,7 @@ const WeeklyView = () => {
     months.length = dates.length;
     return (
         <GraphWithStatCard
-            title={"Surplus Warehouse Picks Monthly View"}
+            title={"Surplus Warehouse Picks Yearly View"}
             isLoading={updates.length === 0}
             dateInput={
                 <YearPickerInput

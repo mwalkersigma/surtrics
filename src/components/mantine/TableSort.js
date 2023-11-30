@@ -63,7 +63,6 @@ function identifyType(value) {
 
 function sorter(a, b) {
     let type = identifyType(a);
-    console.log(type)
     switch (type) {
         case "number":
             return a - b;

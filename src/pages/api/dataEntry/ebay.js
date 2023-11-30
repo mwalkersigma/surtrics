@@ -7,7 +7,6 @@ function putHandler(req, res) {
     return serverAdminWrapper((req, res,{user:{name}}) => {
         let body = parseBody(req);
         const {impressions, page_views, date_for_week} = body;
-        console.log(impressions, page_views, date_for_week, name);
         return db.query(`
             INSERT INTO surtrics.surplus_ebay_data (impressions, page_views, date_for_week, user_who_entered)
             VALUES ($1, $2, $3, $4)

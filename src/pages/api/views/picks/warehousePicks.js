@@ -38,7 +38,6 @@ export default async function handler(req, res) {
         POST:PostHandler
     })(req,res,date,interval,increment)
         .then((response) => {
-            console.log(JSON.stringify(response))
             res.status(200).json(response)
         })
         .catch((error) => {

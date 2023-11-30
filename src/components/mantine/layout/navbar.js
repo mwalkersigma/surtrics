@@ -10,12 +10,12 @@ export default function SurtricsNavbar ({}) {
                     <NavLink label={"E-Commerce Dashboard"} href={"/viewers/ecommerce"}/>
                 </RoleWrapper>
                 <NavLink label={"Increments"}>
-                    <NavLink label={"Graphs"}>
+                    {/*<NavLink label={"Graphs"}>*/}
                         <NavLink href="/graphs/increments/dailyView" label={"Daily View"}/>
                         <NavLink href="/graphs/increments/weeklyView" label={"Weekly View"}/>
                         <NavLink href="/graphs/increments/monthlyView" label={"Monthly View"}/>
                         <NavLink href="/graphs/increments/yearlyView" label={"Yearly View"}/>
-                    </NavLink>
+                    {/*</NavLink>*/}
                 </NavLink>
                 <NavLink label={"Approvals"}>
                     <NavLink label={"Graphs"}>
@@ -36,6 +36,11 @@ export default function SurtricsNavbar ({}) {
                     </NavLink>
                 </NavLink>
                 <NavLink label={"Sales"}>
+                    <NavLink label={"Graphs"}>
+                        <NavLink href="/graphs/sales/weeklyView" label={"Weekly View"}/>
+                        <NavLink href="/graphs/sales/monthlyView" label={"Monthly View"}/>
+                        <NavLink href="/graphs/sales/yearlyView" label={"yearly View"}/>
+                    </NavLink>
                     <NavLink label={"Tables"}>
                         <NavLink href="/tables/sales/dailyView" label={"Daily View"}/>
                     </NavLink>
@@ -52,9 +57,11 @@ export default function SurtricsNavbar ({}) {
                     </NavLink>
                 </NavLink>
                 <NavLink label={"Warehouse"}>
-                    <NavLink label={"Tables"}>
+                    {/*<NavLink label={"Tables"}>*/}
                         <NavLink href="/tables/warehouse/weeklyView" label={"Weekly View"}/>
-                    </NavLink>
+                        <NavLink href="/tables/warehouse/monthlyView" label={"Monthly View"}/>
+                        <NavLink href="/tables/warehouse/yearlyView" label={"Yearly View"}/>
+                    {/*</NavLink>*/}
                 </NavLink>
                 <RoleWrapper invisible altRoles={["bsa", "surplus director"]}>
                     <NavLink label={"Data Entry"}>

@@ -39,7 +39,6 @@ function putHandler(req, res) {
         `,[visits, shopped,add_to_cart, web_leads, date_for_week, user_who_submitted ])
     },"bsa","surplus director")(req,res)
         .then((response) => {
-            console.log(response)
             res.status(200).json({message:"Successfully added data",response});
         })
         .catch((error) => {
@@ -48,7 +47,7 @@ function putHandler(req, res) {
 }
 function deleteHandler(req, res) {
     return serverAdminWrapper((req,res)=> {
-        console.log(parseBody(req))
+
         return db.query(`
             DELETE
             FROM surtrics.surplus_big_commerce_data

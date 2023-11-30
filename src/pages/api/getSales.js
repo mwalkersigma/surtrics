@@ -30,7 +30,6 @@ async function getShipStationOrders(options) {
     let results = [];
     while (true) {
         let fullUrl = buildURL(baseUrl, endpoint, options).href;
-        console.log(fullUrl);
         let headers ={
             "Authorization": "Basic " + process.env.SHIPSTATION_TOKEN
         }

@@ -164,7 +164,7 @@ function MonthlyApprovalsChart({approvals,theme}){
 const MonthlyView = () => {
     const [date,setDate] = useState(dateSet(new Date(),1))
     const {colorScheme:theme} = useMantineColorScheme();
-    let approvals = useUpdates("/api/views/approvals", {date, interval: "1 month"});
+    let approvals = useUpdates("/api/views/approvals", {date, interval: "1 month",increment:"day"});
     approvals = approvals.map((approval) => ({...approval, date_of_final_approval: approval.date_of_final_approval.split("T")[0]}));
 
 

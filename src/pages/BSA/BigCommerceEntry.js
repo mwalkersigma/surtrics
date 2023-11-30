@@ -45,7 +45,7 @@ const BigCommerceEntry = () => {
     const {data: session,status} = useSession();
     const userName = session?.user?.name;
     const [loading, setLoading] = useState(true);
-    const {onSubmit, getInputProps,setValues,resetDirty,reset,values} = useForm({
+    const {onSubmit, getInputProps,setValues,reset,values} = useForm({
         initialValues: {
             visits: 0,
             shopped: 0,
@@ -65,9 +65,8 @@ const BigCommerceEntry = () => {
         }
         let values = {user_who_submitted: userName}
         setValues((prevValues) => ({...prevValues, ...values}));
-        resetDirty(values)
 
-    }, [status,resetDirty,setValues,userName]);
+    }, [status]);
 
 
 

@@ -152,7 +152,7 @@ function WeeklyApprovalsChart({approvals,date,theme}){
 const WeekView = () => {
     const [date, setDate] = useState(new Date());
     const {colorScheme:theme} = useMantineColorScheme();
-    let approvals = useUpdates("/api/views/approvals", {date:formatDateWithZeros(addDays(findStartOfWeek(new Date(date)),1)),interval:"1 week"});
+    let approvals = useUpdates("/api/views/approvals", {date:formatDateWithZeros(addDays(findStartOfWeek(new Date(date)),1)),interval:"1 week",increment:'day'});
 
     const users = [...new Set(approvals.map(({name}) => name))]
         .reduce((acc,cur)=>{

@@ -32,14 +32,39 @@ ChartJS.register(
     LineElement,
     PointElement,
 );
+function findLinearTrendLine(data) {
+    const n = data.length;
+
+    // Calculate sums
+    let sumX = 0;
+    let sumY = 0;
+    let sumXY = 0;
+    let sumX2 = 0;
+
+    for (let i = 0; i < n; i++) {
+        sumX += data[i][0];
+        sumY += data[i][1];
+        sumXY += data[i][0] * data[i][1];
+        sumX2 += data[i][0] * data[i][0];
+    }
+
+    // Calculate slope (m) and y-intercept (b) of the trendline
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+
+    // Create the trendline function
+    const trendline = (_,x) => slope * x + intercept;
+
+    return data.map(trendline)
+}
 
 function smoothData(data,adjCount=3) {
     // take the average of the current, n previous, and n next data points
     // where n is the adjCount
     if(adjCount === 0) return data;
     if(adjCount === 8){
-        let average = data.reduce((a,b) => a + b, 0) / data.length;
-        return data.map(() => average);
+        let linearData = findLinearTrendLine(Object.values(data).map((x,i) => [i+1,x]))
+        return linearData;
     }
     let newData = [];
     for(let i = 0; i < data.length; i++) {
@@ -73,7 +98,7 @@ const ApprovalsView = () => {
     let [user, setUser] = useState("Total");
     const [date,setDate] = useState(dateSet(setMonth(new Date(),0),1));
     const [resolution, setResolution] = useState(4);
-    const updates = useUpdates("/api/views/approvals", {date, interval:"1 year"});
+    const updates = useUpdates("/api/views/approvals", {date, interval:"1 year", increment:"week"});
 
     let mappedUpdates = {Total:{}};
     updates

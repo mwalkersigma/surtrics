@@ -1,50 +1,22 @@
 import React from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
-import {format} from "date-fns";
 import {NativeSelect, Table} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 import formatter from "../../../modules/utils/numberFormatter";
-
+import Order from "../../../modules/classes/Order";
 
 const storeNames = {
     "225004": "Big Commerce",
     "255895": "Ebay",
 };
 
-class Order {
-    constructor(order) {
-        this._order = order;
-        this.name = order.name;
-        this.orderId = order['order_id'];
-        this.storeId = order['store_id'];
-        this.paymentDate = format(new Date(order['payment_date']), "MM/dd/yyyy");
-        this.paymentTime = format(new Date(order['payment_date']), "HH:mm:ss");
-        this.orderStatus = order['order_status'];
-        this.sale_id = order.sale_id;
-    }
 
-    get items() {
-        return this._order.items.map(this.processItem).flat();
-    }
-
-    get total() {
-        return this.items.reduce((total, item) => total + item.unitPrice * item.quantity, 0);
-    }
-
-    processItem(item) {
-        try {
-            return JSON.parse(item);
-        } catch (e) {
-            return JSON.parse("[" + item + "]");
-        }
-    }
-}
 
 const DailyView = () => {
     let [date, setDate] = React.useState(new Date());
     const [store, setStore] = React.useState("225004");
-    let sales = useUpdates("/api/views/sales/sales", {date});
+    let sales = useUpdates("/api/views/sales", {date});
 
     sales = sales.map(sale => new Order(sale));
     let storeIDs = [...new Set(sales.map(sale => sale.storeId))];

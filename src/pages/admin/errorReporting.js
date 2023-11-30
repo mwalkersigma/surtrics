@@ -127,7 +127,7 @@ const ErrorReporting = () => {
                                 {...getInputProps("reason")}
                             >
                                 <option value={""}>Choose a reason</option>
-                                <option onMouseOver={()=>console.log("Hover")} value={"Banned"}>Banned</option>
+                                <option value={"Banned"}>Banned</option>
                                 <option value={"Breakdown"}>Breakdown</option>
                                 <option value={"Condition"}>Condition</option>
                                 <option value={"Location"}>Location</option>

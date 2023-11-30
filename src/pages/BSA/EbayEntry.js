@@ -34,7 +34,7 @@ const EbayEntry = () => {
         form.setValues((prevValues) => ({...prevValues, ...values}));
         form.resetDirty(values)
 
-    }, [status,form,userName]);
+    }, [status]);
 
     function handleSubmit(values) {
         setLoading(true)
@@ -44,7 +44,6 @@ const EbayEntry = () => {
         })
             .then((res) => res.json())
             .then(({message, response}) => {
-                console.log(response)
                 Notifications.show({autoClose: 5000, title: "Success", message, type: "success"})
             })
             .catch((err) => {

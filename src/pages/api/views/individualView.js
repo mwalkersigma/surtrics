@@ -51,7 +51,6 @@ export default function handler (req,res) {
         POST:PostHandler
     })(req,res,date,'1 day')
         .then((response) => {
-            console.log(response)
             res.status(200).json(response)
         })
         .catch((error) => {

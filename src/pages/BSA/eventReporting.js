@@ -7,20 +7,6 @@ import {useForm} from "@mantine/form";
 import {DatePickerInput} from "@mantine/dates";
 
 
-/*
-<TagsInput
-                label={"Affected Categories"}
-                description={"Select All that apply or add your own"}
-                data={[
-                    "Marketing",
-                    "Processing",
-                    "Website",
-                    "Warehouse",
-                    "Pricing"
-                ]}
-                {...form.getInputProps("affected_categories")}
-    />
- */
 
 
 const EventReporting = () => {
@@ -38,7 +24,6 @@ const EventReporting = () => {
             session
         }
     })
-    console.log(form.getInputProps("affected_categories"))
 
     useEffect(() => {
         if(status === "loading"){
@@ -51,7 +36,7 @@ const EventReporting = () => {
         form.setValues((prevValues) => ({...prevValues, ...values}));
         form.resetDirty(values)
 
-    }, [status,form,userName]);
+    }, [status]);
 
     function handleSubmit(values) {
         setLoading(true)

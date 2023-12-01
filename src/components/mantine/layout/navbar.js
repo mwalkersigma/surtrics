@@ -1,103 +1,101 @@
 import {AppShell, NavLink, ScrollArea} from "@mantine/core";
 import RoleWrapper from "../../RoleWrapper";
+import {useLocalStorage, useSessionStorage} from "@mantine/hooks";
 
-export default function SurtricsNavbar ({}) {
+
+
+
+
+
+function GeneratedNavBar({page,count,keyName="",state,handleToggle}) {
+    return Object
+        .entries(page)
+        .map(([key, value],i) => {
+            let href = value?.href;
+            let roles = value?.roles;
+            if(href){
+                const {href,roles,...rest} = value;
+                if(roles){
+                    return (
+                        <RoleWrapper key={`${key} ${i}`} altRoles={roles} invisible>
+                            <NavLink {...rest} href={href} label={key}/>
+                        </RoleWrapper>
+                    )
+                }else{
+                    return <NavLink {...rest} key={`${key} ${i}`} href={href} label={key}/>
+                }
+            }else{
+                let linkName = `${keyName} ${key} ${count++}`;
+                const {links,roles,...rest} = value;
+                if(roles){
+                    return (
+                        <RoleWrapper key={linkName} altRoles={roles} invisible>
+                            <NavLink
+                                key={linkName}
+                                label={key}
+                                onClick={() => handleToggle(linkName)}
+                                opened={state[linkName]}
+                                {...rest}
+                            >
+                                <GeneratedNavBar count={count} keyName={key}  page={links} state={state} handleToggle={handleToggle}/>
+                            </NavLink>
+                        </RoleWrapper>
+                    )
+                }else{
+                    return (
+                        <NavLink
+                            key={linkName}
+                            label={key}
+                            onClick={() => handleToggle(linkName)}
+                            opened={state[linkName]}
+                            {...rest}
+                        >
+                            <GeneratedNavBar count={count} keyName={key}  page={links} state={state} handleToggle={handleToggle}/>
+                        </NavLink>
+                    )
+                }
+            }
+        })
+
+
+}
+
+
+function stateInit(page) {
+    let temp = {}
+   function createStateForPage(page,count=0,keyName="") {
+        return Object
+            .entries(page)
+            .forEach(([key, value]) => {
+                let defaultState = false;
+                let href = value?.href;
+                if(!href){
+                    let linkName = `${keyName} ${key} ${count++}`;
+                    temp[linkName] = defaultState
+                    createStateForPage(value.links,count,key)
+                }
+            })
+    }
+    createStateForPage(page)
+    return temp
+}
+
+
+export default function SurtricsNavbar ({links}) {
+    let count = 0
+    const [state, setState] = useSessionStorage({
+        key: "navbar",
+        defaultValue: stateInit(links)
+    });
+
+    const handleToggle = (key) => {
+        setState((current) => ({...current, [key]: !current[key]}))
+    }
+
     return (
         <AppShell.Navbar p="md">
             <ScrollArea>
-                <NavLink label={"Dashboard"} href={"/"}/>
-                <RoleWrapper invisible altRoles={["bsa", "surplus director"]}>
-                    <NavLink label={"E-Commerce Dashboard"} href={"/viewers/ecommerce"}/>
-                </RoleWrapper>
-                <NavLink label={"Increments"}>
-                    {/*<NavLink label={"Graphs"}>*/}
-                        <NavLink href="/graphs/increments/dailyView" label={"Daily View"}/>
-                        <NavLink href="/graphs/increments/weeklyView" label={"Weekly View"}/>
-                        <NavLink href="/graphs/increments/monthlyView" label={"Monthly View"}/>
-                        <NavLink href="/graphs/increments/yearlyView" label={"Yearly View"}/>
-                    {/*</NavLink>*/}
-                </NavLink>
-                <NavLink label={"Approvals"}>
-                    <NavLink label={"Graphs"}>
-                        <NavLink href="/graphs/approvals/weekView" label={"Weekly View"}/>
-                        <NavLink href="/graphs/approvals/monthlyView" label={"Monthly View"}/>
-                        <NavLink href="/graphs/approvals/yearView" label={"Yearly View"}/>
-                    </NavLink>
-                    <NavLink label={"Tables"}>
-                        <NavLink href="/tables/approvals/weeklyView" label={"Weekly View"}/>
-                    </NavLink>
-                </NavLink>
-                <NavLink label={"Quantity"}>
-                    <NavLink label={"Graphs"}>
-                        <NavLink href="/graphs/quantity/weeklyView" label={"Weekly View"}/>
-                    </NavLink>
-                    <NavLink label={"Tables"}>
-                        <NavLink href="/tables/quantity/weeklyView" label={"Weekly View"}/>
-                    </NavLink>
-                </NavLink>
-                <NavLink label={"Sales"}>
-                    <NavLink label={"Graphs"}>
-                        <NavLink href="/graphs/sales/weeklyView" label={"Weekly View"}/>
-                        <NavLink href="/graphs/sales/monthlyView" label={"Monthly View"}/>
-                        <NavLink href="/graphs/sales/yearlyView" label={"yearly View"}/>
-                    </NavLink>
-                    <NavLink label={"Tables"}>
-                        <NavLink href="/tables/sales/dailyView" label={"Daily View"}/>
-                    </NavLink>
-                </NavLink>
-                <NavLink label={"Individual"}>
-                    <NavLink label={"Graphs"}>
-                        <NavLink href="/graphs/individual/individualGraph" label={"Daily View"}/>
-                    </NavLink>
-                    <NavLink label={"Tables"}>
-                        <NavLink href="/tables/individual/dailyView" label={"Daily View"}/>
-                        <NavLink href="/tables/individual/weeklyView" label={"Weekly View"}/>
-                        <NavLink href="/tables/individual/monthlyView" label={"Monthly View"}/>
-                        <NavLink href="/tables/individual/yearlyView" label={"Yearly View"}/>
-                    </NavLink>
-                </NavLink>
-                <NavLink label={"Warehouse"}>
-                    {/*<NavLink label={"Tables"}>*/}
-                        <NavLink href="/tables/warehouse/weeklyView" label={"Weekly View"}/>
-                        <NavLink href="/tables/warehouse/monthlyView" label={"Monthly View"}/>
-                        <NavLink href="/tables/warehouse/yearlyView" label={"Yearly View"}/>
-                    {/*</NavLink>*/}
-                </NavLink>
-                <RoleWrapper invisible altRoles={["bsa", "surplus director"]}>
-                    <NavLink label={"Data Entry"}>
-                        <RoleWrapper invisible altRoles={["bsa"]}>
-                            <NavLink label={"Big Commerce"} href={"/BSA/BigCommerceEntry"}/>
-                            <NavLink label={"Ebay"} href={"/BSA/EbayEntry"}/>
-                        </RoleWrapper>
-                        <RoleWrapper invisible altRoles={["surplus director"]}>
-                            <NavLink label={"Quick Book"} href={"/BSA/quickBooks"}/>
-                            <NavLink label={"Submit Error Type"} href={"/BSA/createErrorType"}/>
-                        </RoleWrapper>
-                        <NavLink label={"Submit Event"} href={"/BSA/eventReporting"}/>
-                        <NavLink label={"Submit Error"} href={"/admin/errorReporting"}/>
-                    </NavLink>
-                </RoleWrapper>
-                <RoleWrapper invisible altRoles={["bsa", "surplus director"]}>
-                    <NavLink label={"Viewers"}>
-                        <NavLink label={"Error Viewer"} href={"/viewers/error"}/>
-                        <NavLink label={"Event Viewer"} href={"/viewers/event"}/>
-                        <NavLink label={"Ebay Viewer"} href={"/viewers/ebay"}/>
-                        <NavLink label={"Big Commerce Viewer"} href={"/viewers/bigCommerce"}/>
-                        <NavLink label={"Quick Books Viewer"} href={"/viewers/quickBooks"}/>
-                        <RoleWrapper invisible altRoles={["surplus director"]}>
-                            <NavLink label={"Error type Viewer"} href={"/admin/ErrorPanel"}/>
-                        </RoleWrapper>
-                    </NavLink>
-                </RoleWrapper>
-                <RoleWrapper invisible altRoles={["surplus director"]}>
-                    <NavLink label={"Admin"}>
-                        <NavLink label={"Admin Settings"} href={"/admin"}/>
-                        <NavLink label={"Update Goals"} href={"/admin/updateGoal"}/>
-                        <RoleWrapper invisible>
-                            <NavLink label={"User Panel"} href={"/admin/user"}/>
-                        </RoleWrapper>
-                    </NavLink>
-                </RoleWrapper>
+                <GeneratedNavBar state={state} handleToggle={handleToggle} page={links} count={count}/>
             </ScrollArea>
         </AppShell.Navbar>
     )

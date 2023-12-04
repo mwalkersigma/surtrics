@@ -22,7 +22,7 @@ import {
     IconTable,
     IconSettings,
     IconTargetArrow,
-    IconDeviceDesktopAnalytics
+    IconDeviceDesktopAnalytics, IconTimeline
 } from "@tabler/icons-react";
 
 const size= "1.5rem";
@@ -159,7 +159,12 @@ const pages = {
     "ECommerce": {
         roles: ["bsa", "surplus director"],
         leftSection:<IconDeviceDesktopAnalytics size={size} stroke={stroke} />,
-        links:{}
+        links:{
+            "Notable Events": {
+                leftSection:<IconTimeline size={size} stroke={stroke} />,
+                href: "/timelines/surplusEcommerce"
+            },
+        }
     },
     "Sales": {
         leftSection:<IconReportMoney size={size} stroke={stroke} />,

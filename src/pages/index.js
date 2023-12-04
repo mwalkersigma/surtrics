@@ -13,7 +13,7 @@ import makeWeekArray from "../modules/utils/makeWeekArray";
 import {BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import useNav from "../modules/hooks/useNav";
-import { useViewportSize} from "@mantine/hooks";
+import { useViewportSize } from "@mantine/hooks";
 
 ChartJS.register(
     CategoryScale,
@@ -262,7 +262,7 @@ export default function ManLayout({}) {
             goal: formatter(goal),
             errors: errorsToday,
             threshold: 10,
-            badgeText: `Average: ${hourlyAverage} /hr`
+            badgeText: `${hourlyAverage} /hr`
         },
         {
             title: "Total",
@@ -271,7 +271,7 @@ export default function ManLayout({}) {
             goal: goal * 5,
             errors: weeklyErrors,
             threshold: 10,
-            badgeText: `Average: ${dailyAverage} /day`
+            badgeText: `${dailyAverage} /day`
         },
     ]
 
@@ -281,15 +281,12 @@ export default function ManLayout({}) {
                 <Grid.Col span={1}></Grid.Col>
                 <Grid.Col span={10}>
                     <Grid>
-                        <Grid.Col   span={4}>
-                            <DashboardCard hasNav={hasNav} {...cards[0]} />
-                        </Grid.Col>
-                        <Grid.Col span={4}>
-                            <DashboardCard hasNav={hasNav} {...cards[1]} />
-                        </Grid.Col>
-                        <Grid.Col  span={4}>
-                            <DashboardCard hasNav={hasNav} {...cards[2]} />
-                        </Grid.Col>
+                        {cards.map((card,i) => (
+                            <Grid.Col span={4} key={i}>
+                                <DashboardCard key={i} hasNav={hasNav} {...card} />
+                            </Grid.Col>
+                            )
+                        )}
                         <Grid.Col span={6}>
                             <Paper h={height} withBorder p="md" radius="md">
                                 <WeekGraph weekSeed={weekSeed}  goal={goal} theme={theme}/>

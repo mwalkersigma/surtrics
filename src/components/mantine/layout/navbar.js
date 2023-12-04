@@ -1,6 +1,6 @@
 import {AppShell, NavLink, ScrollArea} from "@mantine/core";
 import RoleWrapper from "../../RoleWrapper";
-import {useLocalStorage, useSessionStorage} from "@mantine/hooks";
+import { useSessionStorage } from "@mantine/hooks";
 
 
 
@@ -12,7 +12,6 @@ function GeneratedNavBar({page,count,keyName="",state,handleToggle}) {
         .entries(page)
         .map(([key, value],i) => {
             let href = value?.href;
-            let roles = value?.roles;
             if(href){
                 const {href,roles,...rest} = value;
                 if(roles){
@@ -27,6 +26,7 @@ function GeneratedNavBar({page,count,keyName="",state,handleToggle}) {
             }else{
                 let linkName = `${keyName} ${key} ${count++}`;
                 const {links,roles,...rest} = value;
+                rest.className = "subnav-link"
                 if(roles){
                     return (
                         <RoleWrapper key={linkName} altRoles={roles} invisible>
@@ -37,7 +37,13 @@ function GeneratedNavBar({page,count,keyName="",state,handleToggle}) {
                                 opened={state[linkName]}
                                 {...rest}
                             >
-                                <GeneratedNavBar count={count} keyName={key}  page={links} state={state} handleToggle={handleToggle}/>
+                                <GeneratedNavBar
+                                    count={count}
+                                    keyName={key}
+                                    page={links}
+                                    state={state}
+                                    handleToggle={handleToggle}
+                                />
                             </NavLink>
                         </RoleWrapper>
                     )

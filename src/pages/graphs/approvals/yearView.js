@@ -59,13 +59,10 @@ function findLinearTrendLine(data) {
 }
 
 function smoothData(data,adjCount=3) {
-    // take the average of the current, n previous, and n next data points
-    // where n is the adjCount
+
     if(adjCount === 0) return data;
-    if(adjCount === 8){
-        let linearData = findLinearTrendLine(Object.values(data).map((x,i) => [i+1,x]))
-        return linearData;
-    }
+    if(adjCount === 8) return findLinearTrendLine(Object.values(data).map((x,i) => [i+1,x]));
+
     let newData = [];
     for(let i = 0; i < data.length; i++) {
         let sum = 0;
@@ -159,7 +156,7 @@ const ApprovalsView = () => {
     return (
         <GraphWithStatCard
             isLoading={updates.length === 0}
-            title={"Approvals View"}
+            title={"Surplus Template Approvals Yearly View"}
             dateInput={
             <NativeSelect
                 mt={"xl"}

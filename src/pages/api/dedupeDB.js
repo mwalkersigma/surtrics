@@ -15,7 +15,8 @@ export default function handler (req,res) {
             AND a.code = b.code
             AND a.transaction_date = b.transaction_date
             AND a.transaction_type = b.transaction_type
-            AND a.quantity = b.quantity;
+            AND a.quantity = b.quantity
+            AND a.location = b.location;
     `)
         .then(() => {
             res.status(200).json("Success")

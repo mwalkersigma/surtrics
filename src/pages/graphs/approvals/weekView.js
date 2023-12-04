@@ -167,7 +167,7 @@ const WeekView = () => {
     },{count:0})
     console.log(bestDay)
     return (<GraphWithStatCard
-            title={"Surplus Approvals Weekly View"}
+            title={"Surplus Template Approvals Weekly View"}
             isLoading={approvals.length === 0}
             dateInput={
                 <DatePickerInput

@@ -13,17 +13,9 @@ import formatter from "../../modules/utils/numberFormatter";
 import React from "react";
 
 
-const icons = {
-    eye: IconEye,
-    coin: IconCoin,
-    receipt: IconReceipt2,
-    user: IconUserPlus,
-    discount: IconDiscount2,
-    visits: IconDirections,
-};
 
 export default function StatCard ({stat,Icon:i, ...rest}){
-    const Icon = icons[i] ?? null;
+    const Icon = i ?? null;
     const DiffIcon = stat?.diff ? stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight : null;
     return (
         <Paper {...rest} withBorder p="md" radius="md">

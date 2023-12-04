@@ -171,7 +171,7 @@ const MonthlyView = () => {
 
     return (
         <GraphWithStatCard
-            title={"Surplus Approvals Monthly View"}
+            title={"Surplus Template Approvals Monthly View"}
             isLoading={approvals.length === 0}
             dateInput={
                 <MonthPickerInput

@@ -6,22 +6,43 @@ import {
 import useNav from "../modules/hooks/useNav";
 import SurtricsNavbar from "../components/mantine/layout/navbar";
 import SurtricsHeader from "../components/mantine/layout/header";
-import {IconActivity} from "@tabler/icons-react";
+import {
+    IconActivity,
+    IconCheck,
+    IconCirclePlus,
+    IconForklift,
+    IconForms,
+    IconGauge,
+    IconReportMoney,
+    IconTallymarks,
+    IconUser,
+    IconEdit,
+    IconKey,
+    IconChartHistogram,
+    IconTable,
+    IconSettings,
+    IconTargetArrow,
+    IconDeviceDesktopAnalytics
+} from "@tabler/icons-react";
 
+const size= "1.5rem";
+const stroke = 2;
 
 const pages = {
     "Dashboard": {
         href: "/",
-        //leftSection:<IconActivity size="1rem" stroke={1.5} />
+        leftSection:<IconGauge size={size} stroke={stroke} />
     },
     "E-Commerce Dashboard": {
         href: "/viewers/ecommerce",
-        //leftSection:<IconActivity size="1rem" stroke={1.5} />
+        leftSection:<IconActivity size={size} stroke={stroke} />
     },
     "Increments": {
+        leftSection:<IconCirclePlus size={size} stroke={stroke} />,
         links:{
-            "graphs": {
-                links:{
+            "Graphs": {
+                leftSection:<IconChartHistogram size={size} stroke={stroke} />,
+                    links:{
                     "Daily View": {
                         href: "/graphs/increments/dailyView"
                     },
@@ -39,8 +60,10 @@ const pages = {
         }
     },
     "Approvals": {
+        leftSection:<IconCheck size={size} stroke={stroke} />,
         links:{
-            "graphs": {
+            "Graphs": {
+                leftSection:<IconChartHistogram size={size} stroke={stroke} />,
                 links:{
                     "Weekly View": {
                         href: "/graphs/approvals/weekView"
@@ -53,7 +76,8 @@ const pages = {
                     }
                 }
             },
-            "tables": {
+            "Tables": {
+                leftSection:<IconTable size={size} stroke={stroke} />,
                 links:{
                     "Weekly View": {
                         href: "/tables/approvals/weeklyView"
@@ -63,15 +87,18 @@ const pages = {
         }
     },
     "Quantity": {
+        leftSection:<IconTallymarks size={size} stroke={stroke} />,
         links:{
-            "graphs": {
+            "Graphs": {
+                leftSection:<IconChartHistogram size={size} stroke={stroke} />,
                 links:{
                     "Weekly View": {
                         href: "/graphs/quantity/weeklyView"
                     }
                 }
             },
-            "tables": {
+            "Tables": {
+                leftSection:<IconTable size={size} stroke={stroke} />,
                 links:{
                     "Weekly View": {
                         href: "/tables/quantity/weeklyView"
@@ -80,40 +107,19 @@ const pages = {
             }
         }
     },
-    "Sales": {
-        links:{
-            "graphs": {
-                links:{
-                    "Weekly View": {
-                        href: "/graphs/sales/weeklyView"
-                    },
-                    "Monthly View": {
-                        href: "/graphs/sales/monthlyView"
-                    },
-                    "Yearly View": {
-                        href: "/graphs/sales/yearlyView"
-                    }
-                }
-            },
-            "tables": {
-                links:{
-                    "Daily View": {
-                        href: "/tables/sales/dailyView"
-                    }
-                }
-            }
-        }
-    },
     "Individual": {
+        leftSection:<IconUser size={size} stroke={stroke} />,
         links:{
-            "graphs": {
+            "Graphs": {
+                leftSection:<IconChartHistogram size={size} stroke={stroke} />,
                 links:{
                     "Daily View": {
                         href: "/graphs/individual/individualGraph"
                     }
                 }
             },
-            "tables": {
+            "Tables": {
+                leftSection:<IconTable size={size} stroke={stroke} />,
                 links:{
                     "Daily View": {
                         href: "/tables/individual/dailyView"
@@ -132,8 +138,10 @@ const pages = {
         }
     },
     "Warehouse": {
+        leftSection:<IconForklift size={size} stroke={stroke} />,
         links:{
-            "tables": {
+            "Tables": {
+                leftSection:<IconTable size={size} stroke={stroke} />,
                 links:{
                     "Weekly View": {
                         href: "/tables/warehouse/weeklyView"
@@ -148,7 +156,40 @@ const pages = {
             }
         }
     },
+    "ECommerce": {
+        roles: ["bsa", "surplus director"],
+        leftSection:<IconDeviceDesktopAnalytics size={size} stroke={stroke} />,
+        links:{}
+    },
+    "Sales": {
+        leftSection:<IconReportMoney size={size} stroke={stroke} />,
+        links:{
+            "Graphs": {
+                leftSection:<IconChartHistogram size={size} stroke={stroke} />,
+                links:{
+                    "Weekly View": {
+                        href: "/graphs/sales/weeklyView"
+                    },
+                    "Monthly View": {
+                        href: "/graphs/sales/monthlyView"
+                    },
+                    "Yearly View": {
+                        href: "/graphs/sales/yearlyView"
+                    }
+                }
+            },
+            "Tables": {
+                leftSection:<IconTable size={size} stroke={stroke} />,
+                links:{
+                    "Daily View": {
+                        href: "/tables/sales/dailyView"
+                    }
+                }
+            }
+        }
+    },
     "Data Entry": {
+        leftSection:<IconForms size={size} stroke={stroke} />,
         roles: ["bsa", "surplus director"],
         links:{
             "Big Commerce": {
@@ -175,42 +216,48 @@ const pages = {
             }
         }
     },
-    "Viewers": {
+    "My Entries": {
+        leftSection:<IconEdit size={size} stroke={stroke} />,
         roles: ["bsa", "surplus director"],
         links:{
-            "Error Viewer": {
+            "Error Entries": {
                 href: "/viewers/error"
             },
-            "Event Viewer": {
+            "Event Entries": {
                 href: "/viewers/event"
             },
-            "Ebay Viewer": {
+            "Ebay": {
                 href: "/viewers/ebay"
             },
-            "Big Commerce Viewer": {
+            "Big Commerce": {
                 href: "/viewers/bigCommerce"
             },
-            "Quick Books Viewer": {
+            "Quick Books": {
                 href: "/viewers/quickBooks"
-            },
-            "Error type Viewer": {
-                href: "/admin/ErrorPanel",
-                roles: ["surplus director"]
             }
         }
     },
     "Admin": {
+        leftSection:<IconKey size={size} stroke={stroke} />,
         roles: ["surplus director"],
         links:{
             "Admin Settings": {
-                href: "/admin"
+                href: "/admin",
+                leftSection:<IconSettings size={size} stroke={stroke} />,
             },
             "Update Goals": {
-                href: "/admin/updateGoal"
+                href: "/admin/updateGoal",
+                leftSection:<IconTargetArrow size={size} stroke={stroke} />,
             },
             "User Panel": {
+                leftSection:<IconUser size={size} stroke={stroke} />,
                 href: "/admin/user",
                 roles: []
+            },
+            "Error type Settings": {
+                leftSection:<IconSettings size={size} stroke={stroke} />,
+                href: "/admin/ErrorPanel",
+                roles: ["surplus director"]
             }
         }
     }

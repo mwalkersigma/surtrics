@@ -27,7 +27,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.impressions,
                         subtitle: `Previous Month: ${formatter(previousMonthData.impressions)}`
                     },
-                    Icon: "visits",
+                    ////Icon:IconDirections,
                 },
                 {
                     stat: {
@@ -36,7 +36,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.page_views,
                         subtitle: `Conversion Rate: ${Math.trunc(currentMonthData.page_views / currentMonthData.impressions * 10000) / 100}%`
                     },
-                    Icon: "eye",
+                    //Icon: "eye",
                 },
                 {
                     stat: {
@@ -45,7 +45,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.ebay_sales_transactions,
                         subtitle: `Order Rate: ${Math.trunc(currentMonthData.ebay_sales_transactions / currentMonthData.page_views * 10000) / 100}%`
                     },
-                    Icon: "receipt",
+                    //Icon: "receipt",
                 },
                 {
                     stat: {
@@ -55,7 +55,7 @@ function MasonryGrid({current, previous}) {
                         format: "currency",
                         subtitle: `Previous Month: ${formatter(previousMonthData.ebaySales, "currency")}`
                     },
-                    Icon: "coin",
+                    //Icon: "coin",
                 },
             ]
         },
@@ -69,7 +69,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.visits,
                         subtitle: `Previous Month: ${formatter(previousMonthData.visits)}`
                     },
-                    Icon: "eye",
+                    //Icon: IconDirections,
                 },
                 {
                     stat: {
@@ -78,7 +78,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.shopped,
                         subtitle: `Conversion Rate: ${Math.trunc(currentMonthData.shopped / currentMonthData.visits * 10000) / 100}%`
                     },
-                    Icon: "eye",
+                    //Icon: "eye",
                 },
                 {
                     stat: {
@@ -87,7 +87,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.add_to_cart,
                         subtitle: `Order Rate: ${Math.trunc(currentMonthData.add_to_cart / currentMonthData.visits * 10000) / 100}%`
                     },
-                    Icon: "eye",
+                    //Icon: "eye",
                 },
                 {
                     stat: {
@@ -96,7 +96,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.big_commerce_transactions,
                         subtitle: `Close Rate: ${Math.trunc(currentMonthData.big_commerce_transactions / currentMonthData.add_to_cart * 10000) / 100}%`
                     },
-                    Icon: "receipt",
+                    //Icon: "receipt",
                 },
                 {
                     stat: {
@@ -105,7 +105,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.web_leads,
                         subtitle: `Previous Month: ${formatter(previousMonthData.web_leads)}`
                     },
-                    Icon: "receipt",
+                    //Icon: "receipt",
                 },
                 {
                     stat: {
@@ -115,7 +115,7 @@ function MasonryGrid({current, previous}) {
                         subtitle: `Previous Month: ${formatter(previousMonthData.bigCommerceSales)}`,
                         format: "currency",
                     },
-                    Icon: "coin",
+                    //Icon: "coin",
                 },
             ]
         },
@@ -129,7 +129,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.po_count,
                         subtitle: `Previous Month: ${formatter(previousMonthData.po_count)}`
                     },
-                    Icon: "receipt",
+                    //Icon: "receipt",
                 },
                 {
                     stat: {
@@ -139,7 +139,7 @@ function MasonryGrid({current, previous}) {
                         format: "currency",
                         subtitle: `Previous Month: ${formatter(previousMonthData.po_total, "currency")}`
                     },
-                    Icon: "coin",
+                    //Icon: "coin",
                 },
                 {
                     stat: {
@@ -149,7 +149,7 @@ function MasonryGrid({current, previous}) {
                         format: "currency",
                         subtitle: `Previous Month: ${formatter(previousMonthData.po_avg, "currency")}`
                     },
-                    Icon: "coin",
+                    //Icon: "coin",
                 },
             ]
         },
@@ -163,7 +163,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.relisting_transactions,
                         subtitle: `Previous Month: ${formatter(previousMonthData.relisting_transactions)}`
                     },
-                    Icon: "receipt",
+                    //Icon: "receipt",
                 },
                 {
                     stat: {
@@ -172,7 +172,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.new_listing_transactions,
                         subtitle: `Previous Month: ${formatter(previousMonthData.new_listing_transactions)}`
                     },
-                    Icon: "receipt",
+                    //Icon: "receipt",
                 },
                 {
                     stat: {
@@ -181,7 +181,7 @@ function MasonryGrid({current, previous}) {
                         value: currentMonthData.total_increments,
                         subtitle: `Previous Month: ${formatter(previousMonthData.total_increments)}`
                     },
-                    Icon: "receipt",
+                    //Icon: "receipt",
                 },
             ]
         }

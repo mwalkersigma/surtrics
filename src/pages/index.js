@@ -195,7 +195,8 @@ export default function ManLayout({}) {
     let date = new Date()
     const {colorScheme:theme} = useMantineColorScheme();
     const errorUpdates = useUpdates("/api/views/errors");
-    let dailyData = useUpdates("/api/views/increments",{date, interval:"1 day", increment: "hour"});
+
+    let dailyData = useUpdates("/api/views/increments",{date:date.toLocaleDateString(), interval:"1 day", increment: "hour"});
 
     date = formatDateWithZeros(addDays(findStartOfWeek(new Date()),1))
     let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
@@ -204,7 +205,6 @@ export default function ManLayout({}) {
 
     let height = normalized(viewportHeight)
     if(hasNav) height = height - 50;
-    console.log(height)
 
 
     dailyData = dailyData
@@ -218,7 +218,6 @@ export default function ManLayout({}) {
 
 
     weekData = processWeekData(weekData);
-    console.log(weekData)
 
     const goal = useGoal();
     const hourlyGoal = goal / 7;

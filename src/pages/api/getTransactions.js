@@ -54,6 +54,49 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
         .withConcurrency(25)
         .for(data['Transactions'])
         .process(async (item) => {
+
+                const user=item['User'];
+                const sku =item['Sku'];
+                const code = item['Code'];
+                const title = item['Title'];
+                const quantity = item['Quantity'];
+                const location = item['Location'];
+                const type = item['TransactionType'];
+                const reason = item['TransactionReason'];
+                const date = item['TransactionDate'];
+            Logger.log(`Checking if record exists for sku: ${item['Sku']} `)
+            let existsInDatabase = await Db.query(`
+                SELECT
+                    *
+               FROM
+                    surtrics.surplus_metrics_data
+                WHERE
+                    "user" = $1
+                    AND sku = $2
+                    AND code = $3
+                    AND title = $4
+                    AND quantity = $5
+                    AND location = $6
+                    AND transaction_date = $7
+                    AND transaction_type = $8
+                    AND transaction_reason = $9
+            `,
+                [
+                user,
+                sku,
+                code,
+                title,
+                quantity,
+                location,
+                date,
+                type,
+                reason
+            ])
+            if(existsInDatabase.rows.length > 0){
+                Logger.log(`Record already exists for sku: ${item['Sku']}`)
+                return true;
+            }
+            item = convertToDatabase(item);
             Logger.log(`Inserting Record for sku: ${item['Sku']}`)
             await Db.query(`
                 INSERT INTO nfs.surtrics.surplus_metrics_data (
@@ -63,7 +106,7 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
                     transaction_date, context
                 )
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
-                convertToDatabase(item))
+                item)
             Logger.log(`Inserted Record for sku: ${item['Sku']}`)
         })
 

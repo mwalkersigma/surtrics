@@ -96,7 +96,6 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
                 Logger.log(`Record already exists for sku: ${item['Sku']}`)
                 return true;
             }
-            item = convertToDatabase(item);
             Logger.log(`Inserting Record for sku: ${item['Sku']}`)
             await Db.query(`
                 INSERT INTO nfs.surtrics.surplus_metrics_data (
@@ -106,7 +105,7 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
                     transaction_date, context
                 )
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
-                item)
+                convertToDatabase(item))
             Logger.log(`Inserted Record for sku: ${item['Sku']}`)
         })
 

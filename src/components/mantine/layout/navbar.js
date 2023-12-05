@@ -1,6 +1,8 @@
-import {AppShell, NavLink, ScrollArea} from "@mantine/core";
+import {AppShell, Divider, NavLink, ScrollArea, SegmentedControl} from "@mantine/core";
 import RoleWrapper from "../../RoleWrapper";
 import { useSessionStorage } from "@mantine/hooks";
+import {useState} from "react";
+import useAdminList from "../../../modules/hooks/useAdminList";
 
 
 
@@ -89,19 +91,39 @@ function stateInit(page) {
 
 export default function SurtricsNavbar ({links}) {
     let count = 0
+    const [section, setSection] = useSessionStorage({
+        key: "navbar-section",
+        defaultValue: "Metrics"
+    })
     const [state, setState] = useSessionStorage({
         key: "navbar",
-        defaultValue: stateInit(links)
+        defaultValue: stateInit(links[section])
     });
+
+    const {isRole} = useAdminList()
+
+
 
     const handleToggle = (key) => {
         setState((current) => ({...current, [key]: !current[key]}))
     }
+    let sections = Object.keys(links)
 
     return (
         <AppShell.Navbar p="md">
+            <SegmentedControl
+                data={sections}
+                value={section}
+                onChange={setSection}
+                fullWidth
+                mb={'2rem'}
+                //variant="outline"
+                //color="blue"
+                //size="lg"
+            />
+            <Divider mb={'2rem'}/>
             <ScrollArea>
-                <GeneratedNavBar state={state} handleToggle={handleToggle} page={links} count={count}/>
+                <GeneratedNavBar state={state} handleToggle={handleToggle} page={links[section]} count={count}/>
             </ScrollArea>
         </AppShell.Navbar>
     )

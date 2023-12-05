@@ -29,8 +29,17 @@ export const colorScheme = {
     warning:'#ffc107',
     danger:'#dc3545',
     light:'#f8f9fa',
-    dark:'#212529'
+    dark:'#212529',
+    random () {
+        let ignoreList = ["white", "gray", "grayDark","secondary","light","dark"]
+        let choices = Object.keys(this).filter((key) => !ignoreList.includes(key));
+        let random = Math.floor(Math.random() * choices.length);
+        return this[choices[random]];
+    }
 }
+
+let boundRandom = colorScheme.random.bind(colorScheme);
+colorScheme.random = boundRandom;
 
 
 function Base({ Component, pageProps }) {

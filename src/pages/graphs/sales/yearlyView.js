@@ -18,6 +18,8 @@ import {NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
 import {Chart} from "react-chartjs-2";
 import {setDate, setMonth} from "date-fns";
+import StatCard from "../../../components/mantine/StatCard";
+import formatter from "../../../modules/utils/numberFormatter";
 
 ChartJS.register(
     CategoryScale,
@@ -37,6 +39,7 @@ const storeNameMap = {
     "64872": "Manual Creation",
     "All": "All"
 }
+//225004
 const storeDataMap = {
     "Big Commerce": ["225004"],
     "Ebay": ["255895"],
@@ -47,13 +50,13 @@ const storeDataMap = {
 
 const dateSet = setDate
 const YearlyView = () => {
-    const [date, setDate] = useState(setMonth(dateSet(new Date(),0),1));
+    const [date, setDate] = useState(setMonth(dateSet(new Date(),0),0));
     const theme = useMantineColorScheme();
     const [storeId, setStoreId] = useState("All");
     const sales = useUpdates("/api/views/sales",{date, interval:'1 year'});
     const useTheme = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
     const orders = sales.map(order => new Order(order));
-    const monthes = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     let storeIds= [
         'All',
         ...new Set(orders.map(order => order.storeId)),
@@ -61,7 +64,7 @@ const YearlyView = () => {
     ];
     let yearlySales = {};
     orders.forEach(order => {
-        let month = monthes[+order.paymentDate.split("/")[0] - 1];
+        let month = months[+order.paymentDate.split("/")[0] - 1];
         if(!yearlySales[month]){
             yearlySales[month] = {
                 total: 0,
@@ -77,8 +80,8 @@ const YearlyView = () => {
         yearlySales[month][order.storeId] += order.total;
     })
 
-    yearlySales = monthes
-        .map(month => yearlySales[month] ?? undefined)
+    yearlySales = months
+        .map(month => yearlySales[month] ?? {total:0})
         .filter(month => month !== undefined)
 
 
@@ -152,9 +155,10 @@ const YearlyView = () => {
         },
     }
     const data ={
-        labels:monthes,
+        labels:months,
         datasets : graphDataSets
     }
+    console.log()
     return (
         <GraphWithStatCard
         title={"Yearly Sales"}
@@ -176,6 +180,48 @@ const YearlyView = () => {
                 {storeIds.map((store, index) => <option value={`${store}`} key={index}>{storeNameMap[store]}</option>)}
             </NativeSelect>
         }
+        cards={[
+            <StatCard
+                key={0}
+                stat={{
+                        title: "Total Sales",
+                        value: yearlySales.reduce((acc, {total}) => (acc + +total), 0),
+                        format:'currency'
+                }}
+            />,
+            <StatCard
+                key={1}
+                stat={{
+                    title: "Ebay Sales",
+                    value: yearlySales.reduce((acc, curr) => acc + Number(curr?.["255895"] ?? 0), 0),
+                    format:'currency'
+                }}
+                />,
+            <StatCard
+                key={2}
+                stat={{
+                    title: "Big Commerce Sales",
+                    value: yearlySales.reduce((acc, curr) => acc + Number(curr?.["225004"] ?? 0), 0),
+                    format:'currency'
+                }}
+            />,
+            <StatCard
+                key={3}
+                stat={{
+                    title: "Best Month Ebay",
+                    value: yearlySales.reduce((acc, curr) => (acc > +curr["255895"] ? acc : +curr["255895"]), 0),
+                    format:'currency',
+                }}
+            />,
+            <StatCard
+                key={4}
+                stat={{
+                    title: "Best Month Big Commerce",
+                    value: yearlySales.reduce((acc, curr) => (acc > +curr["225004"] ? acc : +curr["225004"]), 0),
+                    format:'currency',
+                }}
+            />
+        ]}
         >
             <Chart data={data} type={"bar"} height={150} options={options}/>
         </GraphWithStatCard>

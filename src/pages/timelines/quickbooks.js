@@ -1,11 +1,9 @@
 import React from "react";
-import useUpdates from "../modules/hooks/useUpdates";
-import {formatDistance, setDate, setMonth, subMonths} from "date-fns";
-import {useMantineColorScheme, Text, Timeline, Group, Button, Stack, Checkbox, Center} from "@mantine/core";
+
+import {setDate, setMonth} from "date-fns";
+import {Text, Timeline, Group, Checkbox} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
-import GraphWithStatCard from "../components/mantine/graphWithStatCard";
-import {colorScheme} from "./_app";
-import {Chart} from "react-chartjs-2";
+
 import {
     CategoryScale,
     Chart as ChartJS,
@@ -17,8 +15,9 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {IconGitBranch} from "@tabler/icons-react";
-import formatter from "../modules/utils/numberFormatter";
-import StatCard from "../components/mantine/StatCard";
+import formatter from "../../modules/utils/numberFormatter";
+import useUpdates from "../../modules/hooks/useUpdates";
+import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
 
 ChartJS.register(
     CategoryScale,
@@ -53,19 +52,19 @@ const EbayRangeView = () => {
                 />
             }
             slotTwo={
-            <>
-                <Text
-                    mb={'xs'}
-                    onClick={() => setSortDirection(!sortDirection)}
-                >
-                    Sort Direction: {sortDirection ? "ASC" : "DESC"}
-                </Text>
-                <Checkbox
-                    checked={sortDirection}
-                    onChange={() => setSortDirection(!sortDirection)}
-                    label={"Sort Direction"}
-                />
-            </>
+                <>
+                    <Text
+                        mb={'xs'}
+                        onClick={() => setSortDirection(!sortDirection)}
+                    >
+                        Sort Direction: {sortDirection ? "ASC" : "DESC"}
+                    </Text>
+                    <Checkbox
+                        checked={sortDirection}
+                        onChange={() => setSortDirection(!sortDirection)}
+                        label={"Sort Direction"}
+                    />
+                </>
             }
         >
             <Timeline mb={'2rem'} bulletSize={24} lineWidth={2} >

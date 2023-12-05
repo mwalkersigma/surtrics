@@ -1,7 +1,6 @@
 import {AppShell, Divider, NavLink, ScrollArea, SegmentedControl} from "@mantine/core";
 import RoleWrapper from "../../RoleWrapper";
 import { useSessionStorage } from "@mantine/hooks";
-import {useState} from "react";
 import useAdminList from "../../../modules/hooks/useAdminList";
 
 
@@ -100,7 +99,6 @@ export default function SurtricsNavbar ({links}) {
         defaultValue: stateInit(links[section])
     });
 
-    const {isRole} = useAdminList()
 
 
 

@@ -2,12 +2,12 @@ import router from "../../../modules/serverUtils/requestRouter";
 import db from "../../../db";
 import {parseBody} from "../../../modules/serverUtils/parseBody";
 
-async function getQuickbooks(req,res,...options) {
+async function getQuickbooks(req,res) {
     let query = `SELECT * FROM surtrics.surplus_big_commerce_data`;
     let {rows} = await db.query(query);
     return res.status(200).json(rows)
 }
-async function getQuickbooksWithParams(req,res,...options) {
+async function getQuickbooksWithParams(req,res) {
     let body = parseBody(req);
     let query =
         `

@@ -1,7 +1,7 @@
 import router from "../../../modules/serverUtils/requestRouter";
 import db from "../../../db";
 
-async function getEvents(req,res){
+async function getEvents(){
 
     return await db.query(`
         SELECT

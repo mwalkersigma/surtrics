@@ -343,7 +343,6 @@ const pages = {
 export default function Layout({children}) {
     const hasNavBar = useNav();
     const intervalRef = useRef();
-    const [section, setSection] = useState('Metrics');
     const [mobileOpened, {toggle: toggleMobile}] = useDisclosure();
     const [desktopOpened, {toggle: toggleDesktop}] = useDisclosure(true);
 

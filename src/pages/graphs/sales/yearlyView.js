@@ -19,7 +19,6 @@ import {colorScheme} from "../../_app";
 import {Chart} from "react-chartjs-2";
 import {setDate, setMonth} from "date-fns";
 import StatCard from "../../../components/mantine/StatCard";
-import formatter from "../../../modules/utils/numberFormatter";
 
 ChartJS.register(
     CategoryScale,

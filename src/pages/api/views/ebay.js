@@ -2,12 +2,12 @@ import router from "../../../modules/serverUtils/requestRouter";
 import db from "../../../db";
 import {parseBody} from "../../../modules/serverUtils/parseBody";
 
-async function getBigCommerce(req,res,...options) {
+async function getBigCommerce(req,res) {
     let query = `SELECT * FROM surtrics.surplus_ebay_data`;
     let {rows} = await db.query(query);
     return res.status(200).json(rows)
 }
-async function getBigCommerceWithParams(req,res,...options) {
+async function getBigCommerceWithParams(req,res) {
     let body = parseBody(req);
     let query =
         `

@@ -7,7 +7,7 @@ import {parseBody} from "../../../modules/serverUtils/parseBody";
 
 
 
-async function getHandler(req, res, ...options) {
+async function getHandler() {
     return await db.query(`
         SELECT
             COUNT(*) as count,
@@ -22,7 +22,7 @@ async function getHandler(req, res, ...options) {
     .then(({rows})=> rows)
 }
 
-async function posthandler(req, res, ...options) {
+async function posthandler(req) {
     let body = parseBody(req);
     let query =
         `

@@ -190,6 +190,19 @@ function DailyGraph ({dailyData,theme,height}){
     />
 }
 
+
+function handleDailyData(dailyData){
+    let temp = dailyData
+        .reduce((acc,curr) => {
+            let date = new Date(curr.date_of_transaction).toLocaleString().split("T")[0];
+            if (!acc[date]) acc[date] = 0;
+            acc[date] += +curr.count;
+            return acc
+        },{})
+    return Object.entries(dailyData).map(([date,count]) => ({date_of_transaction:date,count}));
+
+}
+
 export default function ManLayout({}) {
     const hasNav = useNav();
     let date = new Date()
@@ -197,32 +210,21 @@ export default function ManLayout({}) {
     const errorUpdates = useUpdates("/api/views/errors");
 
     let dailyData = useUpdates("/api/views/increments",{date:date.toLocaleDateString(), interval:"1 day", increment: "hour"});
+    let processedDailyData = handleDailyData(dailyData);
 
     date = formatDateWithZeros(addDays(findStartOfWeek(new Date()),1))
     let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
-
+    let processedWeekData = processWeekData(weekData);
     const {height:viewportHeight} = useViewportSize();
 
     let height = normalized(viewportHeight)
     if(hasNav) height = height - 50;
 
 
-    dailyData = dailyData
-        .reduce((acc,curr) => {
-            let date = new Date(curr.date_of_transaction).toLocaleString().split("T")[0];
-            if (!acc[date]) acc[date] = 0;
-            acc[date] += +curr.count;
-            return acc
-        },{})
-    dailyData = Object.entries(dailyData).map(([date,count]) => ({date_of_transaction:date,count}));
-
-
-    weekData = processWeekData(weekData);
-
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
-    let weekSeed = makeWeekArray(weekData,new Date(date));
+    let weekSeed = makeWeekArray(processedWeekData,new Date(date));
 
 
     let weeklyErrors = errorUpdates
@@ -235,14 +237,14 @@ export default function ManLayout({}) {
         .filter(({date_of_transaction}) => date_of_transaction === new Date().toISOString().split("T")[0])
         .reduce((acc,{count}) => acc + +count,0);
 
-    if (weekData.length === 0) return <div className={"text-center"}>Loading...</div>
+    if (processedWeekData.length === 0) return <div className={"text-center"}>Loading...</div>
 
     const totalIncrements = weekSeed.map(({count}) => +count).reduce((a,b)=>a+b,0);
     const totalForToday = dailyData.reduce((a,b) => a + +b.count,0);
-    const dailyAverage = Math.round(totalIncrements / (weekData.length || 1));
+    const dailyAverage = Math.round(totalIncrements / (processedWeekData.length || 1));
     const hourlyAverage = Math.round(dailyAverage / 7 || 1);
 
-    const bestDay = Math.max(...weekData.map(({count}) => +count));
+    const bestDay = Math.max(...processedWeekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
 
     let cards = [

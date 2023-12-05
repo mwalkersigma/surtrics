@@ -50,6 +50,13 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
         Logger.log(`response statusText: ${response.statusText} `)
         return false;
     }
+
+    data['Transactions'] = [...new Set(data['Transactions'].map((item) =>{
+        delete item['Activity ID'];
+     return JSON.stringify(item)
+    }))]
+        .map((item) => JSON.parse(item));
+
     await PromisePool
         .withConcurrency(25)
         .for(data['Transactions'])
@@ -64,6 +71,7 @@ async function processTransaction(pageNumber,currentTimestamp,timeLastUpdated){
                 const type = item['TransactionType'];
                 const reason = item['TransactionReason'];
                 const date = item['TransactionDate'];
+
             Logger.log(`Checking if record exists for sku: ${item['Sku']} `)
             let existsInDatabase = await Db.query(`
                 SELECT

@@ -1,30 +1,27 @@
-import React from "react";
+import React, {useState} from "react";
 import {useSession} from "next-auth/react";
 import {Group, Title} from "@mantine/core";
-import {DatePickerInput} from "@mantine/dates";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import {TableSort} from "../../../components/mantine/TableSort";
+import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 
 
 
 
 
 const SurplusNotableEvents = () => {
-    const {data} = useSession();
-    const [dateRange, setDateRange] = React.useState([new Date(), new Date()]) // [start, end]
+    const [dateRange, setDateRange] = useState([new Date(), new Date()]) // [start, end]
     const [startDate,endDate] = dateRange;
-    const name = data?.user?.name
+    const name = 'Stephine Roth' //data?.user?.name
     const errors = useUpdates('/api/views/errors',{name,startDate,endDate});
 
     if(!errors.length > 0) return (<>
         <Group justify={'space-between'}>
             <Title> Surplus User Errors </Title>
-            <DatePickerInput
-                type={'range'}
-                placeholder={'Start Date'}
-                value={dateRange}
-                onChange={setDateRange}
+            <CustomRangeMenu
                 label={'Date Range'}
+                subscribe={setDateRange}
+                defaultValue={dateRange}
             />
         </Group>
         <p>
@@ -38,12 +35,10 @@ const SurplusNotableEvents = () => {
         <>
             <Group justify={'space-between'} mb={'xl'}>
                 <Title > Surplus User Errors </Title>
-                <DatePickerInput
-                    type={'range'}
-                    placeholder={'Start Date'}
-                    value={dateRange}
-                    onChange={setDateRange}
+                <CustomRangeMenu
                     label={'Date Range'}
+                    subscribe={setDateRange}
+                    defaultValue={dateRange}
                 />
             </Group>
 

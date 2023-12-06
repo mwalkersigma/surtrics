@@ -2,10 +2,8 @@ import React, {forwardRef, useEffect, useState} from 'react';
 import {Group, Menu, Paper, ScrollArea, Stack} from "@mantine/core";
 import {DatePicker, DatePickerInput} from "@mantine/dates";
 import {
-    addDays,
     lastDayOfMonth,
-    lastDayOfYear,
-    setDay,
+    lastDayOfYear, setDate,
     startOfMonth,
     startOfYear,
     subDays,
@@ -34,7 +32,7 @@ const presets = [
     },
     {
         title: "This Month",
-        value: [setDay(new Date(),1), new Date()]
+        value: [setDate(new Date(),1), new Date()]
     },
     {
         title: "Last Month",
@@ -51,7 +49,8 @@ const presets = [
 ]
 
 
-const DateMenu = ({subscribe,defaultValue}) => {
+const DateMenu = (props) => {
+    const {subscribe,defaultValue,...rest} = props;
     const [opened, setOpened] = useState(false);
     const ref = useClickOutside(() => setOpened(false));
     const [dateRange, setDateRange] = useState(defaultValue || [new Date(), new Date()]) // [start, end]
@@ -70,7 +69,6 @@ const DateMenu = ({subscribe,defaultValue}) => {
             <Paper {...rest}>
                 <DatePicker
                     ref={refs}
-                    label="Date"
                     type={'range'}
                     placeholder={'Start Date'}
                     value={dateRange}
@@ -93,7 +91,13 @@ const DateMenu = ({subscribe,defaultValue}) => {
         <div>
             <Menu opened={opened}>
                 <Menu.Target>
-                    <DatePickerInput readOnly value={dateRange} type={'range'} onClick={()=>setOpened(!opened)}>{opened ? "close" : "open"} menu </DatePickerInput>
+                    <DatePickerInput
+                        {...rest}
+                        readOnly
+                        value={dateRange}
+                        type={'range'}
+                        onClick={()=>setOpened(!opened)}
+                    />
                 </Menu.Target>
                 <Menu.Dropdown ref={ref} label="Dropdown">
                     <Group justify={'flex-start'} align={'flex-start'}>

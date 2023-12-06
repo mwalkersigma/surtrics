@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useRef} from "react";
 import {useDisclosure} from '@mantine/hooks';
 import {
     AppShell, Text, ScrollArea, Space,
@@ -175,10 +175,6 @@ const pages = {
             leftSection: <IconForms size={size} stroke={stroke}/>,
             roles: ["bsa", "surplus director"],
             links: {
-                "Submit Error Type": {
-                    href: "/BSA/createErrorType",
-                    roles: ["surplus director"]
-                },
                 "Submit Error": {
                     href: "/admin/errorReporting"
                 }

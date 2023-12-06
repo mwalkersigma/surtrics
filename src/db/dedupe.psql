@@ -10,4 +10,10 @@ WHERE
   AND a.transaction_type = b.transaction_type
   AND a.quantity = b.quantity
   AND a.location = b.location
-  AND a.transaction_type != 'Error';
+  AND a.transaction_type != 'Error'
+  AND a.id > 5324330
+  RETURNING a.*
+;
+
+
+SELECT id FROM surtrics.surplus_metrics_data ORDER BY id DESC LIMIT 1;

@@ -104,12 +104,33 @@ async function getTransactions(){
             }
             pageNumber++;
         }
-        await getLastUpdatedTime("dedupe")
-
-
-
-
         await updateLastUpdatedTime("skuVault")
+
+        let lastID = await getLastUpdatedTime("dedupe");
+
+        let removedDuplicates = await Db.query(`
+        DELETE FROM
+        surtrics.surplus_metrics_data a
+            USING surtrics.surplus_metrics_data b
+        WHERE
+            a.id < b.id
+        AND a."user" = b."user"
+        AND a.sku = b.sku
+        AND a.code = b.code
+        AND a.transaction_date = b.transaction_date
+        AND a.transaction_type = b.transaction_type
+        AND a.quantity = b.quantity
+        AND a.location = b.location
+        AND a.transaction_type != 'Error'
+        AND a.id > $1
+            RETURNING a.*`,[lastID]);
+
+        console.log(`removed duplicates: ${removedDuplicates.rowCount}`)
+
+        let lastId = await Db.query(`SELECT id FROM surtrics.surplus_metrics_data ORDER BY id DESC LIMIT 1;`)
+        lastId = lastId.rows[0].id;
+        
+        await updateLastUpdatedTime("dedupe",lastId)
         Logger.log(`Finished inserting into DB ${pageNumber - 1} pages of transactions`)
         return "update complete";
     } catch (e) {

@@ -9,4 +9,5 @@ WHERE
   AND a.transaction_date = b.transaction_date
   AND a.transaction_type = b.transaction_type
   AND a.quantity = b.quantity
-  AND a.location = b.location;
+  AND a.location = b.location
+  AND a.transaction_type != 'Error';

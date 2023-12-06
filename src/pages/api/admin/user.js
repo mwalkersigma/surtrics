@@ -9,7 +9,7 @@ async function getHandler(){
         return (adminList)
 }
 function postHandler(req,res,...options){
-    serverAdminWrapper((req)=>{
+    return serverAdminWrapper((req)=>{
         let userList = fs.readFileSync("./src/json/users.json")
         userList = JSON.parse(`${userList}`);
 
@@ -34,7 +34,7 @@ function postHandler(req,res,...options){
 }
 function putHandler(req,res,...options){
     // update all users
-    serverAdminWrapper((req)=>{
+    return serverAdminWrapper((req)=>{
         let newState = parseBody(req)['newState'];
 
         fs.writeFileSync("./src/json/adminList.json",JSON.stringify(newState,null,2));

@@ -41,6 +41,7 @@ const pages = {
             links: {
                 "Graphs": {
                     leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
+                    opened:true,
                     links: {
                         "Daily View": {
                             href: "/graphs/increments/dailyView"
@@ -141,6 +142,7 @@ const pages = {
             links:{
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
+                    opened:true,
                     links: {
                         "User Errors": {
                             href: "/tables/errors/errorViewer"
@@ -154,6 +156,7 @@ const pages = {
             links: {
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
+                    opened:true,
                     links: {
                         "Weekly View": {
                             href: "/tables/warehouse/weeklyView"
@@ -252,7 +255,6 @@ const pages = {
             }
         },
         "ECommerce": {
-            roles: ["bsa", "surplus director"],
             leftSection: <IconDeviceDesktopAnalytics size={size} stroke={stroke}/>,
             links: {
                 "Big Commerce": {

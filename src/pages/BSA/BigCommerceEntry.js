@@ -44,15 +44,17 @@ function BigCommerceSkeleton() {
 const BigCommerceEntry = () => {
     const {data: session,status} = useSession();
     const userName = session?.user?.name;
-    const [loading, setLoading] = useState(true);
-    const {onSubmit, getInputProps,setValues,reset,values} = useForm({
+
+    const [loading, setLoading] = useState(false);
+
+    const {onSubmit, getInputProps,setValues,reset,values,resetDirty} = useForm({
         initialValues: {
             visits: 0,
             shopped: 0,
             add_to_cart: 0,
             web_leads: 0,
             date_for_week: new Date(),
-            user_who_submitted: userName || "",
+            user_who_submitted: "",
         },
     });
 
@@ -65,6 +67,7 @@ const BigCommerceEntry = () => {
         }
         let values = {user_who_submitted: userName}
         setValues((prevValues) => ({...prevValues, ...values}));
+        resetDirty(values)
 
     }, [status]);
 
@@ -137,7 +140,6 @@ const BigCommerceEntry = () => {
                         <Grid.Col span={6}>
                             <TextInput
                                 label={"User Who Submitted"}
-                                type={"text"}
                                 disabled
                                 readOnly
                                 placeholder={values.user_who_submitted}

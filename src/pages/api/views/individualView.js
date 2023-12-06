@@ -5,6 +5,7 @@ import {parseBody} from "../../../modules/serverUtils/parseBody";
 
 
 async function PostHandler(req,res,date,interval) {
+    console.log(date,interval)
 let data = await db.query(`
 SELECT
     "user" AS user_id,
@@ -26,7 +27,6 @@ GROUP BY
 )
 
     const rows = data.rows;
-
     let results = {};
     for (let row of rows) {
         let {user_id, transaction_type, transaction_reason, count} = row;
@@ -39,7 +39,6 @@ GROUP BY
         }
         results[user_id][fullKey] += (+count);
     }
-
     return JSON.stringify(results);
 }
 export default function handler (req,res) {
@@ -47,9 +46,10 @@ export default function handler (req,res) {
     body = parseBody(req);
 
     date = body?.date ? new Date(body.date) : new Date();
+    let interval = body.interval || "1 day"
     return router({
         POST:PostHandler
-    })(req,res,date,'1 day')
+    })(req,res,date,interval)
         .then((response) => {
             res.status(200).json(response)
         })

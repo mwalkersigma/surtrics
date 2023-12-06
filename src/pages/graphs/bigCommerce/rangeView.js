@@ -16,6 +16,7 @@ import useUpdates from "../../../modules/hooks/useUpdates";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 import {Chart} from "react-chartjs-2";
+import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 
 ChartJS.register(
     CategoryScale,
@@ -113,13 +114,9 @@ const BigCommerceRangeView = () => {
         <GraphWithStatCard
             title={"Big Commerce Ecommerce Data"}
             dateInput={
-                <DatePickerInput
-                    mb={'xl'}
-                    type={'range'}
-                    placeholder={'Start Date'}
-                    value={dateRange}
-                    onChange={setDateRange}
-                    label={'Date Range'}
+                <CustomRangeMenu
+                    defaultValue={dateRange}
+                    subscribe={setDateRange}
                 />
             }
             slotTwo={

@@ -16,6 +16,7 @@ import {
     Tooltip
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
+import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 
 ChartJS.register(
     CategoryScale,
@@ -112,14 +113,7 @@ const EbayRangeView = () => {
         <GraphWithStatCard
             title={"Ebay Ecommerce Data"}
             dateInput={
-                <DatePickerInput
-                    mb={'xl'}
-                    type={'range'}
-                    placeholder={'Start Date'}
-                    value={dateRange}
-                    onChange={setDateRange}
-                    label={'Date Range'}
-                />
+                <CustomRangeMenu subscribe={setDateRange} defaultValue={dateRange}/>
             }
             slotTwo={
                 <Center h={'100%'}>

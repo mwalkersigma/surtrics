@@ -8,9 +8,10 @@ import {DatePickerInput} from "@mantine/dates";
 
 const WeeklyView = () => {
     const [date, setDate] = useState(new Date());
-    let updates = useUpdates("/api/views/approvals", {date:findStartOfWeek(new Date(date)),interval:"1 week"});
+    let updates = useUpdates("/api/views/approvals", {date:findStartOfWeek(new Date(date)),interval:"1 week", increment:"day"});
+    console.log(updates)
     let mappedUpdates = {};
-    updates.forEach((update) => {
+    updates?.forEach((update) => {
         let name = update.name;
         let date = update["date_of_final_approval"].split("T")[0];
         if(!mappedUpdates[name]) mappedUpdates[name] = {};

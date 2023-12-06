@@ -14,7 +14,8 @@ const YearlyView = () => {
     if(typeof individualData === "string") individualData = JSON.parse(individualData);
 
     let users = Object.keys(individualData);
-
+    console.log(individualData)
+    console.log(users)
 
     return <GraphWithStatCard
         title={"Surplus Transactions Individual Yearly View"}

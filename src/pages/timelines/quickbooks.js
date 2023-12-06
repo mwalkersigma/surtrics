@@ -1,7 +1,7 @@
 import React from "react";
 
 import {setDate, setMonth} from "date-fns";
-import {Text, Timeline, Group, Checkbox} from "@mantine/core";
+import {Text, Timeline, Group, Checkbox, ScrollArea} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
 
 import {
@@ -18,6 +18,7 @@ import {IconGitBranch} from "@tabler/icons-react";
 import formatter from "../../modules/utils/numberFormatter";
 import useUpdates from "../../modules/hooks/useUpdates";
 import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
+import CustomRangeMenu from "../../components/mantine/customRangeMenu";
 
 ChartJS.register(
     CategoryScale,
@@ -40,15 +41,12 @@ const EbayRangeView = () => {
 
     return (
         <GraphWithStatCard
+            noBorder
             title={"Quickbooks Purchase Orders"}
             dateInput={
-                <DatePickerInput
-                    mb={'xl'}
-                    type={'range'}
-                    placeholder={'Start Date'}
-                    value={dateRange}
-                    onChange={setDateRange}
-                    label={'Date Range'}
+                <CustomRangeMenu
+                    defaultValue={dateRange}
+                    subscribe={setDateRange}
                 />
             }
             slotTwo={
@@ -60,6 +58,7 @@ const EbayRangeView = () => {
                         Sort Direction: {sortDirection ? "ASC" : "DESC"}
                     </Text>
                     <Checkbox
+                        mb={'xl'}
                         checked={sortDirection}
                         onChange={() => setSortDirection(!sortDirection)}
                         label={"Sort Direction"}
@@ -67,23 +66,24 @@ const EbayRangeView = () => {
                 </>
             }
         >
-            <Timeline mb={'2rem'} bulletSize={24} lineWidth={2} >
-                {updates.map((event,i) => {
-                    return (
-                        <Timeline.Item key={i} bullet={<IconGitBranch size={12} />} title={event.po_name}>
-                            <Group mb={'.3rem'}>
-                                <Text c="dimmed" size="sm" lineClamp={4}>{event.po_number}</Text>
-                                <Text c="dimmed" size="sm" lineClamp={4}>{event.purchase_type}</Text>
-                                <Text c="dimmed" size="sm" lineClamp={4}>{new Date(event.po_date).toLocaleDateString()}</Text>
-                            </Group>
-                            <Text mb={'.3rem'} c="dimmed" size="sm" lineClamp={4}>{formatter(event.purchase_total,'currency')}</Text>
-                            <Text c="dimmed" size="sm" lineClamp={4}>Submitted by : {event.user_who_submitted}</Text>
-                        </Timeline.Item>
-                    )
-                })
-                }
-            </Timeline>
-
+            <ScrollArea>
+                <Timeline mt={'1rem'} ml={'1rem'} mb={'2rem'} bulletSize={24} lineWidth={2} >
+                    {updates.map((event,i) => {
+                        return (
+                            <Timeline.Item key={i} bullet={<IconGitBranch size={12} />} title={event.po_name}>
+                                <Group mb={'.3rem'}>
+                                    <Text c="dimmed" size="sm" lineClamp={4}>{event.po_number}</Text>
+                                    <Text c="dimmed" size="sm" lineClamp={4}>{event.purchase_type}</Text>
+                                    <Text c="dimmed" size="sm" lineClamp={4}>{new Date(event.po_date).toLocaleDateString()}</Text>
+                                </Group>
+                                <Text mb={'.3rem'} c="dimmed" size="sm" lineClamp={4}>{formatter(event.purchase_total,'currency')}</Text>
+                                <Text c="dimmed" size="sm" lineClamp={4}>Submitted by : {event.user_who_submitted}</Text>
+                            </Timeline.Item>
+                        )
+                    })
+                    }
+                </Timeline>
+            </ScrollArea>
         </GraphWithStatCard>
     );
 };

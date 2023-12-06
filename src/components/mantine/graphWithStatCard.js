@@ -2,7 +2,7 @@ import React from 'react';
 import {Container, Grid, Paper, Skeleton, Stack, Title} from "@mantine/core";
 
 
-const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOne, slotTwo}) => {
+const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOne, slotTwo, noBorder}) => {
     const height = 65;
     if (isLoading) {
         return <Container fluid>
@@ -88,7 +88,7 @@ const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOn
                     <>
                         <Grid.Col span={1}></Grid.Col>
                         <Grid.Col span={9}>
-                            <Paper style={{height: "100%", minHeight: `${height}vh`}} radius={"md"} shadow={"md"} p={5} withBorder>
+                            <Paper style={{height: "100%", minHeight: `${height}vh`}} radius={"md"} shadow={"md"} p={5} withBorder={!noBorder}>
                                 {children}
                             </Paper>
                         </Grid.Col>
@@ -102,7 +102,7 @@ const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOn
                 {
                     (cards?.length === 0 || !cards) &&
                     <Grid.Col span={12}>
-                        <Paper style={{height: "100%", minHeight: `${height}vh`}} radius={"md"} shadow={"md"} p={5} withBorder>
+                        <Paper style={{height: "100%", minHeight: `${height}vh`}} radius={"md"} shadow={"md"} p={5} withBorder={!noBorder}>
                             {children}
                         </Paper>
                     </Grid.Col>

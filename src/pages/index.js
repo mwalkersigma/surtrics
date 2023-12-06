@@ -211,7 +211,7 @@ export default function ManLayout({}) {
 
     let dailyData = useUpdates("/api/views/increments",{date:date.toLocaleDateString(), interval:"1 day", increment: "hour"});
     let processedDailyData = handleDailyData(dailyData);
-    console.log(processedDailyData)
+
     date = formatDateWithZeros(addDays(findStartOfWeek(new Date()),1))
     let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
     let processedWeekData = processWeekData(weekData);

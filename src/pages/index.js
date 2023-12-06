@@ -194,12 +194,12 @@ function DailyGraph ({dailyData,theme,height}){
 function handleDailyData(dailyData){
     let temp = dailyData
         .reduce((acc,curr) => {
-            let date = new Date(curr.date_of_transaction).toLocaleString().split("T")[0];
+            let date = new Date(curr.date_of_transaction).toLocaleString();
             if (!acc[date]) acc[date] = 0;
             acc[date] += +curr.count;
             return acc
         },{})
-    return Object.entries(dailyData).map(([date,count]) => ({date_of_transaction:date,count}));
+    return Object.entries(temp).map(([date,count]) => ({date_of_transaction:date,count}));
 
 }
 
@@ -211,7 +211,7 @@ export default function ManLayout({}) {
 
     let dailyData = useUpdates("/api/views/increments",{date:date.toLocaleDateString(), interval:"1 day", increment: "hour"});
     let processedDailyData = handleDailyData(dailyData);
-
+    console.log(processedDailyData)
     date = formatDateWithZeros(addDays(findStartOfWeek(new Date()),1))
     let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
     let processedWeekData = processWeekData(weekData);
@@ -295,7 +295,7 @@ export default function ManLayout({}) {
                         </Grid.Col>
                         <Grid.Col span={6}>
                             <Paper h={height} withBorder p="md" radius="md">
-                                <DailyGraph dailyData={dailyData}  theme={theme}/>
+                                <DailyGraph dailyData={processedDailyData}  theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>

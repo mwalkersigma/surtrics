@@ -40,9 +40,10 @@ async function postHandler(req,res,...options){
     },...options)(req,res)
 }
 async function putHandler(req,res,...options){
-    return await serverAdminWrapper(async (req) => {
+    return serverAdminWrapper(async (req) => {
         const body = JSON.parse(req.body);
-        const {user,reason,notes,session:browserSession,date} = body;
+        const {user,reason,notes,session:browserSession,date,location} = body;
+        console.log(body)
         const {user:sessionUser} = browserSession;
         delete sessionUser.image;
         await db.query(`
@@ -50,9 +51,9 @@ async function putHandler(req,res,...options){
                 nfs.surtrics.surplus_metrics_data
                 ("user", sku,code, scanned_code, lot_number, title, location, quantity, quantity_before, quantity_after, transaction_note, transaction_reason, transaction_type, serial_numbers, context, transaction_date)
             VALUES
-             ($1,null,null,null,null,null,null,null,null,null,$2,$3,'Error',null,$4,$5)
-        `,[user,notes,reason,sessionUser.email,date])
-        const response = `Error Reporting: User: ${sessionUser.email} reported an error for ${user} with reason: ${reason} and notes: ${notes}`
+             ($1,null,null,null,null,null,$6,null,null,null,$2,$3,'Error',null,$4,$5)
+        `,[user,notes,reason,sessionUser.email,date,location])
+        const response = `Error Reported Successfully: \n User: ${sessionUser.email} reported an error for ${user} with reason: ${reason} and notes: ${notes}`
         Logger.log(response);
         return response
     },...options)(req,res)

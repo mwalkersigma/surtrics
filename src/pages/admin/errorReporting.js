@@ -60,6 +60,7 @@ const ErrorReporting = () => {
             reason: "",
             notes: "",
             date: new Date(),
+            location: ""
         },
         validate: {
             user: (value) => (value ? null : 'User is required'),
@@ -81,8 +82,8 @@ const ErrorReporting = () => {
             .finally(() => setLoading(false))
     }, []);
 
-    function handleSubmit({user, reason, notes, date}) {
-        const state = JSON.stringify({user, reason, notes, session, date});
+    function handleSubmit({user, reason, notes, date, location}) {
+        const state = JSON.stringify({user, reason, notes, session, date, location});
         setLoading(true);
         fetch(`${window.location.origin}/api/dataEntry/error`, {
             method: "PUT",
@@ -106,7 +107,7 @@ const ErrorReporting = () => {
                 <form onSubmit={onSubmit(handleSubmit)}>
                     <Grid>
                         <Grid.Col span={12}><Title> Error Reporting </Title></Grid.Col>
-                        <Grid.Col span={4}>
+                        <Grid.Col span={3}>
                             <NativeSelect
                                 required
                                 label={"User"}
@@ -119,7 +120,7 @@ const ErrorReporting = () => {
                                 ))}
                             </NativeSelect>
                         </Grid.Col>
-                        <Grid.Col span={4}>
+                        <Grid.Col span={3}>
                             <NativeSelect
                                 required
                                 label={"Reason"}
@@ -136,17 +137,21 @@ const ErrorReporting = () => {
                                 <option value={"Model ID"}>Model ID</option>
                                 <option value={"Printing"}>Printing</option>
                                 <option value={"Quantity"}>Quantity</option>
-                                {/*<option value={"no photo"}>No Photo</option>*/}
-                                {/*<option value={"not approved"}>Not Approved</option>*/}
-                                {/*<option value={"wrong label"}>Wrong Label</option>*/}
-                                {/*<option value={"no location"}>No Location</option>*/}
-                                {/*<option value={"Typo"}> Typo</option>*/}
-                                {/*<option value={"listing Error"}> Listing Error</option>*/}
-                                {/*<option value={"Wrong Condition"}> Wrong Condition</option>*/}
-                                {/*<option value={"Mixed Bag"}> Mixed Bag</option>*/}
                             </NativeSelect>
                         </Grid.Col>
-                        <Grid.Col span={4}>
+                        <Grid.Col span={3}>
+                            <NativeSelect
+                                label={"location"}
+                                placeholder={"Enter location"}
+                                {...getInputProps("location")}
+                            >
+                                <option value={""}>Choose a location</option>
+                                <option value={"Audit"}>Audit</option>
+                                <option value={"Shipping"}>Shipping</option>
+                                <option value={"Cycle Count"}>Cycle Count</option>
+                            </NativeSelect>
+                        </Grid.Col>
+                        <Grid.Col span={3}>
                             <DatePickerInput
                                 required
                                 label={"Date"}

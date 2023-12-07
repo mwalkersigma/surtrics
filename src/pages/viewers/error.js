@@ -8,7 +8,7 @@ import {IconTrash} from "@tabler/icons-react";
 
 const Error = () => {
     const {tableData,removeHandler,status} = useTable({route:"/api/dataEntry/error",idField:"id"})
-
+    console.log(tableData)
     let removeEntry = removeHandler("/api/dataEntry/error");
 
     return (
@@ -17,9 +17,10 @@ const Error = () => {
                 data={tableData.map((row) => ({
                     id: row.id,
                     user: row.user,
-                    transaction_date: new Date(row.transaction_date).toLocaleDateString(),
-                    transaction_note: row.transaction_note,
-                    transaction_reason: row.transaction_reason,
+                    date: new Date(row.transaction_date).toLocaleDateString(),
+                    note: row.transaction_note,
+                    reason: row.transaction_reason,
+                    location: row.location,
                     remove: <Button
                         variant="filled"
                         color="red"

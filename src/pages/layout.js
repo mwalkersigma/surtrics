@@ -173,7 +173,7 @@ const pages = {
         },
         "Data Entry": {
             leftSection: <IconForms size={size} stroke={stroke}/>,
-            roles: ["bsa", "surplus director"],
+            roles: ["bsa", "surplus director","warehouse"],
             links: {
                 "Submit Error": {
                     href: "/admin/errorReporting"
@@ -182,7 +182,7 @@ const pages = {
         },
         "My Entries": {
             leftSection: <IconEdit size={size} stroke={stroke}/>,
-            roles: ["bsa", "surplus director"],
+            roles: ["bsa", "surplus director","warehouse"],
             links: {
                 "Error Entries": {
                     href: "/viewers/error"

@@ -144,8 +144,8 @@ const pages = {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
                     opened:true,
                     links: {
-                        "User Errors": {
-                            href: "/tables/errors/errorViewer"
+                        "My Errors": {
+                            href: "/tables/errors/myErrors"
                         },
                     }
                 }

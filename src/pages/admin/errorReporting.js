@@ -102,7 +102,7 @@ const ErrorReporting = () => {
     }
 
     return (
-        <RoleWrapper LoadingComponent={<SkeletonLoader/>} altRoles={["surplus director", "bsa"]}>
+        <RoleWrapper LoadingComponent={<SkeletonLoader/>} altRoles={["surplus director", "bsa","warehouse"]}>
             <Container>
                 <form onSubmit={onSubmit(handleSubmit)}>
                     <Grid>

@@ -75,7 +75,7 @@ async function deleteHandler(req,res,...options){
 
 
 export default function handler(req,res) {
-    let authorizedRoles = ["surplus director","bsa"]
+    let authorizedRoles = ["surplus director","bsa",'warehouse','lister']
     return router({
         GET: getHandler,
         POST: postHandler,

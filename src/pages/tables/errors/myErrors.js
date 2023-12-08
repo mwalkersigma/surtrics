@@ -12,7 +12,8 @@ import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 const SurplusNotableEvents = () => {
     const [dateRange, setDateRange] = useState([new Date(), new Date()]) // [start, end]
     const [startDate,endDate] = dateRange;
-    const name = 'Stephine Roth' //data?.user?.name
+    const {data} = useSession();
+    const name = data?.user?.name
     const errors = useUpdates('/api/views/errors',{name,startDate,endDate});
 
     if(!errors.length > 0) return (<>

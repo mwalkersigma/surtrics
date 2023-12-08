@@ -22,7 +22,7 @@ async function getHandler() {
     .then(({rows})=> rows)
 }
 
-async function posthandler(req) {
+async function postHandler(req) {
     let body = parseBody(req);
     let query =
         `
@@ -67,8 +67,6 @@ async function posthandler(req) {
         query += `AND "user" = $${++count} \n`;
         params.push(body.name);
     }
-    console.log(query)
-    console.log(params)
     return await db.query(query, params)
         .then(({rows})=> rows)
 }
@@ -78,7 +76,7 @@ async function posthandler(req) {
 export default function handler(req, res) {
     return router({
         GET: getHandler,
-        POST: posthandler
+        POST: postHandler
     })(req, res)
         .then((response) => {
             res.status(200).json(response)

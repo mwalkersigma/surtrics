@@ -8,7 +8,6 @@ import {IconTrash} from "@tabler/icons-react";
 
 const Error = () => {
     const {tableData,removeHandler,status} = useTable({route:"/api/dataEntry/error",idField:"id"})
-    console.log(tableData)
     let removeEntry = removeHandler("/api/dataEntry/error");
 
     return (

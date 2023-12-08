@@ -147,6 +147,10 @@ const pages = {
                         "My Errors": {
                             href: "/tables/errors/myErrors"
                         },
+                        "Errors by User": {
+                            roles: ["surplus director"],
+                            href: "/tables/errors/errorsByUser"
+                        },
                     }
                 }
             }

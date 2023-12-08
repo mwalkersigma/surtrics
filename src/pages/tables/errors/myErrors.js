@@ -10,11 +10,15 @@ import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 
 
 const SurplusNotableEvents = () => {
+    const {data,status} = useSession();
     const [dateRange, setDateRange] = useState([new Date(), new Date()]) // [start, end]
     const [startDate,endDate] = dateRange;
-    const {data} = useSession();
     const name = data?.user?.name
     const errors = useUpdates('/api/views/errors',{name,startDate,endDate});
+
+    let isLoggedIn = status !== 'unauthenticated';
+
+    if(!isLoggedIn) return (<>You must be logged in to view this page</>)
 
     if(!errors.length > 0) return (<>
         <Group justify={'space-between'}>

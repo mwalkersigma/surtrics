@@ -5,6 +5,7 @@ import {Notifications} from "@mantine/notifications";
 import {useForm} from "@mantine/form";
 import {Container, Grid, Title, TextInput, Button, Stack, Skeleton, NumberInput} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
+import useUsage from "../../modules/hooks/useUsage";
 
 
 function BigCommerceSkeleton() {
@@ -42,6 +43,7 @@ function BigCommerceSkeleton() {
 }
 
 const BigCommerceEntry = () => {
+    useUsage("Ecommerce","BigCommerceEntry")
     const {data: session,status} = useSession();
     const userName = session?.user?.name;
 

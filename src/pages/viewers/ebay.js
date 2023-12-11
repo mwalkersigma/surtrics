@@ -4,6 +4,7 @@ import {TableSort} from "../../components/mantine/TableSort";
 import ViewerLayout from "../../components/mantine/ViewerLayout";
 import useTable from "../../modules/hooks/useTable";
 import {IconTrash} from "@tabler/icons-react";
+import useUsage from "../../modules/hooks/useUsage";
 
 
 
@@ -12,6 +13,7 @@ import {IconTrash} from "@tabler/icons-react";
 
 
 const Ebay = () => {
+    useUsage("Ecommerce","ebay-UserEntries-viewer")
     const {tableData,removeHandler,status} = useTable({route:"/api/dataEntry/ebay",idField:"entry_id"})
     let removeEntry = removeHandler("/api/dataEntry/ebay");
 

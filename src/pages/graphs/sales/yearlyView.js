@@ -19,6 +19,7 @@ import {colorScheme} from "../../_app";
 import {Chart} from "react-chartjs-2";
 import {setDate, setMonth} from "date-fns";
 import StatCard from "../../../components/mantine/StatCard";
+import useUsage from "../../../modules/hooks/useUsage";
 
 ChartJS.register(
     CategoryScale,
@@ -49,6 +50,7 @@ const storeDataMap = {
 
 const dateSet = setDate
 const YearlyView = () => {
+    useUsage("Ecommerce","sales-yearly-chart")
     const [date, setDate] = useState(setMonth(dateSet(new Date(),0),0));
     const theme = useMantineColorScheme();
     const [storeId, setStoreId] = useState("All");

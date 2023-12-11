@@ -6,6 +6,7 @@ import ViewerLayout from "../../components/mantine/ViewerLayout";
 import useTable from "../../modules/hooks/useTable";
 import {IconTrash} from "@tabler/icons-react";
 import formatter from "../../modules/utils/numberFormatter";
+import useUsage from "../../modules/hooks/useUsage";
 
 
 
@@ -14,9 +15,9 @@ import formatter from "../../modules/utils/numberFormatter";
 
 
 const Ebay = () => {
+    useUsage("Ecommerce","quickBooks-UserEntries-viewer")
     const {tableData,removeHandler,status} = useTable({route:"/api/dataEntry/quickBooks",idField:"po_id"})
     let removeEntry = removeHandler("/api/dataEntry/quickBooks");
-    console.log(tableData)
     return (
         <ViewerLayout title={"Quick Books"} isLoading={status === "loading"}>
             <TableSort

@@ -5,8 +5,10 @@ import useGoal from "../../modules/hooks/useGoal";
 import {Notifications} from "@mantine/notifications";
 import {Container, Grid, NumberInput, TextInput, Title, Button, Stack} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
+import useUsage from "../../modules/hooks/useUsage";
 
 const UpdateGoal = () => {
+    useUsage("Admin","UpdateGoal")
     const {data: session} = useSession();
     const [eventDate,setEventDate] = useState(new Date());
     let goal = useGoal();

@@ -6,9 +6,11 @@ import {useForm} from "@mantine/form";
 import {Notifications} from "@mantine/notifications";
 import {Button, Container, Grid, NumberInput, Stack, TextInput, Title} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
+import useUsage from "../../modules/hooks/useUsage";
 
 
 const EbayEntry = () => {
+    useUsage("Ecommerce","EbayEntry")
     const {data: session,status} = useSession();
     const userName = session?.user?.name;
 

@@ -17,6 +17,7 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
+import useUsage from "../../../modules/hooks/useUsage";
 
 ChartJS.register(
     CategoryScale,
@@ -30,6 +31,7 @@ ChartJS.register(
 );
 
 const EbayRangeView = () => {
+    useUsage("Ecommerce","Ebay-RangeView-chart")
     const [dateRange, setDateRange] = React.useState([subMonths(new Date(),1), new Date()]) // [start, end]
     const [startDate,endDate] = dateRange;
     let {colorScheme:theme} = useMantineColorScheme();

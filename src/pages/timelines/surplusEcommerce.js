@@ -3,6 +3,7 @@ import {Button, Container, Group, Text, Timeline, Title, Tooltip} from "@mantine
 import {IconGitBranch} from "@tabler/icons-react";
 import useUpdates from "../../modules/hooks/useUpdates";
 import {formatDistance} from "date-fns";
+import useUsage from "../../modules/hooks/useUsage";
 
 
 
@@ -13,6 +14,7 @@ const directionFunctions = {
 }
 
 const SurplusNotableEvents = () => {
+    useUsage("Ecommerce","notableEvents-rangeView-timeline")
     const [sortDirection,setSortDirection] = useState(true);
     const events = useUpdates("/api/views/events");
     events.sort(directionFunctions[direction(sortDirection)])

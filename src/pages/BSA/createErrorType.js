@@ -2,8 +2,10 @@ import React from 'react';
 import {Button, Grid, NativeSelect, Stack, Textarea, TextInput, Title} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {Notifications} from "@mantine/notifications";
+import useUsage from "../../modules/hooks/useUsage";
 
 const CreateErrorType = () => {
+    useUsage("Admin","CreateErrorType")
     const assignedValues = {
         "Total Output": "Error/(incrementations+Approvals)",
         "Incrementation": "Error/Approvals",

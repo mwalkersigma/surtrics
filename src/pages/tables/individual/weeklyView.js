@@ -5,9 +5,11 @@ import {NativeSelect, Table} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
 import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 import formatter from "../../../modules/utils/numberFormatter";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 const WeeklyView = () => {
+    useUsage("Metrics","individual-weekly-table")
     const [user, setUser] = useState("");
     const [date, setDate] = useState(new Date());
     let individualData = useUpdates("/api/views/individualView",{date:findStartOfWeek(date), interval: "1 week"});

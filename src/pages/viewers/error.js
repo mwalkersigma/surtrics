@@ -4,9 +4,11 @@ import {TableSort} from "../../components/mantine/TableSort";
 import ViewerLayout from "../../components/mantine/ViewerLayout";
 import useTable from "../../modules/hooks/useTable";
 import {IconTrash} from "@tabler/icons-react";
+import useUsage from "../../modules/hooks/useUsage";
 
 
 const Error = () => {
+    useUsage("Metrics","Errors-UserEntries-viewer")
     const {tableData,removeHandler,status} = useTable({route:"/api/dataEntry/error",idField:"id"})
     let removeEntry = removeHandler("/api/dataEntry/error");
 

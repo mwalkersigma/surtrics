@@ -18,6 +18,7 @@ import {NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
 import {Chart} from "react-chartjs-2";
 import {setDate} from "date-fns";
+import useUsage from "../../../modules/hooks/useUsage";
 
 ChartJS.register(
     CategoryScale,
@@ -47,6 +48,7 @@ const storeDataMap = {
 
 const dateSet = setDate
 const MonthlyView = () => {
+    useUsage("Ecommerce","sales-monthly-chart")
     const [date, setDate] = useState(dateSet(new Date(),1));
     const theme = useMantineColorScheme();
     const [storeId, setStoreId] = useState("All");
@@ -58,7 +60,6 @@ const MonthlyView = () => {
         ...new Set(orders.map(order => order.storeId)),
         'Total'
     ];
-    console.log(orders)
     let monthlySales = {};
     orders.forEach(order => {
         let day = +order.paymentDate.split("/")[1];
@@ -76,7 +77,6 @@ const MonthlyView = () => {
 
         monthlySales[day][order.storeId] += order.total;
     })
-    console.log(monthlySales)
     monthlySales = Object.keys(monthlySales)
         .map(month => monthlySales[month] ?? undefined)
         .filter(month => month !== undefined)

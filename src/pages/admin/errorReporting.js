@@ -7,6 +7,7 @@ import {useForm} from "@mantine/form";
 import {Grid, Container, NativeSelect, Title, TextInput, Textarea, Button, Stack, Skeleton} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
 import {Notifications} from "@mantine/notifications";
+import useUsage from "../../modules/hooks/useUsage";
 
 
 const ignoreList = [
@@ -54,6 +55,7 @@ function SkeletonLoader() {
 
 
 const ErrorReporting = () => {
+    useUsage("Admin","ErrorReporting")
     const {onSubmit, getInputProps} = useForm({
         initialValues: {
             user: "",

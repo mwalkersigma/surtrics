@@ -17,6 +17,7 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 import {Chart} from "react-chartjs-2";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
+import useUsage from "../../../modules/hooks/useUsage";
 
 ChartJS.register(
     CategoryScale,
@@ -30,6 +31,7 @@ ChartJS.register(
 );
 
 const BigCommerceRangeView = () => {
+    useUsage("Ecommerce","BigCommerce-RangeView-chart")
     const [dateRange, setDateRange] = React.useState([subMonths(new Date(),1), new Date()]) // [start, end]
     const [startDate,endDate] = dateRange;
     let {colorScheme:theme} = useMantineColorScheme();

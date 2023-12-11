@@ -4,8 +4,10 @@ import {Notifications} from "@mantine/notifications";
 import {useForm} from "@mantine/form";
 import {Button, Container, Grid, NativeSelect, NumberInput, Stack, TextInput, Title} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
+import useUsage from "../../modules/hooks/useUsage";
 
 const QuickBooks = () => {
+    useUsage("Ecommerce","QuickBooksEntry")
     const {data: session, status} = useSession();
     const userName = session?.user?.name;
     const [loading, setLoading] = useState(true);

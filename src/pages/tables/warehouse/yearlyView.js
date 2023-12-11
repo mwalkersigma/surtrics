@@ -7,8 +7,10 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {Table} from "@mantine/core";
 import { YearPickerInput } from "@mantine/dates";
 import {setDate, setMonth} from "date-fns";
+import useUsage from "../../../modules/hooks/useUsage";
 const dateSet = setDate;
 const WeeklyView = () => {
+    useUsage("Metrics","warehouse-yearly-table")
     const [date, setDate] = useState(setMonth(dateSet(new Date(),1),0));
     const updates = useUpdates("/api/views/picks/warehousePicks",{date ,interval:"1 year",increment:"month"});
 

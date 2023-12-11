@@ -19,6 +19,7 @@ import formatter from "../../modules/utils/numberFormatter";
 import useUpdates from "../../modules/hooks/useUpdates";
 import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
 import CustomRangeMenu from "../../components/mantine/customRangeMenu";
+import useUsage from "../../modules/hooks/useUsage";
 
 ChartJS.register(
     CategoryScale,
@@ -32,6 +33,7 @@ ChartJS.register(
 );
 
 const EbayRangeView = () => {
+    useUsage("Ecommerce","quickbooks-rangeView-timeline")
     const [dateRange, setDateRange] = React.useState([setDate(setMonth(new Date(),0),1), new Date()]) // [start, end]
     const [startDate,endDate] = dateRange;
     const [sortDirection,setSortDirection] = React.useState(true);

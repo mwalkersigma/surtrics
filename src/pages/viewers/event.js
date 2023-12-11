@@ -4,6 +4,7 @@ import {TableSort} from "../../components/mantine/TableSort";
 import ViewerLayout from "../../components/mantine/ViewerLayout";
 import useTable from "../../modules/hooks/useTable";
 import {IconTrash} from "@tabler/icons-react";
+import useUsage from "../../modules/hooks/useUsage";
 
 
 
@@ -13,6 +14,7 @@ import {IconTrash} from "@tabler/icons-react";
 
 
 const Event = () => {
+    useUsage("Ecommerce","Events-UserEntries-viewer")
     const {tableData,removeHandler,status} = useTable({route:"/api/admin/event",idField:"event_id"})
     let removeEntry = removeHandler("/api/admin/event");
 

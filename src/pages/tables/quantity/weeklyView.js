@@ -6,6 +6,7 @@ import formatDatabaseRows from "../../../modules/utils/formatDatabaseRows";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 import {Group, Radio, RadioGroup, Table} from "@mantine/core";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 const formatTimeStamps = (timeStamp) => timeStamp.split("T")[0];
@@ -18,6 +19,7 @@ const conversionTable = {
 }
 
 export default function WeeklyView() {
+    useUsage("Metrics","quantity-Daily-table")
     const [field, setField] = useState("Total");
     const [date, setDate] = useState(new Date());
     const databaseRows = useUpdates("/api/views/quantity/weeklyView", {date});

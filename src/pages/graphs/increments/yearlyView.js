@@ -18,6 +18,7 @@ import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";
 import StatCard from "../../../components/mantine/StatCard";
+import useUsage from "../../../modules/hooks/useUsage";
 
 ChartJS.register(
     CategoryScale,
@@ -139,6 +140,7 @@ function YearlyChart(props){
 
 let dateSet = setDate
 function YearlyView() {
+    useUsage("Metrics","Increments-yearly-chart")
     const [date,setDate] = useState(dateSet(setMonth(new Date(),0),1));
     let yearData = useUpdates("/api/views/increments",{date,interval:"1 year",increment:"month"});
     const {colorScheme:theme} = useMantineColorScheme();

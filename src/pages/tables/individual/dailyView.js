@@ -4,9 +4,11 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {NativeSelect, Table} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
 import formatter from "../../../modules/utils/numberFormatter";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 const DailyView = () => {
+    useUsage("Metrics","individual-Daily-table")
     const [user, setUser] = useState("");
     const [date, setDate] = useState(new Date());
     let individualData = useUpdates("/api/views/individualView",{date, interval: "1 day"});

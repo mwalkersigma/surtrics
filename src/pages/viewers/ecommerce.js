@@ -6,6 +6,7 @@ import useUpdates from "../../modules/hooks/useUpdates";
 import formatter from "../../modules/utils/numberFormatter";
 import {MonthPickerInput} from '@mantine/dates';
 import StatCard from "../../components/mantine/StatCard";
+import useUsage from "../../modules/hooks/useUsage";
 
 
 function MasonryGrid({current, previous}) {
@@ -348,6 +349,7 @@ function mapCommerceData(data) {
 }
 
 const Dashboard = () => {
+    useUsage("Ecommerce","Dashboard")
     const [month, setMonth] = React.useState(setDate(new Date, 1));
     let ecommerceData = useUpdates("/api/views/ecommerce");
 

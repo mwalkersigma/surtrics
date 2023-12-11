@@ -5,11 +5,13 @@ import {Notifications} from "@mantine/notifications";
 import {Button, Container, Grid, Stack, TagsInput, Textarea, TextInput, Title, Tooltip} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {DatePickerInput} from "@mantine/dates";
+ import useUsage from "../../modules/hooks/useUsage";
 
 
 
 
 const EventReporting = () => {
+    useUsage("Ecommerce","EventEntry")
     const {data: session, status} = useSession();
     const userName = session?.user?.name;
     const [loading, setLoading] = useState(false);

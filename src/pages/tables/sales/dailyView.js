@@ -5,6 +5,7 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 import formatter from "../../../modules/utils/numberFormatter";
 import Order from "../../../modules/classes/Order";
+import useUsage from "../../../modules/hooks/useUsage";
 
 const storeNames = {
     "225004": "Big Commerce",
@@ -14,6 +15,7 @@ const storeNames = {
 
 
 const DailyView = () => {
+    useUsage("Ecommerce","sales-Daily-table")
     let [date, setDate] = React.useState(new Date());
     const [store, setStore] = React.useState("225004");
     let sales = useUpdates("/api/views/sales", {date});

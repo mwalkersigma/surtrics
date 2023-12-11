@@ -20,6 +20,7 @@ import {Chart} from "react-chartjs-2";
 import {setDate} from "date-fns";
 import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 import makeDateArray from "../../../modules/utils/makeDateArray";
+import useUsage from "../../../modules/hooks/useUsage";
 
 ChartJS.register(
     CategoryScale,
@@ -48,6 +49,7 @@ const storeDataMap = {
 }
 
 const WeeklyView = () => {
+    useUsage("Ecommerce","sales-weekly-chart")
     const [date, setDate] = useState(new Date('11/19/2023'));
     const theme = useMantineColorScheme();
     const [storeId, setStoreId] = useState("All");

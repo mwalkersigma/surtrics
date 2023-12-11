@@ -6,9 +6,11 @@ import useUpdates from "../../../modules/hooks/useUpdates";
 import RoleWrapper from "../../../components/RoleWrapper";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 const ErrorsByUser = () => {
+    useUsage("Admin","Errors-RangeView-table")
     const [dateRange, setDateRange] = useState([subMonths(new Date(),1), new Date()]);
     const [startDate, endDate] = dateRange;
     const errors = useUpdates("/api/views/errors",{startDate, endDate});

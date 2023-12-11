@@ -7,8 +7,10 @@ import formatDatabaseRows from "../../../modules/utils/formatDatabaseRows";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {Table} from "@mantine/core";
 import {DatePickerInput, getStartOfWeek} from "@mantine/dates";
+import useUsage from "../../../modules/hooks/useUsage";
 
 const WeeklyView = () => {
+    useUsage("Metrics","warehouse-weekly-table")
     const [date, setDate] = useState(new Date());
     const updates = useUpdates("/api/views/picks/warehousePicks",{date:getStartOfWeek(date) ,interval:"1 week",increment:"day"});
 

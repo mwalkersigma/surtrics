@@ -17,6 +17,7 @@ import {YearPickerInput} from "@mantine/dates";
 import {NativeSelect, Slider, Text, Tooltip} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import StatCard from "../../../components/mantine/StatCard";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 const ignoredNames = [
@@ -92,6 +93,7 @@ function smoothData(data,adjCount=3) {
 
 const dateSet = setDate
 const ApprovalsView = () => {
+    useUsage("Metrics","Approvals-Yearly-chart")
     let [user, setUser] = useState("Total");
     const [date,setDate] = useState(dateSet(setMonth(new Date(),0),1));
     const [resolution, setResolution] = useState(4);

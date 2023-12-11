@@ -5,10 +5,12 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import { YearPickerInput } from "@mantine/dates";
 import {getMonth, setDate, setMonth} from "date-fns";
 import formatter from "../../../modules/utils/numberFormatter";
+import useUsage from "../../../modules/hooks/useUsage";
 
 const dateSet = setDate
 
-const WeeklyView = () => {
+const YearlyView = () => {
+    useUsage("metrics","approvals-yearly-chart")
     const [date,setDate] = useState(dateSet(setMonth(new Date(),0),1))
     let updates = useUpdates("/api/views/approvals", {date,interval:"1 year",increment:"month"});
     let mappedUpdates = {};
@@ -86,4 +88,4 @@ const WeeklyView = () => {
     )
 };
 
-export default WeeklyView;
+export default YearlyView;

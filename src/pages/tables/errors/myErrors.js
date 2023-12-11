@@ -4,12 +4,14 @@ import {Group, Title} from "@mantine/core";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import {TableSort} from "../../../components/mantine/TableSort";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 
 
 
 const SurplusNotableEvents = () => {
+    useUsage("Metrics","UserErrors-RangeView-table")
     const {data,status} = useSession();
     const [dateRange, setDateRange] = useState([new Date(), new Date()]) // [start, end]
     const [startDate,endDate] = dateRange;

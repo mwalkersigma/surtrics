@@ -14,6 +14,7 @@ import {BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement, P
 import DataLabels from "chartjs-plugin-datalabels";
 import useNav from "../modules/hooks/useNav";
 import { useViewportSize } from "@mantine/hooks";
+import useUsage from "../modules/hooks/useUsage";
 
 ChartJS.register(
     CategoryScale,
@@ -189,8 +190,6 @@ function DailyGraph ({dailyData,theme,height}){
         height={height}
     />
 }
-
-
 function handleDailyData(dailyData){
     let temp = dailyData
         .reduce((acc,curr) => {
@@ -204,6 +203,7 @@ function handleDailyData(dailyData){
 }
 
 export default function ManLayout({}) {
+    useUsage("Metrics","Dashboard")
     const hasNav = useNav();
     let date = new Date()
     const {colorScheme:theme} = useMantineColorScheme();

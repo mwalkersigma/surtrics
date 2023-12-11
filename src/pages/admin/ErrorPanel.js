@@ -3,8 +3,10 @@ import {TableSort} from "../../components/mantine/TableSort";
 import useTable from "../../modules/hooks/useTable";
 import {Button, rem } from "@mantine/core";
 import {IconTrash} from "@tabler/icons-react";
+import useUsage from "../../modules/hooks/useUsage";
 
 const ErrorPanel = () => {
+    useUsage("Admin","ErrorPanel")
     const assignedValues = {
         "Total Output": "Error/(incrementations+Approvals)",
         "Incrementation": "Error/Approvals",

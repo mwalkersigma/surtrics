@@ -16,6 +16,7 @@ import {colorScheme} from "../../_app";
 import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
+import useUsage from "../../../modules/hooks/useUsage";
 
 ChartJS.register(
     CategoryScale,
@@ -159,6 +160,7 @@ function IndividualChart(props){
 
 
 function UserGraph() {
+    useUsage("Metrics","individual-daily-chart")
     const [date, setDate] = useState(new Date());
     let individualData = useUpdates("/api/views/individualView", {date});
     const {colorScheme: theme} = useMantineColorScheme();

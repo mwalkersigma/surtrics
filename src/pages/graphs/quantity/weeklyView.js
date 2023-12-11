@@ -19,6 +19,7 @@ import {colorScheme} from "../../_app";
 import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 
@@ -43,6 +44,7 @@ let colorPalette = [
 
 const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 const WeeklyView = () => {
+    useUsage("Metrics","quantity-weekly-chart")
     const [date, setDate] = useState(new Date());
     let quantity = useUpdates("/api/views/quantity/weeklyViewTotalOnly", {date});
     const {colorScheme: theme} = useMantineColorScheme();

@@ -5,9 +5,11 @@ import {NativeSelect, Table} from "@mantine/core";
 import {YearPickerInput} from "@mantine/dates";
 import {setDate, setMonth} from "date-fns";
 import formatter from "../../../modules/utils/numberFormatter";
+import useUsage from "../../../modules/hooks/useUsage";
 
 const dateSet = setDate
 const YearlyView = () => {
+    useUsage("Metrics","individual-yearly-table")
     const [user, setUser] = useState("");
     const [date,setDate] = useState(setMonth(dateSet(new Date(),1),0))
     let individualData = useUpdates("/api/views/individualView",{date, interval: "1 year"});

@@ -9,6 +9,7 @@ import {
     NativeSelect
 } from "@mantine/core";
 import useFrequency from "../../modules/hooks/useFrequency";
+import useUsage from "../../modules/hooks/useUsage";
 const {frequencies} = settings;
 
 
@@ -23,6 +24,7 @@ const {frequencies} = settings;
 
 
 const Index = () => {
+    useUsage("Admin","Home")
     const frequency = useFrequency();
     const [userFrequency, setUserFrequency] = React.useState(frequencies[0]);
 

@@ -24,6 +24,7 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 import {addDays} from "date-fns";
 import StatCard from "../../../components/mantine/StatCard";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 
@@ -150,6 +151,7 @@ function WeeklyApprovalsChart({approvals,date,theme}){
 
 
 const WeekView = () => {
+    useUsage("Metrics","Approvals-Weekly-chart")
     const [date, setDate] = useState(new Date());
     const {colorScheme:theme} = useMantineColorScheme();
     let approvals = useUpdates("/api/views/approvals", {date:formatDateWithZeros(addDays(findStartOfWeek(new Date(date)),1)),interval:"1 week",increment:'day'});
@@ -165,7 +167,6 @@ const WeekView = () => {
         if(acc.count < +cur.count) return cur;
         return acc;
     },{count:0})
-    console.log(bestDay)
     return (<GraphWithStatCard
             title={"Surplus Template Approvals Weekly View"}
             isLoading={approvals.length === 0}

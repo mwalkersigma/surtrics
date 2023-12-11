@@ -18,6 +18,7 @@ import {setDate} from "date-fns";
 import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {MonthPickerInput} from "@mantine/dates";
+import useUsage from "../../../modules/hooks/useUsage";
 
 ChartJS.register(
     CategoryScale,
@@ -162,6 +163,7 @@ function MonthlyApprovalsChart({approvals,theme}){
 }
 
 const MonthlyView = () => {
+    useUsage("Metrics","Approvals-Monthly-chart")
     const [date,setDate] = useState(dateSet(new Date(),1))
     const {colorScheme:theme} = useMantineColorScheme();
     let approvals = useUpdates("/api/views/approvals", {date, interval: "1 month",increment:"day"});

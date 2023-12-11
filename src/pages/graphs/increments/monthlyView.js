@@ -18,6 +18,7 @@ import {useMantineColorScheme} from "@mantine/core";
 import {MonthPickerInput} from "@mantine/dates";
 import StatCard from "../../../components/mantine/StatCard";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 
@@ -163,7 +164,7 @@ function LineGraphMonthly ({monthData,theme}) {
 }
 const dateSet = setDate;
 const MonthlyView = () => {
-
+    useUsage("Metrics","MonthlyIncrementsView-chart")
     const [date,setDate] = useState(dateSet(new Date(),1))
     let monthData = useUpdates("/api/views/increments",{date,interval:"1 month",increment:"day"});
     const {colorScheme:theme} = useMantineColorScheme();

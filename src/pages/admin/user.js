@@ -5,11 +5,13 @@ import useTable from "../../modules/hooks/useTable";
 import {useForm} from "@mantine/form";
 import {Container, Group, TagsInput, TextInput, Title, Button, Stack, Divider, Space} from "@mantine/core";
 import {Notifications} from "@mantine/notifications";
+import useUsage from "../../modules/hooks/useUsage";
 
 
 
 
 export default function AdminPanel() {
+    useUsage("Admin","AdminPanel")
     const {tableData, removeHandler, putHandler, status, handlers} = useTable({
         route: "/api/admin/user",
         idField: "email"

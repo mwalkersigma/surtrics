@@ -5,6 +5,7 @@ import ViewerLayout from "../../components/mantine/ViewerLayout";
 import useTable from "../../modules/hooks/useTable";
 import {IconTrash} from "@tabler/icons-react";
 import formatter from "../../modules/utils/numberFormatter";
+import useUsage from "../../modules/hooks/useUsage";
 
 
 
@@ -13,6 +14,7 @@ import formatter from "../../modules/utils/numberFormatter";
 
 
 const BigCommerce = () => {
+    useUsage("Ecommerce","bigCommerce-UserEntries-viewer")
     const {tableData,removeHandler,status} = useTable({route:"/api/dataEntry/bigCommerce",idField:"entry_id"})
     let removeEntry = removeHandler("/api/dataEntry/bigCommerce");
     console.log(tableData)

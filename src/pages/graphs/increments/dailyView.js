@@ -11,11 +11,13 @@ import {
 import {DatePickerInput} from "@mantine/dates";
 import StatCard from "../../../components/mantine/StatCard";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 ChartJS.register(CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement,);
 
 const DailyView = () => {
+    useUsage("Metrics","Increments-daily-chart")
     const [date, setDate] = useState(new Date())
     let dailyData = useUpdates("/api/views/increments", {date, interval: "1 day", increment: "hour"});
     const {colorScheme: theme} = useMantineColorScheme();

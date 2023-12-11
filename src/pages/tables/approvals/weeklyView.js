@@ -5,8 +5,12 @@ import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 import { Table } from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
+import useUsage from "../../../modules/hooks/useUsage";
 
 const WeeklyView = () => {
+    //stat-timeframe-type
+    //eg approval-weekly-chart
+    useUsage("metrics","approvals-weekly-chart")
     const [date, setDate] = useState(new Date());
     let updates = useUpdates("/api/views/approvals", {date:findStartOfWeek(new Date(date)),interval:"1 week", increment:"day"});
     console.log(updates)

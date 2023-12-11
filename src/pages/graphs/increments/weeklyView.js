@@ -21,6 +21,7 @@ import {useMantineColorScheme} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
 import StatCard from "../../../components/mantine/StatCard";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import useUsage from "../../../modules/hooks/useUsage";
 
 ChartJS.register(
     CategoryScale,
@@ -238,6 +239,7 @@ function WeeklyChart(props){
 }
 
 function WeeklyView() {
+    useUsage("Metrics","Increments-weekly-chart")
     const [date, setDate] = useState(new Date())
     const {colorScheme:theme} = useMantineColorScheme();
 

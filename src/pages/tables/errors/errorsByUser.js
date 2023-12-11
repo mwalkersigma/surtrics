@@ -47,7 +47,7 @@ const ErrorsByUser = () => {
 
 
     return (
-        <RoleWrapper allowedRoles={["surplus director","warehouse"]}>
+        <RoleWrapper altRoles={["surplus director","warehouse"]}>
             <GraphWithStatCard
                 title="User Error Range View"
                 noBorder

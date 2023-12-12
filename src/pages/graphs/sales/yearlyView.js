@@ -159,7 +159,6 @@ const YearlyView = () => {
         labels:months,
         datasets : graphDataSets
     }
-    console.log()
     return (
         <GraphWithStatCard
         title={"Yearly Sales"}

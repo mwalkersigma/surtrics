@@ -6,7 +6,6 @@ const {PromisePool} = require("@supercharge/promise-pool")
 
 const shipStationToken = process.env.SHIPSTATION_TOKEN;
 
-console.log(shipStationToken)
 
 
 const pool = new Pool({

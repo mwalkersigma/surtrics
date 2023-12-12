@@ -164,9 +164,6 @@ function UserGraph() {
     const [date, setDate] = useState(new Date());
     let individualData = useUpdates("/api/views/individualView", {date});
     const {colorScheme: theme} = useMantineColorScheme();
-    console.log(individualData);
-
-
     return (
         <GraphWithStatCard
             title={"User View"}

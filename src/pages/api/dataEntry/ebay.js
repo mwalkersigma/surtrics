@@ -39,21 +39,16 @@ function getHandler(req, res) {
     },"bsa","surplus director")(req,res)
 }
 function deleteHandler(req, res) {
-    console.log("deleteHandler")
     return serverAdminWrapper((req,res)=> {
-        console.log("serverAdminWrapper")
-        console.log(parseBody(req))
         return db.query(`
             DELETE
             FROM surtrics.surplus_ebay_data
             WHERE entry_id = $1
         `, [parseBody(req)['entry_id']])
-            .then((resp) => {
-                console.log(resp)
+            .then(() => {
                 res.status(200).json("Successfully deleted data");
             })
-            .catch((error) => {
-                console.log(error)
+            .catch(() => {
                 res.status(500).json("There was an error deleting data");
             });
     },"bsa","surplus director")(req,res)

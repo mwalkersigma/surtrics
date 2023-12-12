@@ -10,10 +10,9 @@ import useUsage from "../../../modules/hooks/useUsage";
 const WeeklyView = () => {
     //stat-timeframe-type
     //eg approval-weekly-chart
-    useUsage("metrics","approvals-weekly-chart")
+    useUsage("Metrics","approvals-weekly-chart")
     const [date, setDate] = useState(new Date());
     let updates = useUpdates("/api/views/approvals", {date:findStartOfWeek(new Date(date)),interval:"1 week", increment:"day"});
-    console.log(updates)
     let mappedUpdates = {};
     updates?.forEach((update) => {
         let name = update.name;

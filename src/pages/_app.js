@@ -31,7 +31,7 @@ export const colorScheme = {
     light:'#f8f9fa',
     dark:'#212529',
     random () {
-        let ignoreList = ["white", "gray", "grayDark","secondary","light","dark"]
+        let ignoreList = ["white", "gray", "grayDark","secondary","light","dark","random"]
         let choices = Object.keys(this).filter((key) => !ignoreList.includes(key));
         let random = Math.floor(Math.random() * choices.length);
         return this[choices[random]];

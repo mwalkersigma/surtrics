@@ -43,7 +43,7 @@ export default function handler ( req, res ) {
             PATCH: patchHandler,
             DELETE: deleteHandler
         })(req,res)
-    })(req,res)
+    },"surplus director")(req,res)
         .then((response) => {
             res.status(200).json(response);
         })

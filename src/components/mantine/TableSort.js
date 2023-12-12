@@ -142,8 +142,8 @@ export function TableSort({data, noToolTip=[],specialFormatting = []}) {
         }
     }
 
-    const rows = sortedData.map(row => (
-        <Table.Tr key={row.id}>
+    const rows = sortedData.map((row,i) => (
+        <Table.Tr key={row.id || i }>
             {headers.map((key) => (
                 <Td key={key} ignoreList={["remove",...noToolTip]} property={key}>
                     { !specialFormatting.map(({column})=>column).includes(key) ?

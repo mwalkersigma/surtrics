@@ -10,7 +10,7 @@ import useUsage from "../../../modules/hooks/useUsage";
 const dateSet = setDate
 
 const YearlyView = () => {
-    useUsage("metrics","approvals-yearly-chart")
+    useUsage("Metrics","approvals-yearly-chart")
     const [date,setDate] = useState(dateSet(setMonth(new Date(),0),1))
     let updates = useUpdates("/api/views/approvals", {date,interval:"1 year",increment:"month"});
     let mappedUpdates = {};
@@ -21,7 +21,6 @@ const YearlyView = () => {
         if(!mappedUpdates[name][date]) mappedUpdates[name][date] = 0;
         mappedUpdates[name][date] += parseInt(update.count);
     })
-    console.log(mappedUpdates)
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
     return (

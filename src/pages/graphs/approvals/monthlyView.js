@@ -99,7 +99,6 @@ function MonthlyApprovalsChart({approvals,theme}){
         })
         return acc;
     },{});
-    console.log(theme)
     const options = {
         devicePixelRatio: 4,
         responsive: true,

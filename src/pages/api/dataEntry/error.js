@@ -43,7 +43,6 @@ async function putHandler(req,res,...options){
     return serverAdminWrapper(async (req) => {
         const body = JSON.parse(req.body);
         const {user,reason,notes,session:browserSession,date,location} = body;
-        console.log(body)
         const {user:sessionUser} = browserSession;
         delete sessionUser.image;
         await db.query(`

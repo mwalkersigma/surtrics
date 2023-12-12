@@ -18,7 +18,6 @@ import {
     IconTallymarks,
     IconUser,
     IconEdit,
-    IconKey,
     IconChartHistogram,
     IconTable,
     IconSettings,
@@ -192,30 +191,6 @@ const pages = {
                     href: "/viewers/error"
                 },
             }
-        },
-        "Admin": {
-            leftSection: <IconKey size={size} stroke={stroke}/>,
-            roles: ["surplus director"],
-            links: {
-                "Admin Settings": {
-                    href: "/admin",
-                    leftSection: <IconSettings size={size} stroke={stroke}/>,
-                },
-                "Update Goals": {
-                    href: "/admin/updateGoal",
-                    leftSection: <IconTargetArrow size={size} stroke={stroke}/>,
-                },
-                "User Panel": {
-                    leftSection: <IconUser size={size} stroke={stroke}/>,
-                    href: "/admin/user",
-                    roles: []
-                },
-                "Submit Error Type": {
-                    leftSection: <IconSettings size={size} stroke={stroke}/>,
-                    href: "/BSA/createErrorType",
-                    roles: ["surplus director"]
-                },
-            }
         }
     },
     "E-Commerce": {
@@ -313,30 +288,6 @@ const pages = {
                     href: "/viewers/quickBooks"
                 }
             }
-        },
-        "Admin": {
-            leftSection: <IconKey size={size} stroke={stroke}/>,
-            roles: ["surplus director"],
-            links: {
-                "Admin Settings": {
-                    href: "/admin",
-                    leftSection: <IconSettings size={size} stroke={stroke}/>,
-                },
-                "Update Goals": {
-                    href: "/admin/updateGoal",
-                    leftSection: <IconTargetArrow size={size} stroke={stroke}/>,
-                },
-                "User Panel": {
-                    leftSection: <IconUser size={size} stroke={stroke}/>,
-                    href: "/admin/user",
-                    roles: []
-                },
-                "Error type Settings": {
-                    leftSection: <IconSettings size={size} stroke={stroke}/>,
-                    href: "/admin/ErrorPanel",
-                    roles: ["surplus director"]
-                }
-            }
         }
     }
 }
@@ -372,7 +323,27 @@ export default function Layout({children}) {
     if (!hasNavBar) return children;
     return (<AppShell {...appShellProps}>
             <SurtricsHeader{...toggleProps}/>
-            <SurtricsNavbar links={pages} />
+            <SurtricsNavbar links={pages} footer={{"Admin": {
+                        "Admin Dashboard": {
+                            href: "/admin",
+                            leftSection: <IconTable size={size} stroke={stroke}/>,
+                        },
+                        "Update Goals": {
+                            href: "/admin/updateGoal",
+                            leftSection: <IconTargetArrow size={size} stroke={stroke}/>,
+                        },
+                        "User Panel": {
+                            leftSection: <IconUser size={size} stroke={stroke}/>,
+                            href: "/admin/user",
+                            roles: []
+                        },
+                        "Error type Settings": {
+                            leftSection: <IconSettings size={size} stroke={stroke}/>,
+                            href: "/admin/ErrorPanel",
+                            roles: ["surplus director"]
+                        }
+                    }
+                }} />
             <AppShell.Main>
                 <ScrollArea>
                     {children}

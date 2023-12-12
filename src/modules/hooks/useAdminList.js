@@ -18,7 +18,6 @@ export default function useAdminList () {
                 });
                 return lowerCaseAdminList.includes(emailLowerCase);
             } catch (e) {
-                console.log(e);
                 return false;
             }
         }

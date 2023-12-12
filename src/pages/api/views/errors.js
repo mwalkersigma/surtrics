@@ -63,7 +63,6 @@ async function postHandler(req) {
     }
 
     if (body.name){
-        console.log(body.name)
         query += `AND "user" = $${++count} \n`;
         params.push(body.name);
     }

@@ -17,7 +17,6 @@ const BigCommerce = () => {
     useUsage("Ecommerce","bigCommerce-UserEntries-viewer")
     const {tableData,removeHandler,status} = useTable({route:"/api/dataEntry/bigCommerce",idField:"entry_id"})
     let removeEntry = removeHandler("/api/dataEntry/bigCommerce");
-    console.log(tableData)
     return (
         <ViewerLayout title={"Big Commerce"} isLoading={status === "loading"}>
             <TableSort

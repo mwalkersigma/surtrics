@@ -5,7 +5,6 @@ import {parseBody} from "../../../modules/serverUtils/parseBody";
 
 
 async function PostHandler(req,res,date,interval) {
-    console.log(date,interval)
 let data = await db.query(`
 SELECT
     "user" AS user_id,

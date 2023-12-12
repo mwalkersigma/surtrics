@@ -9,16 +9,14 @@ import fs from "fs";
 
 function postHandler(req,res){
     let {key,parentKey} = parseBody(req);
-    console.log(`Updated usageTracker.json @ ${new Date()} file location: ${path.join(__dirname, 'usageTracker.json')}`);
     logUsage(parentKey,key);
     res.status(200).send('ok');
 }
 
 function getHandler(req,res){
-    fs.readFile(path.join(__dirname, 'usageTracker.json'), 'utf8', function (err, data) {
+    fs.readFile(path.join('./src/json/', 'usageTracker.json'), 'utf8', function (err, data) {
         if (err) throw err;
-
-        res.status(200).send(data);
+        res.status(200).json(JSON.parse(data));
     })
 }
 

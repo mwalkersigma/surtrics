@@ -1,7 +1,6 @@
-import {AppShell, Divider, NavLink, ScrollArea, SegmentedControl} from "@mantine/core";
+import {AppShell, Box, Divider, NavLink, ScrollArea, SegmentedControl, Space} from "@mantine/core";
 import RoleWrapper from "../../RoleWrapper";
 import { useSessionStorage } from "@mantine/hooks";
-import useAdminList from "../../../modules/hooks/useAdminList";
 
 
 
@@ -88,8 +87,9 @@ function stateInit(page) {
 }
 
 
-export default function SurtricsNavbar ({links}) {
+export default function SurtricsNavbar ({links,footer}) {
     let count = 0
+    let adminCount = 0
     const [section, setSection] = useSessionStorage({
         key: "navbar-section",
         defaultValue: "Metrics"
@@ -99,30 +99,46 @@ export default function SurtricsNavbar ({links}) {
         defaultValue: stateInit(links[section])
     });
 
+    const [adminState, setAdminState] = useSessionStorage({
+        key: "navbar-admin",
+        defaultValue: stateInit(footer["Admin"])
+    })
+
 
 
 
     const handleToggle = (key) => {
         setState((current) => ({...current, [key]: !current[key]}))
     }
+    const handleAdminToggle = (key) => {
+        setAdminState((current) => ({...current, [key]: !current[key]}))
+    }
     let sections = Object.keys(links)
 
     return (
         <AppShell.Navbar p="md">
-            <SegmentedControl
-                data={sections}
-                value={section}
-                onChange={setSection}
-                fullWidth
-                mb={'2rem'}
-                //variant="outline"
-                //color="blue"
-                //size="lg"
-            />
-            <Divider mb={'2rem'}/>
+            <Box mb={'md'}>
+                <SegmentedControl
+                    data={sections}
+                    value={section}
+                    onChange={setSection}
+                    fullWidth
+                    mb={'md'}
+                />
+                <Divider/>
+            </Box>
+
+
             <ScrollArea>
                 <GeneratedNavBar state={state} handleToggle={handleToggle} page={links[section]} count={count}/>
+                <Space h={'3rem'}/>
             </ScrollArea>
+            <RoleWrapper invisible altRoles={["surplus director"]}>
+                <Box>
+                    <Divider mb={'md'}/>
+                    <GeneratedNavBar state={adminState} handleToggle={handleAdminToggle} page={footer["Admin"]} count={adminCount}/>
+                </Box>
+            </RoleWrapper>
         </AppShell.Navbar>
     )
 }

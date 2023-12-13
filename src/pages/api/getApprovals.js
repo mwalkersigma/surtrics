@@ -151,9 +151,11 @@ export async function ChannelRouteMain(){
                 const hasFinalApprovalDate = record[89] !== "";
                 if(isParent && isApproved && hasFinalApprovalDate){
                     const sku = record[5];
+                    const mpn = record[35];
+                    const manufacturer = record[46];
                     const approver = record[101];
                     const finalApprovalDate = record[89];
-                    records.push({sku,approver,finalApprovalDate})
+                    records.push({sku,approver,mpn,manufacturer,finalApprovalDate})
                 }
 
             }
@@ -177,6 +179,8 @@ export async function ChannelRouteMain(){
                     (
                         id BIGSERIAL PRIMARY KEY,
                         sku VARCHAR(255) NOT NULL,
+                        part_number VARCHAR(255),
+                        manufacturer VARCHAR(255),
                         date_of_final_approval timestamp,
                         template_approval_status VARCHAR(255),
                         user_who_approved VARCHAR(255)
@@ -185,7 +189,7 @@ export async function ChannelRouteMain(){
     Logger.log("Table Recreated. Inserting data.");
     let query = `
                     INSERT INTO nfs.surtrics.surplus_approvals
-                        (sku, date_of_final_approval, template_approval_status, user_who_approved)
+                        (sku, part_number, manufacturer, date_of_final_approval, template_approval_status, user_who_approved)
                     VALUES
                 `;
 
@@ -195,7 +199,7 @@ export async function ChannelRouteMain(){
         }
         const formatDate = new Date(approval.finalApprovalDate).toLocaleString('en-US', {timeZone: 'America/Chicago', hour12: true});
 
-        query += `('${approval.sku}', '${formatDate}', 'Approved', '${approval.approver}')`;
+        query += `('${approval.sku}',${approval.mpn},${approval.manufacturer}, '${formatDate}', 'Approved', '${approval.approver}')`;
         if(i < records.length - 1){
             query += ','
         }

@@ -269,6 +269,10 @@ const pages = {
                     leftSection: <IconActivity size={size} stroke={stroke}/>,
                     href: "/BSA/eventReporting"
                 },
+                "Pricing Backlog" : {
+                    leftSection: <IconTallymarks size={size} stroke={stroke}/>,
+                    href: "/BSA/pricingBacklogEntry"
+                }
             }
         },
         "My Entries": {
@@ -286,6 +290,9 @@ const pages = {
                 },
                 "Quick Books": {
                     href: "/viewers/quickBooks"
+                },
+                "Pricing Backlog" : {
+                    href: "/viewers/pricingBacklog"
                 }
             }
         }

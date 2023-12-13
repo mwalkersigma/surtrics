@@ -2,22 +2,21 @@ import router from "../../modules/serverUtils/requestRouter";
 import logUsage from "../../modules/usageTracking/usageTracker";
 import {parseBody} from "../../modules/serverUtils/parseBody";
 import * as path from "path";
-import fs from "fs";
+import fs from "fs/promises";
 
 
 
 
-function postHandler(req,res){
+async function postHandler(req,res){
     let {key,parentKey} = parseBody(req);
     logUsage(parentKey,key);
-    res.status(200).send('ok');
+    return res.status(200).send('ok')
 }
 
-function getHandler(req,res){
-    fs.readFile(path.join('./src/json/', 'usageTracker.json'), 'utf8', function (err, data) {
-        if (err) throw err;
-        res.status(200).json(JSON.parse(data));
-    })
+async function getHandler(req,res){
+    let file = await fs.readFile("./src/json/usageTracker.json");
+    file = JSON.parse(file);
+    return res.status(200).json(file)
 }
 
 

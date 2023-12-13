@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS surtrics.surplus_pricing_backlog;
+CREATE TABLE IF NOT EXISTS surtrics.surplus_pricing_backlog (
+    entry_id BIGSERIAL PRIMARY KEY,
+    count INTEGER,
+    user_who_entered VARCHAR(255),
+    date_entered TIMESTAMP
+);

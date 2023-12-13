@@ -23,6 +23,8 @@ function convertInvalidDate(date){
     );
 
 }
+
+const removeSingleQuotes = (str) => str.replace(/'/g, "");
 async function authorizeChannelAdvisor () {
     const authURL = 'https://api.channeladvisor.com/oauth2/token'
     const authHeader = {
@@ -137,6 +139,8 @@ export async function ChannelRouteMain(){
     let file = outputFiles[0];
     Logger.log("unzipping files.")
     await decompress(`${outputFolder}/${file}`, outputFolder)
+    Logger.log("Finished unzipping files.")
+    Logger.log("Parsing TSV.")
     let records = [];
     await new Promise((res,rej)=>{
         const parser = parse({
@@ -152,7 +156,7 @@ export async function ChannelRouteMain(){
                 if(isParent && isApproved && hasFinalApprovalDate){
                     const sku = record[5];
                     const mpn = record[35];
-                    const manufacturer = record[46];
+                    const manufacturer = removeSingleQuotes(record[46]);
                     const approver = record[101];
                     const finalApprovalDate = record[89];
                     records.push({sku,approver,mpn,manufacturer,finalApprovalDate})
@@ -170,7 +174,7 @@ export async function ChannelRouteMain(){
             res()
         })
     })
-    Logger.log("Finished unzipping files.")
+    Logger.log("Finished parsing TSV.")
     Logger.log("Cleaning Table.")
     await db.query(`DROP TABLE IF EXISTS nfs.surtrics.surplus_approvals;`);
     Logger.log("Table Dropped. Recreating Table.")
@@ -198,18 +202,19 @@ export async function ChannelRouteMain(){
             approval.finalApprovalDate = convertInvalidDate(approval.finalApprovalDate)
         }
         const formatDate = new Date(approval.finalApprovalDate).toLocaleString('en-US', {timeZone: 'America/Chicago', hour12: true});
-
-        query += `('${approval.sku}',${approval.mpn},${approval.manufacturer}, '${formatDate}', 'Approved', '${approval.approver}')`;
+        query += `('${approval.sku}','${approval.mpn}','${approval.manufacturer}', '${formatDate}', 'Approved', '${approval.approver}')`;
         if(i < records.length - 1){
             query += ','
         }
 
     })
     query += ';'
-    // fs.writeFileSync("./src/data/channelAdvisor.json",JSON.stringify(records,null,2),{flag: "w+"});
-    db.query(query)
-    Logger.log("Data inserted. Cleaning up.")
-    Logger.log("Cleaning up outputs folder.")
+     fs.writeFileSync("./src/data/channelAdvisor.json",JSON.stringify(records,null,2),{flag: "w+"});
+    console.log(query)
+    await db.query(query)
+    Logger.log("Data inserted. Cleaning up.");
+    Logger.log("Cleaning up outputs folder.");
+
     fs.readdir(outputFolder, (err, files) => {
         if (err) throw err;
         for (const file of files) {

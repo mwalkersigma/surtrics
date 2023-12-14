@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS surtrics.surplus_pricing_data;
+CREATE TABLE IF NOT EXISTS surtrics.surplus_pricing_data(
+    entry_id BIGSERIAL PRIMARY KEY NOT NULL ,
+    date_priced timestamp NOT NULL ,
+    user_who_priced TEXT NOT NULL,
+    sku TEXT NOT NULL,
+    original_packaging_price DECIMAL NOT NULL,
+    sigma_packaging_price DECIMAL NOT NULL,
+    refurbished_price DECIMAL NOT NULL
+);

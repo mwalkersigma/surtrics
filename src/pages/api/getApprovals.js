@@ -21,10 +21,40 @@ function convertInvalidDate(date){
         .replace(/Z/, ' ')
         .replace(/\.\d+/, '')
     );
-
 }
 
 const removeSingleQuotes = (str) => str.replace(/'/g, "");
+function parseRecordForApprovalsTable(record,records){
+    const isParent = record[6] === "Parent";
+    const isApproved = record[91] === "Approved";
+    const hasFinalApprovalDate = record[89] !== "";
+    if(isParent && isApproved && hasFinalApprovalDate){
+        const sku = record[5];
+        const mpn = record[35];
+        const manufacturer = removeSingleQuotes(record[46]);
+        const approver = record[101];
+        const finalApprovalDate = record[89];
+        records.push({sku,approver,mpn,manufacturer,finalApprovalDate})
+    }
+}
+function parseRecordForPricingTable(record,pricingData,lastUpdateDate){
+    let user = record[103];
+    let datePriced = record[105];
+    let sku = record[5];
+    let originalPackagingPrice = +record[169];
+    let sigmaPackagingPrice = +record[173];
+    let refurbishedPrice = +record[171];
+    if(!user || !datePriced || !sku || !originalPackagingPrice || !sigmaPackagingPrice || !refurbishedPrice) return;
+    if(new Date(datePriced).toString() === "Invalid Date"){
+        datePriced = convertInvalidDate(datePriced).toLocaleDateString();
+        if(new Date(datePriced).toString() === "Invalid Date") {return}
+    }
+    if(isNaN(originalPackagingPrice) || isNaN(sigmaPackagingPrice) || isNaN(refurbishedPrice)) return;
+    if(lastUpdateDate && new Date(datePriced) < lastUpdateDate) return;
+    let item = {user,datePriced,sku,originalPackagingPrice,sigmaPackagingPrice,refurbishedPrice};
+    pricingData.push(item);
+}
+
 async function authorizeChannelAdvisor () {
     const authURL = 'https://api.channeladvisor.com/oauth2/token'
     const authHeader = {
@@ -99,6 +129,21 @@ export async function getUpdatesFromChannelAdvisor () {
     return data;
 }
 
+
+function getLatestUpdateDate(){
+    return db.query(`
+        SELECT
+            date_priced
+        FROM
+            surtrics.surplus_pricing_data
+        ORDER BY
+            date_priced DESC
+        LIMIT 1;
+    `)
+    .then(({rows})=>rows[0]?.['date_priced'])
+    .catch((err)=>Logger.log(err))
+}
+
 async function getFileResponseUrl(){
     let fileResponseUrl = null;
     do {
@@ -142,6 +187,11 @@ export async function ChannelRouteMain(){
     Logger.log("Finished unzipping files.")
     Logger.log("Parsing TSV.")
     let records = [];
+    let pricingData = [];
+    let latestUpdateDate = await getLatestUpdateDate();
+    Logger.log("Latest update date: " + latestUpdateDate);
+
+
     await new Promise((res,rej)=>{
         const parser = parse({
             delimiter: '\t',
@@ -150,18 +200,8 @@ export async function ChannelRouteMain(){
         parser.on('readable', function(){
             let record;
             while ((record = parser.read()) !== null) {
-                const isParent = record[6] === "Parent";
-                const isApproved = record[91] === "Approved";
-                const hasFinalApprovalDate = record[89] !== "";
-                if(isParent && isApproved && hasFinalApprovalDate){
-                    const sku = record[5];
-                    const mpn = record[35];
-                    const manufacturer = removeSingleQuotes(record[46]);
-                    const approver = record[101];
-                    const finalApprovalDate = record[89];
-                    records.push({sku,approver,mpn,manufacturer,finalApprovalDate})
-                }
-
+                parseRecordForApprovalsTable(record,records);
+                parseRecordForPricingTable(record,pricingData);
             }
         });
         parser.on('error', function(err){
@@ -206,12 +246,32 @@ export async function ChannelRouteMain(){
         if(i < records.length - 1){
             query += ','
         }
-
     })
     query += ';'
-     fs.writeFileSync("./src/data/channelAdvisor.json",JSON.stringify(records,null,2),{flag: "w+"});
-    console.log(query)
+    fs.writeFileSync("./src/data/channelAdvisor.json",JSON.stringify(records,null,2),{flag: "w+"});
     await db.query(query)
+
+    Logger.log("Finished inserting data.");
+    if(pricingData.length > 0){
+        query = `
+                    INSERT INTO nfs.surtrics.surplus_pricing_data (user_who_priced, date_priced, sku, original_packaging_price, sigma_packaging_price, refurbished_price)
+                    VALUES
+                `;
+        console.log("Querying: " + query)
+        pricingData.forEach((pricing,i) => {
+            let {user,datePriced,sku,originalPackagingPrice,sigmaPackagingPrice,refurbishedPrice} = pricing;
+            query += `('${user}','${datePriced}','${sku}',${originalPackagingPrice},${sigmaPackagingPrice},${refurbishedPrice})`;
+                if(i < pricingData.length - 1){
+                    query += ','
+                }
+        });
+        // remove any double quotes from the query
+        query = query.replace(/"/g,"");
+        console.log("Finished building query for pricing data.")
+        await db.query(query)
+        console.log("Finished inserting pricing data.")
+    }
+
     Logger.log("Data inserted. Cleaning up.");
     Logger.log("Cleaning up outputs folder.");
 

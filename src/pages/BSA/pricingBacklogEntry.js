@@ -80,7 +80,13 @@ const BigCommerceEntry = () => {
             body:JSON.stringify(values)
         })
             .then((res)=>res.json())
-            .then(({message})=>{
+            .then((response)=>{
+                const {message} = response;
+                const error = response?.error;
+                if(error){
+                    Notifications.show({autoClose: 5000, title: "Error", message: error, type: "error"})
+                    return;
+                }
                 Notifications.show({autoClose: 5000, title: "Success", message, type: "success"})
             })
             .catch((err)=>{

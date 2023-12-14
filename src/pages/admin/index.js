@@ -134,14 +134,10 @@ const Index = () => {
                     </Grid>
                 </Stack>
                 <Title  mb={'xl'} order={2} >Usage Statistics</Title>
-                <UsageMeter usage={usage}/>
+                {usage && <UsageMeter usage={usage}/>}
                 <Divider mt={'xl'} mb={'xl'}/>
-                {/*<TableSort*/}
-                {/*    data={*/}
+                {usage && <UsageTable usage={usage}/>}
 
-                {/*    }*/}
-
-                <UsageTable usage={usage}/>
                 <Space mt={'xl'} mb={'xl'}/>
                 <Space mt={'xl'} mb={'xl'}/>
 

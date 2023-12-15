@@ -119,13 +119,13 @@ const BigCommerceRangeView = () => {
                 <CustomRangeMenu
                     defaultValue={dateRange}
                     subscribe={setDateRange}
+                    mb={'md'}
                 />
             }
             slotTwo={
-            <Center h={'100%'}>
-                <Text fz={'small'} c={'dimmed'}>
-                    Please Keep in mind ALL data prior to december
-                    1st was done on a weekly basis, and is currently
+            <Center mb={'md'} h={'100%'}>
+                <Text fz={'small'} c={colorScheme.red}>
+                    Please Keep in mind ALL data prior to november 27th was done on a weekly basis, and is currently
                     done on a daily basis
                 </Text>
             </Center>

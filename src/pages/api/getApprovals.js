@@ -248,7 +248,6 @@ export async function ChannelRouteMain(){
         }
     })
     query += ';'
-    fs.writeFileSync("./src/data/channelAdvisor.json",JSON.stringify(records,null,2),{flag: "w+"});
     await db.query(query)
 
     Logger.log("Finished inserting data.");

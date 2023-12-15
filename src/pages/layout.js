@@ -21,7 +21,6 @@ import {
     IconChartHistogram,
     IconTable,
     IconSettings,
-    IconTargetArrow,
     IconDeviceDesktopAnalytics, IconTimeline, IconExclamationCircle
 } from "@tabler/icons-react";
 import {FaEbay} from "react-icons/fa6";

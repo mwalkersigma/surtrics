@@ -107,32 +107,13 @@ const Index = () => {
 
 
 
-    function handleNowUpdate(key,value){
-        let route = key === "weeklyGoal" ? "setGoal" : "setFrequencies";
-        fetch(`${window.location.origin}/api/admin/${route}`,{
-            method:"POST",
-            body:JSON.stringify({value})
-        })
-            .then((res)=>{console.log(res)});
-    }
+
 
     return (
         <RoleWrapper altRoles={"surplus director"}>
             <Container>
                 <Title ta={"center"} mb={'xl'}>Admin Page</Title>
-                <Stack mb={'xl'}>
-                    <Grid>
-                        <Grid.Col span={4}>
-                            <NativeSelect
-                                label={"Update Frequency"}
-                                description={"This is the frequency that the data will be updated"}
-                                onChange={(e)=>handleNowUpdate("frequency",e.target.value)}
-                                data={frequencies}
-                                value={frequency}
-                            />
-                        </Grid.Col>
-                    </Grid>
-                </Stack>
+
                 <Title  mb={'xl'} order={2} >Usage Statistics</Title>
                 {usage && <UsageMeter usage={usage}/>}
                 <Divider mt={'xl'} mb={'xl'}/>

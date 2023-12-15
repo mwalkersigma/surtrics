@@ -330,14 +330,15 @@ export default function Layout({children}) {
     if (!hasNavBar) return children;
     return (<AppShell {...appShellProps}>
             <SurtricsHeader{...toggleProps}/>
-            <SurtricsNavbar links={pages} footer={{"Admin": {
+            <SurtricsNavbar links={pages} footer={{
+                "Admin": {
                         "Admin Dashboard": {
                             href: "/admin",
                             leftSection: <IconTable size={size} stroke={stroke}/>,
                         },
-                        "Update Goals": {
-                            href: "/admin/updateGoal",
-                            leftSection: <IconTargetArrow size={size} stroke={stroke}/>,
+                        "Department Settings": {
+                            href: "/admin/departmentSettings",
+                            leftSection: <IconSettings size={size} stroke={stroke}/>,
                         },
                         "User Panel": {
                             leftSection: <IconUser size={size} stroke={stroke}/>,

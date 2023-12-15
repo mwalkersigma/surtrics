@@ -1,19 +1,38 @@
+-- DELETE FROM
+--     surtrics.surplus_metrics_data a
+--     USING surtrics.surplus_metrics_data b
+-- WHERE
+--         a.id < b.id
+--   AND a."user" = b."user"
+--   AND a.sku = b.sku
+--   AND a.code = b.code
+--   AND a.transaction_date = b.transaction_date
+--   AND a.transaction_type = b.transaction_type
+--   AND a.quantity = b.quantity
+--   AND a.location = b.location
+--   AND a.transaction_type != 'Error'
+--   AND a.id > 5324330
+--   RETURNING a.*
+-- ;
+--
+--
+-- SELECT id FROM surtrics.surplus_metrics_data ORDER BY id DESC LIMIT 1;
+
+
+
+
+
 DELETE FROM
-    surtrics.surplus_metrics_data a
-    USING surtrics.surplus_metrics_data b
+    surtrics.surplus_pricing_data a
+    USING surtrics.surplus_pricing_data b
 WHERE
-        a.id < b.id
-  AND a."user" = b."user"
-  AND a.sku = b.sku
-  AND a.code = b.code
-  AND a.transaction_date = b.transaction_date
-  AND a.transaction_type = b.transaction_type
-  AND a.quantity = b.quantity
-  AND a.location = b.location
-  AND a.transaction_type != 'Error'
-  AND a.id > 5324330
-  RETURNING a.*
-;
+    a.entry_id < b.entry_id
+    AND a.date_priced = b.date_priced
+    AND a.user_who_priced = b.user_who_priced
+    AND a.sku = b.sku
+    AND a.original_packaging_price = b.original_packaging_price
+    AND a.sigma_packaging_price = b.sigma_packaging_price
+    AND a.refurbished_price = b.refurbished_price
+RETURNING a.*;
 
 
-SELECT id FROM surtrics.surplus_metrics_data ORDER BY id DESC LIMIT 1;

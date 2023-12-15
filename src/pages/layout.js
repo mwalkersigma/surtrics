@@ -243,6 +243,10 @@ const pages = {
                 "Quick Books": {
                     leftSection: <SiQuickbooks size={'1.5rem'} stroke={stroke}/>,
                     href: "/timelines/quickbooks"
+                },
+                "Pricing" : {
+                    leftSection: <IconTallymarks size={size} stroke={stroke}/>,
+                    href: "/graphs/pricingData/rangeView"
                 }
             }
         },

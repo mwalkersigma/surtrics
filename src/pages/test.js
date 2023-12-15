@@ -1,12 +1,6 @@
-import React, {useEffect} from 'react';
-import useUsage from "../modules/hooks/useUsage";
-
-
-
+import React from 'react';
 
 const Test = () => {
-    useUsage("test","test")
-
     return (
         <div>
             

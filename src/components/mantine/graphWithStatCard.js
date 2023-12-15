@@ -93,7 +93,7 @@ const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOn
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={2}>
-                            <Stack style={{height:"100%"}} justify={"space-between"} align={"space-between"}>
+                            <Stack style={{height:"100%"}} justify={"flex-start"} align={"space-between"}>
                                 {cards}
                             </Stack>
                         </Grid.Col>

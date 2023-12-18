@@ -13,7 +13,7 @@ import {
 import findStartOfWeek from "../../modules/utils/findSundayFromDate";
 import {useClickOutside} from "@mantine/hooks";
 
-const presets = [
+const defaultPresets = [
     {
         title: "Today",
         value: [new Date(), new Date()]
@@ -50,7 +50,10 @@ const presets = [
 
 
 const DateMenu = (props) => {
-    const {subscribe,defaultValue,...rest} = props;
+    let {subscribe,defaultValue,presets,...rest} = props;
+    if(!presets){
+        presets = defaultPresets;
+    }
     const [opened, setOpened] = useState(false);
     const ref = useClickOutside(() => setOpened(false));
     const [dateRange, setDateRange] = useState(defaultValue || [new Date(), new Date()]) // [start, end]

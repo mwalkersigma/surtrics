@@ -17,7 +17,7 @@ import {useMantineColorScheme} from "@mantine/core";
 import {mergeAdvanced} from "object-merge-advanced";
 
 import DataLabels from "chartjs-plugin-datalabels";
-
+import annotationPlugin from 'chartjs-plugin-annotation';
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -27,9 +27,10 @@ ChartJS.register(
     LineElement,
     DataLabels,
     PointElement,
+    annotationPlugin
 );
 
-export default function BaseChart ({stacked,config,data}) {
+export default function BaseChart ({stacked,config,data,events}) {
     const {colorScheme:mantineColorScheme} = useMantineColorScheme();
     const theme = mantineColorScheme === "dark" ? colorScheme['white'] : colorScheme['dark'];
     let options = {
@@ -74,7 +75,15 @@ export default function BaseChart ({stacked,config,data}) {
             intersect: false,
         }
     }
-    options = mergeAdvanced(options,config)
+    if(events){
+        options.plugins = mergeAdvanced(options.plugins,{
+            annotation: {
+                annotations: events
+            }
+        })
+    }
+
+    options = mergeAdvanced(options,config);
     return (
         <Chart data={data} options={options} />
     )

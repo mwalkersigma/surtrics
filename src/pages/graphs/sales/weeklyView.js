@@ -28,6 +28,8 @@ const storeDataMap = {
     "Total": ["total"]
 }
 
+
+
 const WeeklyView = () => {
     useUsage("Ecommerce","sales-weekly-chart")
     const [date, setDate] = useState(new Date('11/19/2023'));

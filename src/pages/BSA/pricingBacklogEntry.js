@@ -52,7 +52,7 @@ const BigCommerceEntry = () => {
         initialValues: {
             pricing_backlog: 0,
             user_who_submitted: userName,
-            date_entered: new Date().toISOString().split("T")[0],
+            date_submitted: new Date().toISOString().split("T")[0],
         },
     });
 
@@ -127,7 +127,7 @@ const BigCommerceEntry = () => {
                                 label={"Date Submitted"}
                                 type={"date"}
                                 placeholder={"Date Submitted"}
-                                {...getInputProps("date_entered")}
+                                {...getInputProps("date_submitted")}
                             />
                         </Grid.Col>
                         <Grid.Col span={6}>

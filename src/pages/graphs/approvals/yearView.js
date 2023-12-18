@@ -10,7 +10,7 @@ import {
     Title,
     Tooltip as ChartTooltip
 } from "chart.js";
-import {Line} from "react-chartjs-2";
+
 import {colorScheme} from "../../_app";
 import {setDate, setMonth} from "date-fns";
 import {YearPickerInput} from "@mantine/dates";
@@ -18,11 +18,10 @@ import {NativeSelect, Slider, Text, Tooltip} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
+import BaseChart from "../../../components/Chart";
 
 
-const ignoredNames = [
-    "Bail", "" , "Whit","Finley Aldrid"
-]
+
 
 ChartJS.register(
     CategoryScale,
@@ -120,16 +119,7 @@ const ApprovalsView = () => {
 
     let userUpdates = mappedUpdates[user] || {};
     const options = {
-        devicePixelRatio: 4,
-        responsive: true,
-        maintainAspectRatio: false,
         tension: 0.1,
-        interaction: {
-            mode: 'index',
-            intersect: false,
-        },
-        plugins: {},
-        scales:{}
     }
 
     const graphData = {
@@ -145,6 +135,7 @@ const ApprovalsView = () => {
                 fill: false,
                 backgroundColor: colorScheme.red,
                 borderColor: colorScheme.red,
+                type:"line"
             },
             {
                 label: "Trend",
@@ -152,6 +143,7 @@ const ApprovalsView = () => {
                 fill: false,
                 backgroundColor: colorScheme.blue,
                 borderColor: colorScheme.blue,
+                type:"line"
             }
         ]
     }
@@ -170,7 +162,6 @@ const ApprovalsView = () => {
                 {Object
                     .keys(mappedUpdates)
                     .map((name) => {
-                    if(ignoredNames.includes(name)) return null;
                     return <option key={name} value={name}>{name}</option>
                     })
                 }
@@ -218,7 +209,7 @@ const ApprovalsView = () => {
                 />
             ]}
             >
-            <Line data={graphData} options={options} />
+            <BaseChart data={graphData} config={options} />
         </GraphWithStatCard>
     )
 };

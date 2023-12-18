@@ -1,44 +1,20 @@
 import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
 import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
-
-import {Chart} from "react-chartjs-2";
 import makeDateArray from "../../../modules/utils/makeDateArray";
-
-import {
-    BarElement,
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    LineElement,
-    PointElement,
-    Tooltip
-} from "chart.js";
-
-import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../_app";
 import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
-import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 import {addDays} from "date-fns";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
+import BaseChart from "../../../components/Chart";
 
 
 
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Tooltip,
-    Legend,
-    LineElement,
-    DataLabels,
-    PointElement,
-);
+
 
 let colorPalette = [
     colorScheme.blue,
@@ -51,11 +27,11 @@ let colorPalette = [
 ]
 
 
-const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
 
 
-function WeeklyApprovalsChart({approvals,date,theme}){
+
+function WeeklyApprovalsChart({approvals,date}){
     const names = [...new Set(approvals.map(({name}) => name))];
     const dateArr = makeDateArray(date);
 
@@ -99,29 +75,19 @@ function WeeklyApprovalsChart({approvals,date,theme}){
             return acc
         },[0,0,0,0,0,0,0])
     const options = {
-        responsive:true,
-        maintainAspectRatio:false,
-        devicePixelRatio:4,
         plugins:{
             tooltip:{
-                color:parseTheme(theme),
                 callbacks :{
                     footer: (context) => {
                         return "TOTAL: " + context.reduce((acc, {raw}) => (acc + +raw), 0);
                     }
                 }
             },
-            datalabels:{
-                color:parseTheme(theme),
-            },
             title:{
                 text:"Week View"
             }
         },
-        interaction:{
-            intersect:false,
-            mode:"index"
-        },
+
         scales:{
             y:{
                 max:Math.ceil(Math.max(...max)*1.5)
@@ -138,12 +104,13 @@ function WeeklyApprovalsChart({approvals,date,theme}){
                     backgroundColor: colorPalette[i%colorPalette.length],
                     borderColor: colorPalette[i%colorPalette.length],
                     borderWidth: 1,
-                    stack: 1
+                    stack: 1,
+                    type:"bar"
                 }
             })
     };
     return (
-        <Chart data={data} type={"bar"} height={150} options={options}/>
+        <BaseChart data={data} config={options}/>
     )
 }
 
@@ -153,7 +120,6 @@ function WeeklyApprovalsChart({approvals,date,theme}){
 const WeekView = () => {
     useUsage("Metrics","Approvals-Weekly-chart")
     const [date, setDate] = useState(new Date());
-    const {colorScheme:theme} = useMantineColorScheme();
     let approvals = useUpdates("/api/views/approvals", {date:formatDateWithZeros(addDays(findStartOfWeek(new Date(date)),1)),interval:"1 week",increment:'day'});
 
     const users = [...new Set(approvals.map(({name}) => name))]
@@ -218,7 +184,7 @@ const WeekView = () => {
                 ]
             }
             >
-            <WeeklyApprovalsChart approvals={approvals} date={date} theme={theme}/>
+            <WeeklyApprovalsChart approvals={approvals} date={date} />
         </GraphWithStatCard>)
 };
 

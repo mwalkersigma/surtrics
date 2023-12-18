@@ -20,6 +20,7 @@ import {Chart} from "react-chartjs-2";
 import {setDate, setMonth} from "date-fns";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
+import BaseChart from "../../../components/Chart";
 
 ChartJS.register(
     CategoryScale,
@@ -93,16 +94,14 @@ const YearlyView = () => {
             return {
                 label: storeNameMap[sid],
                 data: yearlySales.map(month => Math.floor(month[sid] * 100) / 100 ?? 0).map(month => isNaN(month) ? 0 : month),
-                backgroundColor: Object.values(colorScheme)[index]
+                backgroundColor: Object.values(colorScheme)[index],
+                type:'bar'
             }
 
         })
 
 
     const options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        devicePixelRatio: 4,
         plugins: {
             tooltip: {
                 callbacks: {
@@ -129,29 +128,12 @@ const YearlyView = () => {
                 formatter: Math.round
             },
         },
-        interaction:{
-            intersect: false,
-            mode: "index"
-        },
         scales: {
             y: {
                 stacked: true,
-                min: 0,
-                ticks: {
-                    color: useTheme(theme)+"A"
-                },
-                grid: {
-                    color: useTheme(theme)+"3"
-                }
             },
             x:{
                 stacked: true,
-                ticks: {
-                    color: useTheme(theme)+"A"
-                },
-                grid: {
-                    color: useTheme(theme)+"3"
-                }
             }
         },
     }
@@ -223,7 +205,7 @@ const YearlyView = () => {
             />
         ]}
         >
-            <Chart data={data} type={"bar"} height={150} options={options}/>
+            <BaseChart stacked data={data} config={options}/>
         </GraphWithStatCard>
     );
 };

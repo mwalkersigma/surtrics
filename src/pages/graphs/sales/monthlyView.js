@@ -3,33 +3,14 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {MonthPickerInput} from "@mantine/dates";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import Order from "../../../modules/classes/Order";
-import {
-    BarElement,
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    LineElement,
-    PointElement,
-    Tooltip
-} from "chart.js";
-import DataLabels from "chartjs-plugin-datalabels";
+
 import {NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
-import {Chart} from "react-chartjs-2";
+
 import {setDate} from "date-fns";
 import useUsage from "../../../modules/hooks/useUsage";
+import BaseChart from "../../../components/Chart";
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Tooltip,
-    Legend,
-    LineElement,
-    DataLabels,
-    PointElement,
-);
 
 const storeNameMap = {
     "225004": "Big Commerce",
@@ -91,14 +72,12 @@ const MonthlyView = () => {
                 data: monthlySales.map(month => Math.floor(month[sid] * 100) / 100 ?? 0).map(month => isNaN(month) ? 0 : month),
                 backgroundColor: Object.values(colorScheme)[index],
                 borderColor: Object.values(colorScheme)[index],
+                type:'line'
             }
         })
 
 
     const options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        devicePixelRatio: 4,
         plugins: {
             tooltip: {
                 callbacks: {
@@ -123,25 +102,6 @@ const MonthlyView = () => {
                     weight: "bold",
                 },
                 formatter: Math.round
-            },
-        },
-        scales: {
-            y: {
-                min: 0,
-                ticks: {
-                    color: useTheme(theme)+"A"
-                },
-                grid: {
-                    color: useTheme(theme)+"3"
-                }
-            },
-            x:{
-                ticks: {
-                    color: useTheme(theme)+"A"
-                },
-                grid: {
-                    color: useTheme(theme)+"3"
-                }
             }
         },
     }
@@ -171,7 +131,7 @@ const MonthlyView = () => {
                 </NativeSelect>
             }
         >
-            <Chart data={data} type={"line"} height={150} options={options}/>
+            <BaseChart stacked data={data} config={options}/>
         </GraphWithStatCard>
     );
 };

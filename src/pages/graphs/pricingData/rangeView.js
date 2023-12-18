@@ -21,6 +21,7 @@ import {colorScheme} from "../../_app";
 import useUsage from "../../../modules/hooks/useUsage";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import StatCard from "../../../components/mantine/StatCard";
+import BaseChart from "../../../components/Chart";
 
 
 ChartJS.register(
@@ -76,9 +77,6 @@ const RangeView = () => {
     let values = chartData.map(item=>item[1])
 
     const options = {
-        devicePixelRatio: 4,
-        responsive: true,
-        maintainAspectRatio: false,
         plugins: {
             datalabels: {
                 color: theme,
@@ -97,28 +95,11 @@ const RangeView = () => {
                 }
             },
         },
-        interaction: {
-            mode: 'index',
-            intersect: false,
-        },
         scales:{
             y: {
-                min: 0,
-                ticks: {
-                    color: theme + "A"
-                },
-                grid: {
-                    color: theme + "3"
-                }
+                max:10000
             },
-            x:{
-                ticks: {
-                    color: theme + "A"
-                },
-                grid: {
-                    color: theme + "3"
-                }
-            }
+
         }
     };
     return (
@@ -170,7 +151,7 @@ const RangeView = () => {
                 />,
             ]}
         >
-            <Chart data={{labels,datasets:[{label:"Pricing Data",data:values,borderColor:colorScheme.blue,backgroundColor:colorScheme.blue}]}} options={options} type={'line'}/>
+            <BaseChart data={{labels,datasets:[{label:"Pricing Data",data:values,borderColor:colorScheme.blue,backgroundColor:colorScheme.blue,type:'line'}]}} stacked config={options} />
         </GraphWithStatCard>
     );
 };

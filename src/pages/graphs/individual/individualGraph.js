@@ -1,33 +1,16 @@
 import React, {useState} from 'react';
-import {Chart} from "react-chartjs-2";
+
 import useUpdates from "../../../modules/hooks/useUpdates";
-import {
-    BarElement,
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    LineElement, PointElement,
-    Tooltip
-} from "chart.js";
-import DataLabels from "chartjs-plugin-datalabels";
+
 import formatter from "../../../modules/utils/numberFormatter";
 import {colorScheme} from "../../_app";
 import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 import useUsage from "../../../modules/hooks/useUsage";
+import BaseChart from "../../../components/Chart";
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Tooltip,
-    Legend,
-    LineElement,
-    DataLabels,
-    PointElement,
-);
+
 
 let colorPalette = [
     "blue",
@@ -56,9 +39,6 @@ function IndividualChart(props){
     const useTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
     const options = {
-        devicePixelRatio: 4,
-        responsive: true,
-        maintainAspectRatio: false,
         plugins: {
             tooltip: {
                 callbacks: {
@@ -79,15 +59,6 @@ function IndividualChart(props){
                     usePointStyle: true,
                     color: useTheme(theme)+"A",
                 },
-                title: {
-                    text: "User View",
-                    display: true,
-                    color: useTheme(theme),
-                    font: {
-                        size: 30,
-                    }
-                },
-
             },
             datalabels: {
                 color: colorScheme.white,
@@ -98,29 +69,12 @@ function IndividualChart(props){
                 formatter: Math.round
             },
         },
-        interaction:{
-            intersect: false,
-            mode: "index"
-        },
         scales: {
             y: {
                 stacked: true,
-                min: 0,
-                ticks: {
-                    color: useTheme(theme)+"A"
-                },
-                grid: {
-                    color: useTheme(theme)+"3"
-                }
             },
             x:{
                 stacked: true,
-                ticks: {
-                    color: useTheme(theme)+"A"
-                },
-                grid: {
-                    color: useTheme(theme)+"3"
-                }
             }
         },
     }
@@ -153,7 +107,7 @@ function IndividualChart(props){
             }
         })
     };
-    return <Chart data={data} type={"bar"} height={150} options={options}/>
+    return <BaseChart stacked data={data}  config={options}/>
 }
 
 

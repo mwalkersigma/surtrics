@@ -2,33 +2,14 @@ import React from "react";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import {subMonths} from "date-fns";
 import {useMantineColorScheme,Center, Text} from "@mantine/core";
-import {DatePickerInput} from "@mantine/dates";
+
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {colorScheme} from "../../_app";
-import {Chart} from "react-chartjs-2";
-import {
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    LineElement, PointElement,
-    Title as chartTitle,
-    Tooltip
-} from "chart.js";
-import DataLabels from "chartjs-plugin-datalabels";
+
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import useUsage from "../../../modules/hooks/useUsage";
+import BaseChart from "../../../components/Chart";
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    chartTitle,
-    Tooltip,
-    Legend,
-    LineElement,
-    PointElement,
-    DataLabels
-);
 
 const EbayRangeView = () => {
     useUsage("Ecommerce","Ebay-RangeView-chart")
@@ -53,6 +34,7 @@ const EbayRangeView = () => {
                     data: [],
                     borderColor: color,
                     backgroundColor: color,
+                    type: 'line',
                 };
                 acc[key].data.push(update[key])
             })
@@ -66,9 +48,6 @@ const EbayRangeView = () => {
         datasets: Object.values(updates)
     }
     const options = {
-        devicePixelRatio: 4,
-        responsive: true,
-        maintainAspectRatio: false,
         plugins: {
             datalabels: {
                 color: theme,
@@ -87,29 +66,6 @@ const EbayRangeView = () => {
                 }
             },
         },
-        interaction: {
-            mode: 'index',
-            intersect: false,
-        },
-        scales:{
-            y: {
-                min: 0,
-                ticks: {
-                    color: theme + "A"
-                },
-                grid: {
-                    color: theme + "3"
-                }
-            },
-            x:{
-                ticks: {
-                    color: theme + "A"
-                },
-                grid: {
-                    color: theme + "3"
-                }
-            }
-        }
     };
     return (
         <GraphWithStatCard
@@ -127,7 +83,7 @@ const EbayRangeView = () => {
                 </Center>
             }
         >
-            <Chart data={graphData} options={options} type={'line'}/>
+            <BaseChart data={graphData} stacked config={options}/>
         </GraphWithStatCard>
     );
 };

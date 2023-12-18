@@ -1,17 +1,7 @@
 import React, {useState} from 'react';
 import yymmddTommddyy from "../../../modules/utils/yymmddconverter";
 import useUpdates from "../../../modules/hooks/useUpdates";
-import {
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    LineElement, PointElement,
-    Title as chartTitle,
-    Tooltip
-} from "chart.js";
-import {Line} from "react-chartjs-2";
-import DataLabels from "chartjs-plugin-datalabels";
+
 import {colorScheme} from "../../_app";
 import {setDate} from "date-fns";
 import {useMantineColorScheme} from "@mantine/core";
@@ -19,19 +9,11 @@ import {MonthPickerInput} from "@mantine/dates";
 import StatCard from "../../../components/mantine/StatCard";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import useUsage from "../../../modules/hooks/useUsage";
+import BaseChart from "../../../components/Chart";
 
 
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    chartTitle,
-    Tooltip,
-    Legend,
-    LineElement,
-    PointElement,
-    DataLabels
-);
+
 
 
 
@@ -39,9 +21,6 @@ ChartJS.register(
 function LineGraphMonthly ({monthData,theme}) {
     theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     const options = {
-        devicePixelRatio: 4,
-        responsive: true,
-        maintainAspectRatio: false,
         plugins: {
             datalabels: {
                 color: theme,
@@ -59,29 +38,6 @@ function LineGraphMonthly ({monthData,theme}) {
                     usePointStyle: true,
                 }
             },
-        },
-        interaction: {
-            mode: 'index',
-            intersect: false,
-        },
-        scales:{
-            y: {
-                min: 0,
-                ticks: {
-                    color: theme + "A"
-                },
-                grid: {
-                    color: theme + "3"
-                }
-            },
-            x:{
-                ticks: {
-                    color: theme + "A"
-                },
-                grid: {
-                    color: theme + "3"
-                }
-            }
         }
     };
     const dataSets = monthData.reduce((acc,curr)=>{
@@ -109,6 +65,7 @@ function LineGraphMonthly ({monthData,theme}) {
                 data: Object.values(dataSets).map((item) => item["total"] ?? 0),
                 borderColor: colorScheme.indigo,
                 backgroundColor: colorScheme.indigo,
+                type: "line",
                 datalabels: {
                     color: theme,
                     font: {
@@ -122,6 +79,7 @@ function LineGraphMonthly ({monthData,theme}) {
                 data: Object.values(dataSets).map((item) => item["Add"] ?? 0),
                 borderColor: colorScheme.green,
                 backgroundColor: colorScheme.green,
+                type: "line",
                 datalabels: {
                     color: theme,
                     font: {
@@ -135,6 +93,7 @@ function LineGraphMonthly ({monthData,theme}) {
                 data: Object.values(dataSets).map((item) => item["Add on Receiving"] ?? 0),
                 borderColor: colorScheme.red,
                 backgroundColor: colorScheme.red,
+                type: "line",
                 datalabels: {
                     color: theme,
                     font: {
@@ -148,6 +107,7 @@ function LineGraphMonthly ({monthData,theme}) {
                 data: Object.values(dataSets).map((item) => item["Relisting"] ?? 0),
                 borderColor: colorScheme.blue,
                 backgroundColor: colorScheme.blue,
+                type: "line",
                 datalabels: {
                     color: theme,
                     font: {
@@ -159,7 +119,7 @@ function LineGraphMonthly ({monthData,theme}) {
         ]
     }
     return (
-        <Line data={graphData} height={150} title={"Monthly View"} options={options} />
+        <BaseChart data={graphData} config={options} />
     )
 }
 const dateSet = setDate;
@@ -169,9 +129,6 @@ const MonthlyView = () => {
     let monthData = useUpdates("/api/views/increments",{date,interval:"1 month",increment:"day"});
     const {colorScheme:theme} = useMantineColorScheme();
 
-
-    // group by date
-    // add a total field
     let cardData = monthData?.reduce((acc,curr)=>{
         let date = curr.date_of_transaction.split("T")[0];
         if(!acc[date]){

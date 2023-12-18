@@ -1,20 +1,17 @@
 import createAdjustedGoal from "../modules/utils/createAdjustedDailyGoal";
-import {Line} from "react-chartjs-2";
 import React from "react";
 import useGoal from "../modules/hooks/useGoal";
 import {colorScheme} from "../pages/_app";
+import BaseChart from "./Chart";
 
 export default function LineGraph (props) {
-    let {dailyData,theme,date} = props;
+    let {dailyData,theme,date,...rest} = props;
     const temp = JSON.parse(JSON.stringify(props));
     delete temp.dailyData;
     delete temp.theme;
     theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     const goal = useGoal({date});
     const options = {
-        devicePixelRatio: 4,
-        responsive: true,
-        maintainAspectRatio: false,
         plugins: {
             datalabels:{
                 display: false,
@@ -27,29 +24,12 @@ export default function LineGraph (props) {
                 }
             },
         },
-        interaction: {
-            mode: 'index',
-            intersect: false,
-        },
         scales:{
             y: {
                 min: 0,
-                ticks: {
-                    color: theme + "A"
-                },
-                grid: {
-                    color: theme + "3"
-                },
                 max:150,
             },
-            x:{
-                ticks: {
-                    color: theme + "A"
-                },
-                grid: {
-                    color: theme + "3"
-                }
-            }
+
         }
     };
     function makeHourlyGoal (dailyGoal) {
@@ -65,6 +45,7 @@ export default function LineGraph (props) {
                 data:makeHourlyGoal(goal || 0),
                 borderColor: colorScheme.purple,
                 backgroundColor: colorScheme.purple,
+                type: 'line',
 
             },
             {
@@ -72,16 +53,19 @@ export default function LineGraph (props) {
                 data:createAdjustedGoal(makeHourlyGoal(goal || 0),dailyData),
                 borderColor: colorScheme.red,
                 backgroundColor: colorScheme.red,
+                type: 'line',
             },
             {
                 label: "Increments",
                 data:dailyData,
                 borderColor: colorScheme.blue,
                 backgroundColor: colorScheme.blue,
+                type: 'line',
             }
         ]
     }
     return (
-        <Line {...temp} data={graphData} options={options} />
+        <BaseChart {...rest} stacked data={graphData} config={options}/>
+
     )
 }

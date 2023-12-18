@@ -19,6 +19,7 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
+import BaseChart from "../../../components/Chart";
 
 ChartJS.register(
     CategoryScale,
@@ -133,7 +134,7 @@ function YearlyChart(props){
             }
         ]
     };
-    return <Chart data={data} type={"bar"} height={150} options={options}/>
+    return <BaseChart data={data} options={options}/>
 }
 
 

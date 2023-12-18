@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
 
-import {Chart} from "react-chartjs-2";
-import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Tooltip} from "chart.js";
-import DataLabels from "chartjs-plugin-datalabels";
+
 
 import useUpdates from "../../../modules/hooks/useUpdates";
 import useGoal from "../../../modules/hooks/useGoal";
@@ -22,17 +20,9 @@ import {DatePickerInput} from "@mantine/dates";
 import StatCard from "../../../components/mantine/StatCard";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import useUsage from "../../../modules/hooks/useUsage";
+import BaseChart from "../../../components/Chart";
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Tooltip,
-    Legend,
-    LineElement,
-    DataLabels,
-    PointElement,
-);
+
 
 
 
@@ -61,13 +51,8 @@ function WeeklyChart(props){
     const goal = useGoal({date});
     const adjustedWeek = createAdjustedWeekArray(weekData,goal)
                                     .map(item => item > 0 ? +item + +goal  : goal);
-
-
     const thickness = 3
     const options = {
-        devicePixelRatio: 4,
-        responsive: true,
-        maintainAspectRatio: false,
         plugins: {
             tooltip: {
                 callbacks: {
@@ -118,30 +103,13 @@ function WeeklyChart(props){
                 }
             },
         },
-        interaction: {
-            mode: 'index',
-            intersect: false,
-        },
         scales: {
             y: {
                 stacked: true,
-                min: 0,
                 max: Math.max(goal * 2,adjustedWeek.reduce((acc,curr)=>{return acc > curr ? acc : curr},0)),
-                ticks: {
-                    color: Theme(theme) + "AA"
-                },
-                grid: {
-                    color: Theme(theme)+"33"
-                }
             },
             x:{
                 stacked: true,
-                ticks: {
-                    color: Theme(theme)+ "AA"
-                },
-                grid: {
-                    color: Theme(theme)+"33"
-                }
             }
         },
     }
@@ -235,7 +203,7 @@ function WeeklyChart(props){
             }
         ]
     };
-    return <Chart data={data} type={"bar"} height={150} options={options}/>
+    return <BaseChart stacked data={data} config={options}/>
 }
 
 function WeeklyView() {

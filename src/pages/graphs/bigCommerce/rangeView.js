@@ -1,68 +1,42 @@
 import React, {useEffect, useState} from "react";
 import {
-    lastDayOfMonth,
-    lastDayOfYear,
-    setDate,
-    startOfMonth,
-    startOfYear,
-    subDays,
     subMonths,
-    subYears
 } from "date-fns";
-import {useMantineColorScheme, Text, Center, MultiSelect, NativeSelect} from "@mantine/core";
+import {useMantineColorScheme, MultiSelect, NativeSelect} from "@mantine/core";
 import {colorScheme} from "../../_app";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
-import {mergeAdvanced} from "object-merge-advanced";
-import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 
-/*
-[
-        {
-            // Indicates the type of annotation
-            type: 'label',
-            xMin: 1,
-            xMax: 2,
-            //yMin: 8000,
-            //yMax: 8070,
-            backgroundColor: 'rgba(255, 99, 132, 0.75)',
-            content: ['Notable Event', '15% off sale for surplus']
-        },
-        {
-            // Indicates the type of annotation
-            type: 'label',
-            xMin: 5,
-            xMax: 6,
-            backgroundColor: 'rgba(255, 99, 132, 0.75)',
-            content: ['Notable Event', '15% off sale for surplus']
-        }
-    ]
-*/
 
 const BigCommerceRangeView = () => {
     useUsage("Ecommerce","BigCommerce-RangeView-chart")
+    const timeScales = ['Data Points','week','month','year']
     const [categories, setCategories] = useState([]);
     const [affectedCategories, setAffectedCategories] = useState([]);
-    const timeScales = ['Data Points','week','month','year']
     const [timeScale, setTimeScale] = useState('Data Points')
-    const [dateRange, setDateRange] = useState([subMonths(new Date(),1), new Date()]) // [start, end]
+    const [dateRange, setDateRange] = useState([subMonths(new Date(),1), new Date()]);
     const [startDate,endDate] = dateRange;
-    let {colorScheme:theme} = useMantineColorScheme();
-    theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     let updates = useUpdates("/api/views/bigCommerce",{startDate,endDate,timeScale});
     let events = useUpdates("/api/views/events",{startDate,endDate});
-    console.log(updates);
 
     useEffect(() => {
         if(!events.length > 0) return;
-        let categories = events.map((event) => event.affected_categories).flat();
-        categories = [...new Set(categories)];
-        setCategories(categories);
-        setAffectedCategories(categories);
-    },[events])
+        if(categories.length > 0) return;
+        let temp = events.map((event) => event.affected_categories).flat();
+        temp = [...new Set(temp)];
+        setCategories(temp);
+        setAffectedCategories(temp);
+    },[events,categories])
+
+
+
+    let {colorScheme:theme} = useMantineColorScheme();
+    theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
+    console.log(updates);
+
 
 
     updates = updates
@@ -86,13 +60,14 @@ const BigCommerceRangeView = () => {
                 acc[key].data.push(update[key])
             })
             return acc;
-        },{})
+        },{});
+
     const dates = updates?.date_for_week?.data;
 
-    //get the max amount for updates
     let max = 0;
     let count = 0;
     let iterations = 0;
+
     Object.values(updates).forEach((update) => {
         let updateMax = Math.max(...update.data);
         count++
@@ -108,7 +83,6 @@ const BigCommerceRangeView = () => {
         if(!isAffected) return acc;
         let index = dates?.indexOf(date);
         if(index === -1) {
-            // find the nearest match not greater than
             let closest = dates.reduce((acc,date) => {
                 let date1 = new Date(date);
                 let date2 = new Date(event.event_date);
@@ -190,24 +164,6 @@ const BigCommerceRangeView = () => {
                     defaultValue={dateRange}
                     subscribe={setDateRange}
                     mb={'md'}
-                    presets={[
-                        {
-                            title: "This Month",
-                            value: [setDate(new Date(),1), new Date()]
-                        },
-                        {
-                            title: "Last Month",
-                            value: [startOfMonth(subMonths(new Date(),1)), lastDayOfMonth(subMonths(new Date(),1))]
-                        },
-                        {
-                            title: "This Year",
-                            value: [startOfYear(new Date()), new Date()]
-                        },
-                        {
-                            title: "Last Year",
-                            value: [startOfYear(subYears(new Date(),1)), lastDayOfYear(subYears(new Date(),1))]
-                        },
-                    ]}
                 />
             }
             slotOne={
@@ -231,7 +187,6 @@ const BigCommerceRangeView = () => {
             }
         >
             <BaseChart events={reducedEvents} data={graphData} stacked config={options}/>
-
         </GraphWithStatCard>
     )
 };

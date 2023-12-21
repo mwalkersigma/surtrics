@@ -158,7 +158,7 @@ function YearlyView() {
         return acc;
     } , {}));
 
-    const {events,reducedEvents} = useEvents({
+    const {reducedEvents} = useEvents({
         startDate:date,
         endDate:lastDayOfYear(date),
         timeScale:'month',

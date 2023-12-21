@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
 import useUpdates from "./useUpdates";
-import {useListState} from "@mantine/hooks";
 
 function findNearestIndex(array, value) {
     let nearestDate = array.reduce((acc,date) => {
@@ -31,7 +30,7 @@ function yValue(ctx, label,combined = true) {
 
 
     let combinedDataSet = []
-    chart.data.datasets.forEach((dataset,index) => {
+    chart.data.datasets.forEach((dataset) => {
         let lowerCaseLabel = dataset['label'].toLowerCase();
         if(lowerCaseLabel === 'total' || lowerCaseLabel === 'total transactions' || lowerCaseLabel === 'goal' || lowerCaseLabel === 'goals' || lowerCaseLabel === 'total goal' || lowerCaseLabel === 'adjustedgoal'){
             return
@@ -55,11 +54,11 @@ export default function useEvents(config) {
     const [categories, setCategories] = useState([]);
     const events = useUpdates("/api/views/events",config);
     const [activeLabel, setActiveLabel] = useState(null);
-    function enter({chart, element}) {
+    function enter({ element}) {
         let id = element.options.id;
         setActiveLabel(id)
     }
-    function leave({chart, element}) {
+    function leave() {
         setActiveLabel(null)
     }
 
@@ -73,8 +72,7 @@ export default function useEvents(config) {
         setCategories(temp);
     },[events,categories])
 
-    let reducedEvents = (dates) =>{
-        let temp = Object.values(events
+    let reducedEvents = (dates) =>Object.values(events
             .sort((a,b) => new Date(a.event_date) - new Date(b.event_date))
             .reduce((acc,event) => {
                 let date = event.event_date;
@@ -124,8 +122,6 @@ export default function useEvents(config) {
                 return acc;
             },{})).flat();
 
-        return temp
-    }
 
 
     return {events, categories,reducedEvents}

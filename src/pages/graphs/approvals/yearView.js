@@ -20,7 +20,7 @@ import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import useEvents from "../../../modules/hooks/useEvents";
-import {readUsedSize} from "chart.js/helpers";
+
 
 
 
@@ -150,7 +150,7 @@ const ApprovalsView = () => {
         ]
     }
 
-    const {events,reducedEvents} = useEvents({
+    const {reducedEvents} = useEvents({
         startDate:date,
         endDate:lastDayOfYear(date),
         timeScale:'week',

@@ -218,7 +218,7 @@ function WeeklyView() {
     weekData = processWeekData(weekData)
     weekData = makeWeekArray(weekData,new Date(date));
 
-    const {events,categories,reducedEvents} = useEvents({
+    const {reducedEvents} = useEvents({
         startDate:weekData[0].date,
         endDate:weekData[weekData.length - 1].date,
         timeScale:'day',

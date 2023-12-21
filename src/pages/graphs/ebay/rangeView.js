@@ -24,7 +24,7 @@ const EbayRangeView = () => {
 
     let updates = useUpdates("/api/views/ebay",{startDate,endDate,timeScale});
 
-    let {events, categories, reducedEvents} = useEvents({
+    let {categories, reducedEvents} = useEvents({
         startDate,
         endDate,
         affected_categories:affectedCategories,

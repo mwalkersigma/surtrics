@@ -53,10 +53,12 @@ async function postHandler(req,res){
         })
     }
     if(body['includedCategories']) {
-        body['includedCategories'].forEach((category)=>{
-            query += `${firstToken(true)} affected_categories @> $${++count}::text[] \n`
+        query += `WHERE (`
+        body['includedCategories'].forEach((category,index)=>{
+            query += `${index !== 0 ?firstToken(true) : ""} affected_categories @> $${++count}::text[] \n`
             params.push([category]);
         })
+        query += `) \n`
     }
 
     if (body.startDate && body.endDate) {
@@ -79,8 +81,6 @@ async function postHandler(req,res){
         query += `WHERE date_trunc('day',event_date) = $${++count} \n`;
         params.push(body.date);
     }
-    console.log(query)
-    console.log(params)
     let {rows} = await db.query(query, params);
     return res.status(200).json(rows)
 }

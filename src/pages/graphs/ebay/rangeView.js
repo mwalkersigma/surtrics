@@ -30,7 +30,7 @@ const EbayRangeView = () => {
         affected_categories:affectedCategories,
         timeScale,
         excludedCategories:['Processing','Warehouse'],
-        minY:2000000,
+        combined:false
     });
 
     useEffect(() => {

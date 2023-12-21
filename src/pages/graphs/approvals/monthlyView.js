@@ -2,19 +2,20 @@ import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
 import {colorScheme} from "../../_app";
 
-import {setDate} from "date-fns";
+import {lastDayOfMonth, setDate} from "date-fns";
 import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {MonthPickerInput} from "@mantine/dates";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
+import useEvents from "../../../modules/hooks/useEvents";
 
 const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
 const dateSet = setDate
 
 
-function MonthlyApprovalsChart({approvals,theme}){
+function MonthlyApprovalsChart({approvals,theme,events}){
     const names = [...new Set(approvals.map(({name}) => name))];
 
     let dateArr = approvals
@@ -95,8 +96,9 @@ function MonthlyApprovalsChart({approvals,theme}){
             }
         ]
     };
+    console.log(events)
     return (
-        <BaseChart data={data} height={150} config={options} />
+        <BaseChart events={events} data={data} height={150} config={options} />
     )
 }
 
@@ -107,7 +109,13 @@ const MonthlyView = () => {
     let approvals = useUpdates("/api/views/approvals", {date, interval: "1 month",increment:"day"});
     approvals = approvals.map((approval) => ({...approval, date_of_final_approval: approval.date_of_final_approval.split("T")[0]}));
 
-
+    const {reducedEvents} = useEvents({
+        startDate:date,
+        endDate:lastDayOfMonth(date),
+        timeScale:'day',
+        includedCategories:['Processing','Warehouse'],
+        affected_categories:['Processing'],
+    })
 
     return (
         <GraphWithStatCard
@@ -125,7 +133,11 @@ const MonthlyView = () => {
             cards={[]}
         >
 
-            <MonthlyApprovalsChart approvals={approvals} theme={theme}/>
+            <MonthlyApprovalsChart
+                events={reducedEvents(approvals.map(({date_of_final_approval})=>date_of_final_approval))}
+                approvals={approvals}
+                theme={theme}
+            />
         </GraphWithStatCard>
 
     );

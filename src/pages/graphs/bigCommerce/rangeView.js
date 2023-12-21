@@ -31,7 +31,7 @@ const BigCommerceRangeView = () => {
         affected_categories:affectedCategories,
         timeScale,
         excludedCategories:['Processing','Warehouse'],
-        minY:5000,
+        combined:false
     });
 
     useEffect(() => {

@@ -43,7 +43,7 @@ function yValue(ctx, label,combined = true) {
         })
     })
 
-    return combined ? combinedDataSet[chart.data.labels.indexOf(label)] : dataset.data[chart.data.labels.indexOf(label)];
+    return combined ? combinedDataSet[chart.data.labels.indexOf(label)] : dataset?.data[chart.data.labels.indexOf(label)];
 }
 
 function xValue(ctx, index) {
@@ -82,7 +82,7 @@ export default function useEvents(config) {
                 if(!isAffected) return acc;
                 if(!acc[date]){
                     let index = findNearestIndex(dates,date);
-                    let xPosition = index < 1 ? 'start' : index > dates.length - 2 ? 'end' : 'center';
+                    let xPosition = index < 1 ? 'start' : index > dates.length - Math.round(dates.length * .1) ? 'end' : 'center';
                     let isActive = activeLabel === event.event_name;
                     let backgroundColor;
                     let color;
@@ -106,7 +106,7 @@ export default function useEvents(config) {
                             type:'label',
                             color:color,
                             xValue: (ctx)=> xValue(ctx,index),
-                            yValue: (ctx) => yValue(ctx, xValue(ctx,index)),
+                            yValue: (ctx) => yValue(ctx, xValue(ctx,index),config?.combined),
                             backgroundColor,
                             content: ['Notable Event',event.event_name],
                             click: ({element}) => select(element, 'rgba(165, 214, 167, 0.8)', 'rgba(165, 214, 167, 0.2)'),

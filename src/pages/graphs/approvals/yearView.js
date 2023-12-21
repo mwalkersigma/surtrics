@@ -12,13 +12,15 @@ import {
 } from "chart.js";
 
 import {colorScheme} from "../../_app";
-import {setDate, setMonth} from "date-fns";
+import {lastDayOfYear, setDate, setMonth} from "date-fns";
 import {YearPickerInput} from "@mantine/dates";
 import {NativeSelect, Slider, Text, Tooltip} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
+import useEvents from "../../../modules/hooks/useEvents";
+import {readUsedSize} from "chart.js/helpers";
 
 
 
@@ -147,6 +149,15 @@ const ApprovalsView = () => {
             }
         ]
     }
+
+    const {events,reducedEvents} = useEvents({
+        startDate:date,
+        endDate:lastDayOfYear(date),
+        timeScale:'week',
+        includedCategories:['Processing','Warehouse'],
+        affected_categories:['Processing'],
+    })
+
     return (
         <GraphWithStatCard
             isLoading={updates.length === 0}
@@ -209,7 +220,7 @@ const ApprovalsView = () => {
                 />
             ]}
             >
-            <BaseChart data={graphData} config={options} />
+            <BaseChart events={reducedEvents(Object.keys(userUpdates || {}))} data={graphData} config={options} />
         </GraphWithStatCard>
     )
 };

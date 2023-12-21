@@ -16,7 +16,7 @@ const directionFunctions = {
 const SurplusNotableEvents = () => {
     useUsage("Ecommerce","notableEvents-rangeView-timeline")
     const [sortDirection,setSortDirection] = useState(true);
-    const events = useUpdates("/api/views/events");
+    const events = useUpdates("/api/views/events",{excludedCategories:['Processing','Warehouse']});
     events.sort(directionFunctions[direction(sortDirection)])
 
     return (

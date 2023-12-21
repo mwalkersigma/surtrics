@@ -31,19 +31,42 @@ async function postHandler(req,res){
     let count = 0
     let params = [];
 
+    let firstToken = () => count === 0 ? 'WHERE' : 'AND';
+
+    if(body['timeScale'] && body['timeScale'] !== 'Data Points') {
+        let [select,from] = query.split('FROM');
+        select = select.replace('*','')
+        select += `
+            event_id,
+            event_name,
+            event_notes,
+            affected_categories,
+            date_trunc('${body['timeScale']}',event_date) as event_date
+        `
+        query = select + 'FROM' + from;
+    }
+
+    if(body['excludedCategories']) {
+        body['excludedCategories'].forEach((category)=>{
+            query += `${firstToken()} affected_categories @> $${++count}::text[] = false  \n`
+            params.push([category]);
+        })
+
+    }
+
     if (body.startDate && body.endDate) {
-        query += `WHERE event_date BETWEEN $${++count} AND $${++count} \n`;
+        query += `${firstToken()} event_date BETWEEN $${++count} AND $${++count} \n`;
         params.push(body.startDate);
         params.push(body.endDate);
     }
 
     if(body.startDate && !body.endDate) {
-        query += `WHERE event_date >= $${++count} \n`;
+        query += `${firstToken()} event_date >= $${++count} \n`;
         params.push(body.startDate);
     }
 
     if(!body.startDate && body.endDate) {
-        query += `WHERE event_date <= $${++count} \n`;
+        query += `${firstToken()} event_date <= $${++count} \n`;
         params.push(body.endDate);
     }
 
@@ -51,7 +74,8 @@ async function postHandler(req,res){
         query += `WHERE date_trunc('day',event_date) = $${++count} \n`;
         params.push(body.date);
     }
-
+    console.log(query)
+    console.log(params)
     let {rows} = await db.query(query, params);
     return res.status(200).json(rows)
 }

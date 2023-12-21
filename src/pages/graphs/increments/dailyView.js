@@ -14,7 +14,7 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 
 
-ChartJS.register(CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement,);
+ChartJS.register(CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement);
 
 const DailyView = () => {
     useUsage("Metrics","Increments-daily-chart")

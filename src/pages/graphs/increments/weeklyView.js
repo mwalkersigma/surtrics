@@ -21,6 +21,7 @@ import StatCard from "../../../components/mantine/StatCard";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
+import useEvents from "../../../modules/hooks/useEvents";
 
 
 
@@ -46,7 +47,7 @@ function returnDayOfWeek(date) {
 }
 
 function WeeklyChart(props){
-    let {weekData,theme,date} = props;
+    let {weekData,theme,date,events} = props;
     const Theme = (theme) => theme === "dark" ? colorScheme.light : colorScheme.dark;
     const goal = useGoal({date});
     const adjustedWeek = createAdjustedWeekArray(weekData,goal)
@@ -203,7 +204,8 @@ function WeeklyChart(props){
             }
         ]
     };
-    return <BaseChart stacked data={data} config={options}/>
+    console.log(events)
+    return <BaseChart events={events} stacked data={data} config={options}/>
 }
 
 function WeeklyView() {
@@ -216,6 +218,14 @@ function WeeklyView() {
     weekData = processWeekData(weekData)
     weekData = makeWeekArray(weekData,new Date(date));
 
+    const {events,categories,reducedEvents} = useEvents({
+        startDate:weekData[0].date,
+        endDate:weekData[weekData.length - 1].date,
+        timeScale:'day',
+        includedCategories:['Processing'],
+        affected_categories:['Processing'],
+        minY:600,
+    })
     return (
         <GraphWithStatCard
             title={"Surplus Increments Weekly View"}
@@ -267,7 +277,7 @@ function WeeklyView() {
                 ]
             }
         >
-            <WeeklyChart date={date} weekData={weekData} theme={theme}/>
+            <WeeklyChart events={reducedEvents(weekData.map(({date})=>date))} date={date} weekData={weekData} theme={theme}/>
         </GraphWithStatCard>
     );
 }

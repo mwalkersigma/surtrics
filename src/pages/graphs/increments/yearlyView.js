@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 
 import useUpdates from "../../../modules/hooks/useUpdates";
-import {Chart} from "react-chartjs-2";
 import {
     BarElement,
     CategoryScale,
@@ -13,13 +12,14 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../_app";
-import { setDate, setMonth } from "date-fns";
+import {eachMonthOfInterval, lastDayOfYear, setDate, setMonth} from "date-fns";
 import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
+import useEvents from "../../../modules/hooks/useEvents";
 
 ChartJS.register(
     CategoryScale,
@@ -71,14 +71,11 @@ function YearlyChart(props){
                 formatter: Math.round
             },
         },
-        interaction:{
-          intersect: false,
-          mode: "index"
-        },
         scales: {
             y: {
                 stacked: true,
                 min: 0,
+                max: 20000,
                 ticks: {
                     color: useTheme(theme)+"A"
                 },
@@ -134,7 +131,10 @@ function YearlyChart(props){
             }
         ]
     };
-    return <BaseChart data={data} options={options}/>
+
+
+
+    return <BaseChart stacked events={props.events} data={data} config={options}/>
 }
 
 
@@ -158,6 +158,14 @@ function YearlyView() {
         return acc;
     } , {}));
 
+    const {events,reducedEvents} = useEvents({
+        startDate:date,
+        endDate:lastDayOfYear(date),
+        timeScale:'month',
+        includedCategories:['Processing'],
+        affected_categories:['Processing'],
+        minY:8000,
+    })
     return (
         <GraphWithStatCard
             title={"Surplus Increments Yearly View"}
@@ -215,7 +223,7 @@ function YearlyView() {
             ]
         }
         >
-            <YearlyChart theme={theme} yearData={yearData} date={date}/>
+            <YearlyChart events={reducedEvents(eachMonthOfInterval({start:date,end:lastDayOfYear(date)}))} theme={theme} yearData={yearData} date={date}/>
         </GraphWithStatCard>)
 }
 

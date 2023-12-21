@@ -34,6 +34,10 @@ const pages = {
             href: "/",
             leftSection: <IconGauge size={size} stroke={stroke}/>
         },
+        "Notable Events": {
+            leftSection: <IconTimeline size={size} stroke={stroke}/>,
+            href: "/timelines/listingNotableEvents"
+        },
         "Increments": {
             leftSection: <IconCirclePlus size={size} stroke={stroke}/>,
             links: {
@@ -179,7 +183,11 @@ const pages = {
             links: {
                 "Submit Error": {
                     href: "/admin/errorReporting"
-                }
+                },
+                "Submit Event": {
+                    leftSection: <IconActivity size={size} stroke={stroke}/>,
+                    href: "/BSA/eventReporting"
+                },
             }
         },
         "My Entries": {

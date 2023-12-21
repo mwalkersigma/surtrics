@@ -31,7 +31,7 @@ async function postHandler(req,res){
     let count = 0
     let params = [];
 
-    let firstToken = () => count === 0 ? 'WHERE' : 'AND';
+    let firstToken = (or=false) => count === 0 ? 'WHERE' : !or ? 'AND' : "OR";
 
     if(body['timeScale'] && body['timeScale'] !== 'Data Points') {
         let [select,from] = query.split('FROM');
@@ -51,7 +51,12 @@ async function postHandler(req,res){
             query += `${firstToken()} affected_categories @> $${++count}::text[] = false  \n`
             params.push([category]);
         })
-
+    }
+    if(body['includedCategories']) {
+        body['includedCategories'].forEach((category)=>{
+            query += `${firstToken(true)} affected_categories @> $${++count}::text[] \n`
+            params.push([category]);
+        })
     }
 
     if (body.startDate && body.endDate) {

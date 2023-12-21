@@ -3,13 +3,14 @@ import yymmddTommddyy from "../../../modules/utils/yymmddconverter";
 import useUpdates from "../../../modules/hooks/useUpdates";
 
 import {colorScheme} from "../../_app";
-import {setDate} from "date-fns";
+import {lastDayOfMonth, setDate} from "date-fns";
 import {useMantineColorScheme} from "@mantine/core";
 import {MonthPickerInput} from "@mantine/dates";
 import StatCard from "../../../components/mantine/StatCard";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
+import useEvents from "../../../modules/hooks/useEvents";
 
 
 
@@ -18,7 +19,7 @@ import BaseChart from "../../../components/Chart";
 
 
 
-function LineGraphMonthly ({monthData,theme}) {
+function LineGraphMonthly ({monthData,theme,events}) {
     theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     const options = {
         plugins: {
@@ -119,7 +120,7 @@ function LineGraphMonthly ({monthData,theme}) {
         ]
     }
     return (
-        <BaseChart data={graphData} config={options} />
+        <BaseChart events={events(graphData.labels)} data={graphData} config={options} />
     )
 }
 const dateSet = setDate;
@@ -144,7 +145,14 @@ const MonthlyView = () => {
         return acc
     },{})
     cardData = Object?.values(cardData);
-
+    const {reducedEvents} = useEvents({
+        startDate:date,
+        endDate:lastDayOfMonth(date),
+        timeScale:'day',
+        includedCategories:['Processing'],
+        affected_categories:['Processing'],
+        minY:600,
+    })
     return (
         <GraphWithStatCard
             title={"Surplus Increments Monthly View"}
@@ -192,7 +200,7 @@ const MonthlyView = () => {
                 ]
             }
         >
-            <LineGraphMonthly monthData={monthData} theme={theme}/>
+            <LineGraphMonthly events={reducedEvents} monthData={monthData} theme={theme}/>
         </GraphWithStatCard>
     )
 };

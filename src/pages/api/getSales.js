@@ -16,12 +16,11 @@ function processItems(items) {
 function buildURL(base_url, endpoint, options) {
     let url = new URL(base_url + endpoint);
     let temp = JSON.parse(JSON.stringify(options))
-    Object.keys(temp).forEach((key) => {
-        // if (key.toLowerCase().includes('date')) {
-        //     temp[key] = new Date(temp[key]).toISOString().split("T")[0];
-        // }
-        url.searchParams.append(key, temp[key])
-    })
+    Object
+        .keys(temp)
+        .forEach((key) => {
+            url.searchParams.append(key, temp[key])
+        })
     return url
 }
 async function getShipStationOrders(options) {
@@ -30,8 +29,8 @@ async function getShipStationOrders(options) {
     let results = [];
     while (true) {
         let fullUrl = buildURL(baseUrl, endpoint, options).href;
-        Logger.log(`Retrieving orders from ${fullUrl}`)
-        let headers ={
+        Logger.log(`Retrieving orders from ${fullUrl}`);
+        let headers = {
             "Authorization": "Basic " + process.env.SHIPSTATION_TOKEN
         }
         let response = await fetch(fullUrl, {
@@ -55,12 +54,11 @@ async function getShipStationOrders(options) {
     return results;
 }
 
-
-
-
-
 async function main () {
     try {
+        /*
+            Get the latest time stamp from the timeLastUpdated json file.
+         */
         let timeLastUpdated = await getLastUpdatedTime("shipStation");
         let currentTimestamp = new Date().toISOString();
         let shouldNotUpdate = await isTimeToUpdate(currentTimestamp, timeLastUpdated);
@@ -70,8 +68,6 @@ async function main () {
             return;
         }
         Logger.log("Time to update sales");
-
-        //timeLastUpdated = new Date(timeLastUpdated).toISOString().split("T")[0];
 
         let [newOrders, updatedOrders] = await Promise.all([
             getShipStationOrders({
@@ -83,8 +79,12 @@ async function main () {
                 paymentDateStart: timeLastUpdated
             })
         ]);
+
         Logger.log("Retrieved orders from shipStation: Time last updated: " + timeLastUpdated);
         Logger.log(`Retrieved ${newOrders.length} new orders and ${updatedOrders.length} updated orders`)
+
+        // This is taking in the new orders and the order updates and concating them together.
+        // Then it parses the data into the correct format, stringifies it, and then removes duplicates.
         newOrders = newOrders
             .concat(updatedOrders)
             .map((order) => {

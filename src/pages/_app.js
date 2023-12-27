@@ -31,15 +31,30 @@ export const colorScheme = {
     light:'#f8f9fa',
     dark:'#212529',
     random () {
-        let ignoreList = ["white", "gray", "grayDark","secondary","light","dark","random"]
-        let choices = Object.keys(this).filter((key) => !ignoreList.includes(key));
+        let ignoreList = ["white", "gray", "grayDark","secondary","light","dark"]
+        let choices = Object
+            .keys(this)
+            .filter((key) => !ignoreList.includes(key))
+            .filter((key) => typeof this[key] === "string");
         let random = Math.floor(Math.random() * choices.length);
         return this[choices[random]];
+    },
+    byIndex(index,callee) {
+        let ignoreList = ["white", "gray", "grayDark","secondary","light","dark"];
+        console.log("callee",callee)
+        if(typeof index !== "number") debugger;
+        let choices = Object
+            .keys(this)
+            .filter((key) => !ignoreList.includes(key))
+            .filter((key) => typeof this[key] === "string");
+        return this[choices[index]];
     }
 }
 
 let boundRandom = colorScheme.random.bind(colorScheme);
+let boundByIndex = colorScheme.byIndex.bind(colorScheme);
 colorScheme.random = boundRandom;
+colorScheme.byIndex = boundByIndex;
 
 
 function Base({ Component, pageProps }) {

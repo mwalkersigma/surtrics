@@ -89,7 +89,7 @@ async function ebaySeed(filePath){
             }
         })
         .map(order => {
-            if(!order.paymentDate)return;
+            if(!order.paymentDate || order.paymentDate.toString() === 'Invalid Date')return;
             let [monthName,day,year] = order.paymentDate.split("-");
             const convertMonthNameToNumber = (monthName) => {
                 let month = new Date(Date.parse(monthName +" 1, 2023")).getMonth()+1;

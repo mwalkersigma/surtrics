@@ -2,10 +2,10 @@ import React from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
 import {NativeSelect, Table} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
-import {DatePickerInput} from "@mantine/dates";
 import formatter from "../../../modules/utils/numberFormatter";
 import Order from "../../../modules/classes/Order";
 import useUsage from "../../../modules/hooks/useUsage";
+import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 
 const storeNames = {
     "225004": "Big Commerce",
@@ -16,9 +16,9 @@ const storeNames = {
 
 const DailyView = () => {
     useUsage("Ecommerce","sales-Daily-table")
-    let [date, setDate] = React.useState(new Date());
+    const[[startDate,endDate],setDateRange] = React.useState([new Date(),new Date()])
     const [store, setStore] = React.useState("225004");
-    let sales = useUpdates("/api/views/sales", {date});
+    let sales = useUpdates("/api/views/sales", {startDate, endDate});
 
     sales = sales.map(sale => new Order(sale));
     let storeIDs = [...new Set(sales.map(sale => sale.storeId))];
@@ -35,11 +35,9 @@ const DailyView = () => {
             title={"Daily Sales By Channel"}
             isLoading={sales.length === 0}
             dateInput={
-                <DatePickerInput
-                    mb={"xl"}
-                    label={"Date"}
-                    value={date}
-                    onChange={(e) => setDate(e)}
+                <CustomRangeMenu
+                    subscribe={setDateRange}
+                    defaultValue={[startDate,endDate]}
                 />
             }
             slotOne={

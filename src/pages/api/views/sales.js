@@ -71,6 +71,7 @@ async function getSales(req,res) {
 }
 async function getSalesWithOptions(req,res) {
     let body = parseBody(req);
+    console.log(body)
     let query =
         `
         SELECT

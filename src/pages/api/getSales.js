@@ -96,7 +96,6 @@ async function main () {
                 let storeId = order['advancedOptions'].storeId;
                 return JSON.stringify({paymentDate, orderId, orderStatus, items, storeId, name});
             })
-            .filter((order) => order.orderStatus !== "cancelled")
         newOrders = [...new Set(newOrders)].map((order) => JSON.parse(order));
         Logger.log(`After removing duplicates and cancelled orders, there are ${newOrders.length} new orders to insert`)
         let queries = [];

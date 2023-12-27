@@ -102,7 +102,7 @@ const DepartmentSettings = () => {
                                     label={"Goal Amount"}
                                     placeholder={displayGoal}
                                     value={newGoal}
-                                    onChange={(e)=>setNewGoal(e.target.value)}
+                                    onChange={(e)=>setNewGoal(e)}
                                 />
                             </Grid.Col>
                             <Grid.Col span={6}>

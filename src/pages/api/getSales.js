@@ -71,7 +71,7 @@ async function main () {
         }
         Logger.log("Time to update sales");
 
-        timeLastUpdated = new Date(timeLastUpdated).toISOString().split("T")[0];
+        //timeLastUpdated = new Date(timeLastUpdated).toISOString().split("T")[0];
 
         let [newOrders, updatedOrders] = await Promise.all([
             getShipStationOrders({

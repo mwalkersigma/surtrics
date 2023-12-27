@@ -229,7 +229,7 @@ const pages = {
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
                     links: {
-                        "Daily View": {
+                        "Range View": {
                             href: "/tables/sales/dailyView"
                         }
                     }

@@ -15,7 +15,7 @@ const storeNames = {
 
 
 const DailyView = () => {
-    useUsage("Ecommerce","sales-Daily-table")
+    useUsage("Ecommerce","sales-range-table")
     const[[startDate,endDate],setDateRange] = React.useState([new Date(),new Date()])
     const [store, setStore] = React.useState("225004");
     let sales = useUpdates("/api/views/sales", {startDate, endDate});
@@ -38,6 +38,8 @@ const DailyView = () => {
                 <CustomRangeMenu
                     subscribe={setDateRange}
                     defaultValue={[startDate,endDate]}
+                    label={"Date Range"}
+                    mb={"xl"}
                 />
             }
             slotOne={

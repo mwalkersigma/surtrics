@@ -1,5 +1,5 @@
 import React from "react";
-import {Badge, Center, Grid, Group, Paper, Progress, Space, Text, Title, useMantineColorScheme} from '@mantine/core';
+import { Center, Grid, Paper, Text, Title, useMantineColorScheme} from '@mantine/core';
 import formatter from "../modules/utils/numberFormatter";
 import {addDays, addHours, format} from "date-fns";
 import {Bar, Line} from "react-chartjs-2";
@@ -15,6 +15,9 @@ import DataLabels from "chartjs-plugin-datalabels";
 import useNav from "../modules/hooks/useNav";
 import { useViewportSize } from "@mantine/hooks";
 import useUsage from "../modules/hooks/useUsage";
+import normalize from "../modules/utils/normalize";
+import DashboardCard from "../components/mantine/dashboardCard";
+
 
 ChartJS.register(
     CategoryScale,
@@ -24,15 +27,6 @@ ChartJS.register(
     PointElement,
     LineElement,
 );
-
-
-function normalize(minIn, maxIn, minOut, maxOut) {
-    return (value)=> {
-        if(value > maxIn) return maxOut;
-        if(value < minIn) return minOut;
-        return (value - minIn) * (maxOut - minOut) / (maxIn - minIn) + minOut;
-    }
-}
 
 let normalized = normalize(730, 1375, 200, 800);
 const Theme = (theme) => theme === "dark" ? colorScheme.light : colorScheme.dark;
@@ -50,50 +44,6 @@ const times = [
     "4 PM"
 ];
 
-function DashboardCard({title, category, value , goal, errors,threshold,badgeText,  hasNav}) {
-    let errorRate = (Math.round(errors / value * 100) / 100) * 100;
-    return (<Paper withBorder p="md" radius="md">
-        <Group align={'flex-start'} justify={'space-between'} mb={'xl'}>
-            <Text size={hasNav ? "md" : "xl"} c="dimmed">
-                {title}
-            </Text>
-            <Badge color="teal" variant="light">
-                {category}
-            </Badge>
-        </Group>
-
-        <Group align={'flex-end'} justify={'space-between'}>
-            <Title order={1} style={{fontSize:`${hasNav ? "" : "56px"}`}}>
-                {formatter(value)}
-            </Title>
-            { errors && errors > 0 && <Text fz="xs" c="dimmed">
-                Error Rate :
-                <span style={{color: `${errorRate < threshold ? 'teal' : 'red'}`}}> {errorRate}</span>
-                %
-            </Text>}
-        </Group>
-
-        <Space h={'lg'}/>
-
-        <Group justify={'space-between'}>
-            <Text size="md" c="dimmed">
-                Progress
-            </Text>
-            <Text size="md" c="dimmed">
-                {formatter((value / goal) * 100)} %
-            </Text>
-        </Group>
-        <Progress size={20} value={(value / goal) * 100} mt={'sm'} mb={'lg'}/>
-        <Group justify="space-between" mt="md">
-            <Text fz="sm" c="dimmed">
-                {value} / {goal} {category}
-            </Text>
-            {badgeText}
-        </Group>
-
-
-    </Paper>)
-}
 function WeekGraph ({weekSeed,goal,theme, height}){
     let dateLabels = weekSeed.map(({date}) => format(addHours(new Date(date),6),"EEE MM/dd"));
     return <Bar
@@ -190,6 +140,7 @@ function DailyGraph ({dailyData,theme,height}){
         height={height}
     />
 }
+
 function handleDailyData(dailyData){
     let temp = dailyData
         .reduce((acc,curr) => {

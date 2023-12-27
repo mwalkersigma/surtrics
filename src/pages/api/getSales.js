@@ -30,6 +30,7 @@ async function getShipStationOrders(options) {
     let results = [];
     while (true) {
         let fullUrl = buildURL(baseUrl, endpoint, options).href;
+        Logger.log(`Retrieving orders from ${fullUrl}`)
         let headers ={
             "Authorization": "Basic " + process.env.SHIPSTATION_TOKEN
         }
@@ -81,7 +82,8 @@ async function main () {
                 pageSize: 500,
                 paymentDateStart: timeLastUpdated
             })
-        ])
+        ]);
+        Logger.log("Retrieved orders from shipStation: Time last updated: " + timeLastUpdated);
         Logger.log(`Retrieved ${newOrders.length} new orders and ${updatedOrders.length} updated orders`)
         newOrders = newOrders
             .concat(updatedOrders)
@@ -146,6 +148,7 @@ async function main () {
             acc[curr] = acc[curr] ? acc[curr] + 1 : 1;
             return acc;
         },{}))
+
         let {errors:QueryErrors} = await PromisePool
             .for(queries)
             .withConcurrency(25)

@@ -149,17 +149,17 @@ ORDER BY
     month_of_transaction
     `)
 }
-// function postHandler(){}
-// function putHandler(){}
-// function deleteHandler(){}
+
+export const config = {
+    api: {
+        responseLimit: false,
+    },
+}
 
 export default function handler(req, res) {
     return serverAdminWrapper((req, res) => {
         return router({
             GET: getHandler,
-            //POST: postHandler,
-            //PUT: putHandler,
-            //DELETE: deleteHandler,
         })(req, res)
     })(req, res)
         .then((response) => {

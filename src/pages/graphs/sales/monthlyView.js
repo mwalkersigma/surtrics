@@ -70,8 +70,8 @@ const MonthlyView = () => {
             return {
                 label: storeNameMap[sid],
                 data: monthlySales.map(month => Math.floor(month[sid] * 100) / 100 ?? 0).map(month => isNaN(month) ? 0 : month),
-                backgroundColor: Object.values(colorScheme)[index],
-                borderColor: Object.values(colorScheme)[index],
+                backgroundColor: colorScheme.byIndex(index),
+                borderColor: colorScheme.byIndex(index),
                 type:'line'
             }
         })

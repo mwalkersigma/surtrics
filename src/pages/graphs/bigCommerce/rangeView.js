@@ -51,8 +51,8 @@ const BigCommerceRangeView = () => {
         .sort((a,b) => a.date_for_week - b.date_for_week )
         .map((update) =>({...update, date_for_week: new Date(update.date_for_week).toLocaleDateString()}))
         .reduce((acc,update)=>{
-            Object.keys(update).forEach((key)=>{
-                let color = colorScheme.random();
+            Object.keys(update).forEach((key,index)=>{
+                let color = colorScheme.byIndex(index);
                 if(!acc[key]) acc[key] = {
                     label: key,
                     data: [],

@@ -49,8 +49,7 @@ const defaultPresets = [
 ]
 
 
-const DateMenu = (props) => {
-    let {subscribe,defaultValue,presets,...rest} = props;
+const DateMenu = ({subscribe,defaultValue,presets,...rest}) => {
     if(!presets){
         presets = defaultPresets;
     }

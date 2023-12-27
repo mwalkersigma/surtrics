@@ -1,19 +1,20 @@
 import React from 'react';
-import settings from "../../json/settings.json";
 import RoleWrapper from "../../components/RoleWrapper";
 import {
     Container,
     Title,
-    Stack,
     Grid,
-    NativeSelect, RingProgress, Text, Divider, Space
+    RingProgress,
+    Text,
+    Divider,
+    Space
 } from "@mantine/core";
 import useFrequency from "../../modules/hooks/useFrequency";
 import useUsage from "../../modules/hooks/useUsage";
 import useUpdates from "../../modules/hooks/useUpdates";
 import {colorScheme} from "../_app";
 import {TableSort} from "../../components/mantine/TableSort";
-const {frequencies} = settings;
+
 
 
 function UsageMeter({usage}){
@@ -25,11 +26,11 @@ function UsageMeter({usage}){
             acc += sectionData[key];
             return acc;
         },0);
-        acc[section] = keys.map((key)=>{
+        acc[section] = keys.map((key,index)=>{
             return {
                 label:key,
                 value:Math.round(sectionData[key]/sectionTotal * 100),
-                color:colorScheme.random(),
+                color:colorScheme.byIndex(index),
                 tooltip:`${key}: ${sectionData[key]}`
             }
             })
@@ -50,11 +51,11 @@ function UsageMeter({usage}){
     },0);
 
     dataForRings["Total Usage"] =
-        Object.keys(totalUsage).map((key)=>{
+        Object.keys(totalUsage).map((key,index)=>{
             return {
                 label:key,
                 value:Math.round(totalUsage[key]/totalUsage["Total Usage"] * 100),
-                color:colorScheme.random(),
+                color:colorScheme.byIndex(index),
                 tooltip:`${key}: ${totalUsage[key]}`
             }
         })

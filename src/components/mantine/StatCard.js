@@ -1,11 +1,6 @@
 import {
     IconArrowDownRight,
     IconArrowUpRight,
-    IconCoin, IconDirections,
-    IconDiscount2,
-    IconEye,
-    IconReceipt2,
-    IconUserPlus
 } from "@tabler/icons-react";
 import {Group, Paper, Text} from "@mantine/core";
 import classes from "../../styles/StatsGrid.module.css";
@@ -17,6 +12,7 @@ import React from "react";
 export default function StatCard ({stat,Icon:i, ...rest}){
     const Icon = i ?? null;
     const DiffIcon = stat?.diff ? stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight : null;
+    const YearOverYearDiffIcon = stat?.yoyDiff ? stat.yoyDiff > 0 ? IconArrowUpRight : IconArrowDownRight : null;
     return (
         <Paper {...rest} withBorder p="md" radius="md">
             <Group justify="space-between">
@@ -33,6 +29,14 @@ export default function StatCard ({stat,Icon:i, ...rest}){
                         <span>{Math.trunc(stat.diff * 100)/100} {!stat['diffFormat'] && "%"} </span>
                         <DiffIcon size="1rem" stroke={1.5} />
                     </Text>
+                }
+                {DiffIcon && YearOverYearDiffIcon && <>
+                    <Text c={stat.yoyDiff > 0 ? 'teal' : 'red'} fz="sm" fw={500} className={classes.diff}>
+                        <span>{Math.trunc(stat.yoyDiff * 100)/100} {!stat['diffFormat'] && "%"} </span>
+                        <YearOverYearDiffIcon size="1rem" stroke={1.5} />
+                    </Text>
+                </>
+
                 }
             </Group>
 

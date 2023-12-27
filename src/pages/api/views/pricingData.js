@@ -49,7 +49,6 @@ async function postHandler(req,res){
     }
 
     let {rows} = await db.query(query, params);
-    console.log(rows)
     return res.status(200).json(rows)
 
 

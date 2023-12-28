@@ -21,10 +21,26 @@ export default class Order {
     }
 
     processItem(item) {
-        try {
-            return JSON.parse(item);
-        } catch (e) {
-            return JSON.parse("[" + item + "]");
+        try{
+            let temp = JSON.parse(item);
+            let tempPrice = temp['unitPrice'];
+            if(typeof tempPrice === "string"){
+                tempPrice = tempPrice.replaceAll("$", "").replaceAll(',','').trim();
+                temp['unitPrice'] = +tempPrice;
+            }
+            return temp;
+
+        }catch (e) {
+            let temp= JSON.parse("[" + item + "]");
+            temp.map(item => {
+                try {
+                    item['unitPrice'] = item['unitPrice']?.replaceAll("$", "").replaceAll(',', '').trim();
+                    return item;
+                } catch (e) {
+                    return item;
+                }
+            })
+            return temp;
         }
     }
 }

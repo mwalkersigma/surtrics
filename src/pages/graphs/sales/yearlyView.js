@@ -52,7 +52,7 @@ const storeDataMap = {
 const dateSet = setDate
 const YearlyView = () => {
     useUsage("Ecommerce","sales-yearly-chart")
-    const [date, setDate] = useState(setMonth(dateSet(new Date(),0),0));
+    const [date, setDate] = useState(dateSet(setMonth(new Date(),0),0));
     const theme = useMantineColorScheme();
     const [storeId, setStoreId] = useState("All");
     const sales = useUpdates("/api/views/sales",{date, interval:'1 year'});
@@ -76,12 +76,16 @@ const YearlyView = () => {
         if(!yearlySales[month][order.storeId]){
             yearlySales[month][order.storeId] = 0;
         }
+        if(order.orderStatus === "cancelled"){
+            console.log("cancelled order")
+            return
+        };
         yearlySales[month].total += order.total;
         yearlySales[month].orders.push(order);
 
         yearlySales[month][order.storeId] += order.total;
     })
-
+    console.log(yearlySales)
     yearlySales = months
         .map(month => yearlySales[month] ?? {total:0})
         .filter(month => month !== undefined)

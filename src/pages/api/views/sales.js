@@ -126,6 +126,9 @@ async function getSalesWithOptions(req,res) {
         query = select + 'FROM' + from;
     }
     let {rows} = await db.query(query, params);
+    console.log(query)
+    console.log(params)
+    console.log(rows.length)
     return res.status(200).json(rows)
 }
 

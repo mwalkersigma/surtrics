@@ -24,7 +24,7 @@ const DailyView = () => {
     let storeIDs = [...new Set(sales.map(sale => sale.storeId))];
     let storeSales = {};
     storeIDs.forEach(storeId => {
-        storeSales[storeId] = sales.filter(sale => sale.storeId === storeId);
+        storeSales[storeId] = sales.filter(sale => sale.storeId === storeId).filter(sale => sale.orderStatus !== "cancelled");
     });
     storeSales["All"] = sales;
 

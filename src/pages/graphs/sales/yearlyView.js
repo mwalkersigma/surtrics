@@ -145,7 +145,7 @@ const YearlyView = () => {
             tooltip: {
                 callbacks: {
                     footer: (context)=> {
-                        return "TOTAL: " + context.reduce((acc, {raw}) => (acc + +raw), 0);
+                        return "TOTAL: " + formatter(context.reduce((acc, {raw}) => (acc + +raw), 0),'currency');
                     }
                 }
             },

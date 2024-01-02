@@ -6,18 +6,6 @@ const {performance} = require('perf_hooks');
 // perf hooks
 const shipStationToken = process.env.SHIPSTATION_TOKEN;
 
-function limitLog(limit){
-    let counter = 0;
-    return (msg) => {
-        if(counter < limit){
-            console.log(msg);
-            counter++;
-        }
-    }
-}
-
-let oneHundredLogs = limitLog(100);
-
 const pool = new Pool({
     connectionString:process.env.CONNECTION_STRING
 });
@@ -77,8 +65,6 @@ async function processEbayCSV ( filePath ) {
 }
 async function ebaySeed(filePath){
     let orders = await processEbayCSV(filePath);
-    console.log("Ebay orders retrieved")
-    console.log(orders.length);
     return orders
         .map(order => {
             let paymentDate = order["Paid On Date"]
@@ -120,10 +106,9 @@ async function ebaySeed(filePath){
 function buildURL(base_url, endpoint, options) {
     let url = new URL(base_url + endpoint);
     let temp = JSON.parse(JSON.stringify(options))
-    Object.keys(temp).forEach((key) => {
-        if (key.toLowerCase().includes('date')) {
-            temp[key] = new Date(temp[key]).toISOString().split("T")[0];
-        }
+    Object
+        .keys(temp)
+        .forEach((key) => {
         url.searchParams.append(key, temp[key])
     })
     return url
@@ -134,7 +119,7 @@ async function getShipStationOrders(options) {
     let results = [];
     while (true) {
         let fullUrl = buildURL(baseUrl, endpoint, options).href;
-        console.log(fullUrl);
+
         let headers ={
             "Authorization": "Basic " + shipStationToken
         }
@@ -184,12 +169,13 @@ async function main () {
     });
     console.log("Finished getting orders from 2020-2023 for store 225004")
     console.log("Getting orders from june 2023 to present")
-    let newEbayOrders = await getShipStationOrders({
+    let newOrders = await getShipStationOrders({
         pageSize: 500,
         paymentDateStart: "06-01-2023",
     })
+
     let orders = bigCommerceOrders
-        .concat(newEbayOrders)
+        .concat(newOrders)
         .map(order => {
             let paymentDate = new Date(order.paymentDate).toISOString();
             let orderId = order.orderId;
@@ -200,6 +186,16 @@ async function main () {
             return {paymentDate, orderId, orderStatus, items, storeId , name};
         })
         .concat(ebayOrders)
+
+    let fullSize = orders.length;
+
+    orders = [...new Set(orders.map(order => JSON.stringify(order)))].map(order => JSON.parse(order));
+
+    console.log("Full size",fullSize)
+    console.log("Orders",orders.length)
+    console.log("Duplicates removed: ",fullSize - orders.length);
+
+
     let queries = [];
     orders.forEach(order => {
         let {paymentDate, orderId, orderStatus, name, storeId, items} = order;
@@ -211,7 +207,6 @@ async function main () {
         .for(queries)
         .withConcurrency(250)
         .process(async (query) => {
-            console.log(query)
             await db.query(query);
         });
     console.log(results.filter(result => result === undefined));

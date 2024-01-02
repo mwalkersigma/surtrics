@@ -22,17 +22,29 @@
 
 
 
-DELETE FROM
-    surtrics.surplus_pricing_data a
-    USING surtrics.surplus_pricing_data b
-WHERE
-    a.entry_id < b.entry_id
-    AND a.date_priced = b.date_priced
-    AND a.user_who_priced = b.user_who_priced
-    AND a.sku = b.sku
-    AND a.original_packaging_price = b.original_packaging_price
-    AND a.sigma_packaging_price = b.sigma_packaging_price
-    AND a.refurbished_price = b.refurbished_price
-RETURNING a.*;
+-- DELETE FROM
+--     surtrics.surplus_pricing_data a
+--     USING surtrics.surplus_pricing_data b
+-- WHERE
+--     a.entry_id < b.entry_id
+--     AND a.date_priced = b.date_priced
+--     AND a.user_who_priced = b.user_who_priced
+--     AND a.sku = b.sku
+--     AND a.original_packaging_price = b.original_packaging_price
+--     AND a.sigma_packaging_price = b.sigma_packaging_price
+--     AND a.refurbished_price = b.refurbished_price
+-- RETURNING a.*;
 
+DELETE FROM
+           surtrics.surplus_sales_data a
+    USING
+        surtrics.surplus_sales_data b
+    WHERE
+        a.sale_id < b.sale_id
+        AND a.payment_date = b.payment_date
+        AND a.order_id = b.order_id
+        AND a.order_status = b.order_status
+        AND a.name = b.name
+        AND a.store_id = b.store_id
+    RETURNING a.*
 

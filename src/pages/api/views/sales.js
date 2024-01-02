@@ -71,7 +71,6 @@ async function getSales(req,res) {
 }
 async function getSalesWithOptions(req,res) {
     let body = parseBody(req);
-    console.log(body)
     let query =
         `
         SELECT
@@ -87,28 +86,33 @@ async function getSalesWithOptions(req,res) {
 
 
     if(body.date && body.interval){
-        query+=`    ${firstToken()} DATE(payment_date - interval '2 hours') < DATE($1) + $2::interval`
+        query+=`    ${firstToken()} DATE(payment_date - interval '3 hours') < DATE($1) + $2::interval`
         params = [body.date,body.interval];
     }
 
     if (body.startDate && body.endDate) {
-        query += `${firstToken()} payment_date BETWEEN $${++count} AND $${++count} \n`;
-        params.push(body.startDate);
-        params.push(body.endDate);
+        if(body.startDate === body.endDate){
+            query += `${firstToken()} DATE(payment_date - interval '3 hours') = $${++count}::DATE \n`;
+            params.push(body.startDate);
+        }else{
+            query += `${firstToken()} DATE(payment_date - interval '3 hours') BETWEEN $${++count}::DATE AND $${++count}::DATE \n`;
+            params.push(body.startDate);
+            params.push(body.endDate);
+        }
     }
 
     if(body.startDate && !body.endDate) {
-        query += `${firstToken()} payment_date >= $${++count} \n`;
+        query += `${firstToken()} DATE(payment_date - interval '3 hours') = $${++count}::DATE \n`;
         params.push(body.startDate);
     }
 
     if(!body.startDate && body.endDate) {
-        query += `${firstToken()} payment_date <= $${++count} \n`;
+        query += `${firstToken()} DATE(payment_date - interval '3 hours') <= $${++count} \n`;
         params.push(body.endDate);
     }
 
     if(body.date && !body.interval) {
-        query += `${firstToken()} date_trunc('day',payment_date) = $${++count} \n`;
+        query += `${firstToken()} date_trunc('day',DATE(payment_date - interval '3 hours')) = $${++count} \n`;
         params.push(body.date);
     }
     if(body['timeScale'] && body['timeScale'] !== 'Data Points') {
@@ -126,9 +130,6 @@ async function getSalesWithOptions(req,res) {
         query = select + 'FROM' + from;
     }
     let {rows} = await db.query(query, params);
-    console.log(query)
-    console.log(params)
-    console.log(rows.length)
     return res.status(200).json(rows)
 }
 

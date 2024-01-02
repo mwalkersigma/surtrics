@@ -7,7 +7,7 @@ import Order from "../../../modules/classes/Order";
 import {NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
 
-import {setDate} from "date-fns";
+import {getDate, lastDayOfMonth, setDate} from "date-fns";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 
@@ -33,7 +33,7 @@ const MonthlyView = () => {
     const [date, setDate] = useState(dateSet(new Date(),1));
     const theme = useMantineColorScheme();
     const [storeId, setStoreId] = useState("All");
-    const sales = useUpdates("/api/views/sales",{date, interval:'1 month'});
+    const sales = useUpdates("/api/views/sales",{startDate: date, endDate: lastDayOfMonth(date)});
     const useTheme = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
     const orders = sales.map(order => new Order(order));
     let storeIds= [
@@ -41,9 +41,12 @@ const MonthlyView = () => {
         ...new Set(orders.map(order => order.storeId)),
         'Total'
     ];
+
     let monthlySales = {};
     orders.forEach(order => {
-        let day = +order.paymentDate.split("/")[1];
+        //let day = +order.paymentDate.split("/")[1];
+        let day = getDate(new Date(order.paymentDate));
+        let orderTotal = Number(order.total);
         if(!monthlySales[day]){
             monthlySales[day] = {
                 total: 0,
@@ -53,11 +56,13 @@ const MonthlyView = () => {
         if(!monthlySales[day][order.storeId]){
             monthlySales[day][order.storeId] = 0;
         }
-        monthlySales[day].total += order.total;
+        monthlySales[day].total += orderTotal;
         monthlySales[day].orders.push(order);
 
-        monthlySales[day][order.storeId] += order.total;
+        monthlySales[day][order.storeId] += orderTotal;
     })
+
+    console.log(monthlySales)
     monthlySales = Object.keys(monthlySales)
         .map(month => monthlySales[month] ?? undefined)
         .filter(month => month !== undefined)

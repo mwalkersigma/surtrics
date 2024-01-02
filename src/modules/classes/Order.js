@@ -17,7 +17,7 @@ export default class Order {
     }
 
     get total() {
-        return this.items.reduce((total, item) => total + item.unitPrice * item.quantity, 0);
+        return Number(this.items.reduce((total, item) => Number(total) + Number(item.unitPrice) * Number(item.quantity), 0));
     }
 
     processItem(item) {

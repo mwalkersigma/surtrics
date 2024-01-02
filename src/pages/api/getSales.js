@@ -5,10 +5,13 @@ import { PromisePool } from '@supercharge/promise-pool'
 import db from "../../db/index";
 import getLastUpdatedTime from "../../modules/serverUtils/getLastUpdatedTime";
 import updateLastUpdatedTime from "../../modules/serverUtils/updateLastUpdatedTime";
+
+
 function processItems(items) {
     return items
         .map(item => {
             let {sku, quantity,name, unitPrice} = item;
+            name = name.replaceAll("'", "");
             return {sku, quantity, name, unitPrice};
         })
         .map(item => JSON.stringify(item));
@@ -79,7 +82,7 @@ async function main () {
                 paymentDateStart: timeLastUpdated
             })
         ]);
-
+        await updateLastUpdatedTime("shipStation");
         Logger.log("Retrieved orders from shipStation: Time last updated: " + timeLastUpdated);
         Logger.log(`Retrieved ${newOrders.length} new orders and ${updatedOrders.length} updated orders`)
 
@@ -157,7 +160,7 @@ async function main () {
         Logger.log("Errors: ");
         Logger.log(JSON.stringify(QueryErrors, null, 2))
         Logger.log("finished inserting into database")
-        await updateLastUpdatedTime("shipStation");
+
         Logger.log("finished updating last updated time for shipStation")
     } catch (e) {
         console.log(e);

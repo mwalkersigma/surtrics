@@ -94,7 +94,7 @@ function sortData(data, payload) {
     }), payload.search);
 }
 
-export function TableSort({data, noToolTip=[],specialFormatting = []}) {
+export function TableSort({data, noSearch, footer, noToolTip=[],specialFormatting = []}) {
     const [search, setSearch] = useState('');
     const [sortedData, setSortedData] = useState(data);
     const [sortBy, setSortBy] = useState(null);
@@ -157,13 +157,13 @@ export function TableSort({data, noToolTip=[],specialFormatting = []}) {
 
 
     return (<ScrollArea>
-        <TextInput
+        {!noSearch && <TextInput
             placeholder="Search by any field"
             mb="md"
             leftSection={<IconSearch style={{width: rem(16), height: rem(16)}} stroke={1.5}/>}
             value={search}
             onChange={handleSearchChange}
-        />
+        />}
         <Table
             striped
             highlightOnHover
@@ -187,7 +187,7 @@ export function TableSort({data, noToolTip=[],specialFormatting = []}) {
                     </Th>))}
                 </Table.Tr>
             </Table.Thead>
-            <Table.Tbody>
+            {data.length > 0 && <Table.Tbody>
                 {rows.length > 0 ? (rows) : (<Table.Tr>
                     <Table.Td colSpan={Object.keys(data[0])?.length || 1}>
                         <Text fw={500} ta="center">
@@ -195,7 +195,12 @@ export function TableSort({data, noToolTip=[],specialFormatting = []}) {
                         </Text>
                     </Table.Td>
                 </Table.Tr>)}
-            </Table.Tbody>
+            </Table.Tbody>}
+            {footer && (
+                <Table.Tfoot>
+                    {footer}
+                </Table.Tfoot>)
+            }
         </Table>
     </ScrollArea>);
 }

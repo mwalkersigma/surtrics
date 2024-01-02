@@ -39,9 +39,8 @@ export const colorScheme = {
         let random = Math.floor(Math.random() * choices.length);
         return this[choices[random]];
     },
-    byIndex(index,callee) {
-        let ignoreList = ["white", "gray", "grayDark","secondary","light","dark"];
-        console.log("callee",callee)
+    byIndex(index) {
+        let ignoreList = ["white", "gray", "grayDark","secondary","light","dark"]
         if(typeof index !== "number") debugger;
         let choices = Object
             .keys(this)

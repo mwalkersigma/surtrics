@@ -17,10 +17,12 @@ import DataLabels from "chartjs-plugin-datalabels";
 import {NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
 import {Chart} from "react-chartjs-2";
-import {setDate, setMonth} from "date-fns";
+import {getMonth, lastDayOfYear, setDate, setMonth} from "date-fns";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
+import formatter from "../../../modules/utils/numberFormatter";
+
 
 ChartJS.register(
     CategoryScale,
@@ -51,59 +53,92 @@ const storeDataMap = {
 
 const dateSet = setDate
 const YearlyView = () => {
-    useUsage("Ecommerce","sales-yearly-chart")
-    const [date, setDate] = useState(dateSet(setMonth(new Date(),0),0));
+    useUsage("Ecommerce","sales-yearly-chart");
+    const [date, setDate] = useState(setMonth(dateSet(new Date(),1),0));
     const theme = useMantineColorScheme();
-    const [storeId, setStoreId] = useState("All");
-    const sales = useUpdates("/api/views/sales",{date, interval:'1 year'});
-    const useTheme = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
-    const orders = sales.map(order => new Order(order));
-    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    const themeColor = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
+    const [storeId, setStoreId] = useState("Total");
+    const sales = useUpdates("/api/views/sales",{startDate:date, endDate:lastDayOfYear(date)});
+    const orders = sales.map(sale => new Order(sale));
+
+
+    let ordersTotal = orders.reduce((acc, order) => {
+        return acc + order.total;
+    },0);
+
+    const displayMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
     let storeIds= [
         'All',
         ...new Set(orders.map(order => order.storeId)),
         'Total'
     ];
-    let yearlySales = {};
-    orders.forEach(order => {
-        let month = months[+order.paymentDate.split("/")[0] - 1];
-        if(!yearlySales[month]){
-            yearlySales[month] = {
-                total: 0,
-                orders: [],
+
+    let yearSales = {total:0};
+    let orderCount = {total:0};
+
+    orders.forEach(order=>{
+        let month = getMonth(new Date(order.paymentDate));
+
+        if(!yearSales[month]){
+            yearSales[month] = {
+                total:0
             }
         }
-        if(!yearlySales[month][order.storeId]){
-            yearlySales[month][order.storeId] = 0;
-        }
-        if(order.orderStatus === "cancelled"){
-            console.log("cancelled order")
-            return
-        };
-        yearlySales[month].total += order.total;
-        yearlySales[month].orders.push(order);
+        let orderTotal = order.total;
+        yearSales.total += Number(orderTotal);
+        yearSales[month].total += Number(orderTotal);
 
-        yearlySales[month][order.storeId] += order.total;
+        let store = order.storeId;
+        if(!yearSales[month][store]){
+            yearSales[month][store] = {total:0}
+        }
+        yearSales[month][store].total += Number(orderTotal);
+
+        orderCount.total += 1;
+
+        if(!orderCount[month]){
+            orderCount[month] = 0;
+        }
+
+        orderCount[month] += 1;
+
     })
-    console.log(yearlySales)
-    yearlySales = months
-        .map(month => yearlySales[month] ?? {total:0})
-        .filter(month => month !== undefined)
 
+    let dataForGraph = []
 
+    for (let i = 0 ; i < displayMonths.length; i++) {
 
+        let dataSet = storeDataMap[storeNameMap[storeId]];
 
-    const graphDataSets = storeDataMap[storeNameMap[storeId]]
-        .map((sid,index) => {
-            return {
-                label: storeNameMap[sid],
-                data: yearlySales.map(month => Math.floor(month[sid] * 100) / 100 ?? 0).map(month => isNaN(month) ? 0 : month),
-                backgroundColor: Object.values(colorScheme)[index],
-                type:'bar'
-            }
+        dataSet.forEach(store => {
+            let displayName = displayMonths[i];
 
+            let monthSales = yearSales[i]?.[store]?.total ?? yearSales[i]?.[store] ?? 0;
+            let monthValue = Math.round( monthSales * 100 ) / 100;
+            dataForGraph.push({
+                displayName,
+                monthValue,
+                store:store,
+                index:i
+            });
         })
 
+
+    }
+
+
+    const data = {
+        labels:displayMonths,
+        datasets:storeDataMap[storeNameMap[storeId]].map((dataSet,index) => {
+            return {
+                label:storeNameMap[dataSet],
+                data:dataForGraph.filter(ele => ele.store === dataSet).map(({monthValue})=>monthValue),
+                backgroundColor: colorScheme.byIndex(index),
+                type:'bar'
+            }
+        })
+    }
 
     const options = {
         plugins: {
@@ -120,7 +155,7 @@ const YearlyView = () => {
                 labels: {
                     boxWidth: 30,
                     usePointStyle: true,
-                    color: useTheme(theme)+"A",
+                    color: themeColor(theme)+"A",
                 },
             },
             datalabels: {
@@ -135,16 +170,15 @@ const YearlyView = () => {
         scales: {
             y: {
                 stacked: true,
+                min:0,
+                max:1000000
             },
             x:{
                 stacked: true,
             }
         },
     }
-    const data ={
-        labels:months,
-        datasets : graphDataSets
-    }
+
     return (
         <GraphWithStatCard
         title={"Yearly Sales"}
@@ -170,46 +204,38 @@ const YearlyView = () => {
             <StatCard
                 key={0}
                 stat={{
-                        title: "Total Sales",
-                        value: yearlySales.reduce((acc, {total}) => (acc + +total), 0),
-                        format:'currency'
+                    title: "Total Sales",
+                    value: ordersTotal,
+                    format:'currency'
                 }}
             />,
             <StatCard
                 key={1}
                 stat={{
-                    title: "Ebay Sales",
-                    value: yearlySales.reduce((acc, curr) => acc + Number(curr?.["255895"] ?? 0), 0),
-                    format:'currency'
+                    title: "Total Orders",
+                    value: orderCount.total,
+                    format:'number'
                 }}
-                />,
+            />,
             <StatCard
                 key={2}
                 stat={{
-                    title: "Big Commerce Sales",
-                    value: yearlySales.reduce((acc, curr) => acc + Number(curr?.["225004"] ?? 0), 0),
+                    title:"Big Commerce Total",
+                    value:Object.values(yearSales).reduce((acc, curr) => acc + Number(curr?.["225004"]?.total ?? 0), 0),
                     format:'currency'
                 }}
             />,
             <StatCard
                 key={3}
                 stat={{
-                    title: "Best Month Ebay",
-                    value: yearlySales.reduce((acc, curr) => (acc > +curr["255895"] ? acc : +curr["255895"]), 0),
-                    format:'currency',
-                }}
-            />,
-            <StatCard
-                key={4}
-                stat={{
-                    title: "Best Month Big Commerce",
-                    value: yearlySales.reduce((acc, curr) => (acc > +curr["225004"] ? acc : +curr["225004"]), 0),
-                    format:'currency',
+                    title:"Ebay Total",
+                    value:Object.values(yearSales).reduce((acc, curr) => acc + Number(curr?.["255895"]?.total ?? 0), 0),
+                    format:'currency'
                 }}
             />
         ]}
         >
-            <BaseChart stacked data={data} config={options}/>
+            <BaseChart stacked data={data} config={options} />
         </GraphWithStatCard>
     );
 };

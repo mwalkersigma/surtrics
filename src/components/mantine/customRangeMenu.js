@@ -72,6 +72,7 @@ const DateMenu = ({subscribe,defaultValue,presets,...rest}) => {
                 <DatePicker
                     ref={refs}
                     type={'range'}
+                    allowSingleDateInRange
                     placeholder={'Start Date'}
                     value={dateRange}
                     onChange={setDateRange}

@@ -112,7 +112,6 @@ const SalesOverSpending = () => {
 
 
                         context.forEach(({datasetIndex,raw})=>{
-                            console.log(context[datasetIndex]);
                             if(salesCategories.includes(context[datasetIndex]?.dataset.label)){
                                 salesTotal += +raw;
                             }
@@ -142,7 +141,7 @@ const SalesOverSpending = () => {
     return (
         <GraphWithStatCard
             title={"Sales Over Spending Range View"}
-            isLoading={salesUpdates.length === 0 || quickBooksUpdates.length === 0}
+            isLoading={salesUpdates.length === 0}
             dateInput={
                 <CustomRangeMenu
                     label={"Date Range"}

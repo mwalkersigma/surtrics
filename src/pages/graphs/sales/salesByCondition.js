@@ -124,12 +124,14 @@ const SalesByCondition = () => {
             dateInput={
                 <CustomRangeMenu
                     label={"Date Range"}
-                    mb={'xl'}
                     subscribe={setDates}
                     defaultValue={[startDate, endDate]}
                 />
             }
         >
+            <Text c={'red'} fz={'xs'} my={'sm'}>
+                This data is for new SKUs only (SKUs with a dash in them). This data is not representative of all sales.
+            </Text>
             <Group mb={'xl'} grow>
                 <SectionBar
                     sectionTitle={"Revenue"}

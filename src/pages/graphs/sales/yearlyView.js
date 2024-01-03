@@ -138,10 +138,9 @@ const YearlyView = () => {
                 index:i
             });
         })
-
-
     }
 
+    let max = Math.max(...dataForGraph.map(({monthValue})=>monthValue)) * 1.5;
     const data = {
         labels:displayMonths,
         datasets:storeDataMap[storeNameMap[storeId]].map((dataSet,index) => {
@@ -181,7 +180,7 @@ const YearlyView = () => {
             y: {
                 stacked: true,
                 min:0,
-                max:1000000
+                max:max
             },
             x:{
                 stacked: true,

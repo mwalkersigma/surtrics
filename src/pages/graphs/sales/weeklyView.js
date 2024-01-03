@@ -32,7 +32,7 @@ const storeDataMap = {
 
 const WeeklyView = () => {
     useUsage("Ecommerce","sales-weekly-chart")
-    const [date, setDate] = useState(new Date('11/19/2023'));
+    const [date, setDate] = useState(new Date());
     const theme = useMantineColorScheme();
     const [storeId, setStoreId] = useState("All");
     const sales = useUpdates("/api/views/sales",{date:findStartOfWeek(date), interval:'1 week'});

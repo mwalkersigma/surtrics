@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";
 import useUpdates from "../../../modules/hooks/useUpdates";
@@ -14,7 +14,7 @@ import {
     Tooltip
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
-import {NativeSelect, useMantineColorScheme} from "@mantine/core";
+import {MultiSelect, NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
 import {Chart} from "react-chartjs-2";
 import {getMonth, lastDayOfYear, setDate, setMonth} from "date-fns";
@@ -22,6 +22,7 @@ import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import formatter from "../../../modules/utils/numberFormatter";
+import useEvents from "../../../modules/hooks/useEvents";
 
 
 ChartJS.register(
@@ -39,6 +40,7 @@ const storeNameMap = {
     "225004": "Big Commerce",
     "255895": "Ebay",
     "Total": "Total",
+    "total": "Total",
     "64872": "Manual Creation",
     "All": "All"
 }
@@ -55,11 +57,24 @@ const dateSet = setDate
 const YearlyView = () => {
     useUsage("Ecommerce","sales-yearly-chart");
     const [date, setDate] = useState(setMonth(dateSet(new Date(),1),0));
+    const [affectedCategories, setAffectedCategories] = useState([]);
     const theme = useMantineColorScheme();
     const themeColor = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
     const [storeId, setStoreId] = useState("Total");
     const sales = useUpdates("/api/views/sales",{startDate:date, endDate:lastDayOfYear(date)});
     const orders = sales.map(sale => new Order(sale));
+    let {categories , reducedEvents} = useEvents({
+        startDate:date,
+        endDate:lastDayOfYear(date),
+        affected_categories:affectedCategories,
+        timeScale:'month',
+        excludedCategories:['Processing','Warehouse'],
+        combined:false
+    });
+    useEffect(() => {
+        if(affectedCategories.length > 0) return;
+        setAffectedCategories(categories)
+    }, [categories]);
 
 
     let ordersTotal = orders.reduce((acc, order) => {
@@ -127,7 +142,6 @@ const YearlyView = () => {
 
     }
 
-
     const data = {
         labels:displayMonths,
         datasets:storeDataMap[storeNameMap[storeId]].map((dataSet,index) => {
@@ -143,11 +157,7 @@ const YearlyView = () => {
     const options = {
         plugins: {
             tooltip: {
-                callbacks: {
-                    footer: (context)=> {
-                        return "TOTAL: " + formatter(context.reduce((acc, {raw}) => (acc + +raw), 0),'currency');
-                    }
-                }
+                enabled:false,
             },
             legend: {
                 position: "top",
@@ -177,7 +187,15 @@ const YearlyView = () => {
                 stacked: true,
             }
         },
-    }
+    };
+
+    let dates = [...new Set(dataForGraph.map(({displayName})=>{
+        let year = new Date(date).getFullYear();
+        let month = displayMonths.indexOf(displayName);
+        let day = 1;
+        let temp = new Date(year,month,day);
+        return temp
+    }))]
 
     return (
         <GraphWithStatCard
@@ -191,6 +209,16 @@ const YearlyView = () => {
             />
         }
         slotTwo={
+            <MultiSelect
+                clearable
+                label={"Events Affected Categories"}
+                data={categories}
+                onChange={(e) => setAffectedCategories(e)}
+                value={affectedCategories}
+                mb={'md'}
+            />
+        }
+        slotOne={
             <NativeSelect
             mb={"xl"}
             label={"Store"}
@@ -235,7 +263,12 @@ const YearlyView = () => {
             />
         ]}
         >
-            <BaseChart stacked data={data} config={options} />
+            <BaseChart
+                events={reducedEvents(dates || [])}
+                stacked
+                data={data}
+                config={options}
+            />
         </GraphWithStatCard>
     );
 };

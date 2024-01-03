@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import useUpdates from "./useUpdates";
 
 function findNearestIndex(array, value) {
+    console.log(array)
     let nearestDate = array.reduce((acc,date) => {
         let date1 = new Date(date);
         let date2 = new Date(value);
@@ -18,9 +19,6 @@ function findNearestIndex(array, value) {
 
 
 function select(element) {
-    console.log(element)
-    console.log(element.options.content + ' selected');
-
     return true;
 }
 
@@ -31,7 +29,7 @@ function yValue(ctx, label,combined = true) {
 
     let combinedDataSet = []
     chart.data.datasets.forEach((dataset) => {
-        let lowerCaseLabel = dataset['label'].toLowerCase();
+        let lowerCaseLabel = dataset['label']?.toLowerCase();
         if(lowerCaseLabel === 'total' || lowerCaseLabel === 'total transactions' || lowerCaseLabel === 'goal' || lowerCaseLabel === 'goals' || lowerCaseLabel === 'total goal' || lowerCaseLabel === 'adjustedgoal'){
             return
         }

@@ -212,6 +212,10 @@ const pages = {
         "Sales": {
             leftSection: <IconReportMoney size={size} stroke={stroke}/>,
             links: {
+                "Sales By Condition": {
+                    leftSection: <IconReportMoney size={size} stroke={stroke}/>,
+                    href: "/graphs/sales/salesByCondition"
+                },
                 "Graphs": {
                     leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
                     links: {
@@ -223,7 +227,10 @@ const pages = {
                         },
                         "Yearly View": {
                             href: "/graphs/sales/yearlyView"
-                        }
+                        },
+                        "Sales Over Spending": {
+                            href: "/graphs/sales/salesOverSpending"
+                        },
                     }
                 },
                 "Tables": {

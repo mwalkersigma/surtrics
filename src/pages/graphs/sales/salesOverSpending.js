@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {subHours, subMonths} from "date-fns";
+import {subMonths} from "date-fns";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import formatter from "../../../modules/utils/numberFormatter";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
@@ -47,7 +47,7 @@ const SalesOverSpending = () => {
         acc[order.storeId][date] = Math.round(acc[order.storeId][date] * 100) / 100;
         return acc;
     },{})
-    console.log(Object.keys(orders))
+    console.log(orders)
     let dates = [...new Set(Object.values(orders).map((store)=>Object.keys(store)).flat())]
         .sort((a,b)=>new Date(a) - new Date(b));
     console.log(dates)

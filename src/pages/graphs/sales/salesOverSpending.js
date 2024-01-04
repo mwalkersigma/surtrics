@@ -50,6 +50,7 @@ const SalesOverSpending = () => {
 
     let dates = [...new Set(Object.values(orders).map((store)=>Object.keys(store)).flat())]
         .sort((a,b)=>new Date(a) - new Date(b));
+    console.log(dates)
 
     let maxOrders = Object.values(orders).reduce((acc,store)=>{
         let max = Math.max(...Object.values(store));

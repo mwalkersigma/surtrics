@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";
-import useUpdates from "../../../modules/hooks/useUpdates";
-import Order from "../../../modules/classes/Order";
+
 import {
     BarElement,
     CategoryScale,
@@ -16,13 +15,12 @@ import {
 import DataLabels from "chartjs-plugin-datalabels";
 import {MultiSelect, NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
-import {Chart} from "react-chartjs-2";
 import {getMonth, lastDayOfYear, setDate, setMonth} from "date-fns";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
-import formatter from "../../../modules/utils/numberFormatter";
 import useEvents from "../../../modules/hooks/useEvents";
+import useOrders from "../../../modules/hooks/useOrders";
 
 
 ChartJS.register(
@@ -61,8 +59,7 @@ const YearlyView = () => {
     const theme = useMantineColorScheme();
     const themeColor = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
     const [storeId, setStoreId] = useState("Total");
-    const sales = useUpdates("/api/views/sales",{startDate:date, endDate:lastDayOfYear(date)});
-    const orders = sales.map(sale => new Order(sale));
+    const orders = useOrders({startDate:date, endDate:lastDayOfYear(date)},{acceptedConditions: ["1", "2", "3", "4"]});
     let {categories , reducedEvents} = useEvents({
         startDate:date,
         endDate:lastDayOfYear(date),
@@ -192,8 +189,7 @@ const YearlyView = () => {
         let year = new Date(date).getFullYear();
         let month = displayMonths.indexOf(displayName);
         let day = 1;
-        let temp = new Date(year,month,day);
-        return temp
+        return new Date(year,month,day);
     }))]
 
     return (

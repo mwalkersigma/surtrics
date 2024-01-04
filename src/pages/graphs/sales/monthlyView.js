@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {MonthPickerInput} from "@mantine/dates";
-import useUpdates from "../../../modules/hooks/useUpdates";
-import Order from "../../../modules/classes/Order";
+
 
 import {NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
@@ -10,6 +9,7 @@ import {colorScheme} from "../../_app";
 import {getDate, lastDayOfMonth, setDate} from "date-fns";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
+import useOrders from "../../../modules/hooks/useOrders";
 
 
 const storeNameMap = {
@@ -33,9 +33,9 @@ const MonthlyView = () => {
     const [date, setDate] = useState(dateSet(new Date(),1));
     const theme = useMantineColorScheme();
     const [storeId, setStoreId] = useState("All");
-    const sales = useUpdates("/api/views/sales",{startDate: date, endDate: lastDayOfMonth(date)});
+    const orders = useOrders({startDate: date, endDate: lastDayOfMonth(date)},{acceptedConditions: ["1", "2", "3", "4"]});
     const useTheme = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
-    const orders = sales.map(order => new Order(order));
+
     let storeIds= [
         'All',
         ...new Set(orders.map(order => order.storeId)),

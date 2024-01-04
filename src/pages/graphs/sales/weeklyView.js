@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
-import useUpdates from "../../../modules/hooks/useUpdates";
-import Order from "../../../modules/classes/Order";
+
 
 import {NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
@@ -11,6 +10,7 @@ import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 import makeDateArray from "../../../modules/utils/makeDateArray";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
+import useOrders from "../../../modules/hooks/useOrders";
 
 
 const storeNameMap = {
@@ -35,9 +35,9 @@ const WeeklyView = () => {
     const [date, setDate] = useState(new Date());
     const theme = useMantineColorScheme();
     const [storeId, setStoreId] = useState("All");
-    const sales = useUpdates("/api/views/sales",{date:findStartOfWeek(date), interval:'1 week'});
+    const orders = useOrders({date:findStartOfWeek(date), interval:'1 week'},{acceptedConditions: ["1", "2", "3", "4"]});
     const useTheme = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
-    const orders = sales.map(order => new Order(order));
+
 
     let week = makeDateArray(findStartOfWeek(date))
         .map(date => {

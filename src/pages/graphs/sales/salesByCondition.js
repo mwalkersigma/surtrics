@@ -1,11 +1,10 @@
 import React from 'react';
 import { Title, Text, Paper, Group, Progress, Tooltip} from "@mantine/core";
 import formatter from "../../../modules/utils/numberFormatter";
-import useUpdates from "../../../modules/hooks/useUpdates";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import {TableSort} from "../../../components/mantine/TableSort";
-import Order from "../../../modules/classes/Order";
+import useOrders from "../../../modules/hooks/useOrders";
 
 
 function SectionBar({sectionTitle,size=30, temp,field,format, subtitle}) {
@@ -63,12 +62,7 @@ const SalesByCondition = () => {
 
     const [[startDate, endDate], setDates] = React.useState([new Date("2023/12/01"), new Date("2023/12/31")]);
 
-    const sales = useUpdates("/api/views/sales", {startDate, endDate})
-
-    const orders = sales
-        .map(sale => new Order(sale))
-        .filter(order => order.orderStatus !== 'cancelled');
-
+    const orders = useOrders({startDate, endDate},{acceptedConditions: ["1", "2", "3", "4"]});
 
     const salesWithNewSkus = orders
         .map(order => order.items)
@@ -79,11 +73,6 @@ const SalesByCondition = () => {
     const salesByCondition = salesWithNewSkus
         .reduce((acc, item) => {
             let condition = item.sku.split("-")[1];
-            let acceptedConditions = ["1", "2", "3", "4"];
-            if (!acceptedConditions.includes(condition)) {
-                console.log("Condition not accepted", item);
-                return acc;
-            }
             if (!acc[condition]) {
                 acc[condition] = {
                     revenue: 0,
@@ -97,7 +86,7 @@ const SalesByCondition = () => {
             return acc
         }, {})
 
-    Object.entries(salesByCondition).forEach(([key, value]) => {
+    Object.entries(salesByCondition).forEach(([, value]) => {
         value.count = value.count.size;
     })
 
@@ -110,7 +99,7 @@ const SalesByCondition = () => {
 
     let temp = JSON.parse(JSON.stringify(salesByCondition))
 
-    Object.entries(temp).forEach(([key, value]) => {
+    Object.entries(temp).forEach(([, value]) => {
         value.revenuePercent = +(value.revenue / totals.revenue);
         value.countPercent = +(value.count / totals.count);
         value.quantityPercent = +(value.quantity / totals.quantity);

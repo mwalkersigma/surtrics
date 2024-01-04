@@ -1,12 +1,11 @@
 import React from 'react';
-import useUpdates from "../../../modules/hooks/useUpdates";
 import {NativeSelect, Table} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import formatter from "../../../modules/utils/numberFormatter";
-import Order from "../../../modules/classes/Order";
 import useUsage from "../../../modules/hooks/useUsage";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import {TableSort} from "../../../components/mantine/TableSort";
+import useOrders from "../../../modules/hooks/useOrders";
 
 const storeNames = {
     "225004": "Big Commerce",
@@ -18,11 +17,10 @@ const DailyView = () => {
     useUsage("Ecommerce", "sales-range-table")
     const [[startDate, endDate], setDateRange] = React.useState([new Date(), new Date()])
     const [store, setStore] = React.useState("225004");
-    let sales = useUpdates("/api/views/sales", {startDate, endDate});
+    const orders = useOrders({startDate, endDate},{acceptedConditions: ["1", "2", "3", "4"]});
 
-    sales = sales.map(sale => new Order(sale));
     let results = [];
-    sales
+    orders
         .reduce((nameList, {orderId}) => {
             if (nameList.has(orderId)) {
                 nameList.set(orderId, nameList.get(orderId) + 1);
@@ -37,14 +35,14 @@ const DailyView = () => {
             }
         })
 
-    let storeIDs = [...new Set(sales.map(sale => sale.storeId))];
+    let storeIDs = [...new Set(orders.map(sale => sale.storeId))];
     let storeSales = {};
     storeIDs.forEach(storeId => {
-        storeSales[storeId] = sales
+        storeSales[storeId] = orders
             .filter(sale => sale.storeId === storeId)
             .filter(sale => sale.orderStatus === "shipped")
     });
-    storeSales["All"] = sales;
+    storeSales["All"] = orders;
 
     const chosenStore = storeSales[store];
     let itemRows = [...chosenStore?.reduce((acc, sale) => {
@@ -74,7 +72,7 @@ const DailyView = () => {
     return (
         <GraphWithStatCard
             title={"Daily Sales By Channel"}
-            isLoading={sales.length === 0}
+            isLoading={orders.length === 0}
             noBorder
             dateInput={
                 <CustomRangeMenu

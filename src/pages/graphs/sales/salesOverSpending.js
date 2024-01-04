@@ -8,13 +8,9 @@ import {NativeSelect} from "@mantine/core";
 import StatCard from "../../../components/mantine/StatCard";
 import BaseChart from "../../../components/Chart";
 import {colorScheme} from "../../_app";
-import Order from "../../../modules/classes/Order";
+import useOrders from "../../../modules/hooks/useOrders";
 
-function useSales({startDate,endDate,timeScale}) {
-    let salesUpdates = useUpdates("/api/views/sales",{startDate,endDate,timeScale});
-    salesUpdates = salesUpdates.map(sale => new Order(sale));
-    return salesUpdates;
-}
+
 
 const storeNames = {
     "225004": "Big Commerce",
@@ -31,8 +27,8 @@ const SalesOverSpending = () => {
     const [timeScale,setTimeScale] = useState("week");
     const [[startDate,endDate],setDateRange] = useState([setDate(testMonth,1),testMonth])
     const quickBooksUpdates = useUpdates("/api/views/quickbooks",{startDate,endDate,timeScale});
-    let salesUpdates = useSales({startDate,endDate,timeScale});
 
+    let salesUpdates = useOrders({startDate,endDate,timeScale},{acceptedConditions: ["1", "2", "3", "4"]});
     let orders = salesUpdates.reduce((acc,order)=>{
 
         let date = order.paymentDate;

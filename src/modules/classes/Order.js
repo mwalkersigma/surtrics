@@ -10,10 +10,19 @@ export default class Order {
         this.paymentTime = format(new Date(order['payment_date']), "HH:mm:ss");
         this.orderStatus = order['order_status'];
         this.sale_id = order.sale_id;
+        this._items = null;
     }
 
     get items() {
-        return this._order.items.map(this.processItem).flat();
+        if(this._items === null){
+            this._items = this._order.items.map(this.processItem).flat();
+        }
+        return this._items;
+    }
+
+    set items(items){
+        this._items = items;
+
     }
 
     get total() {

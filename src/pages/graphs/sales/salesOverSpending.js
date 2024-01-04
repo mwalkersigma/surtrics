@@ -57,17 +57,18 @@ const SalesOverSpending = () => {
     let maxOrders = Object.values(orders).reduce((acc,store)=>{
         let max = Math.max(...Object.values(store));
         return max > acc ? max : acc;
-    },0);
 
+    },0);
     orders = Object
         .entries(orders)
-        .map(([storeId,dates])=>{
+        .map(([storeId,value])=>{
             if(storeId === "64872" || storeId === 64872) return;
             count++
+            console.log(value)
             return ({
                 type:"bar",
                 label:storeNames[storeId],
-                data:Object.values(dates).map((total)=>total),
+                data:dates.map((date)=>value[date] || 0),
                 backgroundColor:colorScheme.byIndex(count),
                 stack:"stack0",
                 order:1

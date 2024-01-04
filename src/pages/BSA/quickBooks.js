@@ -3,7 +3,7 @@ import {useSession} from "next-auth/react";
 import {Notifications} from "@mantine/notifications";
 import {useForm} from "@mantine/form";
 import {Button, Container, Grid, NativeSelect, NumberInput, Stack, TextInput, Title} from "@mantine/core";
-import {DatePickerInput} from "@mantine/dates";
+import {DateInput} from "@mantine/dates";
 import useUsage from "../../modules/hooks/useUsage";
 
 const QuickBooks = () => {
@@ -77,7 +77,7 @@ const QuickBooks = () => {
                         />
                     </Grid.Col>
                     <Grid.Col span={4}>
-                        <DatePickerInput
+                        <DateInput
                             label={"Date"}
                             {...form.getInputProps("date_of_sale")}
                         />

@@ -26,7 +26,7 @@ function putHandler(req, res) {
 
 }
 function getHandler(req, res) {
-    return serverAdminWrapper(async (req, res, {user:{name}}) => {
+    return serverAdminWrapper(async () => {
     return db.query(`
         SELECT * FROM surtrics.surplus_quickbooks_data
         --WHERE user_who_submitted = $1
@@ -48,12 +48,12 @@ function deleteHandler(req, res) {
             DELETE
             FROM surtrics.surplus_quickbooks_data
             WHERE po_id = $1
-        `, [parseBody(req).id])
+        `, [parseBody(req)['po_id']])
             .then(() => {
-                res.status(200).json({message: "Successfully deleted data"});
+                res.status(200).json("Successfully deleted data");
             })
             .catch((error) => {
-                res.status(500).json({error});
+                res.status(500).json(error);
             });
     },"bsa","surplus director")(req,res)
 

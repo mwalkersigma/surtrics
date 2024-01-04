@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {subDays, subMonths} from "date-fns";
+import { subMonths} from "date-fns";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import formatter from "../../../modules/utils/numberFormatter";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
@@ -10,7 +10,7 @@ import BaseChart from "../../../components/Chart";
 import {colorScheme} from "../../_app";
 import useOrders from "../../../modules/hooks/useOrders";
 import smoothData from "../../../modules/utils/graphUtils/smoothData";
-import Order from "../../../modules/classes/Order";
+
 
 
 
@@ -31,11 +31,8 @@ const SalesOverSpending = () => {
     const [resolution, setResolution] = useState(8);
     const quickBooksUpdates = useUpdates("/api/views/quickbooks",{startDate,endDate,timeScale});
     let salesUpdates = useOrders({startDate,endDate,timeScale},{acceptedConditions: ["1", "2", "3", "4"]});
-    // let salesUpdates = useUpdates('/api/views/sales',{startDate,endDate,timeScale})
-    // salesUpdates = salesUpdates.map((order)=> new Order(order));
 
-    let ordersTotal = salesUpdates.reduce((acc,order)=>acc + +order.total,0);
-    console.log(ordersTotal)
+
 
 
     let orders = salesUpdates.reduce((acc,order)=>{
@@ -64,7 +61,6 @@ const SalesOverSpending = () => {
         .map(([storeId,value])=>{
             if(storeId === "64872" || storeId === 64872) return;
             count++
-            console.log(value)
             return ({
                 type:"bar",
                 label:storeNames[storeId],
@@ -76,7 +72,7 @@ const SalesOverSpending = () => {
         })
         .filter((order)=>order !== undefined)
 
-
+    console.log(quickBooksUpdates)
     let purchases = quickBooksUpdates.reduce((acc,purchase)=>{
         let [yyyy,mm,dd] = purchase.po_date.split("T")[0].split("-");
         let date = `${mm}/${dd}/${yyyy}`;
@@ -89,7 +85,7 @@ const SalesOverSpending = () => {
         acc[purchase.purchase_type][date] += +purchase.purchase_total;
         return acc
     },{});
-
+    console.log(purchases)
     let maxPurchases = Object.values(purchases).reduce((acc,purchase)=>{
         let max = Math.max(...Object.values(purchase));
         return max > acc ? max : acc;
@@ -110,7 +106,7 @@ const SalesOverSpending = () => {
         })
         .filter((purchase)=>purchase !== undefined)
 
-
+    console.log(purchases)
 
     let totalSales = salesUpdates.reduce((acc,order)=>acc + +order.total,0);
     let totalPurchases = quickBooksUpdates.reduce((acc,purchase)=>acc + +purchase.purchase_total,0);
@@ -149,11 +145,9 @@ const SalesOverSpending = () => {
                             if(!validCategories.includes(label)) return;
                             if(!salesCategories.includes(label)){
                                 salesTotal += +raw;
-                                return
                             }
                             if(!purchaseCategories.includes(label)){
                                 purchaseTotal += +raw;
-                                return
                             }
                         });
 
@@ -175,11 +169,9 @@ const SalesOverSpending = () => {
 
     function stackData (arr){
         return arr[0]?.data.map((item,index)=>{
-
-            arr.slice(1).forEach((order,j)=> {
+            arr.slice(1).forEach((order,)=> {
                 item += order.data[index] ?? 0;
             });
-
             return item;
         });
     }
@@ -244,7 +236,8 @@ const SalesOverSpending = () => {
         >
             <BaseChart
                 data={{
-                    labels:dates, datasets:[
+                    labels:dates,
+                    datasets:[
                         {
                             type:"line",
                             label:"Sales trend",

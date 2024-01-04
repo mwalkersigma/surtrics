@@ -93,12 +93,13 @@ const SalesOverSpending = () => {
 
     purchases = Object
         .entries(purchases)
-        .map(([purchaseType,dailyBuys])=>{
+        .map(([purchaseType,value])=>{
+            console.log(value)
             count++
             return ({
                 type:"bar",
                 label:purchaseType,
-                data:dates.map((date)=>dailyBuys[date] || 0),
+                data:dates.map((date)=> +value[date] || 0),
                 backgroundColor:colorScheme.byIndex(count),
                 stack:"stack1",
                 order:2

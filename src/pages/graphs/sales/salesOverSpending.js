@@ -47,7 +47,7 @@ const SalesOverSpending = () => {
         acc[order.storeId][date] = Math.round(acc[order.storeId][date] * 100) / 100;
         return acc;
     },{})
-
+    console.log(Object.keys(orders))
     let dates = [...new Set(Object.values(orders).map((store)=>Object.keys(store)).flat())]
         .sort((a,b)=>new Date(a) - new Date(b));
     console.log(dates)

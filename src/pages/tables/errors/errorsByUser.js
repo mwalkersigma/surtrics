@@ -17,25 +17,36 @@ const ErrorsByUser = () => {
 
     const [user, setUser] = useState(null)
 
-    const users = ["----Select User------",...new Set(errors.map(({user}) => user))];
+    const users = ["Total",...new Set(errors.map(({user}) => user))];
 
     const dataOrderedByUser = users.reduce((acc,user)=>{
         const userErrors = errors.filter((error)=>error.user === user);
         const userErrorsByDate = userErrors.reduce((acc,error)=>{
             const date = new Date(error.transaction_date).toLocaleDateString();
             if(!acc[date]){
-                acc[date] = {};
+                acc[date] = {Total:0};
             }
             acc[date][error.transaction_reason] = acc[date][error.transaction_reason] ? acc[date][error.transaction_reason] + 1 : 1;
-            // acc[date]["Total"] = acc[date]["Total"] ? acc[date]["Total"] + 1 : 1;
+            acc[date]["Total"] +=1;
             return acc;
         },{});
         acc[user] = userErrorsByDate;
         return acc;
-    },{})
+    },{});
+    dataOrderedByUser["Total"] = errors?.reduce((acc,error)=>{
+        const date = new Date(error.transaction_date).toLocaleDateString();
+        if(!acc[date]){
+            acc[date] = {Total:0};
+        }
+        acc[date][error.transaction_reason] = acc[date][error.transaction_reason] ? acc[date][error.transaction_reason] + 1 : 1;
+        acc[date]["Total"] +=1;
+        return acc;
+    },{});
+    console.log(dataOrderedByUser)
 
     const userErrors = dataOrderedByUser[user] ?? {};
     const errorReasons = userErrors ? Object.keys(userErrors).reduce((acc,date)=>{
+        console.log(user)
         const reasons = Object.keys(userErrors[date]);
         reasons.forEach((reason)=>{
             if(!acc.includes(reason)){

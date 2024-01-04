@@ -4,9 +4,9 @@ import Order from "../classes/Order";
 export default function useOrders (config,options) {
     const sales = useUpdates("/api/views/sales",config);
 
-    let orders = sales
-        .map(sale => new Order(sale))
-        .filter(order => order.orderStatus !== 'cancelled');
+    let orders = sales.map(sale => new Order(sale))
+         .filter(order => order.orderStatus !== 'cancelled')
+         .filter(order => order.items.length !== 0)
 
     let acceptedConditions = ["1", "2", "3", "4"];
 
@@ -14,23 +14,21 @@ export default function useOrders (config,options) {
         acceptedConditions = options.acceptedConditions;
     }
 
-    orders = orders.filter(order => {
-        let items = order.items;
-        order.items = items.filter(item=>{
-            let sku = `${item.sku}`;
-            let hasSku = sku !== '';
-            if(hasSku){
-                let isNewSku = sku.includes("-");
-                if(isNewSku){
-                    let condition = sku.split('-')[1];
-                    return acceptedConditions.includes(condition)
+
+
+    let temp =  orders
+        .filter(order => {
+            let filteredItems = order.items.filter(item =>{
+                let sku = `${item.sku}`;
+                if (sku === "" || !sku.includes("-")){
+                    return true;
                 }
-            }
-            return false
-        })
-        return order.items !== 0;
-    })
+                return true;
+                let condition = sku.split("-")[1];
+                return acceptedConditions.includes(condition);
+            });
+            return filteredItems.length >= 1
+        });
 
-    return orders;
-
+    return temp;
 }

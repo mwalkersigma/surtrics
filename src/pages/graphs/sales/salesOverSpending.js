@@ -1,14 +1,16 @@
 import React, {useState} from 'react';
-import {setDate} from "date-fns";
+import {subDays, subMonths} from "date-fns";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import formatter from "../../../modules/utils/numberFormatter";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
-import {NativeSelect} from "@mantine/core";
+import {NativeSelect, Slider, Text, Tooltip} from "@mantine/core";
 import StatCard from "../../../components/mantine/StatCard";
 import BaseChart from "../../../components/Chart";
 import {colorScheme} from "../../_app";
 import useOrders from "../../../modules/hooks/useOrders";
+import smoothData from "../../../modules/utils/graphUtils/smoothData";
+import Order from "../../../modules/classes/Order";
 
 
 
@@ -23,14 +25,20 @@ const storeNames = {
 
 const SalesOverSpending = () => {
     let count = 0;
-    let testMonth = new Date('2023-08-30');
+    let testMonth = new Date();
     const [timeScale,setTimeScale] = useState("week");
-    const [[startDate,endDate],setDateRange] = useState([setDate(testMonth,1),testMonth])
+    const [[startDate,endDate],setDateRange] = useState([subMonths(testMonth,1),testMonth]);
+    const [resolution, setResolution] = useState(8);
     const quickBooksUpdates = useUpdates("/api/views/quickbooks",{startDate,endDate,timeScale});
-
     let salesUpdates = useOrders({startDate,endDate,timeScale},{acceptedConditions: ["1", "2", "3", "4"]});
-    let orders = salesUpdates.reduce((acc,order)=>{
+    // let salesUpdates = useUpdates('/api/views/sales',{startDate,endDate,timeScale})
+    // salesUpdates = salesUpdates.map((order)=> new Order(order));
 
+    let ordersTotal = salesUpdates.reduce((acc,order)=>acc + +order.total,0);
+    console.log(ordersTotal)
+
+
+    let orders = salesUpdates.reduce((acc,order)=>{
         let date = order.paymentDate;
         if(!acc[order.storeId]){
             acc[order.storeId] = {}
@@ -42,7 +50,15 @@ const SalesOverSpending = () => {
         acc[order.storeId][date] = Math.round(acc[order.storeId][date] * 100) / 100;
         return acc;
     },{})
-    let dates = [...new Set(Object.values(orders).map((store)=>Object.keys(store)).flat())].sort((a,b)=>new Date(a) - new Date(b));
+
+    let dates = [...new Set(Object.values(orders).map((store)=>Object.keys(store)).flat())]
+        .sort((a,b)=>new Date(a) - new Date(b));
+
+    let maxOrders = Object.values(orders).reduce((acc,store)=>{
+        let max = Math.max(...Object.values(store));
+        return max > acc ? max : acc;
+    },0);
+
     orders = Object
         .entries(orders)
         .map(([storeId,dates])=>{
@@ -72,6 +88,12 @@ const SalesOverSpending = () => {
         acc[purchase.purchase_type][date] += +purchase.purchase_total;
         return acc
     },{});
+
+    let maxPurchases = Object.values(purchases).reduce((acc,purchase)=>{
+        let max = Math.max(...Object.values(purchase));
+        return max > acc ? max : acc;
+    },0);
+
     purchases = Object
         .entries(purchases)
         .map(([purchaseType,dailyBuys])=>{
@@ -89,6 +111,12 @@ const SalesOverSpending = () => {
 
 
 
+    let totalSales = salesUpdates.reduce((acc,order)=>acc + +order.total,0);
+    let totalPurchases = quickBooksUpdates.reduce((acc,purchase)=>acc + +purchase.purchase_total,0);
+
+
+    let max =Math.round(Math.max(maxOrders,maxPurchases) * 2.2);
+
     const options = {
         plugins: {
             legend: {
@@ -100,19 +128,31 @@ const SalesOverSpending = () => {
             },
             tooltip: {
                 callbacks: {
+                    label: (context)=> {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if(label.includes("trend")) return '';
+                        return label + formatter(context.raw,'currency');
+                    },
                     footer: (context)=> {
                         let salesTotal = 0;
                         let purchaseTotal = 0;
                         let salesCategories = ["Big Commerce","Ebay"];
                         let purchaseCategories = ["Auction", "List Buy", "N/A", "Non-List"];
-
+                        let validCategories = [...salesCategories,...purchaseCategories];
 
                         context.forEach(({datasetIndex,raw})=>{
-                            if(salesCategories.includes(context[datasetIndex]?.dataset.label)){
+                            let label = context[datasetIndex]?.dataset.label;
+                            if(!validCategories.includes(label)) return;
+                            if(!salesCategories.includes(label)){
                                 salesTotal += +raw;
+                                return
                             }
-                            if(purchaseCategories.includes(context[datasetIndex].dataset.label)){
+                            if(!purchaseCategories.includes(label)){
                                 purchaseTotal += +raw;
+                                return
                             }
                         });
 
@@ -125,14 +165,23 @@ const SalesOverSpending = () => {
                 }
             }
         },
+        scales: {
+            y: {
+                max
+            }
+        },
     };
 
-    let totalSales = salesUpdates.reduce((acc,order)=>acc + +order.total,0);
-    let totalPurchases = quickBooksUpdates.reduce((acc,purchase)=>acc + +purchase.purchase_total,0);
-    let totalProfit = totalSales - totalPurchases;
-    //let profitMargin = totalProfit / totalSales;
+    function stackData (arr){
+        return arr[0]?.data.map((item,index)=>{
 
+            arr.slice(1).forEach((order,j)=> {
+                item += order.data[index] ?? 0;
+            });
 
+            return item;
+        });
+    }
 
     return (
         <GraphWithStatCard
@@ -141,7 +190,8 @@ const SalesOverSpending = () => {
             dateInput={
                 <CustomRangeMenu
                     label={"Date Range"}
-                    mb={'xl'}
+                    mt={"xl"}
+                    mb={"xl"}
                     subscribe={setDateRange}
                     defaultValue={[startDate,endDate]}
                 />
@@ -150,6 +200,8 @@ const SalesOverSpending = () => {
                 <NativeSelect
                     label={"Time Scale"}
                     value={timeScale}
+                    mt={"xl"}
+                    mb={"xl"}
                     onChange={(e) => setTimeScale(e.target.value)}
                 >
                     <option value={"day"}>Day</option>
@@ -158,6 +210,29 @@ const SalesOverSpending = () => {
                     <option value={"quarter"}>Quarter</option>
                     <option value={"year"}>Year</option>
                 </NativeSelect>
+            }
+            slotTwo={
+                <Tooltip label={"The higher the resolution, the smoother the trend line."}>
+                    <span>
+                        <Text ml={"xs"} mt={"xl"}>Trend Line Resolution</Text>
+                        <Slider
+                            mb={"xl"}
+                            ml={"xs"}
+                            color="blue"
+                            marks={[
+                                { value: 0, label: 'none' },
+                                { value: 2, label: '2' },
+                                { value: 4, label: '4' },
+                                { value: 6, label: '6' },
+                                { value: 8, label: 'linear' },
+                            ]}
+                            min={0}
+                            max={8}
+                            value={resolution}
+                            onChange={(e) => setResolution(e)}
+                        />
+                    </span>
+                </Tooltip>
             }
             cards={[
                 {title:"Total Sales For Selection", value:totalSales, format:'currency'},
@@ -168,7 +243,28 @@ const SalesOverSpending = () => {
         >
             <BaseChart
                 data={{
-                    labels:dates, datasets:[...purchases,...orders]
+                    labels:dates, datasets:[
+                        {
+                            type:"line",
+                            label:"Sales trend",
+                            data:smoothData(stackData(orders),resolution),
+                            fill: false,
+                            backgroundColor: colorScheme.green,
+                            borderColor: colorScheme.green,
+
+                        },
+                        {
+                            type:"line",
+                            label:"Purchases trend",
+                            data:smoothData(stackData(purchases),resolution),
+                            fill: false,
+                            backgroundColor: colorScheme.red,
+                            borderColor: colorScheme.red,
+
+                        },
+                        ...purchases,
+                        ...orders,
+                    ]
                 }}
                 stacked
                 config={options}

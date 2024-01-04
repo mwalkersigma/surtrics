@@ -12,3 +12,10 @@ CREATE TABLE IF NOT EXISTS surtrics.surplus_quickbooks_data (
 SELECT * FROM surtrics.surplus_quickbooks_data;
 
 
+-- update surtrics.surplus_quickbooks_data
+-- IF purchase_type = 'action' THEN purchase_type = 'Action';
+-- UPDATE surtrics.surplus_quickbooks_data
+-- SET purchase_type = 'Non-List'
+-- WHERE purchase_type = 'Non-list';
+
+

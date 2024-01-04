@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { subMonths} from "date-fns";
+import {subHours, subMonths} from "date-fns";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import formatter from "../../../modules/utils/numberFormatter";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
@@ -75,6 +75,7 @@ const SalesOverSpending = () => {
 
     console.log(quickBooksUpdates)
     let purchases = quickBooksUpdates.reduce((acc,purchase)=>{
+        console.log(purchase.po_date)
         let [yyyy,mm,dd] = purchase.po_date.split("T")[0].split("-");
         let date = `${mm}/${dd}/${yyyy}`;
         if(!acc[purchase.purchase_type]){

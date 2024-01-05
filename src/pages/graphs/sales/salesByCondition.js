@@ -5,6 +5,7 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import {TableSort} from "../../../components/mantine/TableSort";
 import useOrders from "../../../modules/hooks/useOrders";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 function SectionBar({sectionTitle,size=30, temp,field,format, subtitle}) {
@@ -59,7 +60,7 @@ function SectionBar({sectionTitle,size=30, temp,field,format, subtitle}) {
 
 
 const SalesByCondition = () => {
-
+    useUsage("Ecommerce","sales-Range-byCondition")
     const [[startDate, endDate], setDates] = React.useState([new Date("2023/12/01"), new Date("2023/12/31")]);
 
     const orders = useOrders({startDate, endDate},{acceptedConditions: ["1", "2", "3", "4"]});

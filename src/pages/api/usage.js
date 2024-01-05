@@ -1,15 +1,15 @@
 import router from "../../modules/serverUtils/requestRouter";
 import logUsage from "../../modules/usageTracking/usageTracker";
 import {parseBody} from "../../modules/serverUtils/parseBody";
-import * as path from "path";
 import fs from "fs/promises";
 
 
 
 
 async function postHandler(req,res){
-    let {key,parentKey} = parseBody(req);
-    logUsage(parentKey,key);
+    let {key,parentKey,user} = parseBody(req);
+    console.log(user)
+    logUsage(parentKey,key,user);
     return res.status(200).send('ok')
 }
 

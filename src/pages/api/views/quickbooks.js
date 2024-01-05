@@ -55,7 +55,6 @@ async function getQuickbooksWithParams(req,res) {
             
         `
         query = select + 'FROM' + from;
-        console.log(query)
     }
     let {rows} = await db.query(query, params);
     return res.status(200).json(rows)

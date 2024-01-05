@@ -11,6 +11,7 @@ import {colorScheme} from "../../_app";
 import useOrders from "../../../modules/hooks/useOrders";
 import smoothData from "../../../modules/utils/graphUtils/smoothData";
 import {useDebouncedValue, useLogger} from "@mantine/hooks";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 
@@ -26,6 +27,7 @@ const storeNames = {
 
 const SalesOverSpending = () => {
     let count = 0;
+    useUsage("Ecommerce","sales-Range-SalesOverSpending")
     const [timeScale,setTimeScale] = useState("week");
     const [[startDate,endDate],setDateRange] = useState([subMonths(new Date(),1),new Date()]);
     const [resolution, setResolution] = useState(8);

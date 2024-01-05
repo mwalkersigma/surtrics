@@ -12,9 +12,10 @@ class Visit {
 
 
 class User {
-    constructor({name,email,_visits=[],useCount=0,uuid=Random.randomStringAlphaNumeric(25)}){
+    constructor({name,email,image,_visits=[],useCount=0,uuid=Random.randomStringAlphaNumeric(25)}){
         this.name = name;
         this.email = email;
+        this.image = image;
         this._visits = _visits;
         this.useCount = useCount;
         this.uuid = uuid;

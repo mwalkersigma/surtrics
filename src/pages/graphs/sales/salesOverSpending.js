@@ -32,11 +32,12 @@ const SalesOverSpending = () => {
     const quickBooksUpdates = useUpdates("/api/views/quickbooks",{startDate,endDate,timeScale});
     let salesUpdates = useOrders({startDate,endDate,timeScale},{acceptedConditions: ["1", "2", "3", "4"]});
 
-
+    console.log(salesUpdates)
 
 
     let orders = salesUpdates.reduce((acc,order)=>{
         let date = order.paymentDate;
+        console.log("ORDER DATE: ",date );
         if(!acc[order.storeId]){
             acc[order.storeId] = {}
         }

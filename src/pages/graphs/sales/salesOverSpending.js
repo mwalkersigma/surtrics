@@ -32,13 +32,10 @@ const SalesOverSpending = () => {
     const quickBooksUpdates = useUpdates("/api/views/quickbooks",{startDate,endDate,timeScale});
     let salesUpdates = useOrders({startDate,endDate,timeScale},{acceptedConditions: ["1", "2", "3", "4"]});
 
-    console.log(salesUpdates)
-
-
     let orders = salesUpdates.reduce((acc,order)=>{
         let [yyyy,mm,dd] = order.timeStamp.split("T")[0].split("-");
         let date = `${mm}/${dd}/${yyyy}`;
-        console.log("ORDER DATE: ",date );
+
         if(!acc[order.storeId]){
             acc[order.storeId] = {}
         }
@@ -49,10 +46,10 @@ const SalesOverSpending = () => {
         acc[order.storeId][date] = Math.round(acc[order.storeId][date] * 100) / 100;
         return acc;
     },{})
-    console.log(orders)
+
     let dates = [...new Set(Object.values(orders).map((store)=>Object.keys(store)).flat())]
         .sort((a,b)=>new Date(a) - new Date(b));
-    console.log(dates)
+
 
     let maxOrders = Object.values(orders).reduce((acc,store)=>{
         let max = Math.max(...Object.values(store));
@@ -75,9 +72,9 @@ const SalesOverSpending = () => {
         })
         .filter((order)=>order !== undefined)
 
-    console.log(quickBooksUpdates)
+
     let purchases = quickBooksUpdates.reduce((acc,purchase)=>{
-        console.log(purchase.po_date)
+
         let [yyyy,mm,dd] = purchase.po_date.split("T")[0].split("-");
         let date = `${mm}/${dd}/${yyyy}`;
         if(!acc[purchase.purchase_type]){
@@ -89,8 +86,7 @@ const SalesOverSpending = () => {
         acc[purchase.purchase_type][date] += +purchase.purchase_total;
         return acc
     },{});
-    console.log("PURCHASES")
-    console.log(purchases)
+
     let maxPurchases = Object.values(purchases).reduce((acc,purchase)=>{
         let max = Math.max(...Object.values(purchase));
         return max > acc ? max : acc;
@@ -99,7 +95,7 @@ const SalesOverSpending = () => {
     purchases = Object
         .entries(purchases)
         .map(([purchaseType,value])=>{
-            console.log(value)
+
             count++
             return ({
                 type:"bar",
@@ -112,7 +108,7 @@ const SalesOverSpending = () => {
         })
         .filter((purchase)=>purchase !== undefined)
 
-    console.log(purchases)
+
 
     let totalSales = salesUpdates.reduce((acc,order)=>acc + +order.total,0);
     let totalPurchases = quickBooksUpdates.reduce((acc,purchase)=>acc + +purchase.purchase_total,0);

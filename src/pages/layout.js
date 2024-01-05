@@ -367,7 +367,12 @@ export default function Layout({children}) {
                             leftSection: <IconSettings size={size} stroke={stroke}/>,
                             href: "/admin/ErrorPanel",
                             roles: ["surplus director"]
-                        }
+                        },
+                        "User Usage": {
+                            leftSection: <IconUser size={size} stroke={stroke}/>,
+                            href: "/admin/userUsage",
+                            roles: []
+                        },
                     }
                 }} />
             <AppShell.Main>

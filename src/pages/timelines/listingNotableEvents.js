@@ -17,7 +17,6 @@ const SurplusNotableEvents = () => {
     useUsage("Metrics","notableEvents-rangeView-timeline")
     const [sortDirection,setSortDirection] = useState(true);
     const events = useUpdates("/api/views/events",{includedCategories:['Processing','Warehouse']});
-    console.log(events)
     events.sort(directionFunctions[direction(sortDirection)])
 
     return (

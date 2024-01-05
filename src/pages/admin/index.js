@@ -102,14 +102,11 @@ function UsageTable({usage}){
 
 
 const Index = () => {
+
     useUsage("Admin","Home")
     const frequency = useFrequency();
     const usage = useUpdates("/api/usage");
-
-
-
-
-
+    delete usage.users;
     return (
         <RoleWrapper altRoles={"surplus director"}>
             <Container>

@@ -3,9 +3,7 @@ import {useShallowEffect} from "@mantine/hooks";
 
 export default function useUsage(parentKey,key){
     const {data:session, status} = useSession();
-    const name = session?.user?.name;
-    const email = session?.user?.email;
-    const user = {name,email};
+    const user = session?.user;
     useShallowEffect(()=>{
         fetch('/api/usage',{
             method:'POST',

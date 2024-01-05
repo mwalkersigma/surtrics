@@ -10,6 +10,7 @@ import BaseChart from "../../../components/Chart";
 import {colorScheme} from "../../_app";
 import useOrders from "../../../modules/hooks/useOrders";
 import smoothData from "../../../modules/utils/graphUtils/smoothData";
+import {useDebouncedValue, useLogger} from "@mantine/hooks";
 
 
 
@@ -25,10 +26,11 @@ const storeNames = {
 
 const SalesOverSpending = () => {
     let count = 0;
-    let testMonth = new Date();
     const [timeScale,setTimeScale] = useState("week");
-    const [[startDate,endDate],setDateRange] = useState([subMonths(testMonth,1),testMonth]);
+    const [[startDate,endDate],setDateRange] = useState([subMonths(new Date(),1),new Date()]);
     const [resolution, setResolution] = useState(8);
+    const [debounced] = useDebouncedValue(resolution, 500);
+    useLogger("Sales Vs Purchases: Trend Line Resolution Factor",[debounced])
     const quickBooksUpdates = useUpdates("/api/views/quickbooks",{startDate,endDate,timeScale});
     let salesUpdates = useOrders({startDate,endDate,timeScale},{acceptedConditions: ["1", "2", "3", "4"]});
 
@@ -54,8 +56,8 @@ const SalesOverSpending = () => {
     let maxOrders = Object.values(orders).reduce((acc,store)=>{
         let max = Math.max(...Object.values(store));
         return max > acc ? max : acc;
-
     },0);
+
     orders = Object
         .entries(orders)
         .map(([storeId,value])=>{
@@ -114,7 +116,7 @@ const SalesOverSpending = () => {
     let totalPurchases = quickBooksUpdates.reduce((acc,purchase)=>acc + +purchase.purchase_total,0);
 
 
-    let max =Math.round(Math.max(maxOrders,maxPurchases) * 2.2);
+    let max =Math.round(Math.max(maxOrders,maxPurchases) * 2);
 
     const options = {
         plugins: {
@@ -243,7 +245,7 @@ const SalesOverSpending = () => {
                         {
                             type:"line",
                             label:"Sales trend",
-                            data:smoothData(stackData(orders),resolution),
+                            data:smoothData(stackData(orders),debounced),
                             fill: false,
                             backgroundColor: colorScheme.green,
                             borderColor: colorScheme.green,
@@ -252,7 +254,7 @@ const SalesOverSpending = () => {
                         {
                             type:"line",
                             label:"Purchases trend",
-                            data:smoothData(stackData(purchases),resolution),
+                            data:smoothData(stackData(purchases),debounced),
                             fill: false,
                             backgroundColor: colorScheme.red,
                             borderColor: colorScheme.red,

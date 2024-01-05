@@ -26,6 +26,7 @@ function findLinearTrendLine(data) {
 
 export default function smoothData(data,adjCount=3) {
     if(!data) return [];
+
     if(adjCount === 0) return data;
     if(adjCount === 8){
         if(Array.isArray(data)){
@@ -33,7 +34,7 @@ export default function smoothData(data,adjCount=3) {
         }
         return findLinearTrendLine(Object.values(data).map((x,i) => [i+1,x]));
     }
-
+    if(adjCount > data.length / 4) return smoothData(data,Math.floor(adjCount / 4));
     let newData = [];
     for(let i = 0; i < data.length; i++) {
         let sum = 0;

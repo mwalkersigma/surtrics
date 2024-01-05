@@ -36,7 +36,8 @@ const SalesOverSpending = () => {
 
 
     let orders = salesUpdates.reduce((acc,order)=>{
-        let date = order.paymentDate;
+        let [yyyy,mm,dd] = order.timeStamp.split("T")[0].split("-");
+        let date = `${mm}/${dd}/${yyyy}`;
         console.log("ORDER DATE: ",date );
         if(!acc[order.storeId]){
             acc[order.storeId] = {}
@@ -88,6 +89,7 @@ const SalesOverSpending = () => {
         acc[purchase.purchase_type][date] += +purchase.purchase_total;
         return acc
     },{});
+    console.log("PURCHASES")
     console.log(purchases)
     let maxPurchases = Object.values(purchases).reduce((acc,purchase)=>{
         let max = Math.max(...Object.values(purchase));

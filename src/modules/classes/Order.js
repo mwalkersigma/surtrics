@@ -6,6 +6,7 @@ export default class Order {
         this.name = order.name;
         this.orderId = order['order_id'];
         this.storeId = order['store_id'];
+        this.timeStamp = order['payment_date'];
         this.paymentDate = format(new Date(order['payment_date']), "MM/dd/yyyy");
         this.paymentTime = format(new Date(order['payment_date']), "HH:mm:ss");
         this.orderStatus = order['order_status'];

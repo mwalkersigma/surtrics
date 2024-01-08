@@ -1,14 +1,16 @@
 import React, {useState} from 'react';
-import useUpdates from "../modules/hooks/useUpdates";
-import mapEcommerceData from "../modules/utils/conversionUtils/mapEccommerceData";
-import GraphWithStatCard from "../components/mantine/graphWithStatCard";
 import {MonthPickerInput} from "@mantine/dates";
-import {TableSort} from "../components/mantine/TableSort";
+
 import {SimpleGrid, Text} from "@mantine/core";
 import {toHeaderCase} from "js-convert-case";
-import formatter from "../modules/utils/numberFormatter";
+
 import {IconArrowDownRight, IconArrowUpRight} from "@tabler/icons-react";
 import {setDate, subMonths} from "date-fns";
+import mapEcommerceData from "../../modules/utils/conversionUtils/mapEccommerceData";
+import useUpdates from "../../modules/hooks/useUpdates";
+import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
+import {TableSort} from "../../components/mantine/TableSort";
+import formatter from "../../modules/utils/numberFormatter";
 
 
 const DateComparisonEcommerce = () => {
@@ -64,7 +66,7 @@ const DateComparisonEcommerce = () => {
                             {formatter(value)} {value > 0 ?
                             <IconArrowUpRight size="1rem" stroke={1.5}/> :
                             <IconArrowDownRight size="1rem" stroke={1.5}/>}
-                    </Text>
+                        </Text>
                     },
                     {column: 'percent',
                         fn: (value) => <Text span c={value > 0 ? 'teal' : 'red'}>
@@ -72,7 +74,7 @@ const DateComparisonEcommerce = () => {
                             {value > 0 ?
                                 <IconArrowUpRight size="1rem" stroke={1.5}/> :
                                 <IconArrowDownRight size="1rem" stroke={1.5}/>}
-                    </Text>},
+                        </Text>},
                     {column: 'stat', fn: (value) => <Text span fw={700}>{toHeaderCase(value)}</Text>}
                 ]}
                 data={

@@ -261,6 +261,11 @@ const pages = {
                 "Pricing" : {
                     leftSection: <IconTallymarks size={size} stroke={stroke}/>,
                     href: "/graphs/pricingData/rangeView"
+                },
+                "Ecommerce Comparison" : {
+                    leftSection: <IconTallymarks size={size} stroke={stroke}/>,
+                    href: "/table/ecommerceComparison"
+
                 }
             }
         },

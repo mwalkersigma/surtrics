@@ -6,11 +6,11 @@ import {toHeaderCase} from "js-convert-case";
 
 import {IconArrowDownRight, IconArrowUpRight} from "@tabler/icons-react";
 import {setDate, subMonths} from "date-fns";
-import mapEcommerceData from "../../modules/utils/conversionUtils/mapEccommerceData";
-import useUpdates from "../../modules/hooks/useUpdates";
-import GraphWithStatCard from "../../components/mantine/graphWithStatCard";
-import {TableSort} from "../../components/mantine/TableSort";
-import formatter from "../../modules/utils/numberFormatter";
+import mapEcommerceData from "../../../modules/utils/conversionUtils/mapEccommerceData";
+import useUpdates from "../../../modules/hooks/useUpdates";
+import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import {TableSort} from "../../../components/mantine/TableSort";
+import formatter from "../../../modules/utils/numberFormatter";
 
 
 const DateComparisonEcommerce = () => {

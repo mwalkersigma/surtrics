@@ -264,7 +264,7 @@ const pages = {
                 },
                 "Ecommerce Comparison" : {
                     leftSection: <IconTallymarks size={size} stroke={stroke}/>,
-                    href: "/table/ecommerceComparison"
+                    href: "/tables/ecommerce/ecommerceComparison"
 
                 }
             }

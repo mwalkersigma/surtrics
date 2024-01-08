@@ -36,7 +36,7 @@ ChartJS.register(
 );
 
 const RangeView = () => {
-    useUsage("test","test");
+    useUsage("Ecommerce","Pricing-rangeView-chart")
     let {colorScheme:theme} = useMantineColorScheme();
     theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     const [user,setUser] = useState("Total")

@@ -21,6 +21,7 @@ import {
     IconTallymarks,
     IconUserCode
 } from "@tabler/icons-react";
+import mapEcommerceData from "../../modules/utils/conversionUtils/mapEccommerceData";
 
 
 function MasonryGrid({current, previous, previousYear}) {
@@ -353,45 +354,7 @@ function createData(monthData) {
 
 const formatDateForEcommerce = (date) => format(setDate(new Date(date), 1), "yyyy-MM-dd")
 
-function mapCommerceData(data) {
-    let {
-        big_commerce_sales,
-        ebay_sales,
-    } = data
 
-    if (big_commerce_sales?.length > 0) {
-        big_commerce_sales = big_commerce_sales
-            .flat()
-            .map((item) => {
-                try {
-                    return JSON.parse(item)
-                } catch (e) {
-                    return JSON.parse("[" + item + "]")
-                }
-            })
-            .flat();
-    }
-    if (ebay_sales?.length > 0) {
-        ebay_sales = ebay_sales
-            .flat()
-            .map((item) => {
-                try {
-                    return JSON.parse(item)
-                } catch (e) {
-                    return JSON.parse("[" + item + "]")
-                }
-            })
-            .flat()
-
-    }
-
-    return {
-        ...data, ...{
-            big_commerce_sales,
-            ebay_sales,
-        }
-    }
-}
 
 const Dashboard = () => {
     useUsage("Ecommerce","Dashboard")
@@ -403,7 +366,7 @@ const Dashboard = () => {
     }
 
 
-    ecommerceData = ecommerceData.rows.map(mapCommerceData);
+    ecommerceData = mapEcommerceData(ecommerceData.rows)
 
     let monthData = ecommerceData.find(({month: month_of_transaction}) => month_of_transaction === month.toISOString().split("T")[0]);
     const currentMonthData = createData(monthData);

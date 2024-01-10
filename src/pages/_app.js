@@ -46,7 +46,7 @@ export const colorScheme = {
             .keys(this)
             .filter((key) => !ignoreList.includes(key))
             .filter((key) => typeof this[key] === "string");
-        return this[choices[index]];
+        return this[choices[index % choices.length]];
     }
 }
 

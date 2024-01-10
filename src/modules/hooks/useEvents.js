@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import useUpdates from "./useUpdates";
 
 function findNearestIndex(array, value) {
-    console.log(array)
     let nearestDate = array.reduce((acc,date) => {
         let date1 = new Date(date);
         let date2 = new Date(value);

@@ -1,0 +1,23 @@
+SELECT
+    payment_date,
+    order_status,
+    name,
+    store_id,
+    items,
+    order_id,
+    count(payment_date) as count
+FROM
+    surtrics.surplus_sales_data
+GROUP BY
+    payment_date,
+    order_status,
+    name,
+    store_id,
+    items,
+    order_id
+HAVING
+    count(payment_date) > 2;
+
+
+
+

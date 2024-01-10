@@ -1,14 +1,17 @@
-SELECT
-    COUNT(*),
-    user_who_approved as name,
-    DATE(date_of_final_approval) as date_of_final_approval
-FROM
-    surtrics.surplus_approvals
-WHERE
-    user_who_approved IS NOT NULL
-    AND user_who_approved != 'undefined'
-    AND date_of_final_approval >= '2023-10-01'
-    AND date_of_final_approval <= '2023-11-01'
-GROUP BY
-    name,
-    date_of_final_approval;
+-- SELECT
+--     COUNT(*),
+--     user_who_approved as name,
+--     DATE(date_of_final_approval) as date_of_final_approval
+-- FROM
+--     surtrics.surplus_approvals
+-- WHERE
+--     user_who_approved IS NOT NULL
+--     AND user_who_approved != 'undefined'
+--     AND date_of_final_approval >= '2023-01-01'
+--     AND date_of_final_approval <= DATE('2023-01-01') + INTERVAL '1 DAY'
+-- GROUP BY
+--     name,
+--     date_of_final_approval;
+
+
+SELECT COUNT(*), user_who_approved as name , DATE_TRUNC('day', date_of_final_approval) as date_of_final_approval FROM surtrics.surplus_approvals WHERE user_who_approved != 'undefined' AND date_of_final_approval >= '1/7/2024' AND DATE(date_of_final_approval) <= '1/7/2024'::DATE + INTERVAL '1 week' GROUP BY name, date_of_final_approval ORDER BY date_of_final_approval ASC;

@@ -67,14 +67,8 @@ const pages = {
                 "Graphs": {
                     leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
                     links: {
-                        "Weekly View": {
-                            href: "/graphs/approvals/weekView"
-                        },
-                        "Monthly View": {
-                            href: "/graphs/approvals/monthlyView"
-                        },
-                        "Yearly View": {
-                            href: "/graphs/approvals/yearView"
+                        "Range View": {
+                            href: "/graphs/approvals/rangeView"
                         }
                     }
                 },
@@ -94,7 +88,7 @@ const pages = {
                 "Graphs": {
                     leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
                     links: {
-                        "Weekly View": {
+                        "Range View": {
                             href: "/graphs/quantity/weeklyView"
                         }
                     }

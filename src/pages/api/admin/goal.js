@@ -52,7 +52,6 @@ function postHandler(req,res){
         })
 }
 function putHandler(req,res){
-    console.log("putHandler")
     return serverAdminWrapper(async (req) => {
         let body = req.body;
         if(typeof body ==="string") body = JSON.parse(body);

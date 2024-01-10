@@ -36,7 +36,7 @@ const EbayRangeView = () => {
     useUsage("Ecommerce","quickbooks-rangeView-timeline")
     const [dateRange, setDateRange] = React.useState([setDate(setMonth(new Date(),0),1), new Date()]) // [start, end]
     const [startDate,endDate] = dateRange;
-    const [sortDirection,setSortDirection] = React.useState(true);
+    const [sortDirection,setSortDirection] = React.useState(false);
     let updates = useUpdates("/api/views/quickbooks",{startDate,endDate});
 
     sortDirection ? updates.sort((a,b) => new Date(a.po_date) - new Date(b.po_date)) : updates.sort((a,b) => new Date(b.po_date) - new Date(a.po_date))

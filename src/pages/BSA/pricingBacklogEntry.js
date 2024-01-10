@@ -73,7 +73,6 @@ const BigCommerceEntry = () => {
 
 
     function handleSubmit(values) {
-        console.log(values)
         setLoading(true)
         fetch(`${window.location.origin}/api/dataEntry/pricingBacklog`,{
             method:"PUT",

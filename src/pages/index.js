@@ -217,7 +217,7 @@ export default function ManLayout({}) {
             badgeText: `${hourlyAverage} /hr`
         },
         {
-            title: "Total",
+            title: "Weekly",
             category: "Increments",
             value: totalIncrements,
             goal: goal * 5,

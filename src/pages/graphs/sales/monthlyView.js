@@ -62,7 +62,6 @@ const MonthlyView = () => {
         monthlySales[day][order.storeId] += orderTotal;
     })
 
-    console.log(monthlySales)
     monthlySales = Object.keys(monthlySales)
         .map(month => monthlySales[month] ?? undefined)
         .filter(month => month !== undefined)

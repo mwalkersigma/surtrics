@@ -6,7 +6,7 @@ const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOn
     const height = 65;
     if (isLoading) {
         return <Container fluid>
-            <Title mb={"md"} ta={"center"}>{title}</Title>
+            <Title mb={"xl"} ta={"center"}>{title}</Title>
             <Grid spacing={"xl"}>
                 {cards?.length > 0 && (
                     <>
@@ -59,7 +59,7 @@ const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOn
     }
     return (
         <Container fluid>
-            <Title mb={"md"} ta={"center"}>{title}</Title>
+            <Title mb={"xl"} ta={"center"}>{title}</Title>
             <Grid spacing={"xl"}>
                 {cards?.length > 0 && (
                     <>

@@ -4,7 +4,7 @@ import useUpdates from "../../../modules/hooks/useUpdates";
 import formatter from "../../../modules/utils/numberFormatter";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
-import {NativeSelect, Slider, Text, Tooltip} from "@mantine/core";
+import {NativeSelect, Paper, Progress, ProgressRoot, Slider, Text, Tooltip} from "@mantine/core";
 import StatCard from "../../../components/mantine/StatCard";
 import BaseChart from "../../../components/Chart";
 import {colorScheme} from "../../_app";
@@ -20,6 +20,11 @@ const storeNames = {
     "225004": "Big Commerce",
     "255895": "Ebay",
 };
+
+const shortNames = {
+    "Big Commerce": "BC",
+    "Ebay": "EBAY",
+}
 
 
 
@@ -78,7 +83,6 @@ const SalesOverSpending = () => {
 
 
     let purchases = quickBooksUpdates.reduce((acc,purchase)=>{
-
         let [yyyy,mm,dd] = purchase.po_date.split("T")[0].split("-");
         let date = `${mm}/${dd}/${yyyy}`;
         if(!acc[purchase.purchase_type]){
@@ -99,7 +103,6 @@ const SalesOverSpending = () => {
     purchases = Object
         .entries(purchases)
         .map(([purchaseType,value])=>{
-
             count++
             return ({
                 type:"bar",
@@ -111,6 +114,25 @@ const SalesOverSpending = () => {
             })
         })
         .filter((purchase)=>purchase !== undefined)
+
+    let byStore = salesUpdates.reduce((acc,order)=>{
+        if(!acc[order.storeId]){
+            acc[order.storeId] = 0;
+        }
+        acc[order.storeId] += order.total;
+        return acc;
+    },{});
+
+    const bySource = quickBooksUpdates.reduce((acc,purchase)=>{
+        if(!acc[purchase.purchase_type]){
+            acc[purchase.purchase_type] = 0;
+        }
+        acc[purchase.purchase_type] += +purchase.purchase_total;
+        return acc;
+    },{});
+
+    console.log(bySource)
+
 
 
 
@@ -189,7 +211,6 @@ const SalesOverSpending = () => {
             dateInput={
                 <CustomRangeMenu
                     label={"Date Range"}
-                    mt={"xl"}
                     mb={"xl"}
                     subscribe={setDateRange}
                     defaultValue={[startDate,endDate]}
@@ -199,7 +220,6 @@ const SalesOverSpending = () => {
                 <NativeSelect
                     label={"Time Scale"}
                     value={timeScale}
-                    mt={"xl"}
                     mb={"xl"}
                     onChange={(e) => setTimeScale(e.target.value)}
                 >
@@ -213,7 +233,7 @@ const SalesOverSpending = () => {
             slotTwo={
                 <Tooltip label={"The higher the resolution, the smoother the trend line."}>
                     <span>
-                        <Text ml={"xs"} mt={"xl"}>Trend Line Resolution</Text>
+                        <Text ml={"xs"} >Trend Line Resolution</Text>
                         <Slider
                             mb={"xl"}
                             ml={"xs"}
@@ -233,11 +253,37 @@ const SalesOverSpending = () => {
                     </span>
                 </Tooltip>
             }
-            cards={[
+            cards={[...[
                 {title:"Total Sales For Selection", value:totalSales, format:'currency'},
                 {title:"Total Purchases For Selection", value:totalPurchases,format:'currency'},
 
-            ].map((card,index)=>(<StatCard key={index} stat={card}/>))
+            ].map((card,index)=>(<StatCard key={index} stat={card}/>)),
+                <Paper key={2} withBorder p="md">
+                    <Text mb='md' size="xs" c="dimmed" fw={700} tt={"uppercase"}>
+                        Sales Origin
+                    </Text>
+                    <ProgressRoot size={30}>
+                        {Object.entries(byStore).map(([storeId,value],i)=>(<Tooltip key={i} label={storeNames[storeId] || 'manual creation'}>
+                            <Progress.Section value={value/totalSales * 100} color={colorScheme.byIndex(i)}>
+                                <Progress.Label>{shortNames[storeNames[storeId]]}</Progress.Label>
+                            </Progress.Section>
+                        </Tooltip>))}
+                    </ProgressRoot>
+                </Paper>,
+                <Paper key={3} withBorder p="md">
+                    <Text mb='md' size="xs" c="dimmed" fw={700} tt={"uppercase"}>
+                        Purchase Origin
+                    </Text>
+                    <ProgressRoot size={30}>
+                        {Object.entries(bySource).map(([source,value],i)=>(<Tooltip key={i} label={source}>
+                            <Progress.Section value={value/totalPurchases * 100} color={colorScheme.byIndex(i + 5)}>
+                                <Progress.Label>{source}</Progress.Label>
+                            </Progress.Section>
+                        </Tooltip>))}
+                    </ProgressRoot>
+                </Paper>
+
+            ]
             }
         >
             <BaseChart

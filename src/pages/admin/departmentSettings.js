@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Card, Grid, Title, Text, NativeSelect, Paper, TextInput, NumberInput, Stack, Button} from "@mantine/core";
+import { Grid, Title, Text, NativeSelect, Paper, TextInput, NumberInput, Stack, Button} from "@mantine/core";
 import settings from "../../json/settings.json";
 import useFrequency from "../../modules/hooks/useFrequency";
 import {DatePickerInput} from "@mantine/dates";

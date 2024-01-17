@@ -4,50 +4,127 @@ import fs from "fs/promises";
 import {parseBody} from "../../../modules/serverUtils/parseBody";
 
 
-function makeSalesTargets( incomingSalesTargets ){
+function makeSalesTargets( incomingSalesTargets, currentSalesTargets ){
     let defaultSettings = {
         "daily": 26455,
         "weekly": 185185,
         "monthly": 833333,
-        "yearly": 10000000
+        "yearly": 8000000
     }
-    let yearly = incomingSalesTargets?.['yearly'];
+    let result = {};
+    let yearly = Math.round(incomingSalesTargets?.['yearly']);
     let monthly = incomingSalesTargets?.['monthly'];
     let weekly = incomingSalesTargets?.['weekly'];
     let daily = incomingSalesTargets?.['daily'];
 
-    if( yearly && !monthly && !weekly && !daily ){
-        monthly = yearly / 12;
-        weekly = yearly / 52;
-        daily = yearly / 365;
+    let difCount = 0;
+
+    for(let key in defaultSettings){
+        if(currentSalesTargets[key] !== incomingSalesTargets[key]){
+            difCount++;
+        }
     }
-    if( monthly && !yearly && !weekly && !daily ){
-        yearly = monthly * 12;
-        weekly = yearly / 52;
-        daily = yearly / 365;
+    console.log(difCount)
+    if(difCount === 0){
+        result =  defaultSettings;
     }
-    if( weekly && !yearly && !monthly && !daily ){
-        yearly = weekly * 52;
-        monthly = yearly / 12;
-        daily = yearly / 365;
+
+    if(difCount === 4){
+        result = incomingSalesTargets;
     }
-    if( daily && !yearly && !monthly && !weekly ){
-        yearly = daily * 365;
-        monthly = yearly / 12;
-        weekly = yearly / 52;
+
+    if(difCount === 1 || difCount === 3){
+        if(yearly){
+            result = {
+                "daily": yearly / 365,
+                "weekly": yearly / 52,
+                "monthly": yearly / 12,
+                "yearly": yearly
+            }
+        }
+        if(monthly){
+            result = {
+                "daily": monthly / 30,
+                "weekly": monthly / 4,
+                "monthly": monthly,
+                "yearly": monthly * 12
+            }
+        }
+        if(weekly){
+            result = {
+                "daily": weekly / 7,
+                "weekly": weekly,
+                "monthly": weekly * 4,
+                "yearly": weekly * 52
+            }
+        }
+        if(daily){
+            result = {
+                "daily": daily,
+                "weekly": daily * 7,
+                "monthly": daily * 30,
+                "yearly": daily * 365
+            }
+        }
+
     }
-    if(!yearly && !monthly && !weekly && !daily ){
-        yearly = defaultSettings?.['yearly'];
-        monthly = defaultSettings?.['monthly'];
-        weekly = defaultSettings?.['weekly'];
-        daily = defaultSettings?.['daily'];
+
+    if(difCount === 2) {
+        if (yearly && monthly) {
+            result = {
+                "daily": yearly / 365,
+                "weekly": yearly / 52,
+                "monthly": yearly / 12,
+                "yearly": yearly
+            }
+        }
+        if (yearly && weekly) {
+            result = {
+                "daily": yearly / 365,
+                "weekly": yearly / 52,
+                "monthly": yearly / 12,
+                "yearly": yearly
+            }
+        }
+        if (yearly && daily) {
+            result = {
+                "daily": yearly / 365,
+                "weekly": yearly / 52,
+                "monthly": yearly / 12,
+                "yearly": yearly
+            }
+        }
+        if (monthly && weekly) {
+            result = {
+                "daily": monthly / 30,
+                "weekly": monthly / 4,
+                "monthly": monthly,
+                "yearly": monthly * 12
+            }
+        }
+        if (monthly && daily) {
+            result = {
+                "daily": monthly / 30,
+                "weekly": monthly / 4,
+                "monthly": monthly,
+                "yearly": monthly * 12
+            }
+        }
+        if (weekly && daily) {
+            result = {
+                "daily": weekly / 7,
+                "weekly": weekly,
+                "monthly": weekly * 4,
+                "yearly": weekly * 52
+            }
+        }
     }
-    return {
-        yearly,
-        monthly,
-        weekly,
-        daily
-    }
+
+    Object.entries(result).forEach(([key,value]) => {
+        result[key] = Math.round(value * 100) / 100;
+    })
+
+    return result;
 }
 
 
@@ -61,9 +138,7 @@ function postHandler(req,res){
 
         const settings = await fs.readFile("./src/json/settings.json").then((settings) => JSON.parse(settings));
 
-        let salesTargets = makeSalesTargets(body?.['salesTarget']);
-
-        settings['salesTarget'] = salesTargets;
+        settings['salesTarget'] = makeSalesTargets(body?.['salesTarget'],settings?.['salesTarget']);
 
         await fs.writeFile("./src/json/settings.json",JSON.stringify(settings,null,2));
 

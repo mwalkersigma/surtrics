@@ -32,7 +32,7 @@ let colorPalette = [
 
 
 
-const rangeView = () => {
+const RangeView = () => {
     let increments = ["day","week","month","quarter","year"];
     useUsage("Metrics","Approvals-chart");
 
@@ -228,74 +228,6 @@ const rangeView = () => {
     >
         <BaseChart data={data} config={options} stacked />
     </GraphWithStatCard>
-    //
-    //
-    //
-    //
-    //
-    // const users = [...new Set(approvals.map(({name}) => name))]
-    //     .reduce((acc,cur)=>{
-    //         acc[cur] = approvals.filter(({name})=>name===cur).reduce((acc,cur)=>acc+ +cur.count,0);
-    //         return acc
-    //     },{})
-    // const totalApprovals = approvals?.reduce((acc,cur)=>acc+ +cur.count,0);
-    // const averageApprovals = totalApprovals/approvals?.length;
-    // const bestDay = approvals?.reduce((acc,cur)=>{
-    //     if(acc.count < +cur.count) return cur;
-    //     return acc;
-    // },{count:0})
-    // return (<GraphWithStatCard
-    //         title={"Surplus Template Approvals Weekly View"}
-    //         isLoading={approvals.length === 0}
-    //         dateInput={
-    //             <CustomRangeMenu
-    //                 subscribe={setDateRange}
-    //                 defaultValue={[startDate,endDate]}
-    //                 label={"Date Range"}
-    //                 mb={'xl'}
-    //             />
-    //         }
-    //         cards={
-    //             [
-    //                 <StatCard
-    //                     key={0}
-    //                     stat={{
-    //                         title:"Total",
-    //                         value:totalApprovals,
-    //                         subtitle:"Approvals for the week"
-    //                     }}
-    //                 />,
-    //                 <StatCard
-    //                     key={1}
-    //                     stat={{
-    //                         title:"Average Approvals",
-    //                         value:averageApprovals,
-    //                         subtitle:"Per Person Per Day"
-    //                     }}
-    //                 />,
-    //                 <StatCard
-    //                     key={2}
-    //                     stat={{
-    //                         title:"Best Day",
-    //                         value:bestDay.count,
-    //                         subtitle:`${bestDay.name} - ${new Date(bestDay.date_of_final_approval).toLocaleDateString()}`
-    //                     }}
-    //                 />,
-    //
-    //                 <StatCard
-    //                     key={3}
-    //                     stat={{
-    //                         title:"Lister of the week",
-    //                         value:Math.max(...Object.values(users)),
-    //                         subtitle:Object.keys(users).find((key)=>users[key]===Math.max(...Object.values(users)))
-    //                     }}
-    //                 />,
-    //
-    //             ]
-    //         }
-    //         >
-    //         <WeeklyApprovalsChart approvals={approvals} date={startDate} />
-    //    </GraphWithStatCard>)
 };
 
-export default rangeView;
+export default RangeView;

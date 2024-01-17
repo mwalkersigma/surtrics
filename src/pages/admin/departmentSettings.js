@@ -7,18 +7,22 @@ import useUsage from "../../modules/hooks/useUsage";
 import {useSession} from "next-auth/react";
 import useGoal from "../../modules/hooks/useGoal";
 import {Notifications} from "@mantine/notifications";
+import {useSetState} from "@mantine/hooks";
+import useUpdates from "../../modules/hooks/useUpdates";
 const {frequencies} = settings;
 
-function SettingsCard({title,description,children}){
+function SettingsCard({title,description,children,...props}){
     return (
-        <Paper p={'2rem'} withBorder>
-                <Title ta={'center'} mb={'xl'}>
-                    {title}
-                </Title>
-                <Text fz={'xs'} c={'dimmed'}>
-                    {description}
-                </Text>
+        <Paper {...props} p={'2rem'} withBorder>
+            <Stack mih={'60%'} justify={"space-between"}>
+                <Stack>
+                    <Title ta={'center'} mb={'xl'}>{title}</Title>
+                    <Text fz={'xs'} c={'dimmed'}>
+                        {description}
+                    </Text>
+                </Stack>
                 {children}
+            </Stack>
         </Paper>
     )
 }
@@ -36,9 +40,23 @@ const DepartmentSettings = () => {
     useUsage("Admin","DepartmentSettings")
     const {data: session} = useSession();
     const [eventDate,setEventDate] = useState(new Date());
+
     let goal = useGoal();
     const [newGoal, setNewGoal] = useState('');
     const [displayGoal,setDisplayGoal] = useState(goal * 5);
+
+    const currentSalesTarget = useUpdates("/api/admin/salesTarget");
+
+    const [salesTarget,setSalesTarget] = useSetState({
+        yearly:10000000,
+        monthly:833333,
+        weekly:185185,
+        daily:26455
+    })
+    useEffect(() => {
+        setSalesTarget(currentSalesTarget)
+    },[currentSalesTarget]);
+
     useEffect(() => {
         setDisplayGoal(goal * 5)
     }, [goal,newGoal]);
@@ -64,13 +82,25 @@ const DepartmentSettings = () => {
     }
 
 
+    function updateSalesTarget () {
+        fetch(`${window.location.origin}/api/admin/salesTarget`,{
+            method:"POST",
+            body:JSON.stringify(salesTarget)
+        })
+            .then((res)=>res.json())
+            .then((text) => {
+                Notifications.show({title: "Success", message: text})
+            })
+    }
+
+
     const userName = session?.user?.name;
 
     return (
         <>
             <Grid>
                 <Grid.Col span={4}>
-                    <SettingsCard title={"Update Frequency"}>
+                    <SettingsCard  title={"Update Frequency"} h={'100%'}>
                         <NativeSelect
                             data={frequencies}
                             value={frequency}
@@ -118,6 +148,56 @@ const DepartmentSettings = () => {
                                 <Stack justify={"flex-end"}>
                                     <Button
                                         onClick={handleSubmit}
+                                        size={'lg'}
+                                    >Submit</Button>
+                                </Stack>
+                            </Grid.Col>
+                        </Grid>
+                    </SettingsCard>
+                </Grid.Col>
+                <Grid.Col span={8}>
+                    <SettingsCard title={"Sales Target"}>
+                        <Grid>
+                            <Grid.Col span={6}>
+                                <NumberInput
+                                    label={"Daily Target"}
+                                    thousandSeparator=","
+                                    prefix="$"
+                                    value={salesTarget?.['daily']}
+                                    onChange={(e)=>setSalesTarget({daily:e})}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                                <NumberInput
+                                    label={"Weekly Target"}
+                                    thousandSeparator=","
+                                    prefix="$"
+                                    value={salesTarget?.['weekly']}
+                                    onChange={(e)=>setSalesTarget({weekly:e})}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                                <NumberInput
+                                    label={"Monthly Target"}
+                                    thousandSeparator=","
+                                    prefix="$"
+                                    value={salesTarget?.['monthly']}
+                                    onChange={(e)=>setSalesTarget({monthly:e})}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                                <NumberInput
+                                    label={"Yearly Target"}
+                                    thousandSeparator=","
+                                    prefix="$"
+                                    value={salesTarget?.['yearly']}
+                                    onChange={(e)=>setSalesTarget({yearly:e})}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={12}>
+                                <Stack justify={"flex-end"}>
+                                    <Button
+                                        onClick={updateSalesTarget}
                                         size={'lg'}
                                     >Submit</Button>
                                 </Stack>

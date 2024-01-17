@@ -85,7 +85,7 @@ const DepartmentSettings = () => {
     function updateSalesTarget () {
         fetch(`${window.location.origin}/api/admin/salesTarget`,{
             method:"POST",
-            body:JSON.stringify(salesTarget)
+            body:JSON.stringify({salesTarget})
         })
             .then((res)=>res.json())
             .then((text) => {

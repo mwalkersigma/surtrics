@@ -57,11 +57,11 @@ async function getHandler(req,res){
 }
 function postHandler(req,res){
     return serverAdminWrapper(async (req) => {
-        const body = parseBody(req.body);
+        const body = parseBody(req);
 
         const settings = await fs.readFile("./src/json/settings.json").then((settings) => JSON.parse(settings));
 
-        let salesTargets = makeSalesTargets(body?.['salesTargets']);
+        let salesTargets = makeSalesTargets(body?.['salesTarget']);
 
         settings['salesTarget'] = salesTargets;
 

@@ -15,7 +15,7 @@ const ErrorsByUser = () => {
     const [startDate, endDate] = dateRange;
     const errors = useUpdates("/api/views/errors",{startDate, endDate});
 
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState("Total")
 
     const users = ["Total",...new Set(errors.map(({user}) => user))];
 
@@ -42,11 +42,11 @@ const ErrorsByUser = () => {
         acc[date]["Total"] +=1;
         return acc;
     },{});
-    console.log(dataOrderedByUser)
+
 
     const userErrors = dataOrderedByUser[user] ?? {};
     const errorReasons = userErrors ? Object.keys(userErrors).reduce((acc,date)=>{
-        console.log(user)
+
         const reasons = Object.keys(userErrors[date]);
         reasons.forEach((reason)=>{
             if(!acc.includes(reason)){

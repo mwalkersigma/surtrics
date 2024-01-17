@@ -10,6 +10,7 @@ import {getDate, lastDayOfMonth, setDate} from "date-fns";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import useOrders from "../../../modules/hooks/useOrders";
+import useUpdates from "../../../modules/hooks/useUpdates";
 
 
 const storeNameMap = {
@@ -35,6 +36,7 @@ const MonthlyView = () => {
     const [storeId, setStoreId] = useState("All");
     const orders = useOrders({startDate: date, endDate: lastDayOfMonth(date)},{acceptedConditions: ["1", "2", "3", "4"]});
     const useTheme = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
+    const salesTarget = useUpdates('/api/admin/salesTarget');
 
     let storeIds= [
         'All',
@@ -106,6 +108,24 @@ const MonthlyView = () => {
                     weight: "bold",
                 },
                 formatter: Math.round
+            },
+            annotation: {
+                annotations: {
+                    'salesTarget': {
+                        type: 'line',
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        label:{
+                            display:true,
+                            content: "Sales Target",
+                            backgroundColor: 'red',
+                            color: 'white',
+                            rotation: 'auto'
+                        },
+                        value: ()=> salesTarget?.['daily'] ?? 0,
+                        scaleID: 'y',
+                    }
+                }
             }
         },
     }

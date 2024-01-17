@@ -21,6 +21,7 @@ import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import useEvents from "../../../modules/hooks/useEvents";
 import useOrders from "../../../modules/hooks/useOrders";
+import useUpdates from "../../../modules/hooks/useUpdates";
 
 
 ChartJS.register(
@@ -57,6 +58,8 @@ const YearlyView = () => {
     const [date, setDate] = useState(setMonth(dateSet(new Date(),1),0));
     const [affectedCategories, setAffectedCategories] = useState([]);
     const theme = useMantineColorScheme();
+    const salesTarget = useUpdates('/api/admin/salesTarget');
+    console.log(salesTarget)
     const themeColor = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
     const [storeId, setStoreId] = useState("Total");
     const orders = useOrders({startDate:date, endDate:lastDayOfYear(date)},{acceptedConditions: ["1", "2", "3", "4"]});
@@ -172,12 +175,30 @@ const YearlyView = () => {
                 },
                 formatter: Math.round
             },
+            annotation: {
+                annotations: [
+                    {
+                        type: 'line',
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        label: {
+                            display: true,
+                            content: "Sales Target",
+                            backgroundColor: 'red',
+                            color: 'white',
+                            rotation: 'auto'
+                        },
+                        value: () => salesTarget?.['monthly'] ?? 0,
+                        scaleID: 'y',
+                    }
+                ]
+            }
         },
         scales: {
             y: {
                 stacked: true,
                 min:0,
-                max:max
+                max:salesTarget?.['monthly'] * 1.3 ?? 0,
             },
             x:{
                 stacked: true,

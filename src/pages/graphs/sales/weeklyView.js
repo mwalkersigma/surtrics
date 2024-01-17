@@ -11,6 +11,7 @@ import makeDateArray from "../../../modules/utils/makeDateArray";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import useOrders from "../../../modules/hooks/useOrders";
+import useUpdates from "../../../modules/hooks/useUpdates";
 
 
 const storeNameMap = {
@@ -35,6 +36,8 @@ const WeeklyView = () => {
     const [date, setDate] = useState(new Date());
     const theme = useMantineColorScheme();
     const [storeId, setStoreId] = useState("All");
+    const salesTarget = useUpdates('/api/admin/salesTarget');
+
     const orders = useOrders({date:findStartOfWeek(date), interval:'1 week'},{acceptedConditions: ["1", "2", "3", "4"]});
     const useTheme = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
 
@@ -51,6 +54,7 @@ const WeeklyView = () => {
         ...new Set(orders.map(order => order.storeId)),
         'Total'
     ];
+
     let weeklySales = {};
     week.forEach(day => {
         weeklySales[day] = {
@@ -86,7 +90,6 @@ const WeeklyView = () => {
             }
         })
 
-
     const options = {
         plugins: {
             tooltip: {
@@ -113,6 +116,24 @@ const WeeklyView = () => {
                 },
                 formatter: Math.round
             },
+            annotation: {
+                annotations: {
+                    'salesTarget': {
+                        type: 'line',
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        label:{
+                            display:true,
+                            content: "Sales Target",
+                            backgroundColor: 'red',
+                            color: 'white',
+                            rotation: 'auto'
+                        },
+                        value: ()=> salesTarget?.['daily'] ?? 0,
+                        scaleID: 'y',
+                    }
+                }
+            }
         },
         scales: {
             y: {

@@ -75,7 +75,6 @@ export default function BaseChart ({stacked,config,data,events}) {
             intersect: false,
         }
     }
-    console.log(config.plugins.annotation.annotations,events)
     if(events){
         options.plugins = mergeAdvanced(options.plugins,{
             annotation: {

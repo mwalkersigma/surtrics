@@ -36,6 +36,10 @@ GROUP BY
         if (!results[user_id][fullKey]) {
             results[user_id][fullKey] = 0;
         }
+        if(fullKey.toLowerCase().includes("create")){
+            results[user_id][fullKey] = (+count / 4);
+            continue;
+        }
         results[user_id][fullKey] += (+count);
     }
     return JSON.stringify(results);

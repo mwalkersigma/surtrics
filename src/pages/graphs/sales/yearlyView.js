@@ -22,6 +22,7 @@ import BaseChart from "../../../components/Chart";
 import useEvents from "../../../modules/hooks/useEvents";
 import useOrders from "../../../modules/hooks/useOrders";
 import useUpdates from "../../../modules/hooks/useUpdates";
+import formatter from "../../../modules/utils/numberFormatter";
 
 
 ChartJS.register(
@@ -171,9 +172,10 @@ const YearlyView = () => {
                 color: colorScheme.white,
                 display: (context) => context.dataset.data[context.dataIndex] > 200,
                 font: {
+                    size: 11,
                     weight: "bold",
                 },
-                formatter: Math.round
+                formatter: (value) => formatter(value,'currency')
             },
             annotation: {
                 annotations: [
@@ -196,6 +198,9 @@ const YearlyView = () => {
         },
         scales: {
             y: {
+                ticks: {
+                    callback:(value)=> `${formatter(value,'currency')}`,
+                },
                 stacked: true,
                 min:0,
                 max:salesTarget?.['monthly'] * 1.3 ?? 0,

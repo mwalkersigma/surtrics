@@ -11,6 +11,7 @@ import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import useOrders from "../../../modules/hooks/useOrders";
 import useUpdates from "../../../modules/hooks/useUpdates";
+import formatter from "../../../modules/utils/numberFormatter";
 
 
 const storeNameMap = {
@@ -87,6 +88,12 @@ const MonthlyView = () => {
         plugins: {
             tooltip: {
                 callbacks: {
+                    label: (context) => {
+                        let {datasetIndex, dataIndex} = context;
+                        let {label} = context.chart.data.datasets[datasetIndex];
+                        let raw = context.raw;
+                        return `${label}: $${raw}`;
+                    },
                     footer: (context)=> {
                         return "TOTAL: " + context.reduce((acc, {raw}) => (acc + +raw), 0);
                     }
@@ -105,9 +112,10 @@ const MonthlyView = () => {
                 color: colorScheme.white,
                 display: (context) => context.dataset.data[context.dataIndex] > 200,
                 font: {
+                    size: 11,
                     weight: "bold",
                 },
-                formatter: Math.round
+                formatter: (value) => formatter(value,'currency')
             },
             annotation: {
                 annotations: {
@@ -128,6 +136,13 @@ const MonthlyView = () => {
                 }
             }
         },
+        scales:{
+            y:{
+                ticks: {
+                    callback:(value)=> `${formatter(value,'currency')}`,
+                },
+            }
+        }
     }
     const data ={
         labels:Object.keys(monthlySales),

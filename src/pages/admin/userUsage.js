@@ -83,7 +83,7 @@ function UserRolesTable({data,open,setUser}) {
                         </Badge>
                     ) : (
                         <Badge color="gray" fullWidth variant="light">
-                            Disabled
+                            Inactive
                         </Badge>
                     )}
                 </Table.Td>

@@ -1,18 +1,25 @@
 import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
-import makeDateArray from "../../../modules/utils/makeDateArray";
 import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
-import { Table } from "@mantine/core";
+import {NativeSelect, Table} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
-import {DatePickerInput} from "@mantine/dates";
 import useUsage from "../../../modules/hooks/useUsage";
+import {addDays} from "date-fns";
+import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 
-const WeeklyView = () => {
+const RangeView = () => {
     //stat-timeframe-type
     //eg approval-weekly-chart
-    useUsage("Metrics","approvals-weekly-chart")
-    const [date, setDate] = useState(new Date());
-    let updates = useUpdates("/api/views/approvals", {date:findStartOfWeek(new Date(date)),interval:"1 week", increment:"day"});
+    useUsage("Metrics","approvals-range-chart");
+    const [increment,setIncrement] = useState("day")
+    const [[startDate,endDate],setDate] = useState([findStartOfWeek(new Date()),addDays(findStartOfWeek(new Date()), 7)])
+    let updates = useUpdates("/api/views/approvals", {
+            startDate,
+            endDate,
+            increment
+        }
+    );
+
     let mappedUpdates = {};
     updates?.forEach((update) => {
         let name = update.name;
@@ -21,18 +28,37 @@ const WeeklyView = () => {
         if(!mappedUpdates[name][date]) mappedUpdates[name][date] = 0;
         mappedUpdates[name][date] += parseInt(update.count);
     })
-    let weekArr = makeDateArray(date);
+    let dateArray = updates
+        .map((update) => update["date_of_final_approval"].split("T")[0])
+        .reduce((a,b) => a.includes(b) ? a : [...a,b],[])
+        .sort((a,b) => new Date(a) - new Date(b))
+
 
     return (
         <GraphWithStatCard
-            title={"Surplus Approvals Weekly View"}
+            title={"Surplus Approvals Range View"}
             isLoading={updates.length === 0}
             dateInput={
-                <DatePickerInput
-                    mb={"xl"}
+                <CustomRangeMenu
+                    subscribe={setDate}
+                    defaultValue={[startDate,endDate]}
                     label={"Date"}
-                    value={date}
-                    onChange={(e) => setDate(e)}
+                    mb={"xl"}
+                />
+            }
+            slotOne={
+                <NativeSelect
+                    value={increment}
+                    onChange={(e) => setIncrement(e.currentTarget.value)}
+                    data={[
+                        //{value:"hour",label:"Hour"},
+                        {value:"day",label:"Day"},
+                        {value:"week",label:"Week"},
+                        {value:"month",label:"Month"},
+                        {value:"year",label:"Year"},
+                    ]}
+                    label={"Increment"}
+                    mb={"xl"}
                 />
             }
             cards={[]}
@@ -41,7 +67,7 @@ const WeeklyView = () => {
                 <Table.Thead>
                     <Table.Tr>
                         <Table.Th>Name</Table.Th>
-                        {weekArr.map((date) => <Table.Th key={`${date}`}>{date}</Table.Th>)}
+                        {dateArray.map((date) => <Table.Th key={`${date}`}>{date}</Table.Th>)}
                         <Table.Th>Total</Table.Th>
                     </Table.Tr>
                 </Table.Thead>
@@ -50,7 +76,7 @@ const WeeklyView = () => {
                         return (
                             <Table.Tr key={name}>
                                 <Table.Td>{name}</Table.Td>
-                                {weekArr.map((date) => {
+                                {dateArray.map((date) => {
                                     return (
                                         <Table.Td key={date}>
                                             {mappedUpdates[name][date] ? mappedUpdates[name][date] : 0}
@@ -65,7 +91,7 @@ const WeeklyView = () => {
                 <Table.Tfoot>
                     <Table.Tr>
                         <Table.Th>Total</Table.Th>
-                        {weekArr.map((date) => {
+                        {dateArray.map((date) => {
                             let total = 0;
                             Object.keys(mappedUpdates).forEach((name) => {
                                 if(mappedUpdates[name][date]) total += mappedUpdates[name][date]
@@ -86,4 +112,4 @@ const WeeklyView = () => {
     )
 };
 
-export default WeeklyView;
+export default RangeView;

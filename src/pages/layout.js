@@ -75,9 +75,9 @@ const pages = {
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
                     links: {
-                        "Weekly View": {
-                            href: "/tables/approvals/weeklyView"
-                        }
+                        "Range View": {
+                            href: "/tables/approvals/rangeView"
+                        },
                     }
                 }
             }

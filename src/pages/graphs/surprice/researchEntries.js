@@ -7,10 +7,12 @@ import {colorScheme} from "../../_app";
 import BaseChart from "../../../components/Chart";
 import roleWrapper from "../../../components/RoleWrapper";
 import RoleWrapper from "../../../components/RoleWrapper";
+import useUsage from "../../../modules/hooks/useUsage";
 
 const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
 const ResearchEntries = () => {
+    useUsage("Metrics", "surprice-range-chart")
     const {colorScheme: theme} = useMantineColorScheme();
     const [interval, setInterval] = React.useState('day');
     const [[startDate,endDate], setDateRange] = React.useState([new Date('01-01-2023'), new Date('12-31-2023')]);

@@ -7,6 +7,7 @@ import {colorScheme} from "../../_app";
 import BaseChart from "../../../components/Chart";
 import RoleWrapper from "../../../components/RoleWrapper";
 import useUsage from "../../../modules/hooks/useUsage";
+import StatCard from "../../../components/mantine/StatCard";
 
 const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
@@ -31,6 +32,13 @@ const ResearchEntries = () => {
         acc.includes(curr.approver) ? null : acc.push(curr.approver);
         return acc
         }, []);
+    const bestDate = Math.max(...days
+        .map(day=>rows.filter(row=>row.date === day))
+        .map(arr=>arr.reduce((acc,curr)=>acc + +curr.count,0)));
+
+
+    console.log(bestDate)
+
     const colors = [0,1,3,5,6,7,8]
     let datasets = names.map((name,i)=>{
         return {
@@ -86,6 +94,11 @@ const ResearchEntries = () => {
                     mb={'xl'}
                 />
             }
+            cards={[
+                {title:'Total Entries', value:rows.reduce((acc,curr)=>acc + +curr.count,0)},
+                {title:'Average Entries', value:(rows.reduce((acc,curr)=>acc + +curr.count,0)/rows.length).toFixed(2)},
+                {title:`Best ${interval}`, value:bestDate},
+            ].map((stat,i)=><StatCard key={i} stat={stat}/>)}
             slotTwo={
             <NativeSelect
                 label={'Interval'}

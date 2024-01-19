@@ -73,7 +73,7 @@ const ResearchEntries = () => {
 
 
     return (
-        <RoleWrapper roles={['admin','buying group']}>
+        <RoleWrapper altRoles={['buying group']} >
         <GraphWithStatCard
             title={'Surprice Research Entries'}
             isLoading={!rows.length>0}

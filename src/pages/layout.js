@@ -171,6 +171,15 @@ const pages = {
                 }
             }
         },
+        "Surprice": {
+            leftSection: <IconTallymarks size={size} stroke={stroke}/>,
+            roles: ["buying group","surplus director"],
+            links: {
+                    "Research Entries": {
+                        href: "/graphs/surprice/researchEntries"
+                    },
+                }
+            },
         "Data Entry": {
             leftSection: <IconForms size={size} stroke={stroke}/>,
             roles: ["bsa", "surplus director","warehouse"],

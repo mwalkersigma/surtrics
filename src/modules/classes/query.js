@@ -3,6 +3,7 @@ export default class Query {
         this.table = table;
         this.columns = columns;
         this.aggregateColumns = [];
+        this.joins = [];
         this.where = [];
         this.whereChains = [];
         this.groupBy = [];
@@ -27,6 +28,10 @@ export default class Query {
     }
     addWhereWithOr(conditions){
         this.whereChains.push(conditions);
+        return this;
+    }
+    join(table,joinType,joinCondition){
+        this.joins.push([table,joinType,joinCondition]);
         return this;
     }
     conditional = (condition,cbIfTrue,cbIfFalse) => {
@@ -60,6 +65,9 @@ export default class Query {
             this.params.push(...this.aggregateColumns.map(([aggregate])=>aggregate));
         }
         query += ` FROM ${this.table} `;
+        if(this.joins.length > 0){
+            query += ` ${this.joins.map(([table,joinType,joinCondition])=>`${joinType} JOIN ${table} ON ${joinCondition}`).join(" ")}`;
+        }
         if(this.where.length > 0){
             query += `WHERE ${this.where.map(({column,operator,value})=>`${column} ${operator} $${count++}`).join(" AND ")}`;
             this.params.push(...this.where.map(({value})=>value));

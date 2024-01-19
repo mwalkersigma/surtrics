@@ -5,7 +5,6 @@ import useUpdates from "../../../modules/hooks/useUpdates";
 import {NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
 import BaseChart from "../../../components/Chart";
-import roleWrapper from "../../../components/RoleWrapper";
 import RoleWrapper from "../../../components/RoleWrapper";
 import useUsage from "../../../modules/hooks/useUsage";
 

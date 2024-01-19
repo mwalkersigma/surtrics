@@ -5,6 +5,8 @@ import useUpdates from "../../../modules/hooks/useUpdates";
 import {NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
 import BaseChart from "../../../components/Chart";
+import roleWrapper from "../../../components/RoleWrapper";
+import RoleWrapper from "../../../components/RoleWrapper";
 
 const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
@@ -71,6 +73,7 @@ const ResearchEntries = () => {
 
 
     return (
+        <RoleWrapper roles={['admin','buying group']}>
         <GraphWithStatCard
             title={'Surprice Research Entries'}
             isLoading={!rows.length>0}
@@ -97,6 +100,7 @@ const ResearchEntries = () => {
         >
             <BaseChart stacked data={data} config={options}/>
         </GraphWithStatCard>
+        </RoleWrapper>
     );
 };
 

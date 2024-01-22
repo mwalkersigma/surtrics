@@ -120,7 +120,7 @@ function UserGraph() {
     const {colorScheme: theme} = useMantineColorScheme();
     return (
         <GraphWithStatCard
-            title={"User View"}
+            title={"Individual Daily Chart"}
             isLoading={individualData.length === 0}
             dateInput={
                 <DatePickerInput

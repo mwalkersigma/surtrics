@@ -89,7 +89,7 @@ const pages = {
                     leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
                     links: {
                         "Range View": {
-                            href: "/graphs/quantity/weeklyView"
+                            href: "/graphs/quantity/rangeView"
                         }
                     }
                 },

@@ -25,17 +25,17 @@ async function postHandler (req,res) {
         .addGroupBy("date")
         .addOrderBy("date",'ASC')
         .conditional(body.date,
-            ()=>query.addWhere('transaction_date','>=',body.date),
+            (q)=>q.addWhere('transaction_date','>=',body.date),
             ()=>null
         )
         .conditional(body.startDate && body.endDate,
-            ()=>query.addWhere('transaction_date','>=',body.startDate)
+            (q)=>q.addWhere('transaction_date','>=',body.startDate)
                 .addWhere('transaction_date','<=',body.endDate),
             ()=>null
         )
         .conditional(body.interval,
-            ()=>query.addAggregate(`DATE_TRUNC('@', transaction_date) as date`,body.interval),
-            ()=>query.addColumn(`DATE_TRUNC('week',transaction_date) as date`)
+            (q)=>q.addAggregate(`DATE_TRUNC('@', transaction_date) as date`,body.interval),
+            (q)=>q.addColumn(`DATE_TRUNC('week',transaction_date) as date`)
         )
     return db.query(query.query, query.params)
         .then((response) => {

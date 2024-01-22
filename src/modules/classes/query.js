@@ -2,6 +2,7 @@ export default class Query {
     constructor(table,columns) {
         this.table = table;
         this.columns = columns;
+        this.offset = null;
         this.aggregateColumns = [];
         this.joins = [];
         this.where = [];
@@ -46,6 +47,10 @@ export default class Query {
         this.groupBy.push(column);
         return this;
     }
+    addOffset(offset){
+        this.offset = offset;
+        return this;
+    }
     addOrderBy(column,direction){
         this.orderBy.push({column,direction});
         return this;
@@ -68,11 +73,12 @@ export default class Query {
         if(this.joins.length > 0){
             query += ` ${this.joins.map(([table,joinType,joinCondition])=>`${joinType} JOIN ${table} ON ${joinCondition}`).join(" ")}`;
         }
+
         if(this.where.length > 0){
-            query += `WHERE ${this.where.map(({column,operator,value})=>`${column} ${operator} $${count++}`).join(" AND ")}`;
+            query += ` WHERE ${this.where.map(({column,operator})=>`${column} ${operator} $${count++}`).join(" AND ")}`;
             this.params.push(...this.where.map(({value})=>value));
             let whereChain = this.whereChains
-                .map((conditions)=>`(${conditions.map(({column,operator,value})=>`${column} ${operator} $${count++}`).join(" OR ")})`).join(" AND ");
+                .map((conditions)=>`(${conditions.map(({column,operator})=>`${column} ${operator} $${count++}`).join(" OR ")})`).join(" AND ");
 
             if(whereChain.length > 0){
                 query += ` AND ${whereChain}`;
@@ -91,6 +97,9 @@ export default class Query {
         if(this.limit.length > 0){
             query += ` LIMIT ${this.limit.join(", ")}`;
         }
+        if(this.offset){
+            query += ` OFFSET ${Number(this.offset)}`;
+        }
         query += `;`;
         this._query = query;
         return query;
@@ -102,7 +111,6 @@ export default class Query {
 
     getParsedQuery(){
         let query = this.build();
-        let params = this.params;
         this.params.forEach((param,index)=>{
             query = query.replace(`$${index+1}`,`'${param}'`);
         })

@@ -13,6 +13,7 @@ const RangeView = () => {
     useUsage("Metrics", "quantity-range-chart")
     const [[startDate, endDate], setDates] = useState([new Date('12-01-2023'), new Date('12-31-2023')]);
     const [interval, setInterval] = useState('week');
+
     const quantities = useUpdates("/api/views/quantity/totalOnly", {startDate: startDate, endDate: endDate,interval});
 
     const {colorScheme: theme} = useMantineColorScheme();
@@ -36,16 +37,7 @@ const RangeView = () => {
         return acc
     }, {})
 
-    let max = Object
-        .values(dataForGraph)
-        .map(arr => arr.map(item => +item))
-        .reduce((acc, cur) => {
-            cur.forEach((item, i) => {
-                acc[i] += item;
-            })
-            return acc
-        }, [0, 0, 0, 0, 0, 0, 0])
-    max = Math.ceil(Math.max(...max) * 2)
+
 
     const options = {
         plugins: {
@@ -61,11 +53,6 @@ const RangeView = () => {
                 color: parseTheme(theme),
             },
         },
-        scales: {
-            y: {
-                max: max
-            }
-        }
     }
 
     const data = {

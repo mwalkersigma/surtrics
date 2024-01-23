@@ -22,7 +22,9 @@ function UserRolesTable({data,open,setUser}) {
             acc[parent] += 1;
             total += 1;
             return acc
-        },{})
+        },{});
+
+        let usedColors = {};
 
         return (
             <Table.Tr key={item.name}>
@@ -46,8 +48,12 @@ function UserRolesTable({data,open,setUser}) {
                             Object
                                 .entries(parentKeys)
                                 .map(([key, value],index) => {
+                                    if(!usedColors[key]){
+                                        usedColors[key] = colorScheme.byIndex(index);
+                                    }
+                                    let color = usedColors[key];
                                     return (
-                                        <Text key={index} fz="xs" c={colorScheme.byIndex(index)} fw={700} truncate={'end'}>
+                                        <Text key={index} fz="xs" c={color} fw={700} truncate={'end'}>
                                             {key}
                                         </Text>
                                     )
@@ -60,12 +66,13 @@ function UserRolesTable({data,open,setUser}) {
                             Object
                                 .entries(parentKeys)
                                 .map(([key, value],index) => {
+                                    let color = usedColors[key]
                                     return (
                                         <Tooltip label={key} key={key} position="top" withArrow={false}>
                                             <Progress.Section
                                                 className={classes.progressSection}
                                                 value={value/total*100}
-                                                color={colorScheme.byIndex(index)}
+                                                color={color}
                                             >
                                                 <Progress.Label>{value}</Progress.Label>
                                             </Progress.Section>

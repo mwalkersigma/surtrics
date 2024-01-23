@@ -2,6 +2,7 @@ import React from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
 import {Container, Skeleton, Table, Tabs, Text, Title} from "@mantine/core";
 import formatter from "../../../modules/utils/numberFormatter";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 const buckets = [
@@ -100,6 +101,7 @@ const macroBuckets = [
 ]
 
 const SalesBuckets = () => {
+    useUsage("Ecommerce", "sales-priceBuckets-table")
     const sales = useUpdates("/api/views/sales/usingComponent");
 
     const isLoading = sales.length === 0;

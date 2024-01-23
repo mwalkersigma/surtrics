@@ -6,17 +6,16 @@ export default class Order {
         this.name = order.name;
         this.orderId = order['order_id'];
         this.storeId = order['store_id'];
-        this.timeStamp = order['payment_date'];
-        this.paymentDate = format(new Date(order['payment_date']), "MM/dd/yyyy");
-        this.paymentTime = format(new Date(order['payment_date']), "HH:mm:ss");
+        this.timeStamp = order['payment_date_utc'];
+        this.paymentDate = format(new Date(this.timeStamp), "MM/dd/yyyy");
+        this.paymentTime = format(new Date(this.timeStamp), "HH:mm:ss");
         this.orderStatus = order['order_status'];
-        this.sale_id = order.sale_id;
         this._items = null;
     }
 
     get items() {
         if(this._items === null){
-            this._items = this._order.items.map(this.processItem).flat();
+            this._items = this.processItems(this._order);
         }
         return this._items;
     }
@@ -30,27 +29,18 @@ export default class Order {
         return Number(this.items.reduce((total, item) => Number(total) + Number(item.unitPrice) * Number(item.quantity), 0));
     }
 
-    processItem(item) {
-        try{
-            let temp = JSON.parse(item);
-            let tempPrice = temp['unitPrice'];
-            if(typeof tempPrice === "string"){
-                tempPrice = tempPrice.replaceAll("$", "").replaceAll(',','').trim();
-                temp['unitPrice'] = +tempPrice;
-            }
-            return temp;
-
-        }catch (e) {
-            let temp= JSON.parse("[" + item + "]");
-            temp.map(item => {
-                try {
-                    item['unitPrice'] = item['unitPrice']?.replaceAll("$", "").replaceAll(',', '').trim();
-                    return item;
-                } catch (e) {
-                    return item;
+    processItems(order) {
+        if(!this._items) {
+            const {names, quantities_sold, sale_ids, skus, sold_prices} = order
+            this._items = names.map((name, index) => {
+                return {
+                    name,
+                    quantity: quantities_sold[index],
+                    sku: skus[index],
+                    unitPrice: sold_prices[index]
                 }
             })
-            return temp;
         }
+        return this._items;
     }
 }

@@ -13,6 +13,7 @@ import BaseChart from "../../../components/Chart";
 import useOrders from "../../../modules/hooks/useOrders";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import formatter from "../../../modules/utils/numberFormatter";
+import {lastDayOfWeek} from "date-fns";
 
 
 const storeNameMap = {
@@ -39,7 +40,7 @@ const WeeklyView = () => {
     const [storeId, setStoreId] = useState("All");
     const salesTarget = useUpdates('/api/admin/salesTarget');
 
-    const orders = useOrders({date:findStartOfWeek(date), interval:'1 week'},{acceptedConditions: ["1", "2", "3", "4"]});
+    const orders = useOrders({startDate:findStartOfWeek(date), endDate:lastDayOfWeek(new Date(date))},{acceptedConditions: ["1", "2", "3", "4"]});
     const useTheme = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
 
 

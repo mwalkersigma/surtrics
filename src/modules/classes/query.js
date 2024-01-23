@@ -120,6 +120,10 @@ export default class Query {
     get query(){
         return this.build();
     }
+    log(value){
+        console.log(value);
+        return this;
+    }
 
     getParsedQuery(){
         let query = this.build();

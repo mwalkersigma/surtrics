@@ -1,23 +1,30 @@
-SELECT
-    payment_date,
-    order_status,
-    name,
-    store_id,
-    items,
-    order_id,
-    count(payment_date) as count
-FROM
-    surtrics.surplus_sales_data
-GROUP BY
-    payment_date,
-    order_status,
-    name,
-    store_id,
-    items,
-    order_id
-HAVING
-    count(payment_date) > 2;
-
-
-
-
+-- SELECT
+--     payment_date,
+--     order_status,
+--     name,
+--     store_id,
+--     items,
+--     order_id,
+--     count(payment_date) as count
+-- FROM
+--     surtrics.surplus_sales_data
+-- GROUP BY
+SELECT orders.order_id,
+       orders.payment_date_utc,
+       orders.order_status,
+       orders.name,
+       orders.store_id,
+       array_agg(s.sale_id)       AS sale_ids,
+       array_agg(s.sku)           AS skus,
+       array_agg(s.name)          AS names,
+       array_agg(s.quantity_sold) AS quantities_sold,
+       array_agg(s.sold_price)    AS sold_prices
+FROM sursuite.orders
+         INNER JOIN sursuite.sales s on orders.order_id = s.order_id
+WHERE orders.payment_date_utc >= '2023-12-01'
+  AND orders.payment_date_utc <= '2023-12-31'
+GROUP BY orders.order_id,
+         orders.payment_date_utc,
+         orders.order_status,
+         orders.name,
+         orders.store_id;

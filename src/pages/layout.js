@@ -241,7 +241,10 @@ const pages = {
                     links: {
                         "Range View": {
                             href: "/tables/sales/dailyView"
-                        }
+                        },
+                        "Sales By Price Range" : {
+                            href: "/tables/sales/salesByPriceRange"
+                        },
                     }
                 }
             }

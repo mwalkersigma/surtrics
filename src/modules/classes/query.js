@@ -7,6 +7,7 @@ export default class Query {
         this.joins = [];
         this.where = [];
         this.whereChains = [];
+        this.adHocWhere = null;
         this.groupBy = [];
         this.orderBy = [];
         this.limit = [];
@@ -29,6 +30,10 @@ export default class Query {
     }
     addWhereWithOr(conditions){
         this.whereChains.push(conditions);
+        return this;
+    }
+    addAdHocWhere(condition){
+        this.adHocWhere = condition
         return this;
     }
     join(table,joinType,joinCondition){
@@ -74,7 +79,7 @@ export default class Query {
             query += ` ${this.joins.map(([table,joinType,joinCondition])=>`${joinType} JOIN ${table} ON ${joinCondition}`).join(" ")}`;
         }
 
-        if(this.where.length > 0){
+        if(this.where.length > 0 && !this.adHocWhere){
             query += ` WHERE ${this.where.map(({column,operator})=>`${column} ${operator} $${count++}`).join(" AND ")}`;
             this.params.push(...this.where.map(({value})=>value));
             let whereChain = this.whereChains
@@ -82,9 +87,16 @@ export default class Query {
 
             if(whereChain.length > 0){
                 query += ` AND ${whereChain}`;
-                this.params = [...this.params, ...this.whereChains.map((conditions)=>conditions.map(({value})=>value)).flat()];
+                this.params = [
+                    ...this.params,
+                    ...this.whereChains
+                        .map((conditions)=>conditions.map(({value})=>value))
+                        .flat()
+                ];
             }
-
+        }
+        if(this.adHocWhere && this.where.length === 0){
+            query += ` ${this.adHocWhere}`;
         }
         if(this.groupBy.length > 0){
             query += ` GROUP BY ${this.groupBy.join(", ")}`;
@@ -112,7 +124,7 @@ export default class Query {
     getParsedQuery(){
         let query = this.build();
         this.params.forEach((param,index)=>{
-            query = query.replace(`$${index+1}`,`'${param}'`);
+            query = query.replace(`$${index+1}`,`${isNaN(param) ? `'${param}'` : Number(param)}`);
         })
         return query;
     }

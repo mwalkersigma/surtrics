@@ -3,32 +3,41 @@ import db from "../../../../db";
 import Query from "../../../../modules/classes/query";
 
 async function getComponents(req,res) {
-    let query = new Query(
-        'sursuite.components',
-        [
-            'components.sku',
-            'retail_price',
-            'quantity',
-            'quantity_sold',
-            'cost',
-            'sold_price'
-        ]
-    );
-    query.join('surplusapi.approved_templates a','LEFT','SPLIT_PART(components.sku,\'-\',1) = a.inventory_sku::text ');
-    query.join('sursuite.sales s','LEFT','components.sku = s.sku ');
-    query.join('sursuite.orders o','LEFT OUTER','o.order_id = s.order_id ');
-    query.addWhere('o.payment_date_utc','>=', '2023-01-01');
-    query.addWhere('o.payment_date_utc','<=', '2023-12-31');
 
-    console.log(query.getParsedQuery())
 
-    await db.query(query.query,query.params)
+    await db.query(`
+        WITH orders AS (
+            SELECT 
+                orders.order_id,     
+                sales.sku           as sku,      
+                sales.quantity_sold as quantity_sold,            
+                sales.sold_price
+            FROM sursuite.orders
+                INNER JOIN sursuite.sales ON orders.order_id = sales.order_id
+            WHERE 
+                payment_date_utc >= $1
+                AND payment_date_utc <= $2
+        )
+        SELECT components.sku,
+               retail_price,
+               quantity,
+               SUM(orders.quantity_sold) as quantity_sold,
+               cost,
+               orders.sold_price
+        FROM 
+            sursuite.components
+        LEFT JOIN orders ON components.sku = orders.sku
+        GROUP BY 
+            components.sku,
+            orders.sold_price,
+            quantity_sold
+        ORDER BY 
+            components.sku ASC;
+    `,['2023-01-01','2023-12-31'])
         .then((data) => {
-            console.log(data)
             res.json(data.rows)
         })
         .catch((error) => {
-            console.log(error)
             res.json(error)
         })
 

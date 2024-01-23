@@ -71,7 +71,7 @@ const DailyView = () => {
 
     return (
         <GraphWithStatCard
-            title={"Daily Sales By Channel"}
+            title={"Sales By Channel"}
             isLoading={orders.length === 0}
             noBorder
             dateInput={

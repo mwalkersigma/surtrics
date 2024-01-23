@@ -76,7 +76,8 @@ const buckets = [
         max: Infinity,
         label: "$5000.01 and above"
     }
-]
+];
+
 const macroBuckets = [
     {
         min: 0,
@@ -98,7 +99,7 @@ const macroBuckets = [
         max: Infinity,
         label: "$3000.01 and above"
     },
-]
+];
 
 const SalesBuckets = () => {
     useUsage("Ecommerce", "sales-priceBuckets-table")
@@ -216,63 +217,75 @@ const SalesBuckets = () => {
                                                 return acc + (Number(sale['quantity'] || 0) * Number(sale['retail_price'] || 0))
                                             },0)
                                         ,'currency')
-                                ))
+                                ));
+
+                            let percentOfTotalSales = macroBucketsMap
+                                .get(range.min)
+                                .map( bucket => (
+                                    formatter(
+                                        bucket
+                                            .sales
+                                            .reduce( (acc, sale) =>{
+                                                if( sale['quantity'] < 0 ) return acc;
+                                                return acc + Number(Number(sale['sold_price']) * Number(sale['quantity_sold']))
+                                            }, 0)/ totalSales * 100) + "%"
+                                ));
+
+                            let percentOfSoldItems = macroBucketsMap
+                                .get(range.min)
+                                .map( bucket => (
+                                    formatter((
+                                        bucket
+                                            .sales
+                                            .reduce( (acc, sale) => acc + Number(sale['quantity_sold']), 0) / totalQuantitySold) * 100)) + "%");
 
                             let rows = [
                                 {
                                     label: "Total Sales",
-                                    values: [...totalOfSales,formatter(totalSales,'currency')]
+                                    values: [
+                                        ...totalOfSales,
+                                        formatter(totalOfSales.map( val => Number(`${val}`.replace(/[^0-9.-]+/g,""))).reduce( (a,b) => a + b, 0)),
+                                        formatter(totalSales,'currency')
+                                    ]
                                 },
                                 {
                                     label: "Total Quantity Sold",
-                                    values: [...totalQuantitySoldBucket,formatter(totalQuantitySold,'number')]
+                                    values: [
+                                        ...totalQuantitySoldBucket,
+                                        formatter(totalQuantitySoldBucket.map( val => Number(`${val}`.replace(/[^0-9.-]+/g,""))).reduce( (a,b) => a + b, 0)),
+                                        formatter(totalQuantitySold,'number')
+                                    ]
                                 },
                                 {
                                     label: "Percent of Total Sales",
-                                    values: [...macroBucketsMap
-                                        .get(range.min)
-                                        .map( bucket => (
-                                            formatter(
-                                                bucket
-                                                    .sales
-                                                    .reduce( (acc, sale) =>{
-                                                        if( sale['quantity'] < 0 ) return acc;
-                                                        return acc + Number(Number(sale['sold_price']) * Number(sale['quantity_sold']))
-                                                    }, 0)/ totalSales * 100) + "%"
-                                        ))," "]
+                                    values: [
+                                        ...percentOfTotalSales,
+                                            percentOfTotalSales.length > 0 ? percentOfTotalSales.reduce( (a,b) => a + Number(b.replace('%','')), 0) + '%' : 0,
+                                            " "
+                                    ]
                                 },
                                 {
                                     label: "Percent of Sold Items",
-                                    values: [...macroBucketsMap
-                                        .get(range.min)
-                                        .map( bucket => (
-                                            formatter((
-                                                bucket
-                                                    .sales
-                                                    .reduce( (acc, sale) => acc + Number(sale['quantity_sold']), 0) / totalQuantitySold) * 100)) + "%"
-
-                                        ), " "]
+                                    values: [
+                                        ...percentOfSoldItems,
+                                            percentOfSoldItems.length > 0 ? percentOfSoldItems.reduce( (a,b) => a + Number(b.replace('%','')), 0) + '%' : 0,
+                                        " "
+                                    ]
                                 },
                                 {
                                     label: "Total Items Available for Sell in Range",
-                                    values: [...totalOfItemsAvailableForSellInRange,totalOfItemsAvailableForSell]
+                                    values: [
+                                        ...totalOfItemsAvailableForSellInRange,
+                                        formatter(totalOfItemsAvailableForSellInRange.map( val => Number(`${val}`.replace(/[^0-9.-]+/g,""))).reduce( (a,b) => a + b, 0)),
+                                        totalOfItemsAvailableForSell
+                                    ]
                                 },
                                 {
                                     label: "Total Inventory Value in Range",
-                                    values: [...totalQuantityAvailableToSaleInRange,valueOfAllItemsAvailableForSell]
-                                },
-                                {
-                                    label: "Total Inventory Value in group",
-                                    values: [...Array(macroBucketsMap.get(range.min).length - 1).fill(' '),
-                                        formatter(macroBucketsMap
-                                            .get(range.min)
-                                            .map( bucket => {
-                                                return bucket.sales.reduce((acc, sale) => {
-                                                    if( sale['quantity'] < 0 ) return acc;
-                                                    return acc + (Number(sale['quantity'] || 0) * Number(sale['retail_price'] || 0))
-                                                }, 0);
-                                            })
-                                            .reduce( (a,b)=> a + +b, 0),'currency')
+                                    values: [
+                                        ...totalQuantityAvailableToSaleInRange,
+                                        formatter(totalQuantityAvailableToSaleInRange.map( val => Number(`${val}`.replace(/[^0-9.-]+/g,""))).reduce( (a,b) => a + b, 0),'currency'),
+                                        valueOfAllItemsAvailableForSell
                                     ]
                                 }
                             ]
@@ -290,7 +303,8 @@ const SalesBuckets = () => {
                                                             <Table.Th key={`th-${bucket.label}`}>{bucket.label}</Table.Th>
                                                         ))
                                                 }
-                                                <Table.Th>Total For All Ranges</Table.Th>
+                                                <Table.Th> Total for Group </Table.Th>
+                                                <Table.Th> Total For All Ranges </Table.Th>
                                             </Table.Tr>
                                         </Table.Thead>
                                         <Table.Tbody>

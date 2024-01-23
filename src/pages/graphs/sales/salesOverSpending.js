@@ -131,11 +131,6 @@ const SalesOverSpending = () => {
         return acc;
     },{});
 
-    console.log(bySource)
-
-
-
-
     let totalSales = salesUpdates.reduce((acc,order)=>acc + +order.total,0);
     let totalPurchases = quickBooksUpdates.reduce((acc,purchase)=>acc + +purchase.purchase_total,0);
 

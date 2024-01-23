@@ -204,7 +204,6 @@ function WeeklyChart(props){
             }
         ]
     };
-    console.log(events)
     return <BaseChart events={events} stacked data={data} config={options}/>
 }
 

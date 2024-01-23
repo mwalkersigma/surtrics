@@ -60,7 +60,7 @@ const YearlyView = () => {
     const [affectedCategories, setAffectedCategories] = useState([]);
     const theme = useMantineColorScheme();
     const salesTarget = useUpdates('/api/admin/salesTarget');
-    console.log(salesTarget)
+
     const themeColor = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
     const [storeId, setStoreId] = useState("Total");
     const orders = useOrders({startDate:date, endDate:lastDayOfYear(date)},{acceptedConditions: ["1", "2", "3", "4"]});
@@ -141,7 +141,6 @@ const YearlyView = () => {
         })
     }
 
-    let max = Math.max(...dataForGraph.map(({monthValue})=>monthValue)) * 1.5;
     const data = {
         labels:displayMonths,
         datasets:storeDataMap[storeNameMap[storeId]].map((dataSet,index) => {

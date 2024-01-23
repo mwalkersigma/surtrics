@@ -36,9 +36,6 @@ const ResearchEntries = () => {
         .map(day=>rows.filter(row=>row.date === day))
         .map(arr=>arr.reduce((acc,curr)=>acc + +curr.count,0)));
 
-
-    console.log(bestDate)
-
     const colors = [0,1,3,5,6,7,8]
     let datasets = names.map((name,i)=>{
         return {

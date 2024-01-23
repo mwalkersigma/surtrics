@@ -24,7 +24,6 @@ function makeSalesTargets( incomingSalesTargets, currentSalesTargets ){
             difCount++;
         }
     }
-    console.log(difCount)
     if(difCount === 0){
         result =  defaultSettings;
     }

@@ -160,7 +160,6 @@ async function main () {
     console.log("Getting ebay orders")
     let ebayOrders = await ebaySeed("./src/scripts/eBay.csv")
 
-    console.log(ebayOrders.length);
     console.log("Getting historical orders")
     let bigCommerceOrders = await getShipStationOrders({
         pageSize: 500,
@@ -203,17 +202,12 @@ async function main () {
             INSERT INTO surtrics.surplus_sales_data (payment_date, order_id, order_status, name, store_id, items) 
             VALUES ( '${paymentDate}', '${orderId}', '${orderStatus}', '${name}', '${storeId}', Array['${items}']);`)
     });
-    let {results,errors} = await PromisePool
+    await PromisePool
         .for(queries)
         .withConcurrency(250)
         .process(async (query) => {
             await db.query(query);
         });
-    console.log(results.filter(result => result === undefined));
-    console.log("Results",results.filter(result => result === undefined).length)
-    console.log(errors.filter(error => error !== undefined));
-    console.log("Errors",errors.filter(error => error !== undefined).length)
-    console.log("done")
 
 }
 

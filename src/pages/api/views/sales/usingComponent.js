@@ -6,7 +6,7 @@ async function getComponents(req,res) {
 
 
     await db.query(`
-        WITH orders AS (
+        WITH annual_sales AS (
             SELECT 
                 orders.order_id,     
                 sales.sku           as sku,      
@@ -15,21 +15,21 @@ async function getComponents(req,res) {
             FROM sursuite.orders
                 INNER JOIN sursuite.sales ON orders.order_id = sales.order_id
             WHERE 
-                payment_date_utc >= $1
+                payment_date_utc >= $1 
                 AND payment_date_utc <= $2
         )
         SELECT components.sku,
                retail_price,
                quantity,
-               SUM(orders.quantity_sold) as quantity_sold,
+               SUM(a.quantity_sold) as quantity_sold,
                cost,
-               orders.sold_price
+               a.sold_price
         FROM 
             sursuite.components
-        LEFT JOIN orders ON components.sku = orders.sku
+        LEFT JOIN annual_sales a ON components.sku = a.sku
         GROUP BY 
             components.sku,
-            orders.sold_price,
+            a.sold_price,
             quantity_sold
         ORDER BY 
             components.sku ASC;

@@ -111,7 +111,7 @@ const SalesBuckets = () => {
     const macroBucketsMap = new Map( macroBuckets.map( range => [range.min, [] ] ));
 
     sales.forEach( sale => {
-        let priceRange = buckets.find( range => sale['sold_price'] >= range.min && sale['sold_price'] <= range.max )
+        let priceRange = buckets.find( range => sale['retail_price'] >= range.min && sale['retail_price'] <= range.max )
         if(priceRange){
             priceRangeBuckets.get(priceRange.label).push(sale)
         }

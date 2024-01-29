@@ -97,12 +97,7 @@ const RangeView = () => {
                 }
             },
         },
-        scales:{
-            y: {
-                max:600
-            },
 
-        }
     };
     const dataForBaseChart = {
         labels,

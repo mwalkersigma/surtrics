@@ -4,7 +4,6 @@ import {subMonths} from "date-fns";
 
 import {NativeSelect, useMantineColorScheme} from "@mantine/core";
 
-
 import {
     CategoryScale,
     Chart as ChartJS,
@@ -14,6 +13,7 @@ import {
     Title as chartTitle,
     Tooltip
 } from "chart.js";
+
 import DataLabels from "chartjs-plugin-datalabels";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
@@ -42,10 +42,11 @@ const RangeView = () => {
     const [user,setUser] = useState("Total")
     const [dateRange, setDateRange] = React.useState([subMonths(new Date(),1), new Date()])
     const pricingData = useUpdates('/api/views/pricingData', {startDate: dateRange[0], endDate: dateRange[1]});
-    console.log(pricingData)
+
     let users = ['Total']
     pricingData.forEach(item=>{
         let username = item['user_who_priced'];
+        if(!username) return;
         if(users.includes(username)){
             return;
         }
@@ -98,11 +99,22 @@ const RangeView = () => {
         },
         scales:{
             y: {
-                max:10000
+                max:600
             },
 
         }
     };
+    const dataForBaseChart = {
+        labels,
+        datasets:[
+            {
+                label:"Pricing Data",
+                data:values,
+                borderColor:colorScheme.blue,
+                backgroundColor:colorScheme.blue,
+                type:'line'
+            }
+        ]}
     return (
         <GraphWithStatCard
             isLoading={pricingData.length === 0}
@@ -152,7 +164,7 @@ const RangeView = () => {
                 />,
             ]}
         >
-            <BaseChart data={{labels,datasets:[{label:"Pricing Data",data:values,borderColor:colorScheme.blue,backgroundColor:colorScheme.blue,type:'line'}]}} stacked config={options} />
+            <BaseChart data={dataForBaseChart} stacked config={options} />
         </GraphWithStatCard>
     );
 };

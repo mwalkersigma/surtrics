@@ -1,5 +1,5 @@
 import React from "react";
-import { Center, Grid, Paper, Text, Title, useMantineColorScheme} from '@mantine/core';
+import {Center, Grid, Paper, Text, Title, useMantineColorScheme} from '@mantine/core';
 import formatter from "../modules/utils/numberFormatter";
 import {addDays, addHours, format} from "date-fns";
 import {Bar, Line} from "react-chartjs-2";
@@ -13,7 +13,7 @@ import makeWeekArray from "../modules/utils/makeWeekArray";
 import {BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement} from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import useNav from "../modules/hooks/useNav";
-import { useViewportSize } from "@mantine/hooks";
+import {useViewportSize} from "@mantine/hooks";
 import useUsage from "../modules/hooks/useUsage";
 import normalize from "../modules/utils/normalize";
 import DashboardCard from "../components/mantine/dashboardCard";
@@ -44,14 +44,14 @@ const times = [
     "4 PM"
 ];
 
-function WeekGraph ({weekSeed,goal,theme, height}){
-    let dateLabels = weekSeed.map(({date}) => format(addHours(new Date(date),6),"EEE MM/dd"));
+function WeekGraph({weekSeed, goal, theme, height}) {
+    let dateLabels = weekSeed.map(({date}) => format(addHours(new Date(date), 6), "EEE MM/dd"));
     return <Bar
         data={{
             labels: dateLabels,
-            datasets:[
+            datasets: [
                 {
-                    data:weekSeed.map(({count}) => +count),
+                    data: weekSeed.map(({count}) => +count),
                     borderColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
                     backgroundColor: (ctx) => ctx?.parsed?.y < goal ? colorScheme.red : colorScheme.green,
                 }
@@ -70,7 +70,7 @@ function WeekGraph ({weekSeed,goal,theme, height}){
                 },
             },
             scales: {
-                x:{
+                x: {
                     ticks: {
                         color: Theme(theme) + "AA"
                     },
@@ -78,8 +78,8 @@ function WeekGraph ({weekSeed,goal,theme, height}){
                         color: Theme(theme) + "AA"
                     }
                 },
-                y:{
-                    max : goal * 2,
+                y: {
+                    max: goal * 2,
                     ticks: {
                         color: Theme(theme) + "AA"
                     },
@@ -92,14 +92,15 @@ function WeekGraph ({weekSeed,goal,theme, height}){
         height={height}
     />
 }
-function DailyGraph ({dailyData,theme,height}){
+
+function DailyGraph({dailyData, theme, height}) {
     return <Line
         data={{
-            labels: times.slice(0,dailyData.length),
-            datasets:[
+            labels: times.slice(0, dailyData.length),
+            datasets: [
                 {
-                    data:dailyData.map(({count}) => +count),
-                    borderColor:'rgba(54, 162, 235, 1)',
+                    data: dailyData.map(({count}) => +count),
+                    borderColor: 'rgba(54, 162, 235, 1)',
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                 }
             ]
@@ -119,7 +120,7 @@ function DailyGraph ({dailyData,theme,height}){
                 },
             },
             scales: {
-                x:{
+                x: {
                     ticks: {
                         color: Theme(theme) + "AA"
                     },
@@ -127,7 +128,7 @@ function DailyGraph ({dailyData,theme,height}){
                         color: Theme(theme) + "AA"
                     }
                 },
-                y:{
+                y: {
                     ticks: {
                         color: Theme(theme) + "AA"
                     },
@@ -141,57 +142,72 @@ function DailyGraph ({dailyData,theme,height}){
     />
 }
 
-function handleDailyData(dailyData){
+function handleDailyData(dailyData) {
     let temp = dailyData
-        .reduce((acc,curr) => {
+        .reduce((acc, curr) => {
             let date = new Date(curr.date_of_transaction).toLocaleString();
             if (!acc[date]) acc[date] = 0;
             acc[date] += +curr.count;
             return acc
-        },{})
-    return Object.entries(temp).map(([date,count]) => ({date_of_transaction:date,count}));
+        }, {})
+    return Object.entries(temp).map(([date, count]) => ({date_of_transaction: date, count}));
 
 }
 
 export default function ManLayout({}) {
-    useUsage("Metrics","Dashboard")
+    useUsage("Metrics", "Dashboard")
     const hasNav = useNav();
     let date = new Date()
-    const {colorScheme:theme} = useMantineColorScheme();
+    const {colorScheme: theme} = useMantineColorScheme();
     const errorUpdates = useUpdates("/api/views/errors");
 
-    let dailyData = useUpdates("/api/views/increments",{date:date.toLocaleDateString(), interval:"1 day", increment: "hour"});
+    let dailyData = useUpdates(
+        "/api/views/increments",
+        {
+            date: date.toLocaleDateString(),
+            interval: "1 day",
+            increment: "hour"
+        }
+    );
     let processedDailyData = handleDailyData(dailyData);
 
-    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()),1))
-    let weekData = useUpdates("/api/views/increments",{date,interval:"1 week",increment:"day"});
+    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()), 1))
+    let weekData = useUpdates(
+        "/api/views/increments",
+        {
+            date,
+            interval: "1 week",
+            increment: "day"
+        }
+    );
     let processedWeekData = processWeekData(weekData);
-    const {height:viewportHeight} = useViewportSize();
+
+    const {height: viewportHeight} = useViewportSize();
 
     let height = normalized(viewportHeight)
-    if(hasNav) height = height - 50;
+    if (hasNav) height = height - 50;
 
 
     const goal = useGoal();
     const hourlyGoal = goal / 7;
 
-    let weekSeed = makeWeekArray(processedWeekData,new Date(date));
+    let weekSeed = makeWeekArray(processedWeekData, new Date(date));
 
 
     let weeklyErrors = errorUpdates
-            .map((item)=>({...item,date_of_transaction:item.date_of_transaction.split("T")[0]}))
-            .filter(({date_of_transaction}) => weekSeed.map(item=>item.date).includes(date_of_transaction))
-            .reduce((acc,{count}) => acc + +count,0);
+        .map((item) => ({...item, date_of_transaction: item.date_of_transaction.split("T")[0]}))
+        .filter(({date_of_transaction}) => weekSeed.map(item => item.date).includes(date_of_transaction))
+        .reduce((acc, {count}) => acc + +count, 0);
 
     let errorsToday = errorUpdates
-        .map((item)=>({...item,date_of_transaction:item.date_of_transaction.split("T")[0]}))
+        .map((item) => ({...item, date_of_transaction: item.date_of_transaction.split("T")[0]}))
         .filter(({date_of_transaction}) => date_of_transaction === new Date().toISOString().split("T")[0])
-        .reduce((acc,{count}) => acc + +count,0);
+        .reduce((acc, {count}) => acc + +count, 0);
 
     if (processedWeekData.length === 0) return <div className={"text-center"}>Loading...</div>
 
-    const totalIncrements = weekSeed.map(({count}) => +count).reduce((a,b)=>a+b,0);
-    const totalForToday = dailyData.reduce((a,b) => a + +b.count,0);
+    const totalIncrements = weekSeed.map(({count}) => +count).reduce((a, b) => a + b, 0);
+    const totalForToday = dailyData.reduce((a, b) => a + +b.count, 0);
     const dailyAverage = Math.round(totalIncrements / (processedWeekData.length || 1));
     const hourlyAverage = Math.round(dailyAverage / 7 || 1);
 
@@ -229,24 +245,24 @@ export default function ManLayout({}) {
 
     return (
         <Center h={`${!hasNav && "100vh"}`}>
-            <Grid py={`${!hasNav && "xl"}`} >
+            <Grid py={`${!hasNav && "xl"}`}>
                 <Grid.Col span={1}></Grid.Col>
                 <Grid.Col span={10}>
                     <Grid>
-                        {cards.map((card,i) => (
-                            <Grid.Col span={4} key={i}>
-                                <DashboardCard key={i} hasNav={hasNav} {...card} />
-                            </Grid.Col>
+                        {cards.map((card, i) => (
+                                <Grid.Col span={4} key={i}>
+                                    <DashboardCard key={i} hasNav={hasNav} {...card} />
+                                </Grid.Col>
                             )
                         )}
                         <Grid.Col span={6}>
                             <Paper h={height} withBorder p="md" radius="md">
-                                <WeekGraph weekSeed={weekSeed}  goal={goal} theme={theme}/>
+                                <WeekGraph weekSeed={weekSeed} goal={goal} theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={6}>
                             <Paper h={height} withBorder p="md" radius="md">
-                                <DailyGraph dailyData={processedDailyData}  theme={theme}/>
+                                <DailyGraph dailyData={processedDailyData} theme={theme}/>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>

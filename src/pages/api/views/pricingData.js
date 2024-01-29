@@ -1,59 +1,44 @@
 import db from "../../../db";
 import router from "../../../modules/serverUtils/requestRouter";
 import {parseBody} from "../../../modules/serverUtils/parseBody";
+import Query from "../../../modules/classes/query";
 
 
 
 async function getHandler(req,res){
-    let query = `
-        SELECT
-            *
-        FROM
-            surtrics.surplus_pricing_data
-    `
-    return db.query(query)
+    const query = new Query('surtrics.surplus_pricing_data',['*']);
+    return query
+        .run(db,console)
         .then(({rows})=>res.status(200).json(rows))
 }
 
 async function postHandler(req,res){
-    let query = `
-        SELECT
-            *
-        FROM
-            surtrics.surplus_pricing_data
-    `
     const body = parseBody(req);
+    const baseQuery = new Query(
+        'sursuite.components',
+        [
+            'date_priced_utc as date_priced',
+            'priced_by as user_who_priced',
+            'sku'
+        ],
+    ).conditional(
+        body.startDate && body.endDate,
+        (q)=> q
+            .addWhere('date_priced_utc','>=',body.startDate)
+            .addWhere('date_priced_utc','<=',body.endDate),
+            (q)=> q
+                .conditional(body.startDate || body.endDate,
+                    (q)=> q.conditional(body.startDate,
+                        (q)=> q.addWhere('date_priced_utc','>=',body.startDate),
+                        (q)=> q.addWhere('date_priced_utc','<=',body.endDate)
+                    ),
+                    ()=> null,
+                )
+    )
 
-    let count = 0
-    let params = [];
-
-    if (body.startDate && body.endDate) {
-        query += `WHERE date_priced BETWEEN $${++count} AND $${++count} \n`;
-        params.push(body.startDate);
-        params.push(body.endDate);
-    }
-
-    if(body.startDate && !body.endDate) {
-        query += `WHERE date_priced >= $${++count} \n`;
-        params.push(body.startDate);
-    }
-
-    if(!body.startDate && body.endDate) {
-        query += `WHERE date_priced <= $${++count} \n`;
-        params.push(body.endDate);
-    }
-
-    if(body.date) {
-        query += `WHERE date_trunc('day',date_priced) = $${++count} \n`;
-        params.push(body.date);
-    }
-    console.log(query)
-    console.log(params)
-    let {rows} = await db.query(query, params);
-    console.log(rows)
-    return res.status(200).json(rows)
-
-
+    return await baseQuery
+        .run(db,console)
+        .then(({rows})=>res.status(200).json(rows))
 }
 
 

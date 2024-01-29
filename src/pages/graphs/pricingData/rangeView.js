@@ -3,7 +3,7 @@ import React, { useState} from 'react';
 import {subMonths} from "date-fns";
 
 import {NativeSelect, useMantineColorScheme} from "@mantine/core";
-import {Chart} from "react-chartjs-2";
+
 
 import {
     CategoryScale,
@@ -42,6 +42,7 @@ const RangeView = () => {
     const [user,setUser] = useState("Total")
     const [dateRange, setDateRange] = React.useState([subMonths(new Date(),1), new Date()])
     const pricingData = useUpdates('/api/views/pricingData', {startDate: dateRange[0], endDate: dateRange[1]});
+    console.log(pricingData)
     let users = ['Total']
     pricingData.forEach(item=>{
         let username = item['user_who_priced'];

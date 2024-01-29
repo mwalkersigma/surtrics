@@ -21,7 +21,11 @@ import {
     IconChartHistogram,
     IconTable,
     IconSettings,
-    IconDeviceDesktopAnalytics, IconTimeline, IconExclamationCircle
+    IconDeviceDesktopAnalytics,
+    IconTimeline,
+    IconExclamationCircle,
+    IconClipboardData,
+    IconGitCompare
 } from "@tabler/icons-react";
 import {FaEbay} from "react-icons/fa6";
 
@@ -265,11 +269,15 @@ const pages = {
                     href: "/timelines/quickbooks"
                 },
                 "Pricing" : {
-                    leftSection: <IconTallymarks size={size} stroke={stroke}/>,
+                    leftSection: <IconClipboardData size={size} stroke={stroke}/>,
                     href: "/graphs/pricingData/rangeView"
                 },
+                "Pricing Backlog" : {
+                    leftSection: <IconReportMoney size={size} stroke={stroke}/>,
+                    href: "/graphs/pricingData/pricingBacklogRangeView"
+                },
                 "Ecommerce Comparison" : {
-                    leftSection: <IconTallymarks size={size} stroke={stroke}/>,
+                    leftSection: <IconGitCompare size={size} stroke={stroke}/>,
                     href: "/tables/ecommerce/ecommerceComparison"
 
                 }

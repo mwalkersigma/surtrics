@@ -4,6 +4,7 @@ export default class Query {
         this.columns = columns;
         this.offset = null;
         this.aggregateColumns = [];
+        this.having = [];
         this.joins = [];
         this.where = [];
         this.whereChains = [];
@@ -19,13 +20,17 @@ export default class Query {
         this.aggregateColumns.push([aggregate,column]);
         return this;
     }
+
     addColumn(column){
         this.columns.push(column);
         return this;
     }
-
     addWhere(column,operator,value){
         this.where.push({column,operator,value});
+        return this;
+    }
+    addHaving(column,operator,value){
+        this.having.push({column,operator,value});
         return this;
     }
     addWhereWithOr(conditions){
@@ -79,32 +84,47 @@ export default class Query {
             query += ` ${this.joins.map(([table,joinType,joinCondition])=>`${joinType} JOIN ${table} ON ${joinCondition}`).join(" ")}`;
         }
 
-        if(this.where.length > 0 && !this.adHocWhere){
+        if(this.where.length > 0){
+
             query += ` WHERE ${this.where.map(({column,operator})=>`${column} ${operator} $${count++}`).join(" AND ")}`;
             this.params.push(...this.where.map(({value})=>value));
-            let whereChain = this.whereChains
-                .map((conditions)=>`(${conditions.map(({column,operator})=>`${column} ${operator} $${count++}`).join(" OR ")})`).join(" AND ");
-
-            if(whereChain.length > 0){
-                query += ` AND ${whereChain}`;
+        }
+        if(this.whereChains.length > 0) {
+            if (this.params.length > 0) {
+                query += ` OR ${this.whereChains
+                    .map((conditions) => `(${conditions.map(({column, operator}) => `${column} ${operator} $${count++}`).join(" OR ")})`)
+                    .join(" AND ")}`;
                 this.params = [
                     ...this.params,
                     ...this.whereChains
-                        .map((conditions)=>conditions.map(({value})=>value))
+                        .map((conditions) => conditions.map(({value}) => value))
+                        .flat()
+                ];
+            }
+            else {
+                query += ` WHERE ${this.whereChains
+                    .map((conditions) => `(${conditions.map(({column, operator}) => `${column} ${operator} $${count++}`).join(" OR ")})`)
+                    .join(" AND ")}`;
+                this.params = [
+                    ...this.whereChains
+                        .map((conditions) => conditions.map(({value}) => value))
                         .flat()
                 ];
             }
         }
+
         if(this.adHocWhere && this.where.length === 0){
             query += ` ${this.adHocWhere}`;
         }
         if(this.groupBy.length > 0){
             query += ` GROUP BY ${this.groupBy.join(", ")}`;
-
+        }
+        if(this.having.length > 0){
+            query += ` HAVING ${this.having.map(({column,operator})=>`${column} ${operator} $${count++}`).join(" AND ")}`;
+            this.params.push(...this.having.map(({value})=>value));
         }
         if(this.orderBy.length > 0){
             query += ` ORDER BY ${this.orderBy.map(({column,direction})=>`${column} ${direction}`).join(", ")}`;
-
         }
         if(this.limit.length > 0){
             query += ` LIMIT ${this.limit.join(", ")}`;
@@ -116,7 +136,6 @@ export default class Query {
         this._query = query;
         return query;
     }
-
     get query(){
         return this.build();
     }
@@ -124,12 +143,23 @@ export default class Query {
         console.log(value);
         return this;
     }
-
     getParsedQuery(){
         let query = this.build();
         this.params.forEach((param,index)=>{
-            query = query.replace(`$${index+1}`,`${isNaN(param) ? `'${param}'` : Number(param)}`);
+            query = query
+                .replace(`$${index+1}`,` ${isNaN(param) ? `'${param}'` : Number(param)} \n \t`)
+        })
+        let keywords = ['SELECT','FROM','WHERE','GROUP BY','HAVING','ORDER BY','LIMIT','OFFSET','LEFT JOIN','RIGHT JOIN','INNER JOIN'];
+        query = query.replaceAll(',',`, \n \t`);
+        keywords.forEach((keyword)=>{
+            query = query.replaceAll(keyword,` \n ${keyword} \n \t `)
         })
         return query;
+    }
+    async run(db,logger){
+        if(logger){
+            logger.log(this.getParsedQuery());
+        }
+        return await db.query(this.query,this.params);
     }
 }

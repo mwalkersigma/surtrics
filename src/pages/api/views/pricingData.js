@@ -47,8 +47,10 @@ async function postHandler(req,res){
         query += `WHERE date_trunc('day',date_priced) = $${++count} \n`;
         params.push(body.date);
     }
-
+    console.log(query)
+    console.log(params)
     let {rows} = await db.query(query, params);
+    console.log(rows)
     return res.status(200).json(rows)
 
 

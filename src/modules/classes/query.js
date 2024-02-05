@@ -91,7 +91,7 @@ export default class Query {
         }
         if(this.whereChains.length > 0) {
             if (this.params.length > 0) {
-                query += ` OR ${this.whereChains
+                query += ` AND ${this.whereChains
                     .map((conditions) => `(${conditions.map(({column, operator}) => `${column} ${operator} $${count++}`).join(" OR ")})`)
                     .join(" AND ")}`;
                 this.params = [
@@ -155,11 +155,5 @@ export default class Query {
             query = query.replaceAll(keyword,` \n ${keyword} \n \t `)
         })
         return query;
-    }
-    async run(db,logger){
-        if(logger){
-            logger.log(this.getParsedQuery());
-        }
-        return await db.query(this.query,this.params);
     }
 }

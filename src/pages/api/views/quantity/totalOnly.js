@@ -13,17 +13,6 @@ async function postHandler (req,res) {
         `"user" as name`,
         `transaction_type as type`,
     ])
-        .addWhere(`"user"`, `!=`, 'BSA')
-        .addWhere('transaction_type', '=', 'Add')
-        .addWhereWithOr([
-            {column:'transaction_reason',operator:'=',value:'Relisting'},
-            {column:'transaction_reason',operator:'=',value:'Add'},
-            {column:'transaction_reason',operator:'=',value:'Add on Receiving'},
-        ])
-        .addGroupBy("name")
-        .addGroupBy("type")
-        .addGroupBy("date")
-        .addOrderBy("date",'ASC')
         .conditional(body.date,
             (q)=>q.addWhere('transaction_date','>=',body.date),
             ()=>null
@@ -33,10 +22,22 @@ async function postHandler (req,res) {
                 .addWhere('transaction_date','<=',body.endDate),
             ()=>null
         )
+        .addWhere(`"user"`, `!=`, 'BSA')
+        .addWhere('transaction_type', '=', 'Add')
+        .addWhereWithOr([
+            {column:'transaction_reason',operator:'=',value:'Relisting'},
+            {column:'transaction_reason',operator:'=',value:'Add'},
+            {column:'transaction_reason',operator:'=',value:'Add on Receiving'},
+        ],'AND')
+        .addGroupBy("name")
+        .addGroupBy("type")
+        .addGroupBy("date")
+        .addOrderBy("date",'ASC')
         .conditional(body.interval,
             (q)=>q.addAggregate(`DATE_TRUNC('@', transaction_date) as date`,body.interval),
             (q)=>q.addColumn(`DATE_TRUNC('week',transaction_date) as date`)
         )
+    console.log(query.getParsedQuery())
     return db.query(query.query, query.params)
         .then((response) => {
             res.status(200).json(response.rows)

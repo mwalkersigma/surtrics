@@ -14,6 +14,7 @@ import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import {NativeSelect, Slider, Text, Tooltip} from "@mantine/core";
 import smoothData from "../../../modules/utils/graphUtils/smoothData";
 import normalize from "../../../modules/utils/normalize";
+import colorizeLine from "../../../modules/utils/colorizeLine";
 
 
 let colorPalette = [
@@ -27,8 +28,6 @@ let colorPalette = [
 ]
 
 
-const down = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y ? value : undefined;
-const up = (ctx, value) => ctx.p0.parsed.y < ctx.p1.parsed.y ? value : undefined;
 
 
 const RangeView = () => {
@@ -72,8 +71,8 @@ const RangeView = () => {
                 data: smoothData(dataForTrend, resolution),
                 fill: false,
                 segment: {
-                    borderColor: ctx => up(ctx, 'rgb(0,255,0)') || down(ctx, 'rgb(255,0,0)'),
-                    backgroundColor: ctx => up(ctx, 'rgba(0,255,0,0.1)') || down(ctx, 'rgba(255,0,0,0.1)'),
+                    borderColor: colorizeLine ,
+                    backgroundColor: colorizeLine,
                 },
                 radius: 0,
                 type: "line",

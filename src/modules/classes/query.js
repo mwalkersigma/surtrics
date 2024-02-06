@@ -156,4 +156,7 @@ export default class Query {
         })
         return query;
     }
+    run(db,logger){
+        return db.query(this.query,this.params)
+    }
 }

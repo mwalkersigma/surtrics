@@ -3,18 +3,28 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import BaseChart from "../../../components/Chart";
 import {colorScheme} from "../../_app";
 import React from "react";
+import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 
 const PricingBacklog = () => {
-    const updates = useUpdates('/api/views/pricingBacklog',{
-        startDate: '2023-01-01',
-        endDate: '2024-01-31'
+    const [[startDate, endDate], setDateRange] = React.useState([new Date('2023-01-01'), new Date('2024-01-31')]);
+    let updates = useUpdates('/api/views/pricingBacklog',{
+        startDate,
+        endDate
     });
-    updates.sort((a,b)=>a['date_entered']-b['date_entered']);
+    updates.sort((a,b)=>new Date(a['date_entered'])- new Date(b['date_entered']));
 
     return (
         <GraphWithStatCard
             title={"Pricing Backlog"}
             noBorder
+            dateInput={
+                <CustomRangeMenu
+                    subscribe={setDateRange}
+                    defaultValue={[startDate, endDate]}
+                    mb={'xl'}
+                    label={'Date Range'}
+                />
+            }
         >
             <BaseChart
                 data={{

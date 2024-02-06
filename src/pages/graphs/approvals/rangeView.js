@@ -71,8 +71,8 @@ const RangeView = () => {
                 data: smoothData(dataForTrend, resolution),
                 fill: false,
                 segment: {
-                    borderColor: colorizeLine ,
-                    backgroundColor: colorizeLine,
+                    borderColor: colorizeLine() ,
+                    backgroundColor: colorizeLine(),
                 },
                 radius: 0,
                 type: "line",

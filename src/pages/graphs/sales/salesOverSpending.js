@@ -12,6 +12,7 @@ import useOrders from "../../../modules/hooks/useOrders";
 import smoothData from "../../../modules/utils/graphUtils/smoothData";
 import {useDebouncedValue, useLogger} from "@mantine/hooks";
 import useUsage from "../../../modules/hooks/useUsage";
+import colorizeLine from "../../../modules/utils/colorizeLine";
 
 
 
@@ -289,18 +290,22 @@ const SalesOverSpending = () => {
                             type:"line",
                             label:"Sales trend",
                             data:smoothData(stackData(orders),debounced),
+                            segment: {
+                                borderColor: colorizeLine({up:'limeGreen',down:'red',unchanged:'blue'})
+                            },
+                            backgroundColor: colorScheme.blue,
                             fill: false,
-                            backgroundColor: colorScheme.green,
-                            borderColor: colorScheme.green,
 
                         },
                         {
                             type:"line",
                             label:"Purchases trend",
                             data:smoothData(stackData(purchases),debounced),
+                            segment: {
+                                borderColor: colorizeLine() ,
+                            },
                             fill: false,
                             backgroundColor: colorScheme.red,
-                            borderColor: colorScheme.red,
 
                         },
                         ...purchases,

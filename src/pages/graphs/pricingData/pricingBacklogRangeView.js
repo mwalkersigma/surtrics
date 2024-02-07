@@ -27,22 +27,22 @@ const PricingBacklog = () => {
                     label={'Date Range'}
                 />
             }
-            // cards={[
-            //     {
-            //         title:"Current Pricing Backlog",
-            //         value:updates[updates.length - 1].count,
-            //         format:'number',
-            //     },
-            //     {
-            //         title:"Average Daily Change",
-            //         value: updates.reduce((acc,update,index)=>{
-            //             if(index === 0) return 0;
-            //             return acc + (update.count - updates[index-1].count)
-            //         }
-            //         ,0) / updates.length,
-            //         format:'number',
-            //     }
-            // ].map((card,index)=>(<StatCard key={index} stat={card}/>))}
+            cards={[
+                {
+                    title:"Current Pricing Backlog",
+                    value:updates[updates.length - 1]?.count ?? 0,
+                    format:'number',
+                },
+                {
+                    title:"Average Daily Change",
+                    value: updates.reduce((acc,update,index)=>{
+                        if(index === 0) return 0;
+                        return acc + (update.count - updates[index-1].count)
+                    }
+                    ,0) / updates.length,
+                    format:'number',
+                }
+            ].map((card,index)=>(<StatCard key={index} stat={card}/>))}
         >
             <BaseChart
                 data={{

@@ -123,20 +123,20 @@ const EbayRangeView = () => {
                     mb={'md'}
                 />
             }
-            cards={[
-                {
-                    title:"Impressions",
-                    value:updates.impressions.data.reduce((acc,curr)=> Number(acc) + Number(curr),0),
-                    subtitle:"avg Visits: " + formatter(updates?.impressions?.data?.reduce((acc,curr)=> Number(acc) + Number(curr),0) / updates?.impressions?.data?.length),
-                    format:'number',
-                },
-                {
-                    title:"Page Views",
-                    value:updates['pageviews'].data.reduce((a,b) => Number(a) + Number(b),0),
-                    format:'number',
-                    subtitle: "avg shopped: " + formatter(updates?.['pageviews']?.data.reduce((a,b) => Number(a) + Number(b),0) / updates?.['pageviews']?.data.length)
-                },
-            ].map((card,index)=>(<StatCard key={index} stat={card}/>))}
+            // cards={[
+            //     {
+            //         title:"Impressions",
+            //         value:updates.impressions.data.reduce((acc,curr)=> Number(acc) + Number(curr),0),
+            //         subtitle:"avg Visits: " + formatter(updates?.impressions?.data?.reduce((acc,curr)=> Number(acc) + Number(curr),0) / updates?.impressions?.data?.length),
+            //         format:'number',
+            //     },
+            //     {
+            //         title:"Page Views",
+            //         value:updates['pageviews'].data.reduce((a,b) => Number(a) + Number(b),0),
+            //         format:'number',
+            //         subtitle: "avg shopped: " + formatter(updates?.['pageviews']?.data.reduce((a,b) => Number(a) + Number(b),0) / updates?.['pageviews']?.data.length)
+            //     },
+            // ].map((card,index)=>(<StatCard key={index} stat={card}/>))}
         >
             <BaseChart events={reducedEvents(dates || [])} data={graphData} stacked config={options}/>
         </GraphWithStatCard>

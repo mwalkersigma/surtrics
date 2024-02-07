@@ -125,34 +125,34 @@ const BigCommerceRangeView = () => {
                     mb={'md'}
                 />
             }
-            cards={[
-                //{title:"Total Sales For Selection", value:totalSales, format:'currency'},
-                {
-                    title:"Visits",
-                    value:updates.visits.data.reduce((acc,curr)=> Number(acc) + Number(curr),0),
-                    subtitle:"avg Visits: " + formatter(updates?.visits?.data?.reduce((acc,curr)=> Number(acc) + Number(curr),0) / updates?.visits?.data?.length),
-                    format:'number',
-                },
-                {
-                    title:"Shopped",
-                    value:updates?.shopped?.data.reduce((a,b) => Number(a) + Number(b),0),
-                    format:'number',
-                    subtitle: "avg shopped: " + formatter(updates?.shopped?.data.reduce((a,b) => Number(a) + Number(b),0) / updates?.shopped?.data.length)
-
-                },
-                {
-                    title:"Add To Cart",
-                    value:updates?.add_to_cart?.data.reduce((a,b) => Number(a) + Number(b),0),
-                    format:'number',
-                    subtitle: "avg add to cart: " + formatter(updates?.add_to_cart?.data.reduce((a,b) => +a + +b,0) / updates?.add_to_cart?.data.length)
-                },
-                {
-                    title:"Web Leads",
-                    value:updates?.web_leads?.data.reduce((a,b) => Number(a) + Number(b),0),
-                    format:'number',
-                    subtitle: "avg web leads: " + formatter(updates?.web_leads?.data.reduce((a,b) => +a + +b,0) / updates?.web_leads?.data.length)
-                },
-            ].map((card,index)=>(<StatCard key={index} stat={card}/>))}
+            // cards={[
+            //     //{title:"Total Sales For Selection", value:totalSales, format:'currency'},
+            //     {
+            //         title:"Visits",
+            //         value:updates.visits.data.reduce((acc,curr)=> Number(acc) + Number(curr),0),
+            //         subtitle:"avg Visits: " + formatter(updates?.visits?.data?.reduce((acc,curr)=> Number(acc) + Number(curr),0) / updates?.visits?.data?.length),
+            //         format:'number',
+            //     },
+            //     {
+            //         title:"Shopped",
+            //         value:updates?.shopped?.data.reduce((a,b) => Number(a) + Number(b),0),
+            //         format:'number',
+            //         subtitle: "avg shopped: " + formatter(updates?.shopped?.data.reduce((a,b) => Number(a) + Number(b),0) / updates?.shopped?.data.length)
+            //
+            //     },
+            //     {
+            //         title:"Add To Cart",
+            //         value:updates?.add_to_cart?.data.reduce((a,b) => Number(a) + Number(b),0),
+            //         format:'number',
+            //         subtitle: "avg add to cart: " + formatter(updates?.add_to_cart?.data.reduce((a,b) => +a + +b,0) / updates?.add_to_cart?.data.length)
+            //     },
+            //     {
+            //         title:"Web Leads",
+            //         value:updates?.web_leads?.data.reduce((a,b) => Number(a) + Number(b),0),
+            //         format:'number',
+            //         subtitle: "avg web leads: " + formatter(updates?.web_leads?.data.reduce((a,b) => +a + +b,0) / updates?.web_leads?.data.length)
+            //     },
+            // ].map((card,index)=>(<StatCard key={index} stat={card}/>))}
         >
             <BaseChart events={reducedEvents(dates || [])} data={graphData} stacked config={options}/>
         </GraphWithStatCard>

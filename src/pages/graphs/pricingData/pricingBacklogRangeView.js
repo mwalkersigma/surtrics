@@ -4,6 +4,8 @@ import BaseChart from "../../../components/Chart";
 import {colorScheme} from "../../_app";
 import React from "react";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
+import formatter from "../../../modules/utils/numberFormatter";
+import StatCard from "../../../components/mantine/StatCard";
 
 const PricingBacklog = () => {
     const [[startDate, endDate], setDateRange] = React.useState([new Date('2023-01-01'), new Date('2024-01-31')]);
@@ -16,7 +18,7 @@ const PricingBacklog = () => {
     return (
         <GraphWithStatCard
             title={"Pricing Backlog"}
-            noBorder
+            //noBorder
             dateInput={
                 <CustomRangeMenu
                     subscribe={setDateRange}
@@ -25,6 +27,22 @@ const PricingBacklog = () => {
                     label={'Date Range'}
                 />
             }
+            cards={[
+                {
+                    title:"Current Pricing Backlog",
+                    value:updates[updates.length - 1].count,
+                    format:'number',
+                },
+                {
+                    title:"Average Daily Change",
+                    value: updates.reduce((acc,update,index)=>{
+                        if(index === 0) return 0;
+                        return acc + (update.count - updates[index-1].count)
+                    }
+                    ,0) / updates.length,
+                    format:'number',
+                }
+            ].map((card,index)=>(<StatCard key={index} stat={card}/>))}
         >
             <BaseChart
                 data={{
@@ -35,11 +53,10 @@ const PricingBacklog = () => {
                             label: 'Pricing Backlog',
                             data: updates.map(({count})=>count),
                             fill: false,
-                            backgroundColor: colorScheme.red,
-                            borderColor: colorScheme.red,
                         },
                     ],
                 }}
+
             />
         </GraphWithStatCard>
     );

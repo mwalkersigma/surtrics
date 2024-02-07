@@ -10,6 +10,9 @@ import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import useEvents from "../../../modules/hooks/useEvents";
+import StatCard from "../../../components/mantine/StatCard";
+import formatter from "../../../modules/utils/numberFormatter";
+
 
 
 
@@ -51,13 +54,10 @@ const BigCommerceRangeView = () => {
         .sort((a,b) => a.date_for_week - b.date_for_week )
         .map((update) =>({...update, date_for_week: new Date(update.date_for_week).toLocaleDateString()}))
         .reduce((acc,update)=>{
-            Object.keys(update).forEach((key,index)=>{
-                let color = colorScheme.byIndex(index);
+            Object.keys(update).forEach((key)=>{
                 if(!acc[key]) acc[key] = {
                     label: key,
                     data: [],
-                    borderColor: color,
-                    backgroundColor: color,
                     type: 'line',
                 };
                 acc[key].data.push(update[key])
@@ -68,6 +68,7 @@ const BigCommerceRangeView = () => {
     const dates = updates?.date_for_week?.data;
     delete updates.date_for_week;
 
+    console.log(updates);
     const graphData = {
         labels: dates,
         datasets: Object.values(updates)
@@ -96,6 +97,7 @@ const BigCommerceRangeView = () => {
     return (
         <GraphWithStatCard
             title={"Big Commerce Ecommerce Data"}
+            isLoading={updates.length === 0}
             dateInput={
                 <CustomRangeMenu
                     label={"Date Range"}
@@ -123,6 +125,34 @@ const BigCommerceRangeView = () => {
                     mb={'md'}
                 />
             }
+            cards={[
+                //{title:"Total Sales For Selection", value:totalSales, format:'currency'},
+                {
+                    title:"Visits",
+                    value:updates.visits.data.reduce((acc,curr)=> Number(acc) + Number(curr),0),
+                    subtitle:"avg Visits: " + formatter(updates?.visits?.data?.reduce((acc,curr)=> Number(acc) + Number(curr),0) / updates?.visits?.data?.length),
+                    format:'number',
+                },
+                {
+                    title:"Shopped",
+                    value:updates?.shopped?.data.reduce((a,b) => Number(a) + Number(b),0),
+                    format:'number',
+                    subtitle: "avg shopped: " + formatter(updates?.shopped?.data.reduce((a,b) => Number(a) + Number(b),0) / updates?.shopped?.data.length)
+
+                },
+                {
+                    title:"Add To Cart",
+                    value:updates?.add_to_cart?.data.reduce((a,b) => Number(a) + Number(b),0),
+                    format:'number',
+                    subtitle: "avg add to cart: " + formatter(updates?.add_to_cart?.data.reduce((a,b) => +a + +b,0) / updates?.add_to_cart?.data.length)
+                },
+                {
+                    title:"Web Leads",
+                    value:updates?.web_leads?.data.reduce((a,b) => Number(a) + Number(b),0),
+                    format:'number',
+                    subtitle: "avg web leads: " + formatter(updates?.web_leads?.data.reduce((a,b) => +a + +b,0) / updates?.web_leads?.data.length)
+                },
+            ].map((card,index)=>(<StatCard key={index} stat={card}/>))}
         >
             <BaseChart events={reducedEvents(dates || [])} data={graphData} stacked config={options}/>
         </GraphWithStatCard>

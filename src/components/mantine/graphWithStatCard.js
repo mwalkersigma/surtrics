@@ -82,11 +82,13 @@ const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOn
                     </>
                 )}
             </Grid>
-            <Grid spacing={"xl"} style={{}}>
+            <Grid spacing={"xl"}>
                 {
                     cards?.length > 0 &&
                     <>
-                        <Grid.Col span={1}></Grid.Col>
+                        <Grid.Col span={1}>
+
+                        </Grid.Col>
                         <Grid.Col span={9}>
                             <Paper style={{height: "100%", minHeight: `${height}vh`}} radius={"md"} shadow={"md"} p={5} withBorder={!noBorder}>
                                 {children}
@@ -101,11 +103,13 @@ const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOn
                 }
                 {
                     (cards?.length === 0 || !cards) &&
-                    <Grid.Col span={12}>
-                        <Paper style={{height: "100%", minHeight: `${height}vh`}} radius={"md"} shadow={"md"} p={5} withBorder={!noBorder}>
-                            {children}
-                        </Paper>
-                    </Grid.Col>
+                    <>
+                        <Grid.Col span={'auto'}>
+                            <Paper style={{height: "100%", minHeight: `${height}vh`}} radius={"md"} shadow={"md"} p={5} withBorder={!noBorder}>
+                                {children}
+                            </Paper>
+                        </Grid.Col>
+                    </>
                 }
             </Grid>
         </Container>

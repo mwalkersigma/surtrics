@@ -61,8 +61,6 @@ const RangeView = () => {
             return {
                 label: name,
                 data: graphData,
-                backgroundColor: colorScheme.byIndex(i),
-                borderColor: colorScheme.byIndex(i),
                 borderWidth: 1,
                 stack: 1,
                 type: "bar"

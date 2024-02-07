@@ -17,15 +17,7 @@ import normalize from "../../../modules/utils/normalize";
 import colorizeLine from "../../../modules/utils/colorizeLine";
 
 
-let colorPalette = [
-    colorScheme.blue,
-    colorScheme.green,
-    colorScheme.red,
-    colorScheme.purple,
-    colorScheme.yellow,
-    colorScheme.orange,
-    colorScheme.pink,
-]
+
 
 
 
@@ -83,8 +75,6 @@ const RangeView = () => {
                 return {
                     label: name,
                     data: Object.values(dataForGraph).map((obj) => obj[name]),
-                    backgroundColor: colorPalette[i % colorPalette.length],
-                    borderColor: colorPalette[i % colorPalette.length],
                     borderWidth: 1,
                     stack: 1,
                     type: "bar"

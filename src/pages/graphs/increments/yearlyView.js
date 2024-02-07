@@ -109,7 +109,6 @@ function YearlyChart(props){
                 type: "bar",
                 label: "New Inbound",
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add on Receiving").map(({count}) => (+count)),
-                backgroundColor: colorScheme.red,
                 borderRadius: 5,
                 stack: "stack0"
             },
@@ -117,7 +116,6 @@ function YearlyChart(props){
                 type: "bar",
                 label: "Incrementation",
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Add").map(({count}) => (+count)),
-                backgroundColor: colorScheme.green,
                 borderRadius: 5,
                 stack: "stack0"
             },
@@ -125,7 +123,6 @@ function YearlyChart(props){
                 type: "bar",
                 label: "Relisting",
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Relisting").map(({count}) => (+count)),
-                backgroundColor: colorScheme.blue,
                 borderRadius: 5,
                 stack: "stack0"
             }

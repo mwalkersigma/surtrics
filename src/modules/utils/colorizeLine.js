@@ -6,8 +6,8 @@ const up = (ctx, value) => ctx.p0.parsed.y < ctx.p1.parsed.y ? value : undefined
 export default function colorizeLine(options={}) {
     return (ctx) => {
         let defaults = {
-            up: colorScheme.green,
-            down: colorScheme.red,
+            up: 'rgba(0, 255, 0, 0.75)',
+            down: 'rgba(255, 0, 0, 0.75)',
             unchanged: colorScheme.blue,
         };
         defaults = {...defaults, ...options};

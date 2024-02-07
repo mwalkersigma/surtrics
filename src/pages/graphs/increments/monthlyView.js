@@ -64,8 +64,6 @@ function LineGraphMonthly ({monthData,theme,events}) {
             {
                 label: "Total",
                 data: Object.values(dataSets).map((item) => item["total"] ?? 0),
-                borderColor: colorScheme.indigo,
-                backgroundColor: colorScheme.indigo,
                 type: "line",
                 datalabels: {
                     color: theme,
@@ -78,8 +76,6 @@ function LineGraphMonthly ({monthData,theme,events}) {
             {
                 label: "Incrementation",
                 data: Object.values(dataSets).map((item) => item["Add"] ?? 0),
-                borderColor: colorScheme.green,
-                backgroundColor: colorScheme.green,
                 type: "line",
                 datalabels: {
                     color: theme,
@@ -92,8 +88,6 @@ function LineGraphMonthly ({monthData,theme,events}) {
             {
                 label: "New Inbound",
                 data: Object.values(dataSets).map((item) => item["Add on Receiving"] ?? 0),
-                borderColor: colorScheme.red,
-                backgroundColor: colorScheme.red,
                 type: "line",
                 datalabels: {
                     color: theme,
@@ -106,8 +100,6 @@ function LineGraphMonthly ({monthData,theme,events}) {
             {
                 label: "Relisting",
                 data: Object.values(dataSets).map((item) => item["Relisting"] ?? 0),
-                borderColor: colorScheme.blue,
-                backgroundColor: colorScheme.blue,
                 type: "line",
                 datalabels: {
                     color: theme,

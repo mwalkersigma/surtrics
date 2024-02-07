@@ -105,8 +105,6 @@ const RangeView = () => {
             {
                 label:"Pricing Data",
                 data:values,
-                borderColor:colorScheme.blue,
-                backgroundColor:colorScheme.blue,
                 type:'line'
             }
         ]}

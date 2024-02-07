@@ -13,15 +13,18 @@ export default function createAdjustedWeekArray(data, goal) {
     console.log("weekTotal", weekTotal);
 
     let days = data.filter(day=> day.count !== 0).length + 1;
-    let daysRemaining = 5 - days;
+    let daysRemaining = 6 - days;
     daysRemaining = daysRemaining <= 0 ? 1 : daysRemaining;
 
     let baseWeek = Array(days).fill(0);
 
     let weekDifference = (weekGoal - weekTotal) / daysRemaining;
-
+    console.log("Days remaining", daysRemaining)
+    console.log("week difference",weekDifference)
     if(weekDifference > 0) {
-        baseWeek.splice(days - daysRemaining, daysRemaining, ...Array(daysRemaining).fill(weekDifference));
+        console.log("here")
+        let count = daysRemaining + 1 > 5 ? 4 : daysRemaining + 1;
+        baseWeek.splice(days - daysRemaining + 1, daysRemaining, ...Array(daysRemaining + 1).fill(weekDifference / count ));
     }
     console.log("baseWeek", baseWeek);
     return baseWeek;

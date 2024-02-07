@@ -12,23 +12,8 @@ import BaseChart from "../../../components/Chart";
 
 
 
-let colorPalette = [
-    "blue",
-    "indigo",
-    "purple",
-    "pink",
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "teal",
-    "cyan",
-]
 
-function pickRandomColorFromColorScheme() {
-    let colors = colorPalette;
-    return colorScheme[colors[Math.floor(Math.random() * colors.length)]];
-}
+
 
 
 
@@ -94,7 +79,6 @@ function IndividualChart(props){
                     type: "bar",
                     label: type,
                     data: Object.values(dataForChart).map((user) => +user[type] / 4  || 0) ,
-                    backgroundColor: pickRandomColorFromColorScheme(),
                     maxBarThickness: 100,
                 }
             }
@@ -102,7 +86,6 @@ function IndividualChart(props){
                 type: "bar",
                 label: type,
                 data: Object.values(dataForChart).map((user) => user[type] || 0),
-                backgroundColor: pickRandomColorFromColorScheme(),
                 maxBarThickness: 100,
             }
         })

@@ -147,6 +147,10 @@ const SalesOverSpending = () => {
                     usePointStyle: true,
                 }
             },
+            colors: {
+                enabled: false,
+                forceOverride: false
+            },
             tooltip: {
                 callbacks: {
                     label: (context)=> {
@@ -283,6 +287,7 @@ const SalesOverSpending = () => {
             }
         >
             <BaseChart
+                customColors
                 data={{
                     labels:dates,
                     datasets:[

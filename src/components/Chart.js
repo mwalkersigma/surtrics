@@ -9,7 +9,8 @@ import {
     LinearScale,
     LineElement,
     PointElement,
-    Tooltip
+    Tooltip,
+    Colors
 } from "chart.js";
 
 import {colorScheme} from "../pages/_app";
@@ -27,10 +28,11 @@ ChartJS.register(
     LineElement,
     DataLabels,
     PointElement,
-    annotationPlugin
+    annotationPlugin,
+    Colors
 );
 
-export default function BaseChart ({stacked,config,data,events}) {
+export default function BaseChart ({stacked,config,data,events,customColors}) {
     const {colorScheme:mantineColorScheme} = useMantineColorScheme();
     const theme = mantineColorScheme === "dark" ? colorScheme['white'] : colorScheme['dark'];
     let options = {
@@ -40,6 +42,10 @@ export default function BaseChart ({stacked,config,data,events}) {
         plugins: {
             datalabels:{
                 display: false,
+            },
+            colors: {
+                enabled: true,
+                forceOverride: true
             },
             legend: {
                 position: 'top',
@@ -82,9 +88,13 @@ export default function BaseChart ({stacked,config,data,events}) {
             }
         })
     }
+    if(customColors){
+        options.plugins.colors.forceOverride = false;
+    }
 
     options = mergeAdvanced(options,config);
-
+    console.log(JSON.stringify(config,null,2))
+    console.log(JSON.stringify(options,null,2))
     return (
         <Chart data={data} options={options} />
     )

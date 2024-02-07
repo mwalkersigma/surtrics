@@ -10,6 +10,8 @@ import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import useEvents from "../../../modules/hooks/useEvents";
+import formatter from "../../../modules/utils/numberFormatter";
+import StatCard from "../../../components/mantine/StatCard";
 
 
 const EbayRangeView = () => {
@@ -51,13 +53,10 @@ const EbayRangeView = () => {
         .sort((a,b) => a.date_for_week - b.date_for_week )
         .map((update) =>({...update, date_for_week: new Date(update.date_for_week).toLocaleDateString()}))
         .reduce((acc,update)=>{
-            Object.keys(update).forEach((key,index)=>{
-                let color = colorScheme.byIndex(index);
+            Object.keys(update).forEach((key)=>{
                 if(!acc[key]) acc[key] = {
                     label: key,
                     data: [],
-                    borderColor: color,
-                    backgroundColor: color,
                     type: 'line',
                 };
                 acc[key].data.push(update[key])
@@ -67,7 +66,7 @@ const EbayRangeView = () => {
 
     const dates = updates?.date_for_week?.data;
     delete updates.date_for_week;
-
+    console.log(updates)
     const graphData = {
         labels: dates,
         datasets: Object.values(updates)
@@ -124,6 +123,20 @@ const EbayRangeView = () => {
                     mb={'md'}
                 />
             }
+            cards={[
+                {
+                    title:"Impressions",
+                    value:updates.impressions.data.reduce((acc,curr)=> Number(acc) + Number(curr),0),
+                    subtitle:"avg Visits: " + formatter(updates?.impressions?.data?.reduce((acc,curr)=> Number(acc) + Number(curr),0) / updates?.impressions?.data?.length),
+                    format:'number',
+                },
+                {
+                    title:"Page Views",
+                    value:updates['pageviews'].data.reduce((a,b) => Number(a) + Number(b),0),
+                    format:'number',
+                    subtitle: "avg shopped: " + formatter(updates?.['pageviews']?.data.reduce((a,b) => Number(a) + Number(b),0) / updates?.['pageviews']?.data.length)
+                },
+            ].map((card,index)=>(<StatCard key={index} stat={card}/>))}
         >
             <BaseChart events={reducedEvents(dates || [])} data={graphData} stacked config={options}/>
         </GraphWithStatCard>

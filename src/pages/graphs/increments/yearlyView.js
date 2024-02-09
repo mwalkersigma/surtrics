@@ -8,24 +8,29 @@ import {
     Legend,
     LinearScale,
     LineElement, PointElement,
-    Tooltip
+    Tooltip as tt
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../_app";
 import {eachMonthOfInterval, lastDayOfYear, setDate, setMonth} from "date-fns";
-import {useMantineColorScheme} from "@mantine/core";
+import {Slider, Text, Tooltip, useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import useEvents from "../../../modules/hooks/useEvents";
+import useGoal from "../../../modules/hooks/useGoal";
+import {useDebouncedValue, useLogger} from "@mantine/hooks";
+import smoothData from "../../../modules/utils/graphUtils/smoothData";
+import colorizeLine from "../../../modules/utils/colorizeLine";
+import formatter from "../../../modules/utils/numberFormatter";
 
 ChartJS.register(
     CategoryScale,
     LinearScale,
     BarElement,
-    Tooltip,
+    tt,
     Legend,
     LineElement,
     DataLabels,
@@ -38,7 +43,7 @@ ChartJS.register(
 
 
 function YearlyChart(props){
-    let {yearData,theme} = props;
+    let {yearData,theme,goals,resolution} = props;
     const useTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
     const options = {
@@ -49,7 +54,9 @@ function YearlyChart(props){
             tooltip: {
                 callbacks: {
                     footer: (context)=> {
-                        return "TOTAL: " + context.reduce((acc, {raw}) => (acc + +raw), 0);
+                        return "TOTAL: " + context.filter((context)=>{
+                            return context.dataset.label !== "Goal" && context.dataset.label !== "trend"
+                        }).reduce((acc, {raw}) => (acc + +raw), 0);
                     }
                 }
             },
@@ -68,7 +75,7 @@ function YearlyChart(props){
                 font: {
                     weight: "bold",
                 },
-                formatter: Math.round
+                formatter:(val) => formatter(val)
             },
         },
         scales: {
@@ -102,6 +109,35 @@ function YearlyChart(props){
         .map((item)=>({...item, ...{date_of_transaction: item.date_of_transaction.split("T")[0]}}))
         .sort((a,b)=> new Date(a.date_of_transaction) - new Date(b.date_of_transaction));
 
+    const goalsMapped = yearData.length > 0 && yearData
+        .reduce((acc, {date_of_transaction}) => {
+            if(acc.includes(date_of_transaction)) return acc;
+            acc.push(date_of_transaction);
+            return acc;
+        },[])
+        .map((date_of_transaction) => {
+          let goal;
+          for(let i = 0; i < goals.length; i++){
+              let goalDate = new Date(goals[i].goal_date);
+              let transactionDate = new Date(date_of_transaction);
+                if(goalDate <= transactionDate && (!goal || goalDate > new Date(goal.goal_date))){
+                    goal = goals[i];
+                }
+
+          }
+            return goal;
+        })
+
+    let totals = Object.values(yearData
+        .reduce((acc, {count,date_of_transaction}) =>{
+            if(!acc[date_of_transaction]){
+                acc[date_of_transaction]={count:0,date_of_transaction};
+            }
+            acc[date_of_transaction].count += +count;
+            return acc;
+        }, {}))
+        .map(({count}) => count);
+    const smooth = smoothData(totals,resolution);
     const data = yearData.length > 0 && {
         labels: months,
         datasets: [
@@ -125,13 +161,30 @@ function YearlyChart(props){
                 data: yearData?.filter(({transaction_reason})=>transaction_reason === "Relisting").map(({count}) => (+count)),
                 borderRadius: 5,
                 stack: "stack0"
+            },
+            {
+                type: "line",
+                label: "Goal",
+                data: goalsMapped.filter(item=>item).map(({goal_amount}) => Number(goal_amount) * 4.5 ),
+                borderWidth: 2,
+                stack: "stack1"
+            },
+            {
+                type: "line",
+                label: "trend",
+                data: smooth,
+                segment: {
+                    borderColor: colorizeLine({up:'limeGreen',down:'red',unchanged:'blue'})
+                },
+                borderWidth: 2,
+                stack: "stack2",
             }
         ]
     };
 
 
 
-    return <BaseChart stacked events={props.events} data={data} config={options}/>
+    return <BaseChart customColors stacked events={props.events} data={data} config={options}/>
 }
 
 
@@ -140,7 +193,11 @@ let dateSet = setDate
 function YearlyView() {
     useUsage("Metrics","Increments-yearly-chart")
     const [date,setDate] = useState(dateSet(setMonth(new Date(),0),1));
+    const goal = useGoal({all:true});
     let yearData = useUpdates("/api/views/increments",{date,interval:"1 year",increment:"month"});
+    const [resolution, setResolution] = useState(4);
+    const [debounced] = useDebouncedValue(resolution, 500);
+    useLogger("Sales Vs Purchases: Trend Line Resolution Factor",[debounced])
     const {colorScheme:theme} = useMantineColorScheme();
 
 
@@ -160,8 +217,7 @@ function YearlyView() {
         endDate:lastDayOfYear(date),
         timeScale:'month',
         includedCategories:['Processing'],
-        affected_categories:['Processing'],
-        minY:8000,
+        affected_categories:['Processing']
     })
     return (
         <GraphWithStatCard
@@ -173,7 +229,30 @@ function YearlyView() {
                     value={date}
                     onChange={(e) => setDate(e)}
                 />
-        }
+            }
+            slotTwo={
+                <Tooltip label={"The higher the resolution, the smoother the trend line."}>
+                    <span>
+                        <Text ml={"xs"} >Trend Line Resolution</Text>
+                        <Slider
+                            mb={"xl"}
+                            ml={"xs"}
+                            color="blue"
+                            marks={[
+                                { value: 0, label: 'none' },
+                                { value: 2, label: '2' },
+                                { value: 4, label: '4' },
+                                { value: 6, label: '6' },
+                                { value: 8, label: 'linear' },
+                            ]}
+                            min={0}
+                            max={8}
+                            value={resolution}
+                            onChange={(e) => setResolution(e)}
+                        />
+                    </span>
+                </Tooltip>
+            }
             isLoading={yearData.length === 0}
             cards={
             [
@@ -220,7 +299,14 @@ function YearlyView() {
             ]
         }
         >
-            <YearlyChart events={reducedEvents(eachMonthOfInterval({start:date,end:lastDayOfYear(date)}))} theme={theme} yearData={yearData} date={date}/>
+            <YearlyChart
+                resolution={debounced}
+                goals={goal}
+                events={reducedEvents(eachMonthOfInterval({start:date,end:lastDayOfYear(date)}))}
+                theme={theme}
+                yearData={yearData}
+                date={date}
+            />
         </GraphWithStatCard>)
 }
 

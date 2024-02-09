@@ -21,7 +21,14 @@ async function getGoalForDate (date) {
         body:JSON.stringify(date)
     })
         .then(res => res.json())
-
+}
+async function getAll (){
+    return await fetch(`${window.location.origin}/api/admin/goal`,{
+        method:"POST",
+        body:JSON.stringify({all:true})
+    })
+        .then(res => res.json())
+        .then(data=>({goal_amount:data}))
 }
 function roundUp(num){
     return Math.ceil(num/10)*10;
@@ -38,10 +45,12 @@ export default function useGoal (options) {
     useEffect(() => {
         let effectOptions = JSON.parse(options);
         function updateGoal(amount){
+            if(effectOptions?.all) return setGoal(amount);
             if(effectOptions?.['round'] === false) return setGoal(amount);
             return setGoal(roundUp(amount/5));
         }
         let goalFunc = effectOptions?.date ? getGoalForDate : getGoal;
+        if(effectOptions?.all) goalFunc = getAll;
         goalFunc(effectOptions)
             .then(({goal_amount}) => updateGoal(goal_amount))
             .then(()=>{

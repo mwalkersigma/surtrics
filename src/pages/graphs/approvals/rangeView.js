@@ -1,20 +1,17 @@
 import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
-import formatDateWithZeros from "../../../modules/utils/formatDateWithZeros";
-import makeDateArray from "../../../modules/utils/makeDateArray";
-import {colorScheme} from "../../_app";
-import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
-import {DatePickerInput} from "@mantine/dates";
-import {addDays, subDays} from "date-fns";
+
+import { subDays } from "date-fns";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import {NativeSelect, Slider, Text, Tooltip} from "@mantine/core";
 import smoothData from "../../../modules/utils/graphUtils/smoothData";
-import normalize from "../../../modules/utils/normalize";
 import colorizeLine from "../../../modules/utils/colorizeLine";
+import useEvents from "../../../modules/hooks/useEvents";
+import formatter from "../../../modules/utils/numberFormatter";
 
 
 
@@ -29,6 +26,16 @@ const RangeView = () => {
     const [[startDate, endDate], setDateRange] = useState([subDays(new Date(), 30), new Date()]);
     const [increment, setIncrement] = useState("week");
     const [resolution, setResolution] = useState(4);
+
+    const {events,reducedEvents} = useEvents({
+        startDate:startDate,
+        endDate:endDate,
+        timeScale:increment,
+        includedCategories:['Processing'],
+        affected_categories:['Processing'],
+    });
+    console.log(events)
+
 
     let approvals = useUpdates("/api/views/approvals", {startDate, endDate, increment});
     approvals = approvals.filter(({name}) => name !== "")
@@ -71,7 +78,7 @@ const RangeView = () => {
                 tension: 0.4,
                 stack: 2
             },
-            ...names.map((name, i) => {
+            ...names.map((name) => {
                 return {
                     label: name,
                     data: Object.values(dataForGraph).map((obj) => obj[name]),
@@ -116,7 +123,7 @@ const RangeView = () => {
             tooltip: {
                 callbacks: {
                     footer: (context) => {
-                        return "TOTAL: " + context.reduce((acc, {raw}) => (acc + +raw), 0);
+                        return "TOTAL: " + formatter(context.reduce((acc, {raw}) => (acc + +raw), 0));
                     }
                 }
             },
@@ -127,12 +134,10 @@ const RangeView = () => {
 
         scales: {
             y: {
-                max: Math.ceil(totalApprovals / dates.length * 2.5)
-            }
+                max: Math.ceil(totalApprovals / dates.length * 2.5),
+            },
         }
     }
-
-
     return <GraphWithStatCard
         title={"Surplus Template Approvals Range View"}
         cards={[
@@ -211,7 +216,7 @@ const RangeView = () => {
         }
 
     >
-        <BaseChart data={data} config={options} stacked/>
+        <BaseChart events={reducedEvents(dates)} data={data} config={options} stacked/>
     </GraphWithStatCard>
 };
 

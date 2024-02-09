@@ -11,6 +11,7 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import useEvents from "../../../modules/hooks/useEvents";
+import useGoal from "../../../modules/hooks/useGoal";
 
 
 
@@ -19,7 +20,7 @@ import useEvents from "../../../modules/hooks/useEvents";
 
 
 
-function LineGraphMonthly ({monthData,theme,events}) {
+function LineGraphMonthly ({monthData,theme,events,goal}) {
     theme = theme === "dark" ? colorScheme.white : colorScheme.dark;
     const options = {
         plugins: {
@@ -39,6 +40,24 @@ function LineGraphMonthly ({monthData,theme,events}) {
                     usePointStyle: true,
                 }
             },
+            annotation: {
+                annotations: [
+                    {
+                        type: 'line',
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        label: {
+                            display: true,
+                            content: "Increment Goal",
+                            backgroundColor: 'red',
+                            color: 'white',
+                            rotation: 'auto'
+                        },
+                        value: () => goal ?? 0,
+                        scaleID: 'y',
+                    }
+                ]
+            }
         }
     };
     const dataSets = monthData.reduce((acc,curr)=>{
@@ -120,6 +139,7 @@ const MonthlyView = () => {
     useUsage("Metrics","MonthlyIncrementsView-chart")
     const [date,setDate] = useState(dateSet(new Date(),1))
     let monthData = useUpdates("/api/views/increments",{date,interval:"1 month",increment:"day"});
+    const goal = useGoal({date})
     const {colorScheme:theme} = useMantineColorScheme();
 
     let cardData = monthData?.reduce((acc,curr)=>{
@@ -192,7 +212,7 @@ const MonthlyView = () => {
                 ]
             }
         >
-            <LineGraphMonthly events={reducedEvents} monthData={monthData} theme={theme}/>
+            <LineGraphMonthly goal={goal} events={reducedEvents} monthData={monthData} theme={theme}/>
         </GraphWithStatCard>
     )
 };

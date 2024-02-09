@@ -20,7 +20,21 @@ function getHandler(req,res){
 function postHandler(req,res){
     let body = req.body;
     if(typeof body ==="string") body = JSON.parse(body);
-    const {date} = body;
+    const {date,all} = body;
+    if(all){
+        return db.query(`
+            SELECT
+                *
+            FROM
+                surtrics.surplus_goal_data
+            ORDER BY
+                goal_date DESC,
+                goal_id DESC;
+        `)
+            .then(({rows}) => {
+                return res.status(200).json(rows)
+            })
+    }
     return db.query(`
             SELECT
                 *

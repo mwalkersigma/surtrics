@@ -17,7 +17,7 @@ function findNearestIndex(array, value) {
 
 
 
-function select(element) {
+function select() {
     return true;
 }
 
@@ -29,7 +29,7 @@ function yValue(ctx, label,combined = true) {
     let combinedDataSet = []
     chart.data.datasets.forEach((dataset) => {
         let lowerCaseLabel = dataset['label']?.toLowerCase();
-        if(lowerCaseLabel === 'total' || lowerCaseLabel === 'total transactions' || lowerCaseLabel === 'goal' || lowerCaseLabel === 'goals' || lowerCaseLabel === 'total goal' || lowerCaseLabel === 'adjustedgoal'){
+        if(lowerCaseLabel === 'total' || lowerCaseLabel === 'total transactions' || lowerCaseLabel==="trend" || lowerCaseLabel === 'goal' || lowerCaseLabel === 'goals' || lowerCaseLabel === 'total goal' || lowerCaseLabel === 'adjustedgoal'){
             return
         }
         dataset.data.forEach((amount,index)=>{
@@ -107,6 +107,7 @@ export default function useEvents(config) {
                             click: ({element}) => select(element, 'rgba(165, 214, 167, 0.8)', 'rgba(165, 214, 167, 0.2)'),
                             enter: enter,
                             leave: leave,
+                            stack:'x9x9x9x9',
                             position: {
                                 x: xPosition,
                                 y: 'end'

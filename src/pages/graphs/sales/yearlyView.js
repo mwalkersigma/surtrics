@@ -66,7 +66,7 @@ const YearlyView = () => {
     const orders = useOrders({startDate:date, endDate:lastDayOfYear(date)},{acceptedConditions: ["1", "2", "3", "4"]});
     let {categories , reducedEvents} = useEvents({
         startDate:date,
-        endDate:lastDayOfYear(date),
+        endDate:date,
         affected_categories:affectedCategories,
         timeScale:'month',
         excludedCategories:['Processing','Warehouse'],

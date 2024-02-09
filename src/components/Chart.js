@@ -93,8 +93,8 @@ export default function BaseChart ({stacked,config,data,events,customColors}) {
     }
 
     options = mergeAdvanced(options,config);
-    console.log(JSON.stringify(config,null,2))
-    console.log(JSON.stringify(options,null,2))
+    // console.log(JSON.stringify(config,null,2))
+    // console.log(JSON.stringify(options,null,2))
     return (
         <Chart data={data} options={options} />
     )

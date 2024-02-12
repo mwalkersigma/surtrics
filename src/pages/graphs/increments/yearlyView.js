@@ -137,6 +137,7 @@ function YearlyChart(props){
             return acc;
         }, {}))
         .map(({count}) => count);
+
     const smooth = smoothData(totals,resolution);
     const data = yearData.length > 0 && {
         labels: months,

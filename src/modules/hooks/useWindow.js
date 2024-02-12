@@ -1,7 +1,7 @@
-import { useCallback } from "react";
+import { useEffect } from "react";
 
 export default function useWindow(callback,deps) {
-    useCallback(()=>{
+    useEffect(()=>{
         if(typeof window !== "undefined"){
             callback();
         }

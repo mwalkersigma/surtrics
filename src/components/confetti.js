@@ -101,8 +101,13 @@ const Confetti = () => {
 
             // Fire off another round of confetti
             //if (confetti.length <= 10) initConfetti();
-
-            currentAnimationFrame = window.requestAnimationFrame(render);
+            if(confetti.length <= 40){
+                //window.cancelAnimationFrame(render);
+                initConfetti();
+                currentAnimationFrame = window.requestAnimationFrame(render);
+            }else{
+                currentAnimationFrame = window.requestAnimationFrame(render);
+            }
         }
         initConfetti();
         render();

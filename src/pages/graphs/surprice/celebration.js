@@ -154,9 +154,7 @@ let total = new Metric({
         unit: "Hrs saved",
         formula() {
             let filteredList = metrics.filter(metric => metric.title !== "Total Time Saved");
-            console.log(filteredList);
             let sum = filteredList.reduce((acc, metric) => acc + +metric.timeSavings.raw, 0)
-            console.log(sum);
             this.raw = formatter(sum)
         }
     },
@@ -166,9 +164,7 @@ let total = new Metric({
         collectionDateStart: "07/01/2023",
         formula() {
             let filteredList = metrics.filter(metric => metric.title !== "Total Time Saved");
-            console.log(filteredList);
             let sum = filteredList.reduce((acc, metric) => acc + +metric.timeSavings.raw, 0)
-            console.log(sum);
             this.raw = formatter(sum / 8)
         }
     }
@@ -215,7 +211,6 @@ const Celebration = () => {
         fetch("http://surprice.forsigma.com/api/getUsageData")
             .then((response) => response.json())
             .then((data) => {
-                console.log(data)
                 setSurpriceUsageData(data);
             });
     }, []);
@@ -228,7 +223,7 @@ const Celebration = () => {
 
     total.render();
     return (
-        <GraphWithStatCard noBorder title={'🎉 Celebration 🎉'} >
+        <GraphWithStatCard noBorder title={'🎉 Sursuite Celebration 🎉'} >
             <Confetti/>
             <SimpleGrid mt={'xl'} cols={1}>
                 <CelebrationCard metric={total}/>

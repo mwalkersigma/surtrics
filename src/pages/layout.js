@@ -182,6 +182,9 @@ const pages = {
                     "Research Entries": {
                         href: "/graphs/surprice/researchEntries"
                     },
+                    "Celebration" : {
+                        href: "/graphs/surprice/celebration"
+                    },
                 }
             },
         "Data Entry": {

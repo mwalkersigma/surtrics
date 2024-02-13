@@ -27,6 +27,14 @@ const shortNames = {
     "Ebay": "EBAY",
 }
 
+const targetList = {
+    "day": "daily",
+    "week": "weekly",
+    "month": "monthly",
+    "quarter": "monthly",
+    "year": "yearly",
+
+}
 
 
 
@@ -41,6 +49,7 @@ const SalesOverSpending = () => {
     useLogger("Sales Vs Purchases: Trend Line Resolution Factor",[debounced])
     const quickBooksUpdates = useUpdates("/api/views/quickbooks",{startDate,endDate,timeScale});
     let salesUpdates = useOrders({startDate,endDate,timeScale},{acceptedConditions: ["1", "2", "3", "4"]});
+    const salesTarget = useUpdates('/api/admin/salesTarget');
 
     let orders = salesUpdates.reduce((acc,order)=>{
         let [yyyy,mm,dd] = order.timeStamp.split("T")[0].split("-");
@@ -136,7 +145,7 @@ const SalesOverSpending = () => {
     let totalPurchases = quickBooksUpdates.reduce((acc,purchase)=>acc + +purchase.purchase_total,0);
 
 
-    let max =Math.round(Math.max(maxOrders,maxPurchases) * 2);
+    let max = salesTarget?.[targetList[timeScale]] * 1.8 ;
 
     const options = {
         plugins: {
@@ -186,6 +195,24 @@ const SalesOverSpending = () => {
                         return str;
                     }
                 }
+            },
+            annotation: {
+                annotations: [
+                    {
+                        type: 'line',
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        value: () => salesTarget?.[targetList[timeScale]] ?? 0,
+                        label: {
+                            display: true,
+                            content: "Sales Target",
+                            backgroundColor: 'red',
+                            color: 'white',
+                            rotation: 'auto'
+                        },
+                        scaleID: 'y',
+                    }
+                ]
             }
         },
         scales: {
@@ -283,8 +310,7 @@ const SalesOverSpending = () => {
                     </ProgressRoot>
                 </Paper>
 
-            ]
-            }
+            ]}
         >
             <BaseChart
                 customColors

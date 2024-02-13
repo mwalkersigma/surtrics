@@ -14,11 +14,8 @@ import useOrders from "../../../modules/hooks/useOrders";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import formatter from "../../../modules/utils/numberFormatter";
 import {lastDayOfWeek} from "date-fns";
-import {useDebouncedValue} from "@mantine/hooks";
 import useEvents from "../../../modules/hooks/useEvents";
 import StatCard from "../../../components/mantine/StatCard";
-import smoothData from "../../../modules/utils/graphUtils/smoothData";
-import colorizeLine from "../../../modules/utils/colorizeLine";
 
 
 const storeNameMap = {
@@ -118,12 +115,12 @@ const WeeklyView = () => {
             tooltip: {
                 callbacks: {
                     label: (context) => {
-                        let {datasetIndex, dataIndex} = context;
+                        let {datasetIndex} = context;
                         let {label} = context.chart.data.datasets[datasetIndex];
                         let raw = context.raw;
-                        return `${label}: $${raw}`;
+                        return `${label}: $${formatter(raw)}`;
                     }, footer: (context) => {
-                        return "TOTAL: $" + context.reduce((acc, {raw}) => (acc + +raw), 0);
+                        return "TOTAL: $" + formatter(context.reduce((acc, {raw}) => (acc + +raw), 0));
                     }
                 }
             }, legend: {
@@ -137,24 +134,27 @@ const WeeklyView = () => {
             }, annotation: {
                 annotations: {
                     'salesTarget': {
-                        type: 'line', borderColor: 'red', borderWidth: 2, label: {
+                        type: 'line',
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        label: {
                             display: true,
                             content: "Sales Target",
                             backgroundColor: 'red',
                             color: 'white',
                             rotation: 'auto'
-                        }, value: () => salesTarget?.['daily'] ?? 0, scaleID: 'y',
+                        },
+                        value: () => salesTarget?.['daily'] ?? 0, scaleID: 'y',
                     }
                 }
             }
-        }, scales: {
+        },
+        scales: {
             y: {
                 ticks: {
                     callback: (value) => `${formatter(value, 'currency')}`,
                 }, stacked: true,
-            }, x: {
-                stacked: true,
-            }
+            },
         },
     }
 

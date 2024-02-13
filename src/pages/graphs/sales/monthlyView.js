@@ -6,7 +6,7 @@ import {MonthPickerInput} from "@mantine/dates";
 import {MultiSelect, NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
 
-import {getDate, lastDayOfMonth, setDate} from "date-fns";
+import {lastDayOfMonth, setDate} from "date-fns";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
 import useOrders from "../../../modules/hooks/useOrders";
@@ -127,7 +127,7 @@ const MonthlyView = () => {
             tooltip: {
                 callbacks: {
                     label: (context) => {
-                        let {datasetIndex, dataIndex} = context;
+                        let {datasetIndex} = context;
                         let {label} = context.chart.data.datasets[datasetIndex];
                         let raw = context.raw;
                         return `${label}: $${raw}`;

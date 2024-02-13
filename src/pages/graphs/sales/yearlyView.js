@@ -15,7 +15,7 @@ import {
 import DataLabels from "chartjs-plugin-datalabels";
 import {MultiSelect, NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
-import {getMonth, lastDayOfYear, setDate, setMonth, startOfMonth} from "date-fns";
+import { lastDayOfYear, setDate, setMonth, startOfMonth} from "date-fns";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
@@ -65,13 +65,23 @@ const YearlyView = () => {
 
     const themeColor = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
     const [storeId, setStoreId] = useState("Total");
-    const orders = useOrders({startDate:date, endDate:lastDayOfYear(date)},{acceptedConditions: ["1", "2", "3", "4"]});
+    const orders = useOrders(
+        {
+            startDate:date,
+            endDate:lastDayOfYear(date)
+        },
+        {
+            acceptedConditions: ["1", "2", "3", "4"]
+        });
     let {categories , reducedEvents} = useEvents({
         startDate:date,
         endDate:lastDayOfYear(date),
         affected_categories:affectedCategories,
         timeScale:'month',
-        excludedCategories:['Processing','Warehouse'],
+        excludedCategories:[
+            'Processing',
+            'Warehouse'
+        ],
     });
     useEffect(() => {
         if(affectedCategories.length > 0) return;
@@ -156,6 +166,8 @@ const YearlyView = () => {
             }
         })
     }
+    const value = salesTarget?.['monthly'] ?? 0 ;
+
 
     const options = {
         plugins: {
@@ -183,6 +195,7 @@ const YearlyView = () => {
             annotation: {
                 annotations: [
                     {
+                        value,
                         type: 'line',
                         borderColor: 'red',
                         borderWidth: 2,
@@ -193,7 +206,6 @@ const YearlyView = () => {
                             color: 'white',
                             rotation: 'auto'
                         },
-                        value: () => salesTarget?.['monthly'] ?? 0,
                         scaleID: 'y',
                     }
                 ]
@@ -215,7 +227,6 @@ const YearlyView = () => {
     };
 
     let dataForTrend = months.map(month => yearSales[month]?.total ?? 0);
-    console.log(dataForTrend);
     data.datasets.push({
         label: "Trend",
         data: smoothData(dataForTrend, 8),

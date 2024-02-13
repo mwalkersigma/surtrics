@@ -88,11 +88,16 @@ export default function BaseChart ({stacked,config,data,events,customColors}) {
             }
         })
     }
+    if(config?.plugins?.annotation){
+        console.log("config",config.plugins.annotation)
+
+    }
     if(customColors){
         options.plugins.colors.forceOverride = false;
     }
 
     options = mergeAdvanced(options,config);
+    console.log("options",options.plugins.annotation)
     // console.log(JSON.stringify(config,null,2))
     // console.log(JSON.stringify(options,null,2))
     return (

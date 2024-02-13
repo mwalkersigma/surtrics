@@ -15,7 +15,7 @@ import {
 import DataLabels from "chartjs-plugin-datalabels";
 import {MultiSelect, NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../_app";
-import {getMonth, lastDayOfYear, setDate, setMonth} from "date-fns";
+import {getMonth, lastDayOfYear, setDate, setMonth, startOfMonth} from "date-fns";
 import StatCard from "../../../components/mantine/StatCard";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
@@ -23,6 +23,8 @@ import useEvents from "../../../modules/hooks/useEvents";
 import useOrders from "../../../modules/hooks/useOrders";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import formatter from "../../../modules/utils/numberFormatter";
+import smoothData from "../../../modules/utils/graphUtils/smoothData";
+import colorizeLine from "../../../modules/utils/colorizeLine";
 
 
 ChartJS.register(
@@ -66,11 +68,10 @@ const YearlyView = () => {
     const orders = useOrders({startDate:date, endDate:lastDayOfYear(date)},{acceptedConditions: ["1", "2", "3", "4"]});
     let {categories , reducedEvents} = useEvents({
         startDate:date,
-        endDate:date,
+        endDate:lastDayOfYear(date),
         affected_categories:affectedCategories,
         timeScale:'month',
         excludedCategories:['Processing','Warehouse'],
-        combined:false
     });
     useEffect(() => {
         if(affectedCategories.length > 0) return;
@@ -82,7 +83,6 @@ const YearlyView = () => {
         return acc + order.total;
     },0);
 
-    const displayMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
     let storeIds= [
         'All',
@@ -94,7 +94,7 @@ const YearlyView = () => {
     let orderCount = {total:0};
 
     orders.forEach(order=>{
-        let month = getMonth(new Date(order.paymentDate));
+        let month = startOfMonth(new Date(order.paymentDate)).toLocaleDateString();
 
         if(!yearSales[month]){
             yearSales[month] = {
@@ -119,30 +119,34 @@ const YearlyView = () => {
 
         orderCount[month] += 1;
 
-    })
+    });
+
+
+
 
     let dataForGraph = []
 
-    for (let i = 0 ; i < displayMonths.length; i++) {
+    let months = Object.keys(yearSales).filter(date => date !== 'total')
+
+    for (let i = 0 ; i < months.length; i++) {
 
         let dataSet = storeDataMap[storeNameMap[storeId]];
-
+        let month = months[i];
         dataSet.forEach(store => {
-            let displayName = displayMonths[i];
-
-            let monthSales = yearSales[i]?.[store]?.total ?? yearSales[i]?.[store] ?? 0;
+            let monthSales = yearSales[month]?.[store]?.total ?? yearSales[month]?.[store] ?? 0;
             let monthValue = Math.round( monthSales * 100 ) / 100;
             dataForGraph.push({
-                displayName,
                 monthValue,
                 store:store,
                 index:i
             });
         })
+
     }
 
+
     const data = {
-        labels:displayMonths,
+        labels:months,
         datasets:storeDataMap[storeNameMap[storeId]].map((dataSet,index) => {
             return {
                 label:storeNameMap[dataSet],
@@ -210,13 +214,24 @@ const YearlyView = () => {
         },
     };
 
-    let dates = [...new Set(dataForGraph.map(({displayName})=>{
-        let year = new Date(date).getFullYear();
-        let month = displayMonths.indexOf(displayName);
-        let day = 1;
-        return new Date(year,month,day);
-    }))]
-
+    let dataForTrend = months.map(month => yearSales[month]?.total ?? 0);
+    console.log(dataForTrend);
+    data.datasets.push({
+        label: "Trend",
+        data: smoothData(dataForTrend, 8),
+        fill: false,
+        segment: {
+            borderColor: colorizeLine() ,
+            backgroundColor: colorizeLine(),
+        },
+        radius: 0,
+        type: "line",
+        tension: 0.4,
+        stack: 2,
+        datalabels: {
+            display: false
+        },
+    })
     return (
         <GraphWithStatCard
         title={"Yearly Sales"}
@@ -228,7 +243,7 @@ const YearlyView = () => {
                 onChange={(e) => setDate(e)}
             />
         }
-        slotTwo={
+        slotOne={
             <MultiSelect
                 clearable
                 label={"Events Affected Categories"}
@@ -238,7 +253,7 @@ const YearlyView = () => {
                 mb={'md'}
             />
         }
-        slotOne={
+        slotTwo={
             <NativeSelect
             mb={"xl"}
             label={"Store"}
@@ -284,7 +299,7 @@ const YearlyView = () => {
         ]}
         >
             <BaseChart
-                events={reducedEvents(dates || [])}
+                events={reducedEvents(months)}
                 stacked
                 data={data}
                 config={options}

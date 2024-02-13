@@ -9,6 +9,7 @@ import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
+import StatCard from "../../../components/mantine/StatCard";
 
 
 
@@ -68,7 +69,9 @@ function IndividualChart(props){
     Object
         .values(dataForChart)
         .forEach(user=>{
-            Object.keys(user).forEach(key => types.add(key));
+            Object
+                .keys(user)
+                .forEach(key => types.add(key));
         })
     const data = individualData.length > 0 && {
         labels: Object.keys(dataForChart),
@@ -101,6 +104,7 @@ function UserGraph() {
     const [date, setDate] = useState(new Date());
     let individualData = useUpdates("/api/views/individualView", {date});
     const {colorScheme: theme} = useMantineColorScheme();
+
     return (
         <GraphWithStatCard
             title={"Individual Daily Chart"}
@@ -113,7 +117,13 @@ function UserGraph() {
                     onChange={(e) => setDate(e)}
                 />
             }
-            cards={[]}>
+            cards={[
+                {
+                    title: "Users",
+                    value: individualData && Object.keys(JSON.parse(individualData)).length,
+                    description: "Total number of users"
+                }
+            ].map((stat,i)=> <StatCard key={i} stat={stat} />)}>
             <IndividualChart theme={theme} individualData={individualData} date={date}/>
         </GraphWithStatCard>
     )

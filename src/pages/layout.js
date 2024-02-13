@@ -25,7 +25,7 @@ import {
     IconTimeline,
     IconExclamationCircle,
     IconClipboardData,
-    IconGitCompare
+    IconGitCompare, IconConfetti
 } from "@tabler/icons-react";
 import {FaEbay} from "react-icons/fa6";
 
@@ -41,6 +41,10 @@ const pages = {
         "Notable Events": {
             leftSection: <IconTimeline size={size} stroke={stroke}/>,
             href: "/timelines/listingNotableEvents"
+        },
+        "Celebration" : {
+            leftSection: <IconConfetti size={size} stroke={stroke}/>,
+            href: "/celebration"
         },
         "Increments": {
             leftSection: <IconCirclePlus size={size} stroke={stroke}/>,
@@ -181,9 +185,6 @@ const pages = {
             links: {
                     "Research Entries": {
                         href: "/graphs/surprice/researchEntries"
-                    },
-                    "Celebration" : {
-                        href: "/graphs/surprice/celebration"
                     },
                 }
             },

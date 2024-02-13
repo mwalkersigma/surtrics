@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import { Group, Paper, SimpleGrid, Text, Title, Tooltip } from "@mantine/core";
-import {IconClipboardData, IconSearch} from "@tabler/icons-react";
-import formatter from "../../../modules/utils/numberFormatter";
-import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
-import Confetti from "../../../components/confetti";
+import {IconClipboardData, IconSearch, IconTable} from "@tabler/icons-react";
+import formatter from "../modules/utils/numberFormatter";
+import GraphWithStatCard from "../components/mantine/graphWithStatCard";
+import Confetti from "../components/confetti";
 import { eachWeekOfInterval } from "date-fns";
 
 
@@ -54,7 +54,7 @@ const metrics = [
             Consecutive runs of the sheet are not counted as time saved since the data must 
             be researched for the sheet each time. Each model number is counted only once.
         `,
-        icon: <IconSearch size={'1.5rem'} />,
+        icon: <IconTable size={'1.5rem'} />,
         timeSavings :{
             raw: null,
             unit: "Hrs saved",
@@ -177,7 +177,9 @@ function CelebrationCard ({metric}) {
             withArrow
             label={metric.Explanation}
             w={220}
-            transitionProps={{ duration: 200 }}
+            transitionProps={{
+                duration: 200
+            }}
         >
             <Paper p={"1rem 1.5rem"} withBorder>
 
@@ -187,13 +189,13 @@ function CelebrationCard ({metric}) {
                 </Group>
 
                 <Group mb={'md'} align={'end'}>
-                    <Title> { metric.timeSavings.raw } </Title>
+                    <Title c={'teal'}> { metric.timeSavings.raw } </Title>
                     <Text> { metric.timeSavings.unit } </Text>
                 </Group>
 
                 <Group c={'dimmed'} justify={'space-between'} >
-                    <Text fz={'sm'} > { metric.value.raw } { metric.value.unit }  </Text>
-                    <Text fz={'sm'} > Start Date { metric.value.collectionDateStart } </Text>
+                    <Text fz={'xs'} > { metric.value.raw } { metric.value.unit }  </Text>
+                    <Text fz={'xs'} > Start Date { metric.value.collectionDateStart } </Text>
                 </Group>
 
             </Paper>

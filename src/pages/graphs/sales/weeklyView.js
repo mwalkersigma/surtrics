@@ -17,6 +17,8 @@ import {lastDayOfWeek} from "date-fns";
 import {useDebouncedValue} from "@mantine/hooks";
 import useEvents from "../../../modules/hooks/useEvents";
 import StatCard from "../../../components/mantine/StatCard";
+import smoothData from "../../../modules/utils/graphUtils/smoothData";
+import colorizeLine from "../../../modules/utils/colorizeLine";
 
 
 const storeNameMap = {
@@ -40,8 +42,6 @@ const WeeklyView = () => {
     const salesTarget = useUpdates('/api/admin/salesTarget');
     const [affectedCategories, setAffectedCategories] = useState([]);
 
-    const [resolution, setResolution] = useState(8);
-    const [debounced] = useDebouncedValue(resolution, 500);
 
     let startDate = findStartOfWeek(date);
     let endDate = lastDayOfWeek(new Date(date));
@@ -166,6 +166,8 @@ const WeeklyView = () => {
         labels: dates,
         datasets: graphDataSets
     }
+
+
 
     return (
         <GraphWithStatCard

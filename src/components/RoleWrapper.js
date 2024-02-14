@@ -29,7 +29,7 @@ function Unauthorized(){
 function RoleWrapper({children,altRoles,invisible,LoadingComponent = <Loading/>}){
     const {data:session, status} = useSession();
     const {adminList, isAdmin,isRole} = useAdminList();
-    if(altRoles.includes("loggedIn")){
+    if(altRoles && altRoles.includes("loggedIn")){
         if(status === "loading") return<>{LoadingComponent}</>  ;
         if(invisible && status === "unauthenticated")return null;
         if(status === "unauthenticated")return <Container><Title>Not logged in</Title></Container>;

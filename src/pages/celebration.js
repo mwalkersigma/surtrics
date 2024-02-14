@@ -5,6 +5,8 @@ import formatter from "../modules/utils/numberFormatter";
 import GraphWithStatCard from "../components/mantine/graphWithStatCard";
 import Confetti from "../components/confetti";
 import { eachWeekOfInterval } from "date-fns";
+import useUsage from "../modules/hooks/useUsage";
+import RoleWrapper from "../components/RoleWrapper";
 
 
 
@@ -171,6 +173,7 @@ let total = new Metric({
 })
 
 function CelebrationCard ({metric}) {
+
     return (
         <Tooltip
             multiline
@@ -208,7 +211,7 @@ function CelebrationCard ({metric}) {
 const Celebration = () => {
     //12.149
     const [surpriceUsageData, setSurpriceUsageData] = useState(null);
-
+    useUsage("Metrics", "celebration")
     useEffect(() => {
         fetch("http://surprice.forsigma.com/api/getUsageData")
             .then((response) => response.json())
@@ -225,15 +228,17 @@ const Celebration = () => {
 
     total.render();
     return (
-        <GraphWithStatCard noBorder title={'🎉 Sursuite Celebration 🎉'} >
-            <Confetti/>
-            <SimpleGrid mt={'xl'} cols={1}>
-                <CelebrationCard metric={total}/>
-            </SimpleGrid>
-            <SimpleGrid mt={'md'} cols={3}>
-                {metrics.map((metric, i) => <CelebrationCard key={i} metric={metric}/>)}
-            </SimpleGrid>
-        </GraphWithStatCard>
+        <RoleWrapper altRoles={"loggedIn"}>
+            <GraphWithStatCard noBorder title={'🎉 Sursuite Celebration 🎉'} >
+                <Confetti/>
+                <SimpleGrid mt={'xl'} cols={1}>
+                    <CelebrationCard metric={total}/>
+                </SimpleGrid>
+                <SimpleGrid mt={'md'} cols={3}>
+                    {metrics.map((metric, i) => <CelebrationCard key={i} metric={metric}/>)}
+                </SimpleGrid>
+            </GraphWithStatCard>
+        </RoleWrapper>
     );
 };
 

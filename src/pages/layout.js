@@ -44,7 +44,7 @@ const pages = {
         },
         "Celebration" : {
             leftSection: <IconConfetti size={size} stroke={stroke}/>,
-            href: "/celebration"
+            href: "/celebration",
         },
         "Increments": {
             leftSection: <IconCirclePlus size={size} stroke={stroke}/>,

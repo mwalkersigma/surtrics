@@ -29,6 +29,12 @@ function Unauthorized(){
 function RoleWrapper({children,altRoles,invisible,LoadingComponent = <Loading/>}){
     const {data:session, status} = useSession();
     const {adminList, isAdmin,isRole} = useAdminList();
+    if(altRoles.includes("loggedIn")){
+        if(status === "loading") return<>{LoadingComponent}</>  ;
+        if(invisible && status === "unauthenticated")return null;
+        if(status === "unauthenticated")return <Container><Title>Not logged in</Title></Container>;
+        return children;
+    }
     if(invisible)return <RoleWrapperInvisible altRoles={altRoles}>{children}</RoleWrapperInvisible>
     if(status === "loading" || !adminList ) return<>{LoadingComponent}</>  ;
     if(status === "error") return <Container><Title>Error</Title></Container>;

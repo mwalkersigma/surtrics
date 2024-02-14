@@ -6,7 +6,6 @@ import GraphWithStatCard from "../components/mantine/graphWithStatCard";
 import Confetti from "../components/confetti";
 import { eachWeekOfInterval } from "date-fns";
 import useUsage from "../modules/hooks/useUsage";
-import RoleWrapper from "../components/RoleWrapper";
 
 
 
@@ -228,7 +227,6 @@ const Celebration = () => {
 
     total.render();
     return (
-        <RoleWrapper altRoles={"loggedIn"}>
             <GraphWithStatCard noBorder title={'🎉 Sursuite Celebration 🎉'} >
                 <Confetti/>
                 <SimpleGrid mt={'xl'} cols={1}>
@@ -238,7 +236,6 @@ const Celebration = () => {
                     {metrics.map((metric, i) => <CelebrationCard key={i} metric={metric}/>)}
                 </SimpleGrid>
             </GraphWithStatCard>
-        </RoleWrapper>
     );
 };
 

@@ -64,6 +64,7 @@ function IndividualChart(props){
             }
         },
     }
+    try{
     let dataForChart = JSON.parse(individualData);
     let types = new Set();
     Object
@@ -94,6 +95,10 @@ function IndividualChart(props){
         })
     };
     return <BaseChart stacked data={data}  config={options}/>
+
+    }catch (e) {
+        return null;
+    }
 }
 
 

@@ -42,7 +42,7 @@ GROUP BY
         }
         results[user_id][fullKey] += (+count);
     }
-    return JSON.stringify(results);
+    return results;
 }
 export default function handler (req,res) {
     let date,body;

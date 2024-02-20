@@ -2,6 +2,16 @@ import router from "../../modules/serverUtils/requestRouter";
 import {parseBody} from "../../modules/serverUtils/parseBody";
 import fs from "fs";
 
+function getHandler (req, res) {
+    const usageData = fs.readFileSync("./src/json/usageTracker.json");
+    const usage = JSON.parse(usageData);
+    const mroUsage = usage?.['mro'];
+    const ordersSentToInsightly = mroUsage?.['ordersSentToInsightly'] || 0;
+
+    res.status(200).json([ordersSentToInsightly]);
+
+}
+
 function postHandler (req, res) {
     const body = parseBody(req);
     const count = body.count;
@@ -27,5 +37,6 @@ function postHandler (req, res) {
 
 
 export default router({
+    GET: getHandler,
     POST: postHandler
 })

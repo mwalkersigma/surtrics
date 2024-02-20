@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import { Group, Paper, SimpleGrid, Text, Title, Tooltip } from "@mantine/core";
-import {IconClipboardData, IconSearch, IconTable} from "@tabler/icons-react";
+import {IconClipboardData, IconReceipt, IconSearch, IconTable} from "@tabler/icons-react";
 import formatter from "../modules/utils/numberFormatter";
 import GraphWithStatCard from "../components/mantine/graphWithStatCard";
 import Confetti from "../components/confetti";
 import { eachWeekOfInterval } from "date-fns";
 import useUsage from "../modules/hooks/useUsage";
 import RoleWrapper from "../components/RoleWrapper";
+import useUpdates from "../modules/hooks/useUpdates";
+import {useShallowEffect} from "@mantine/hooks";
 
 
 
@@ -206,25 +208,60 @@ function CelebrationCard ({metric}) {
     )
 }
 
-
+let shopSavings = new Metric({
+    title: "Shop MRO Orders Sent To Insightly",
+    Explanation: `
+        When an order is placed on the surplus website by the SHOP it is automatically sent to Insightly. 
+        This metric counts the number of orders sent to Insightly.
+        Each order After being placed took around 15 minutes in the past to be manually entered into Insightly.
+        `,
+    icon: <IconReceipt size={'1.5rem'}/>,
+    timeSavings: {
+        raw: null,
+        unit: "Hrs saved",
+        formula(val){
+            this.raw = formatter(val * 15 / 60)
+        }
+    },
+    value: {
+        raw: null,
+        unit: "Orders sent",
+        collectionDateStart: "02/20/2024",
+        formula(val){
+            this.raw = formatter(val)
+        }
+    },
+})
+shopSavings.render = function(val){
+    this.value.formula(val)
+    this.timeSavings.formula(val)
+}
 
 const Celebration = () => {
     //12.149
+    const shopUpdates = useUpdates("/api/logShopUsage")
     const [surpriceUsageData, setSurpriceUsageData] = useState(null);
     useUsage("Metrics", "celebration")
+
     useEffect(() => {
         fetch("http://surprice.forsigma.com/api/getUsageData")
             .then((response) => response.json())
             .then((data) => {
                 setSurpriceUsageData(data);
+                metrics.forEach(metric=>metric.render(data))
+                metrics.push(shopSavings)
             });
     }, []);
 
-    if(!surpriceUsageData){
+    useShallowEffect(()=>{
+        shopSavings.render(shopUpdates[0] ?? 0)
+    },[shopUpdates])
+
+    if(!surpriceUsageData || shopUpdates.length === 0 ){
         return <div>loading...</div>
     }
 
-    metrics.forEach(metric=>metric.render(surpriceUsageData))
+
 
     total.render();
     return (
@@ -234,7 +271,7 @@ const Celebration = () => {
                 <SimpleGrid mt={'xl'} cols={1}>
                     <CelebrationCard metric={total}/>
                 </SimpleGrid>
-                <SimpleGrid mt={'md'} cols={3}>
+                <SimpleGrid mb={'xl'} mt={'md'} cols={3}>
                     {metrics.map((metric, i) => <CelebrationCard key={i} metric={metric}/>)}
                 </SimpleGrid>
             </GraphWithStatCard>

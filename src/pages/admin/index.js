@@ -107,6 +107,7 @@ const Index = () => {
     const frequency = useFrequency();
     const usage = useUpdates("/api/usage");
     delete usage.users;
+    delete usage.mro
     return (
         <RoleWrapper altRoles={"surplus director"}>
             <Container>

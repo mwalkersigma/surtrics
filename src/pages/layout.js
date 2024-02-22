@@ -25,7 +25,7 @@ import {
     IconTimeline,
     IconExclamationCircle,
     IconClipboardData,
-    IconGitCompare, IconConfetti
+    IconGitCompare, IconConfetti, IconCamera
 } from "@tabler/icons-react";
 import {FaEbay} from "react-icons/fa6";
 
@@ -139,6 +139,20 @@ const pages = {
                         }
                     }
                 }
+            }
+        },
+        "Photos":{
+            leftSection: <IconCamera size={size} stroke={stroke}/>,
+            links:{
+                "Graphs": {
+                    leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
+                    opened:true,
+                    links: {
+                        "Range View": {
+                            href: "/graphs/photos/rangeViewer"
+                        }
+                    }
+                },
             }
         },
         "Errors":{

@@ -8,6 +8,7 @@ import BaseChart from "../../../components/Chart";
 import RoleWrapper from "../../../components/RoleWrapper";
 import useUsage from "../../../modules/hooks/useUsage";
 import StatCard from "../../../components/mantine/StatCard";
+import {setDate, subDays} from "date-fns";
 
 const parseTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
@@ -15,7 +16,7 @@ const ResearchEntries = () => {
     useUsage("Metrics", "surprice-range-chart")
     const {colorScheme: theme} = useMantineColorScheme();
     const [interval, setInterval] = React.useState('day');
-    const [[startDate,endDate], setDateRange] = React.useState([new Date('01-01-2023'), new Date('12-31-2023')]);
+    const [[startDate,endDate], setDateRange] = React.useState([subDays(new Date(),30), new Date()]);
     const rows = useUpdates('/api/views/surpriceEntries',
         {
             startDate,

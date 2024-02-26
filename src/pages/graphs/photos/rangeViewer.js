@@ -8,15 +8,14 @@ import formatter from "../../../modules/utils/numberFormatter";
 import BaseChart from "../../../components/Chart";
 import {useMantineColorScheme} from "@mantine/core";
 import StatCard from "../../../components/mantine/StatCard";
-import {setDate} from "date-fns";
-const setDay = setDate
+import {subDays} from "date-fns";
 
 
 const RangeViewer = () => {
     const {colorScheme:theme} = useMantineColorScheme();
     const useTheme = theme => theme === "dark" ? colorScheme.white : colorScheme.dark;
 
-    const [[startDate,endDate],setDate] = useState([setDay(new Date(),1),new Date()])
+    const [[startDate,endDate],setDate] = useState([subDays(new Date(),30),new Date()])
 
     const updates = useUpdates("/api/views/photos",{ startDate, endDate })
 

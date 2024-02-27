@@ -13,7 +13,9 @@ import Logger from "sigma-logger";
 const {APPLICATION_ID, SHARED_SECRET, REFRESH_TOKEN} = process.env
 
 const limiter =  APILimiter(10000000,1440,5);
+
 const channelAdvisorLimiter = APILimiter(2000,1,5);
+
 function convertInvalidDate(date){
     return new Date(date
         .replace(/-/g, '/')
@@ -24,6 +26,7 @@ function convertInvalidDate(date){
 }
 
 const removeSingleQuotes = (str) => str.replace(/'/g, "");
+
 function parseRecordForApprovalsTable(record,records){
     const isParent = record[6] === "Parent";
     const isApproved = record[91] === "Approved";
@@ -37,6 +40,7 @@ function parseRecordForApprovalsTable(record,records){
         records.push({sku,approver,mpn,manufacturer,finalApprovalDate})
     }
 }
+
 function parseRecordForPricingTable(record,pricingData,lastUpdateDate){
     let user = record[103];
     let datePriced = record[105];
@@ -74,7 +78,9 @@ async function authorizeChannelAdvisor () {
     const accessTokenData = await accessTokenResponse.json();
     return accessTokenData['access_token'];
 }
+
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 export async function getUpdatesFromChannelAdvisor () {
 
     let channelAdvisorTokens = await fsp.readFile("./src/json/access_token.json").then(JSON.parse);
@@ -129,7 +135,6 @@ export async function getUpdatesFromChannelAdvisor () {
     return data;
 }
 
-
 function getLatestUpdateDate(){
     return db.query(`
         SELECT
@@ -156,6 +161,7 @@ async function getFileResponseUrl(){
     Logger.log("File response url found.")
     return fileResponseUrl;
 }
+
 async function downloadFile(fileResponseUrl){
     const {access_token} = await fsp.readFile("./src/json/access_token.json").then(JSON.parse);
     Logger.log("starting download.")
@@ -214,10 +220,14 @@ export async function ChannelRouteMain(){
             res()
         })
     })
+
     Logger.log("Finished parsing TSV.")
     Logger.log("Cleaning Table.")
+
     await db.query(`DROP TABLE IF EXISTS nfs.surtrics.surplus_approvals;`);
+
     Logger.log("Table Dropped. Recreating Table.")
+
     await db.query(`
                 CREATE TABLE IF NOT EXISTS nfs.surtrics.surplus_approvals
                     (
@@ -230,7 +240,9 @@ export async function ChannelRouteMain(){
                         user_who_approved VARCHAR(255)
                     )
                 `);
+
     Logger.log("Table Recreated. Inserting data.");
+
     let query = `
                     INSERT INTO nfs.surtrics.surplus_approvals
                         (sku, part_number, manufacturer, date_of_final_approval, template_approval_status, user_who_approved)
@@ -286,8 +298,6 @@ export async function ChannelRouteMain(){
     Logger.log("Finished Channel Advisor Route.")
     return "Finished Channel Advisor Route."
 }
-
-
 
 export default function handler (req,res) {
     return ChannelRouteMain()

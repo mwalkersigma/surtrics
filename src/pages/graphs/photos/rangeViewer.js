@@ -8,7 +8,7 @@ import formatter from "../../../modules/utils/numberFormatter";
 import BaseChart from "../../../components/Chart";
 import {useMantineColorScheme} from "@mantine/core";
 import StatCard from "../../../components/mantine/StatCard";
-import {subDays} from "date-fns";
+import { subDays } from "date-fns";
 
 
 const RangeViewer = () => {

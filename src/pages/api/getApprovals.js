@@ -185,8 +185,10 @@ export async function ChannelRouteMain(){
     Logger.log("Starting Channel Advisor Route.")
     let fileResponseUrl = await getFileResponseUrl();
     await downloadFile(fileResponseUrl);
+
     let outputFolder = "./src/json/outputs";
     let outputFiles = await fsp.readdir(outputFolder);
+
     let file = outputFiles[0];
     Logger.log("unzipping files.")
     await decompress(`${outputFolder}/${file}`, outputFolder)
@@ -194,6 +196,7 @@ export async function ChannelRouteMain(){
     Logger.log("Parsing TSV.")
     let records = [];
     let pricingData = [];
+
     let latestUpdateDate = await getLatestUpdateDate();
     Logger.log("Latest update date: " + latestUpdateDate);
 
@@ -261,8 +264,8 @@ export async function ChannelRouteMain(){
     })
     query += ';'
     await db.query(query)
-
     Logger.log("Finished inserting data.");
+
     if(pricingData.length > 0){
         query = `
                     INSERT INTO nfs.surtrics.surplus_pricing_data (user_who_priced, date_priced, sku, original_packaging_price, sigma_packaging_price, refurbished_price)
@@ -282,7 +285,6 @@ export async function ChannelRouteMain(){
         await db.query(query)
         console.log("Finished inserting pricing data.")
     }
-
     Logger.log("Data inserted. Cleaning up.");
     Logger.log("Cleaning up outputs folder.");
 

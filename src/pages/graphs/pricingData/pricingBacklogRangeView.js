@@ -4,11 +4,12 @@ import BaseChart from "../../../components/Chart";
 import React from "react";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import StatCard from "../../../components/mantine/StatCard";
+import {subDays} from "date-fns";
 
 const PricingBacklog = () => {
     const [[startDate, endDate], setDateRange] = React.useState([
-        new Date('2023-01-01'),
-        new Date('2024-01-31')
+        subDays(new Date(),30),
+        new Date()
     ]);
     let updates = useUpdates('/api/views/pricingBacklog', {
         startDate,

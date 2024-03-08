@@ -16,9 +16,7 @@ const PricingBacklog = () => {
         endDate
     });
     updates.sort((a, b) => new Date(a['date_entered']) - new Date(b['date_entered']));
-
-    console.log(updates);
-
+    
     return (
         <GraphWithStatCard
             title={"Pricing Backlog"}

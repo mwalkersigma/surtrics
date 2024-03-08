@@ -16,6 +16,7 @@ const limiter =  APILimiter(10000000,1440,5);
 
 const channelAdvisorLimiter = APILimiter(2000,1,5);
 
+
 function convertInvalidDate(date){
     return new Date(date
         .replace(/-/g, '/')
@@ -28,26 +29,27 @@ function convertInvalidDate(date){
 const removeSingleQuotes = (str) => str.replace(/'/g, "");
 
 function parseRecordForApprovalsTable(record,records){
-    const isParent = record[6] === "Parent";
-    const isApproved = record[91] === "Approved";
-    const hasFinalApprovalDate = record[89] !== "";
+    const isParent = record['IsParent'] !== "False";
+    const isApproved = record['(06.) Template Approval Status'] === "Approved";
+    const hasFinalApprovalDate = record['(04.) Date of Final Approval'] !== "";
     if(isParent && isApproved && hasFinalApprovalDate){
-        const sku = record[5];
-        const mpn = record[35];
-        const manufacturer = removeSingleQuotes(record[46]);
-        const approver = record[101];
-        const finalApprovalDate = record[89];
+        const sku = record['Sku'];
+        const mpn = record['MPN'];
+        const manufacturer = removeSingleQuotes(record['Brand']);
+        const approver = record['(11.) Final Approval By'];
+        const finalApprovalDate = record['(04.) Date of Final Approval'];
         records.push({sku,approver,mpn,manufacturer,finalApprovalDate})
     }
+
 }
 
 function parseRecordForPricingTable(record,pricingData,lastUpdateDate){
-    let user = record[103];
-    let datePriced = record[105];
-    let sku = record[5];
-    let originalPackagingPrice = +record[169];
-    let sigmaPackagingPrice = +record[173];
-    let refurbishedPrice = +record[171];
+    let user = record['(12.) Priced By'];
+    let datePriced = record['(13.) Date Priced'];
+    let sku = record['Sku'];
+    let originalPackagingPrice = +record['Market Price: Original Packaging'];
+    let sigmaPackagingPrice = +record['Market Price: SIGMA Packaging'];
+    let refurbishedPrice = +record['Market Price: Refurbished'];
     if(!user || !datePriced || !sku || !originalPackagingPrice || !sigmaPackagingPrice || !refurbishedPrice) return;
     if(new Date(datePriced).toString() === "Invalid Date"){
         datePriced = convertInvalidDate(datePriced).toLocaleDateString();
@@ -197,18 +199,25 @@ export async function ChannelRouteMain(){
     let records = [];
     let pricingData = [];
 
-    let latestUpdateDate = await getLatestUpdateDate();
-    Logger.log("Latest update date: " + latestUpdateDate);
-
-
     await new Promise((res,rej)=>{
         const parser = parse({
             delimiter: '\t',
+            columns: true
         });
         fs.createReadStream(`${outputFolder}/${file.split(".")[0]}.txt`).pipe(parser);
         parser.on('readable', function(){
             let record;
             while ((record = parser.read()) !== null) {
+                let keys = Object.keys(record);
+                keys.forEach((key) => {
+                    if(key.match(/Attribute\d+Name/g)){
+                        let attributeNumber = key.match(/\d+/g)[0];
+                        let attributeValue = 'Attribute' + attributeNumber + 'Value';
+                        record[record[key]] = record[attributeValue];
+                        delete record[key];
+                        delete record[key.replace("Name","Value")];
+                    }
+                })
                 parseRecordForApprovalsTable(record,records);
                 parseRecordForPricingTable(record,pricingData);
             }
@@ -225,6 +234,25 @@ export async function ChannelRouteMain(){
     })
 
     Logger.log("Finished parsing TSV.")
+
+
+    let query = `
+                    INSERT INTO nfs.surtrics.surplus_approvals
+                        (sku, part_number, manufacturer, date_of_final_approval, template_approval_status, user_who_approved)
+                    VALUES
+                `;
+    records.forEach((approval,i) => {
+        process.stdout.write(`\rProcessing:${i} of ${records.length} ${Math.floor((i/records.length)*100)}%`)
+        if(new Date(approval.finalApprovalDate).toString() === "Invalid Date") {
+            approval.finalApprovalDate = convertInvalidDate(approval.finalApprovalDate)
+        }
+        const formatDate = new Date(approval.finalApprovalDate).toLocaleString('en-US', {timeZone: 'America/Chicago', hour12: true});
+        query += `('${approval.sku}','${approval.mpn}','${approval.manufacturer}', '${formatDate}', 'Approved', '${approval.approver}')`;
+        if(i < records.length - 1){
+            query += ','
+        }
+    })
+    query += ';'
     Logger.log("Cleaning Table.")
 
     await db.query(`DROP TABLE IF EXISTS nfs.surtrics.surplus_approvals;`);
@@ -245,24 +273,6 @@ export async function ChannelRouteMain(){
                 `);
 
     Logger.log("Table Recreated. Inserting data.");
-
-    let query = `
-                    INSERT INTO nfs.surtrics.surplus_approvals
-                        (sku, part_number, manufacturer, date_of_final_approval, template_approval_status, user_who_approved)
-                    VALUES
-                `;
-
-    records.forEach((approval,i) => {
-        if(new Date(approval.finalApprovalDate).toString() === "Invalid Date") {
-            approval.finalApprovalDate = convertInvalidDate(approval.finalApprovalDate)
-        }
-        const formatDate = new Date(approval.finalApprovalDate).toLocaleString('en-US', {timeZone: 'America/Chicago', hour12: true});
-        query += `('${approval.sku}','${approval.mpn}','${approval.manufacturer}', '${formatDate}', 'Approved', '${approval.approver}')`;
-        if(i < records.length - 1){
-            query += ','
-        }
-    })
-    query += ';'
     await db.query(query)
     Logger.log("Finished inserting data.");
 

@@ -253,6 +253,9 @@ export async function ChannelRouteMain(){
         }
     })
     query += ';'
+    if(records.length === 0){
+        throw(new Error("No records found in TSV file."))
+    }
     Logger.log("Cleaning Table.")
 
     await db.query(`DROP TABLE IF EXISTS nfs.surtrics.surplus_approvals;`);
@@ -314,5 +317,8 @@ export async function ChannelRouteMain(){
 export default function handler (req,res) {
     return ChannelRouteMain()
         .then((data) => res.status(200).json({statusCode: 200, message : data}))
-        .catch(err => res.status(500).json({statusCode: 500, message : err.message}))
+        .catch(err => {
+            Logger.log(err)
+            res.status(500).json({statusCode: 500, message : err.message})
+        })
 }

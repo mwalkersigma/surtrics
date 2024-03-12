@@ -2,7 +2,63 @@ import router from "../../../modules/serverUtils/requestRouter";
 import db from "../../../db/index"
 import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
 import {parseBody} from "../../../modules/serverUtils/parseBody";
+import { parse } from 'csv-parse/sync';
 
+
+function formDataHandler(req) {
+    let contentTypeHeader = req.headers['content-type'];
+    let boundary = "--" + contentTypeHeader.split("; ")[1].replace("boundary=", "");
+    let body = req.body;
+    let parts = body.split(boundary)[1];
+
+    let data = parts
+        .split(/[\r\n]+/)
+        .filter((part) => part.length)
+
+    let fileName, file;
+
+    data.forEach((val, index) => {
+        if (val.includes("filename=")) {
+            fileName = data[index].split("filename=")[1];
+        }
+        if (val.toLowerCase().includes("content-type")) {
+            file = data.slice(index + 1);
+        }
+    });
+
+
+    return parse(file.join("\n"), {
+        columns: true,
+        skip_empty_lines: true,
+    });
+}
+
+async function postHandler(req, res) {
+    return serverAdminWrapper(async (req,res,{user:{name}}    ) => {
+        let records = formDataHandler(req, res);
+
+        const queries = [];
+
+        records.forEach((record) => {
+            const date = new Date(record['Date']);
+            const po_number = record['PO Num'];
+            const customerName = record['Name'];
+            const purchaseType = record['Purchase Type'];
+            const total = record['Total Amount'].replace("$", "").replace(",", "");
+
+            let query = `
+                INSERT INTO surtrics.surplus_quickbooks_data (po_name, po_number, po_date, purchase_type, purchase_total, user_who_submitted)
+                VALUES ('${customerName}', '${po_number}', '${date.toISOString()}', '${purchaseType}', '${total}', '${name}');
+            `
+            queries.push(query);
+        })
+        for(let i = 0; i < queries.length; i++) {
+            await db.query(queries[i]);
+        }
+
+        res.status(200).json({message: "Successfully added data"})
+    },"surplus director", "bsa")(req,res)
+}
 function putHandler(req, res) {
     let body = parseBody(req);
     const {
@@ -61,9 +117,9 @@ function deleteHandler(req, res) {
 
 export default function handler (req, res) {
     return router({
+        POST: postHandler,
         PUT: putHandler,
         GET: getHandler,
         DELETE: deleteHandler,
     })(req, res)
-
 }

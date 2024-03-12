@@ -178,7 +178,7 @@ const QuickBooks = () => {
                 </Grid>
             </form>
             <Space h={"2.4rem"}/>
-            <Divider variant={"dashed"} label="Label in the center" labelPosition="center"/>
+            <Divider variant={"dashed"} label="File Upload" labelPosition="center"/>
             <Space h={"2.4rem"}/>
             <FileInput
                 onChange={setFile}

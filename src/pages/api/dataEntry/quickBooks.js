@@ -10,6 +10,7 @@ function formDataHandler(req) {
     let boundary = "--" + contentTypeHeader.split("; ")[1].replace("boundary=", "");
     let body = req.body;
     let parts = body.split(boundary)[1];
+    console.log("here")
 
     let data = parts
         .split(/[\r\n]+/)
@@ -25,7 +26,7 @@ function formDataHandler(req) {
             file = data.slice(index + 1);
         }
     });
-
+    console.log("here")
 
     return parse(file.join("\n"), {
         columns: true,
@@ -39,24 +40,48 @@ async function postHandler(req, res) {
 
         const queries = [];
 
+        let pastRecordPoNumbers = await db.query(`
+            SELECT po_number
+            FROM surtrics.surplus_quickbooks_data
+        `);
+        console.log("here")
+        pastRecordPoNumbers = pastRecordPoNumbers.rows.map((row) => row.po_number);
+
+        let updateCount = 0;
+        let insertCount = 0;
+
         records.forEach((record) => {
             const date = new Date(record['Date']);
             const po_number = record['PO Num'];
-            const customerName = record['Name'];
+            const customerName = record['Name'].replace("'", "");
             const purchaseType = record['Purchase Type'];
             const total = record['Total Amount'].replace("$", "").replace(",", "");
+            let query;
 
-            let query = `
-                INSERT INTO surtrics.surplus_quickbooks_data (po_name, po_number, po_date, purchase_type, purchase_total, user_who_submitted)
-                VALUES ('${customerName}', '${po_number}', '${date.toISOString()}', '${purchaseType}', '${total}', '${name}');
-            `
+            if (pastRecordPoNumbers.includes(po_number)) {
+                updateCount++;
+                query = `
+                    UPDATE surtrics.surplus_quickbooks_data
+                    SET po_name = '${customerName}', po_date = '${date.toISOString()}', purchase_type = '${purchaseType}', purchase_total = '${total}', user_who_submitted = '${name}'
+                    WHERE po_number = '${po_number}';
+                `
+            }else{
+                insertCount++;
+                query = `
+                    INSERT INTO surtrics.surplus_quickbooks_data (po_name, po_number, po_date, purchase_type, purchase_total, user_who_submitted)
+                    VALUES ('${customerName}', '${po_number}', '${date.toISOString()}', '${purchaseType}', '${total}', '${name}');
+                `;
+            }
             queries.push(query);
         })
+        console.log("here")
         for(let i = 0; i < queries.length; i++) {
+            console.log(queries[i])
             await db.query(queries[i]);
         }
-
-        res.status(200).json({message: "Successfully added data"})
+        res.status(200).json({
+            message: `Successfully added ${insertCount} records and updated ${updateCount} records.`
+        });
     },"surplus director", "bsa")(req,res)
 }
 function putHandler(req, res) {

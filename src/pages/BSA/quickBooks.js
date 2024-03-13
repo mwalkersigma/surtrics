@@ -158,6 +158,7 @@ const QuickBooks = () => {
                             <option value={"auction"}>Auction</option>
                             <option value={"no_list"}>Non-List</option>
                             <option value={"targeted"}>List Buy</option>
+                            <option value={"targeted"}>Sourcing</option>
                             <option value={"N/A"}>N/A</option>
                         </NativeSelect>
                     </Grid.Col>

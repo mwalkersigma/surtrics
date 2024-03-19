@@ -66,7 +66,6 @@ const EbayRangeView = () => {
 
     const dates = updates?.date_for_week?.data;
     delete updates.date_for_week;
-    console.log(updates)
     const graphData = {
         labels: dates,
         datasets: Object.values(updates)

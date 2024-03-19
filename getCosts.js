@@ -173,7 +173,7 @@ class Query {
         })
         return query;
     }
-    run(db,logger){
+    run(db){
         return db.query(this.query,this.params)
     }
 }
@@ -207,7 +207,7 @@ async function processCSV ( filePath,  callback ) {
     let data = {};
     let skusToProcess = [];
     await processCSV("./skuData.csv", async (record) => {
-        const {SKU, NEW , NEW_OTHER, SELLER_REFURBISHED, USED, USED_EXCELLENT} = record;
+        const { NEW , NEW_OTHER, SELLER_REFURBISHED, USED, USED_EXCELLENT} = record;
         let potentialSkus = [NEW, NEW_OTHER, SELLER_REFURBISHED, USED, USED_EXCELLENT];
         let skusToFind = potentialSkus
             .filter(cost => cost !== "")
@@ -215,9 +215,8 @@ async function processCSV ( filePath,  callback ) {
         skusToProcess.push(...skusToFind);
     })
 
-    console.log(skusToProcess);
 
-    await new Promise(async (res,rej)=>{
+    await new Promise(async (res)=>{
         for(let i = 0 ; i < skusToProcess.length; i++){
             let sku = skusToProcess[i];
             let query = new Query("sursuite.components",["cost"])
@@ -228,7 +227,6 @@ async function processCSV ( filePath,  callback ) {
         res();
     })
 
-    console.log(data);
     let csvString = "SKU,Cost\n";
     Object.entries(data).forEach(([sku,cost])=>{
         csvString += `${sku},${cost}\n`

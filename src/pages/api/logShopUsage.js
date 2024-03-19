@@ -18,7 +18,6 @@ function postHandler (req, res) {
 
     const usageData = fs.readFileSync("./src/json/usageTracker.json");
     const usage = JSON.parse(usageData);
-    console.log(usage);
 
     const key = "ordersSentToInsightly";
     const mroUsage = usage?.['mro'];

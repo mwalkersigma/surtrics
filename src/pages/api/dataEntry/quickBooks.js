@@ -10,7 +10,6 @@ function formDataHandler(req) {
     let boundary = "--" + contentTypeHeader.split("; ")[1].replace("boundary=", "");
     let body = req.body;
     let parts = body.split(boundary)[1];
-    console.log("here")
 
     let data = parts
         .split(/[\r\n]+/)
@@ -26,7 +25,6 @@ function formDataHandler(req) {
             file = data.slice(index + 1);
         }
     });
-    console.log("here")
 
     return parse(file.join("\n"), {
         columns: true,
@@ -44,7 +42,6 @@ async function postHandler(req, res) {
             SELECT po_number
             FROM surtrics.surplus_quickbooks_data
         `);
-        console.log("here")
         pastRecordPoNumbers = pastRecordPoNumbers.rows.map((row) => row.po_number);
 
         let updateCount = 0;
@@ -74,9 +71,7 @@ async function postHandler(req, res) {
             }
             queries.push(query);
         })
-        console.log("here")
         for(let i = 0; i < queries.length; i++) {
-            console.log(queries[i])
             await db.query(queries[i]);
         }
         res.status(200).json({

@@ -75,7 +75,7 @@ const RangeView = () => {
 
     const data = {
         labels: dates.map((date) => new Date(date).toLocaleDateString()),
-        datasets: Object.entries(dataForGraph).map(([name, graphData], i) => {
+        datasets: Object.entries(dataForGraph).map(([name, graphData],) => {
             return {
                 label: name,
                 data: graphData,
@@ -86,20 +86,17 @@ const RangeView = () => {
         })
     };
     let totals = [];
-    console.log(data.datasets)
 
     for(let i = 0 ; i < data.datasets.length; i++){
         for(let j = 0; j < data.datasets[i].data.length; j++){
          if(!totals[j]) totals[j] = [];
-         let entry = data.datasets[i].data[j];
          totals[j].push(data.datasets[i].data[j])
         }
     }
 
     totals = totals.map((total) => total.reduce((acc,cur) => acc + +cur,0))
 
-    console.log(totals)
-    const smooth = smoothData(totals,resolution);
+    const smooth = smoothData(totals,debounced);
     data.datasets.push({
         label: "Trend Line",
         type: "line",

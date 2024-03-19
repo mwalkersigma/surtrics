@@ -53,7 +53,6 @@ function WeeklyChart(props){
     const adjustedWeek = createAdjustedWeekArray(weekData,goal)
                                     .map(item => item > 0 ? +item + +goal  : goal);
 
-    console.log(adjustedWeek)
     const thickness = 3
     const options = {
         plugins: {

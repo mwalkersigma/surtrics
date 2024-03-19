@@ -27,14 +27,13 @@ const RangeView = () => {
     const [increment, setIncrement] = useState("week");
     const [resolution, setResolution] = useState(4);
 
-    const {events,reducedEvents} = useEvents({
+    const {reducedEvents} = useEvents({
         startDate:startDate,
         endDate:endDate,
         timeScale:increment,
         includedCategories:['Processing'],
         affected_categories:['Processing'],
     });
-    console.log(events)
 
 
     let approvals = useUpdates("/api/views/approvals", {startDate, endDate, increment});

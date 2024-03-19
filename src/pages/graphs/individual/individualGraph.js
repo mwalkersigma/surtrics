@@ -104,7 +104,6 @@ function UserGraph() {
     useUsage("Metrics","individual-daily-chart")
     const [date, setDate] = useState(new Date());
     let individualData = useUpdates("/api/views/individualView", {date});
-    console.log(individualData)
     const {colorScheme: theme} = useMantineColorScheme();
 
 

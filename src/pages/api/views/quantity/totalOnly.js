@@ -37,7 +37,6 @@ async function postHandler (req,res) {
             (q)=>q.addAggregate(`DATE_TRUNC('@', transaction_date) as date`,body.interval),
             (q)=>q.addColumn(`DATE_TRUNC('week',transaction_date) as date`)
         )
-    console.log(query.getParsedQuery())
     return db.query(query.query, query.params)
         .then((response) => {
             res.status(200).json(response.rows)

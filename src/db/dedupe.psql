@@ -1,50 +1,52 @@
--- DELETE FROM
---     surtrics.surplus_metrics_data a
---     USING surtrics.surplus_metrics_data b
--- WHERE
---         a.id < b.id
---   AND a."user" = b."user"
---   AND a.sku = b.sku
---   AND a.code = b.code
---   AND a.transaction_date = b.transaction_date
---   AND a.transaction_type = b.transaction_type
---   AND a.quantity = b.quantity
---   AND a.location = b.location
---   AND a.transaction_type != 'Error'
---   AND a.id > 5324330
---   RETURNING a.*
--- ;
---
---
--- SELECT id FROM surtrics.surplus_metrics_data ORDER BY id DESC LIMIT 1;
+DELETE FROM
+    surtrics.surplus_metrics_data a
+    USING surtrics.surplus_metrics_data b
+ WHERE
+     a.id < b.id
+   AND a."user" = b."user"
+   AND a.sku = b.sku
+   AND a.code = b.code
+   AND a.transaction_date = b.transaction_date
+   AND a.transaction_type = b.transaction_type
+   AND a.quantity = b.quantity
+   AND a.location = b.location
+   AND a.transaction_type != 'Error'
+   AND a.id > 5324330
+ RETURNING a.*;
 
-
-
-
-
--- DELETE FROM
---     surtrics.surplus_pricing_data a
---     USING surtrics.surplus_pricing_data b
--- WHERE
---     a.entry_id < b.entry_id
---     AND a.date_priced = b.date_priced
---     AND a.user_who_priced = b.user_who_priced
---     AND a.sku = b.sku
---     AND a.original_packaging_price = b.original_packaging_price
---     AND a.sigma_packaging_price = b.sigma_packaging_price
---     AND a.refurbished_price = b.refurbished_price
--- RETURNING a.*;
 
 DELETE FROM
-           surtrics.surplus_sales_data a
-    USING
-        surtrics.surplus_sales_data b
-    WHERE
-        a.sale_id < b.sale_id
-        AND a.payment_date = b.payment_date
-        AND a.order_id = b.order_id
-        AND a.order_status = b.order_status
-        AND a.name = b.name
-        AND a.store_id = b.store_id
-    RETURNING a.*
+    surtrics.surplus_pricing_data a
+    USING surtrics.surplus_pricing_data b
+WHERE
+    a.entry_id < b.entry_id
+    AND a.date_priced = b.date_priced
+    AND a.user_who_priced = b.user_who_priced
+    AND a.sku = b.sku
+    AND a.original_packaging_price = b.original_packaging_price
+    AND a.sigma_packaging_price = b.sigma_packaging_price
+    AND a.refurbished_price = b.refurbished_price
+RETURNING a.*;
 
+DELETE FROM
+    sursuite.orders a
+    USING sursuite.orders b
+WHERE
+    a.order_id < b.order_id
+    AND a.payment_date_utc = b.payment_date_utc
+    AND a.order_status = b.order_status
+    AND a.name = b.name
+    AND a.store_id = b.store_id
+    RETURNING a.*;
+
+DELETE FROM
+    sursuite.sales a
+    USING sursuite.sales b
+WHERE
+    a.sale_id < b.sale_id
+    AND a.order_id = b.order_id
+    AND a.sku = b.sku
+    AND a.name = b.name
+    AND a.quantity_sold = b.quantity_sold
+    AND a.sold_price = b.sold_price
+    RETURNING a.*;

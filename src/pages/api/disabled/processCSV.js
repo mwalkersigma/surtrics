@@ -90,7 +90,6 @@ async function processCSVTransaction(){
                 .withConcurrency(100)
                 .for(records)
                 .process(async (item) => {
-                    console.log("Inserting Record for sku: ", item[14])
                     await Db.query(`
                                 INSERT INTO nfs.surtrics.surplus_metrics_data ("user", sku, code, scanned_code, lot_number,
                                                                                title, quantity,
@@ -101,7 +100,6 @@ async function processCSVTransaction(){
                                                                                transaction_date, context)
                                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
                         item)
-                    console.log("INSERTED Record for sku: ", item[14])
                 })
             resolve("success")
         })

@@ -137,20 +137,6 @@ export async function getUpdatesFromChannelAdvisor () {
     return data;
 }
 
-function getLatestUpdateDate(){
-    return db.query(`
-        SELECT
-            date_priced
-        FROM
-            surtrics.surplus_pricing_data
-        ORDER BY
-            date_priced DESC
-        LIMIT 1;
-    `)
-    .then(({rows})=>rows[0]?.['date_priced'])
-    .catch((err)=>Logger.log(err))
-}
-
 async function getFileResponseUrl(){
     let fileResponseUrl = null;
     do {
@@ -284,7 +270,6 @@ export async function ChannelRouteMain(){
                     INSERT INTO nfs.surtrics.surplus_pricing_data (user_who_priced, date_priced, sku, original_packaging_price, sigma_packaging_price, refurbished_price)
                     VALUES
                 `;
-        console.log("Querying: " + query)
         pricingData.forEach((pricing,i) => {
             let {user,datePriced,sku,originalPackagingPrice,sigmaPackagingPrice,refurbishedPrice} = pricing;
             query += `('${user}','${datePriced}','${sku}',${originalPackagingPrice},${sigmaPackagingPrice},${refurbishedPrice})`;
@@ -294,9 +279,7 @@ export async function ChannelRouteMain(){
         });
         // remove any double quotes from the query
         query = query.replace(/"/g,"");
-        console.log("Finished building query for pricing data.")
         await db.query(query)
-        console.log("Finished inserting pricing data.")
     }
     Logger.log("Data inserted. Cleaning up.");
     Logger.log("Cleaning up outputs folder.");

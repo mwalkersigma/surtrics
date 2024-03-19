@@ -6,7 +6,6 @@ import {parseBody} from "../../../modules/serverUtils/parseBody";
 export default router({
     POST: async (req, res) => {
         const body = parseBody(req);
-        console.log(body);
             const query = new Query(
                 'models',
                 [

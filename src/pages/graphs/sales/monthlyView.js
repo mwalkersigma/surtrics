@@ -118,7 +118,6 @@ const MonthlyView = () => {
         })
 
     const dataForTrendLine = Object.values(monthlySales).map(month => month.total);
-    console.log(dataForTrendLine)
 
 
 

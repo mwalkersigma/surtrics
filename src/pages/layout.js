@@ -104,8 +104,8 @@ const pages = {
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
                     links: {
-                        "Weekly View": {
-                            href: "/tables/quantity/weeklyView"
+                        "Range View": {
+                            href: "/tables/quantity/rangeView"
                         }
                     }
                 }

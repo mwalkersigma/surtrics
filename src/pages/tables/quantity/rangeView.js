@@ -5,8 +5,10 @@ import makeDateArray from "../../../modules/utils/makeDateArray";
 import formatDatabaseRows from "../../../modules/utils/formatDatabaseRows";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {DatePickerInput} from "@mantine/dates";
-import {Group, Radio, RadioGroup, Table} from "@mantine/core";
+import {Group, NativeSelect, Radio, RadioGroup, Table} from "@mantine/core";
 import useUsage from "../../../modules/hooks/useUsage";
+import {subDays} from "date-fns";
+import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 
 
 const formatTimeStamps = (timeStamp) => timeStamp.split("T")[0];
@@ -21,39 +23,57 @@ const conversionTable = {
 export default function WeeklyView() {
     useUsage("Metrics","quantity-Daily-table")
     const [field, setField] = useState("Total");
-    const [date, setDate] = useState(new Date());
-    const databaseRows = useUpdates("/api/views/quantity/weeklyView", {date});
-
+    const [[startDate, endDate], setDate] = useState([subDays(new Date(),7), new Date()]);
+    const [interval, setInterval] = useState("day");
+    const databaseRows = useUpdates("/api/views/quantity/weeklyView", {startDate, endDate, interval});
 
     let rows = formatDatabaseRows(databaseRows);
     let users = Object.keys(rows);
-    let dates = makeDateArray(date);
+
+    console.log(rows)
+
+    let dates = [...new Set(users.map(user => Object.keys(rows[user])).flat())].sort()
+
+
+
 
 
     return (
         <GraphWithStatCard
-            title={"Surplus Quantity Weekly View"}
+            title={"Surplus Quantity Range View"}
             isLoading={databaseRows.length === 0}
             dateInput={
-                <DatePickerInput
+                <CustomRangeMenu
+                    subscribe={setDate}
+                    defaultValue={[startDate, endDate]}
                     mb={"xl"}
-                    label={"Date"}
-                    value={date}
-                    onChange={(e) => setDate(e)}
+                    label={"Choose Date Range"}
+                />
+            }
+            slotOne={
+                <NativeSelect
+                    label={'Interval'}
+                    value={interval}
+                    onChange={(e)=>setInterval(e.target.value)}
+                    data={[
+                        {label:'Day',value:'day'},
+                        {label:'Week',value:'week'},
+                        {label:'Month',value:'month'},
+                    ]}
                 />
             }
             slotTwo={
-            <RadioGroup
-                label={"Transaction Type"}
-                value={field}
-                onChange={(e) => setField(e)}
-            >
-                <Group>
-                    <Radio label={"Total"} value={"Total"} />
-                    <Radio label={"Add"} value={"Add"} />
-                    <Radio label={"Relisting"} value={"Relisting"}/>
-                </Group>
-            </RadioGroup>
+                <RadioGroup
+                    label={"Transaction Type"}
+                    value={field}
+                    onChange={(e) => setField(e)}
+                >
+                    <Group>
+                        <Radio label={"Total"} value={"Total"} />
+                        <Radio label={"Add"} value={"Add"} />
+                        <Radio label={"Relisting"} value={"Relisting"}/>
+                    </Group>
+                </RadioGroup>
             }
             cards={[]}
         >

@@ -39,4 +39,4 @@ TransactionHistory-8_24_2023 1_10 PM.csv
 .idea
 logs
 /src/data/
-src/scripts/eBay.csv
+src/scripts/*

@@ -43,8 +43,8 @@
     "@mantine/notifications": "^7.2.2",
     "dayjs": "^1.11.10",
     "node-env-run": "^4.0.2",
-    "postcss": "^8.4.31",
-    "postcss-preset-mantine": "^1.11.0",
+    "postcss": "^8.4.38",
+    "postcss-preset-mantine": "^1.13.0",
     "postcss-simple-vars": "^7.0.1",
     "vitest": "^0.34.4"
   }

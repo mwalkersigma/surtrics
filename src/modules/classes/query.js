@@ -85,7 +85,6 @@ export default class Query {
         }
 
         if(this.where.length > 0){
-
             query += ` WHERE ${this.where.map(({column,operator})=>`${column} ${operator} $${count++}`).join(" AND ")}`;
             this.params.push(...this.where.map(({value})=>value));
         }

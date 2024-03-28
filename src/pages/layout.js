@@ -45,6 +45,7 @@ const pages = {
         "Celebration" : {
             leftSection: <IconConfetti size={size} stroke={stroke}/>,
             href: "/celebration",
+            roles:["loggedIn"]
         },
         "Increments": {
             leftSection: <IconCirclePlus size={size} stroke={stroke}/>,
@@ -114,6 +115,11 @@ const pages = {
         "Individual": {
             leftSection: <IconUser size={size} stroke={stroke}/>,
             links: {
+                "Skill Assessment":{
+                    href: "/admin/skillAssessment",
+                    leftSection: <IconGauge size={size} stroke={stroke}/>,
+                    roles: ["surplus director", "bsa","warehouse"]
+                },
                 "Graphs": {
                     leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
                     links: {

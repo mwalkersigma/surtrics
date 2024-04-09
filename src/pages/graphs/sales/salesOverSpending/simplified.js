@@ -143,7 +143,7 @@ const Simplified = () => {
                 color: colorScheme === "dark" ? "white" : "black",
                 fontWeight: 'bold',
                 formatter: (v)=>formatter(v,'currency'),
-                display: 'auto',
+                display: true,
                 borderRadius: 10,
             },
         },

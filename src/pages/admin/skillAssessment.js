@@ -55,7 +55,7 @@ function SkeletonLoader() {
 
 
 const ErrorReporting = () => {
-    useUsage("Admin","ErrorReporting")
+    useUsage("Admin","UserAssessment")
     const {onSubmit, getInputProps} = useForm({
         initialValues: {
             user: "",

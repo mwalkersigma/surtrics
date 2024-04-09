@@ -1,18 +1,18 @@
 import React, {useState} from 'react';
 import {subMonths} from "date-fns";
-import useUpdates from "../../../modules/hooks/useUpdates";
-import formatter from "../../../modules/utils/numberFormatter";
-import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
-import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
+import useUpdates from "../../../../modules/hooks/useUpdates";
+import formatter from "../../../../modules/utils/numberFormatter";
+import GraphWithStatCard from "../../../../components/mantine/graphWithStatCard";
+import CustomRangeMenu from "../../../../components/mantine/customRangeMenu";
 import {NativeSelect, Paper, Progress, ProgressRoot, Slider, Text, Tooltip} from "@mantine/core";
-import StatCard from "../../../components/mantine/StatCard";
-import BaseChart from "../../../components/Chart";
-import {colorScheme} from "../../_app";
-import useOrders from "../../../modules/hooks/useOrders";
-import smoothData from "../../../modules/utils/graphUtils/smoothData";
+import StatCard from "../../../../components/mantine/StatCard";
+import BaseChart from "../../../../components/Chart";
+import {colorScheme} from "../../../_app";
+import useOrders from "../../../../modules/hooks/useOrders";
+import smoothData from "../../../../modules/utils/graphUtils/smoothData";
 import {useDebouncedValue, useLogger} from "@mantine/hooks";
-import useUsage from "../../../modules/hooks/useUsage";
-import colorizeLine from "../../../modules/utils/colorizeLine";
+import useUsage from "../../../../modules/hooks/useUsage";
+import colorizeLine from "../../../../modules/utils/colorizeLine";
 
 
 
@@ -39,9 +39,9 @@ const targetList = {
 
 
 
-const SalesOverSpending = () => {
+const Index = () => {
     let count = 0;
-    useUsage("Ecommerce","sales-Range-SalesOverSpending")
+    useUsage("Ecommerce","sales-Range-Index")
     const [timeScale,setTimeScale] = useState("week");
     const [[startDate,endDate],setDateRange] = useState([subMonths(new Date(),1),new Date()]);
     const [resolution, setResolution] = useState(8);
@@ -350,4 +350,4 @@ const SalesOverSpending = () => {
     );
 };
 
-export default SalesOverSpending;
+export default Index;

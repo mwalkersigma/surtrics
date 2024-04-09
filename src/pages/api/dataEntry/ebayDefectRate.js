@@ -43,11 +43,13 @@ function putHandler(req, res) {
 
 function deleteHandler(req, res) {
     return serverAdminWrapper((req,res)=> {
+        const body = parseBody(req);
+        console.log(body)
         return db.query(`
             DELETE
             FROM surtrics.ebay_defect_rate
             WHERE id = $1
-        `, [parseBody(req)['entry_id']])
+        `, [parseBody(req)['id']])
     },"bsa","surplus director")(req,res)
         .then(({rows}) => rows)
 }

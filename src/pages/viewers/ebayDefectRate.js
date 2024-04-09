@@ -27,7 +27,7 @@ const Ebay = () => {
                     remove: <Button
                         variant="filled"
                         color="red"
-                        onClick={() => removeEntry(row['entry_id'])}
+                        onClick={() => removeEntry(row['id'])}
                         leftSection={<IconTrash style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
 
                     >Remove</Button>,

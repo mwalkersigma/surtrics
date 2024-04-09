@@ -25,7 +25,7 @@ import {
     IconTimeline,
     IconExclamationCircle,
     IconClipboardData,
-    IconGitCompare, IconConfetti, IconCamera
+    IconGitCompare, IconConfetti, IconCamera, IconFocus
 } from "@tabler/icons-react";
 import {FaEbay} from "react-icons/fa6";
 
@@ -277,6 +277,15 @@ const pages = {
                 }
             }
         },
+        "Simplified" : {
+            leftSection: <IconFocus size={size} stroke={stroke}/>,
+            links:{
+                "Sales Over Spending" : {
+                    href: "/graphs/sales/salesOverSpending/simplified",
+                    leftSection: <IconReportMoney size={size} stroke={stroke}/>
+                },
+            }
+        },
         "ECommerce": {
             leftSection: <IconDeviceDesktopAnalytics size={size} stroke={stroke}/>,
             links: {
@@ -358,6 +367,7 @@ const pages = {
             }
         }
     },
+
 }
 
 

@@ -297,6 +297,10 @@ const pages = {
                     leftSection: <FaEbay size={'1.5rem'} stroke={stroke}/>,
                     href: "/graphs/ebay/rangeView"
                 },
+                "Ebay Defect Rate": {
+                    leftSection: <FaEbay size={'1.5rem'} stroke={stroke}/>,
+                    href: "/graphs/ebay/defectRate"
+                },
                 "Quick Books": {
                     leftSection: <SiQuickbooks size={'1.5rem'} stroke={stroke}/>,
                     href: "/timelines/quickbooks"
@@ -330,6 +334,11 @@ const pages = {
                     href: "/BSA/EbayEntry",
                     roles: ["bsa"]
                 },
+                "Ebay Defect Rate": {
+                    leftSection: <FaEbay size={'1.5rem'} stroke={stroke}/>,
+                    href: "/BSA/ebayDefectRate",
+                    roles: ["bsa","surplus director"]
+                },
                 "Quick Book": {
                     leftSection: <SiQuickbooks size={'1.5rem'} stroke={stroke}/>,
                     href: "/BSA/quickBooks",
@@ -354,6 +363,10 @@ const pages = {
                 },
                 "Ebay": {
                     href: "/viewers/ebay"
+                },
+                "Ebay Defect Rate": {
+                    href: "/viewers/ebayDefectRate",
+                    roles: ["surplus director","bsa"]
                 },
                 "Big Commerce": {
                     href: "/viewers/bigCommerce"

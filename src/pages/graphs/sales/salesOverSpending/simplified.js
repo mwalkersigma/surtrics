@@ -4,7 +4,17 @@ import useUpdates from "../../../../modules/hooks/useUpdates";
 import formatter from "../../../../modules/utils/numberFormatter";
 import GraphWithStatCard from "../../../../components/mantine/graphWithStatCard";
 import CustomRangeMenu from "../../../../components/mantine/customRangeMenu";
-import {NativeSelect, Paper, Progress, ProgressRoot, Slider, Text, Tooltip} from "@mantine/core";
+import {
+    NativeSelect,
+    Paper,
+    Progress,
+    ProgressRoot,
+    Slider,
+    Text,
+    Tooltip,
+    useMantineColorScheme,
+    useMantineTheme
+} from "@mantine/core";
 import StatCard from "../../../../components/mantine/StatCard";
 import BaseChart from "../../../../components/Chart";
 import {colorScheme} from "../../../_app";
@@ -41,6 +51,8 @@ const targetList = {
 
 const Simplified = () => {
     useUsage("Ecommerce","sales-Range-Index-simple")
+    const {colorScheme} = useMantineColorScheme();
+    console.log(colorScheme)
     const [timeScale,setTimeScale] = useState("week");
     const [[startDate,endDate],setDateRange] = useState([subMonths(new Date(),1),new Date()]);
 
@@ -126,6 +138,13 @@ const Simplified = () => {
                     borderRadius: 10,
                     usePointStyle: true,
                 }
+            },
+            datalabels: {
+                color: colorScheme === "dark" ? "white" : "black",
+                fontWeight: 'bold',
+                formatter: (v)=>formatter(v,'currency'),
+                display: 'auto',
+                borderRadius: 10,
             },
         },
         scales: {

@@ -285,7 +285,7 @@ const pages = {
                     leftSection: <IconReportMoney size={size} stroke={stroke}/>
                 },
                 "Sales Compounding ": {
-                    href: "/graphs/sales/monthlyView/simplified",
+                    href: "/graphs/sales/yearlyView/simplified",
                     leftSection: <IconReportMoney size={size} stroke={stroke}/>
                 },
             }

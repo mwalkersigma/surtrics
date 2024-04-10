@@ -64,10 +64,11 @@ const ErrorReporting = () => {
             date: new Date(),
             score: 0
         },
-        validate: {
-            user: (value) => (value ? null : 'User is required'),
-            reason: (value) => (value ? null : 'Reason is required'),
-            date: (value) => (value ? null : 'Date is required'),
+        validate:{
+            user: (value) => value === "" ? "User is required" : null,
+            score: (value) => value === "" ? "Score is required" : null,
+            date: (value) => value === "" ? "Date is required" : null,
+            notes: (value) => value === "" ? "Notes are required" : null
         }
     });
     const [users, setUsers] = useState([]);
@@ -86,6 +87,8 @@ const ErrorReporting = () => {
 
     function handleSubmit({user, reason, notes, date, score}) {
         const state = JSON.stringify({user, reason, notes, session, date, score});
+        console.log("Starting submit");
+        console.log("State : ", state);
         setLoading(true);
         fetch(`${window.location.origin}/api/dataEntry/skillAssessment`, {
             method: "PUT",
@@ -106,7 +109,7 @@ const ErrorReporting = () => {
     return (
         <RoleWrapper LoadingComponent={<SkeletonLoader/>} altRoles={["surplus director", "bsa","warehouse"]}>
             <Container>
-                <form onSubmit={onSubmit(handleSubmit)}>
+                <form>
                     <Grid>
                         <Grid.Col span={12}>
                             <Title>
@@ -161,8 +164,7 @@ const ErrorReporting = () => {
                         <Grid.Col span={6}>
                             <Stack h={"100%"} justify={"flex-end"}>
                                 <Button
-                                    type={"submit"}
-                                    disabled={loading}
+                                    onClick={() => onSubmit(handleSubmit)()}
                                     loading={loading}
                                     variant="gradient"
                                     gradient={{from: 'red', to: 'grape', deg: 90}}

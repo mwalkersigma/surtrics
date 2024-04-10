@@ -91,7 +91,7 @@ async function putHandler(req,res,...options){
                 ($1, $2)
         `,[id,score])
         
-        const response = `Skill Assessment Reported Successfully: \n User: ${sessionUser.email} reported an error for ${user} with reason: ${reason} and notes: ${notes}`
+        const response = `Skill Assessment Reported Successfully: \n User: ${sessionUser.email}`
         Logger.log(response);
         return response
     },...options)(req,res)

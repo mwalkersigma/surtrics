@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import GraphWithStatCard from "../../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";
 
 import {
@@ -14,17 +14,17 @@ import {
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {MultiSelect, NativeSelect, useMantineColorScheme} from "@mantine/core";
-import {colorScheme} from "../../_app";
+import {colorScheme} from "../../../_app";
 import { lastDayOfYear, setDate, setMonth, startOfMonth} from "date-fns";
-import StatCard from "../../../components/mantine/StatCard";
-import useUsage from "../../../modules/hooks/useUsage";
-import BaseChart from "../../../components/Chart";
-import useEvents from "../../../modules/hooks/useEvents";
-import useOrders from "../../../modules/hooks/useOrders";
-import useUpdates from "../../../modules/hooks/useUpdates";
-import formatter from "../../../modules/utils/numberFormatter";
-import smoothData from "../../../modules/utils/graphUtils/smoothData";
-import colorizeLine from "../../../modules/utils/colorizeLine";
+import StatCard from "../../../../components/mantine/StatCard";
+import useUsage from "../../../../modules/hooks/useUsage";
+import BaseChart from "../../../../components/Chart";
+import useEvents from "../../../../modules/hooks/useEvents";
+import useOrders from "../../../../modules/hooks/useOrders";
+import useUpdates from "../../../../modules/hooks/useUpdates";
+import formatter from "../../../../modules/utils/numberFormatter";
+import smoothData from "../../../../modules/utils/graphUtils/smoothData";
+import colorizeLine from "../../../../modules/utils/colorizeLine";
 
 
 ChartJS.register(
@@ -56,7 +56,7 @@ const storeDataMap = {
 }
 
 const dateSet = setDate
-const YearlyView = () => {
+const Index = () => {
     useUsage("Ecommerce","sales-yearly-chart");
     const [date, setDate] = useState(setMonth(dateSet(new Date(),1),0));
     const [affectedCategories, setAffectedCategories] = useState([]);
@@ -319,4 +319,4 @@ const YearlyView = () => {
     );
 };
 
-export default YearlyView;
+export default Index;

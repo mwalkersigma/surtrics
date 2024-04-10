@@ -1,21 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import GraphWithStatCard from "../../../../components/mantine/graphWithStatCard";
 import {MonthPickerInput} from "@mantine/dates";
 
 
 import {MultiSelect, NativeSelect, useMantineColorScheme} from "@mantine/core";
-import {colorScheme} from "../../_app";
+import {colorScheme} from "../../../_app";
 
 import {lastDayOfMonth, setDate} from "date-fns";
-import useUsage from "../../../modules/hooks/useUsage";
-import BaseChart from "../../../components/Chart";
-import useOrders from "../../../modules/hooks/useOrders";
-import useUpdates from "../../../modules/hooks/useUpdates";
-import formatter from "../../../modules/utils/numberFormatter";
-import useEvents from "../../../modules/hooks/useEvents";
-import StatCard from "../../../components/mantine/StatCard";
-import smoothData from "../../../modules/utils/graphUtils/smoothData";
-import colorizeLine from "../../../modules/utils/colorizeLine";
+import useUsage from "../../../../modules/hooks/useUsage";
+import BaseChart from "../../../../components/Chart";
+import useOrders from "../../../../modules/hooks/useOrders";
+import useUpdates from "../../../../modules/hooks/useUpdates";
+import formatter from "../../../../modules/utils/numberFormatter";
+import useEvents from "../../../../modules/hooks/useEvents";
+import StatCard from "../../../../components/mantine/StatCard";
+import smoothData from "../../../../modules/utils/graphUtils/smoothData";
+import colorizeLine from "../../../../modules/utils/colorizeLine";
 
 
 const storeNameMap = {
@@ -46,7 +46,7 @@ const storeDataMap = {
 }
 
 const dateSet = setDate
-const MonthlyView = () => {
+const Index = () => {
     useUsage("Ecommerce","sales-monthly-chart")
     const [date, setDate] = useState(dateSet(new Date(),1));
     const theme = useMantineColorScheme();
@@ -276,4 +276,4 @@ const MonthlyView = () => {
     );
 };
 
-export default MonthlyView;
+export default Index;

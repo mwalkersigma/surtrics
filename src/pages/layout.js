@@ -29,7 +29,7 @@ import {
 } from "@tabler/icons-react";
 import {FaEbay} from "react-icons/fa6";
 
-const size= "1.5rem";
+const size = "1.5rem";
 const stroke = 2;
 
 const pages = {
@@ -42,17 +42,17 @@ const pages = {
             leftSection: <IconTimeline size={size} stroke={stroke}/>,
             href: "/timelines/listingNotableEvents"
         },
-        "Celebration" : {
+        "Celebration": {
             leftSection: <IconConfetti size={size} stroke={stroke}/>,
             href: "/celebration",
-            roles:["loggedIn"]
+            roles: ["loggedIn"]
         },
         "Increments": {
             leftSection: <IconCirclePlus size={size} stroke={stroke}/>,
             links: {
                 "Graphs": {
                     leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
-                    opened:true,
+                    opened: true,
                     links: {
                         "Daily View": {
                             href: "/graphs/increments/dailyView"
@@ -115,10 +115,10 @@ const pages = {
         "Individual": {
             leftSection: <IconUser size={size} stroke={stroke}/>,
             links: {
-                "Skill Assessment":{
+                "Skill Assessment": {
                     href: "/admin/skillAssessment",
                     leftSection: <IconGauge size={size} stroke={stroke}/>,
-                    roles: ["surplus director", "bsa","warehouse"]
+                    roles: ["surplus director", "bsa", "warehouse"]
                 },
                 "Graphs": {
                     leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
@@ -147,12 +147,12 @@ const pages = {
                 }
             }
         },
-        "Photos":{
+        "Photos": {
             leftSection: <IconCamera size={size} stroke={stroke}/>,
-            links:{
+            links: {
                 "Graphs": {
                     leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
-                    opened:true,
+                    opened: true,
                     links: {
                         "Range View": {
                             href: "/graphs/photos/rangeViewer"
@@ -161,12 +161,12 @@ const pages = {
                 },
             }
         },
-        "Errors":{
+        "Errors": {
             leftSection: <IconExclamationCircle size={size} stroke={stroke}/>,
-            links:{
+            links: {
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
-                    opened:true,
+                    opened: true,
                     links: {
                         "My Errors": {
                             href: "/tables/errors/myErrors"
@@ -184,7 +184,7 @@ const pages = {
             links: {
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
-                    opened:true,
+                    opened: true,
                     links: {
                         "Weekly View": {
                             href: "/tables/warehouse/weeklyView"
@@ -201,16 +201,16 @@ const pages = {
         },
         "Surprice": {
             leftSection: <IconTallymarks size={size} stroke={stroke}/>,
-            roles: ["buying group","surplus director"],
+            roles: ["buying group", "surplus director"],
             links: {
-                    "Research Entries": {
-                        href: "/graphs/surprice/researchEntries"
-                    },
-                }
-            },
+                "Research Entries": {
+                    href: "/graphs/surprice/researchEntries"
+                },
+            }
+        },
         "Data Entry": {
             leftSection: <IconForms size={size} stroke={stroke}/>,
-            roles: ["bsa", "surplus director","warehouse"],
+            roles: ["bsa", "surplus director", "warehouse"],
             links: {
                 "Submit Error": {
                     href: "/admin/errorReporting"
@@ -223,7 +223,7 @@ const pages = {
         },
         "My Entries": {
             leftSection: <IconEdit size={size} stroke={stroke}/>,
-            roles: ["bsa", "surplus director","warehouse"],
+            roles: ["bsa", "surplus director", "warehouse"],
             links: {
                 "Error Entries": {
                     href: "/viewers/error"
@@ -270,18 +270,22 @@ const pages = {
                         "Range View": {
                             href: "/tables/sales/dailyView"
                         },
-                        "Sales By Price Range" : {
+                        "Sales By Price Range": {
                             href: "/tables/sales/salesByPriceRange"
                         },
                     }
                 }
             }
         },
-        "Simplified" : {
+        "Simplified": {
             leftSection: <IconFocus size={size} stroke={stroke}/>,
-            links:{
-                "Sales Over Spending" : {
+            links: {
+                "Sales Over Spending": {
                     href: "/graphs/sales/salesOverSpending/simplified",
+                    leftSection: <IconReportMoney size={size} stroke={stroke}/>
+                },
+                "Sales Compounding ": {
+                    href: "/graphs/sales/monthlyView/simplified",
                     leftSection: <IconReportMoney size={size} stroke={stroke}/>
                 },
             }
@@ -290,7 +294,7 @@ const pages = {
             leftSection: <IconDeviceDesktopAnalytics size={size} stroke={stroke}/>,
             links: {
                 "Big Commerce": {
-                    leftSection: <SiBigcommerce size={'1.5rem'} stroke={stroke/2}/>,
+                    leftSection: <SiBigcommerce size={'1.5rem'} stroke={stroke / 2}/>,
                     href: "/graphs/bigCommerce/rangeView"
                 },
                 "Ebay": {
@@ -305,15 +309,15 @@ const pages = {
                     leftSection: <SiQuickbooks size={'1.5rem'} stroke={stroke}/>,
                     href: "/timelines/quickbooks"
                 },
-                "Pricing" : {
+                "Pricing": {
                     leftSection: <IconClipboardData size={size} stroke={stroke}/>,
                     href: "/graphs/pricingData/rangeView"
                 },
-                "Pricing Backlog" : {
+                "Pricing Backlog": {
                     leftSection: <IconReportMoney size={size} stroke={stroke}/>,
                     href: "/graphs/pricingData/pricingBacklogRangeView"
                 },
-                "Ecommerce Comparison" : {
+                "Ecommerce Comparison": {
                     leftSection: <IconGitCompare size={size} stroke={stroke}/>,
                     href: "/tables/ecommerce/ecommerceComparison"
 
@@ -325,7 +329,7 @@ const pages = {
             roles: ["bsa", "surplus director"],
             links: {
                 "Big Commerce": {
-                    leftSection: <SiBigcommerce size={'1.5rem'} stroke={stroke/2}/>,
+                    leftSection: <SiBigcommerce size={'1.5rem'} stroke={stroke / 2}/>,
                     href: "/BSA/BigCommerceEntry",
                     roles: ["bsa"]
                 },
@@ -337,7 +341,7 @@ const pages = {
                 "Ebay Defect Rate": {
                     leftSection: <FaEbay size={'1.5rem'} stroke={stroke}/>,
                     href: "/BSA/ebayDefectRate",
-                    roles: ["bsa","surplus director"]
+                    roles: ["bsa", "surplus director"]
                 },
                 "Quick Book": {
                     leftSection: <SiQuickbooks size={'1.5rem'} stroke={stroke}/>,
@@ -348,7 +352,7 @@ const pages = {
                     leftSection: <IconActivity size={size} stroke={stroke}/>,
                     href: "/BSA/eventReporting"
                 },
-                "Pricing Backlog" : {
+                "Pricing Backlog": {
                     leftSection: <IconTallymarks size={size} stroke={stroke}/>,
                     href: "/BSA/pricingBacklogEntry"
                 }
@@ -366,7 +370,7 @@ const pages = {
                 },
                 "Ebay Defect Rate": {
                     href: "/viewers/ebayDefectRate",
-                    roles: ["surplus director","bsa"]
+                    roles: ["surplus director", "bsa"]
                 },
                 "Big Commerce": {
                     href: "/viewers/bigCommerce"
@@ -374,7 +378,7 @@ const pages = {
                 "Quick Books": {
                     href: "/viewers/quickBooks"
                 },
-                "Pricing Backlog" : {
+                "Pricing Backlog": {
                     href: "/viewers/pricingBacklog"
                 }
             }
@@ -413,46 +417,47 @@ export default function Layout({children}) {
 
     if (!hasNavBar) return children;
     return (<AppShell {...appShellProps}>
-            <SurtricsHeader{...toggleProps}/>
-            <SurtricsNavbar links={pages} footer={{
-                "Admin": {
-                        "Admin Dashboard": {
-                            href: "/admin",
-                            leftSection: <IconTable size={size} stroke={stroke}/>,
-                        },
-                        "Department Settings": {
-                            href: "/admin/departmentSettings",
-                            leftSection: <IconSettings size={size} stroke={stroke}/>,
-                        },
-                        "User Panel": {
-                            leftSection: <IconUser size={size} stroke={stroke}/>,
-                            href: "/admin/user",
-                            roles: []
-                        },
-                        "Error type Settings": {
-                            leftSection: <IconSettings size={size} stroke={stroke}/>,
-                            href: "/admin/ErrorPanel",
-                            roles: ["surplus director"]
-                        },
-                        "User Usage": {
-                            leftSection: <IconUser size={size} stroke={stroke}/>,
-                            href: "/admin/userUsage",
-                            roles: []
-                        },
-                    }
-                }} />
-            <AppShell.Main>
-                <ScrollArea>
-                    {children}
-                    <Space h={"xl"}/>
-                    <Space h={"xl"}/>
-                </ScrollArea>
-            </AppShell.Main>
-            <AppShell.Footer p="md">
-                <Text ta={"center"} fz={"xs"}>
-                    Surtrics 2023. Proud to be employee owned.<br/>
-                    To suggest improvements, features, pages, or report bugs, please use the <a href={"https://surprice.productlift.dev/"}>SurSuite Product Lift page</a>
-                </Text>
-            </AppShell.Footer>
-        </AppShell>)
+        <SurtricsHeader{...toggleProps}/>
+        <SurtricsNavbar links={pages} footer={{
+            "Admin": {
+                "Admin Dashboard": {
+                    href: "/admin",
+                    leftSection: <IconTable size={size} stroke={stroke}/>,
+                },
+                "Department Settings": {
+                    href: "/admin/departmentSettings",
+                    leftSection: <IconSettings size={size} stroke={stroke}/>,
+                },
+                "User Panel": {
+                    leftSection: <IconUser size={size} stroke={stroke}/>,
+                    href: "/admin/user",
+                    roles: []
+                },
+                "Error type Settings": {
+                    leftSection: <IconSettings size={size} stroke={stroke}/>,
+                    href: "/admin/ErrorPanel",
+                    roles: ["surplus director"]
+                },
+                "User Usage": {
+                    leftSection: <IconUser size={size} stroke={stroke}/>,
+                    href: "/admin/userUsage",
+                    roles: []
+                },
+            }
+        }}/>
+        <AppShell.Main>
+            <ScrollArea>
+                {children}
+                <Space h={"xl"}/>
+                <Space h={"xl"}/>
+            </ScrollArea>
+        </AppShell.Main>
+        <AppShell.Footer p="md">
+            <Text ta={"center"} fz={"xs"}>
+                Surtrics 2023. Proud to be employee owned.<br/>
+                To suggest improvements, features, pages, or report bugs, please use the <a
+                href={"https://surprice.productlift.dev/"}>SurSuite Product Lift page</a>
+            </Text>
+        </AppShell.Footer>
+    </AppShell>)
 }

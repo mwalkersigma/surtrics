@@ -1,9 +1,9 @@
-import {Grid, Skeleton, Title} from "@mantine/core";
+import {Container, Grid, Skeleton, Title} from "@mantine/core";
 import React from "react";
 
 export default function ViewerLayout({children, isLoading, title}) {
     if( isLoading )return (
-        <Grid>
+        <Grid w={'100%'}>
             <Grid.Col span={12}>
                 <Title>{title}</Title>
             </Grid.Col>
@@ -13,13 +13,16 @@ export default function ViewerLayout({children, isLoading, title}) {
         </Grid>
     )
     return (
-        <Grid>
-            <Grid.Col span={12}>
-                <Title>{title}</Title>
-            </Grid.Col>
-            <Grid.Col span={12}>
-                {children}
-            </Grid.Col>
-        </Grid>
+        <Container fluid>
+            <Grid w={'100%'}>
+                <Grid.Col span={12}>
+                    <Title>{title}</Title>
+                </Grid.Col>
+                <Grid.Col w={'100%'} span={12}>
+                    {children}
+                </Grid.Col>
+            </Grid>
+        </Container>
+
     )
 }

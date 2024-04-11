@@ -7,6 +7,7 @@ import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import useUsage from "../../../modules/hooks/useUsage";
 import {subDays} from "date-fns";
 import {LineChart} from "@mantine/charts";
+import dayjs from "dayjs";
 
 
 const SurplusNotableEvents = () => {
@@ -20,9 +21,6 @@ const SurplusNotableEvents = () => {
         startDate,
         endDate
     });
-
-    console.log(skillAssessments)
-
     let isLoggedIn = status !== 'unauthenticated';
 
     if (!isLoggedIn) return (<>You must be logged in to view this page</>)
@@ -53,7 +51,7 @@ const SurplusNotableEvents = () => {
                         data={skillAssessments
                             .sort((a, b) => new Date(a['transaction_date']) - new Date(b['transaction_date']))
                             .map((error) => ({
-                                    date: error['transaction_date'],
+                                    date: dayjs(new Date(error['transaction_date'])).format("MM-DD-YYYY"),
                                     score: error.score,
                                 })
                             )
@@ -73,7 +71,7 @@ const SurplusNotableEvents = () => {
                             return {
                                 id: error.id,
                                 date: error['transaction_date'],
-                                error_message: error['transaction_note'],
+                                assessment_notes: error['transaction_note'],
                                 score: error.score,
                             }
                         })

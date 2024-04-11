@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-import useUpdates from "../../../modules/hooks/useUpdates";
+import useUpdates from "../../../../modules/hooks/useUpdates";
 import {
     BarElement,
     CategoryScale,
@@ -11,20 +11,20 @@ import {
     Tooltip as tt
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
-import {colorScheme} from "../../_app";
+import {colorScheme} from "../../../_app";
 import {eachMonthOfInterval, lastDayOfYear, setDate, setMonth} from "date-fns";
 import {Slider, Text, Tooltip, useMantineColorScheme} from "@mantine/core";
-import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
+import GraphWithStatCard from "../../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";
-import StatCard from "../../../components/mantine/StatCard";
-import useUsage from "../../../modules/hooks/useUsage";
-import BaseChart from "../../../components/Chart";
-import useEvents from "../../../modules/hooks/useEvents";
-import useGoal from "../../../modules/hooks/useGoal";
+import StatCard from "../../../../components/mantine/StatCard";
+import useUsage from "../../../../modules/hooks/useUsage";
+import BaseChart from "../../../../components/Chart";
+import useEvents from "../../../../modules/hooks/useEvents";
+import useGoal from "../../../../modules/hooks/useGoal";
 import {useDebouncedValue, useLogger} from "@mantine/hooks";
-import smoothData from "../../../modules/utils/graphUtils/smoothData";
-import colorizeLine from "../../../modules/utils/colorizeLine";
-import formatter from "../../../modules/utils/numberFormatter";
+import smoothData from "../../../../modules/utils/graphUtils/smoothData";
+import colorizeLine from "../../../../modules/utils/colorizeLine";
+import formatter from "../../../../modules/utils/numberFormatter";
 
 ChartJS.register(
     CategoryScale,
@@ -191,7 +191,7 @@ function YearlyChart(props){
 
 
 let dateSet = setDate
-function YearlyView() {
+function Index() {
     useUsage("Metrics","Increments-yearly-chart")
     const [date,setDate] = useState(dateSet(setMonth(new Date(),0),1));
     const goal = useGoal({all:true});
@@ -311,4 +311,4 @@ function YearlyView() {
         </GraphWithStatCard>)
 }
 
-export default YearlyView;
+export default Index;

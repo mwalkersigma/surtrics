@@ -288,6 +288,10 @@ const pages = {
                     href: "/graphs/sales/yearlyView/simplified",
                     leftSection: <IconReportMoney size={size} stroke={stroke}/>
                 },
+                "Increments Compounding" : {
+                    href: "/graphs/increments/yearlyView/simplified",
+                    leftSection: <IconCirclePlus size={size} stroke={stroke}/>
+                }
             }
         },
         "ECommerce": {

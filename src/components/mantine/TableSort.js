@@ -94,7 +94,7 @@ function sortData(data, payload) {
     }), payload.search);
 }
 
-export function TableSort({data, noSearch, footer, noToolTip=[],specialFormatting = []}) {
+export function TableSort({data, noSearch, footer, noToolTip=[],specialFormatting = [],noDisplay=[]}) {
     const [search, setSearch] = useState('');
     const [sortedData, setSortedData] = useState(data);
     const [sortBy, setSortBy] = useState(null);
@@ -120,7 +120,7 @@ export function TableSort({data, noSearch, footer, noToolTip=[],specialFormattin
     let headers = data
         .reduce((acc, cur) => {
             for (let key in cur) {
-                if (!acc.includes(key)) {
+                if (!acc.includes(key) && !noDisplay.includes(key)) {
                     acc.push(key);
                 }
             }

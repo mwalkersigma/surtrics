@@ -2,68 +2,34 @@ import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
 import Logger from "sigma-logger";
 import db from "../../../db";
 import router from "../../../modules/serverUtils/requestRouter";
+import Query from "../../../modules/classes/query";
 
 async function getHandler(req,res,...options){
     return serverAdminWrapper(async (req,res,{user:{email}}) => {
-        let queryString = `
-        SELECT
-            *
-        FROM
-            surtrics.surplus_metrics_data
-        WHERE
-            context = $1
-            AND transaction_type = 'SkillAssessment'`;
-        const params = [email];
-        const query = await db.query(queryString, params);
-        let rows = query.rows;
-        for (let row of rows) {
-            const {id} = row;
-            const {rows} = await db.query(`
-                SELECT
-                    *
-                FROM
-                    nfs.surtrics.score_table
-                WHERE
-                    id = $1;
-            `,[id]);
-            row.score = rows[0].score;
-        }
-
-        return rows;
+        return new Query(
+            'surtrics.surplus_metrics_data',
+            ['*'],
+        )
+            .addWhere('context','=',email)
+            .addWhere('transaction_type','=','SkillAssessment')
+            .join('nfs.surtrics.score_table s','LEFT',' s.id = surtrics.surplus_metrics_data.id')
+            .run(db,console.log)
+            .then(({rows})=>rows);
     },...options)(req,res)
 }
+
 async function postHandler(req,res,...options){
     return serverAdminWrapper(async (req,res,{user:{email}}) => {
-        let queryString = `
-        SELECT
-            *
-        FROM
-            surtrics.surplus_metrics_data
-        WHERE
-            context = $1
-            AND transaction_type = 'SkillAssessment'
-            AND DATE(transaction_date) = $2;`;
-        const params = [email];
-        let hasDate = JSON.parse(req.body)?.date;
-        if (hasDate) {
-            queryString += ``;
-            params.push(hasDate);
-        }
-        const query = await db.query(queryString, params);
-        let rows = query.rows;
-        for (let row of rows) {
-            const {id} = row;
-            const {rows} = await db.query(`
-                SELECT
-                    *
-                FROM
-                    nfs.surtrics.score_table
-                WHERE
-                    id = $1;
-            `,[id]);
-            row.score = rows[0].score;
-        }
-        return rows;
+        return  new Query(
+            'surtrics.surplus_metrics_data',
+            ['*'],
+        )
+            .addWhere('context','=',email)
+            .addWhere('transaction_type','=','SkillAssessment')
+            .addWhere('DATE(transaction_date)','=',req.body.date)
+            .join('nfs.surtrics.score_table s','LEFT',' s.id = surtrics.surplus_metrics_data.id')
+            .run(db,console.log)
+            .then(({rows})=>rows);
     },...options)(req,res)
 }
 async function putHandler(req,res,...options){

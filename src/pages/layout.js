@@ -25,7 +25,7 @@ import {
     IconTimeline,
     IconExclamationCircle,
     IconClipboardData,
-    IconGitCompare, IconConfetti, IconCamera, IconFocus
+    IconGitCompare, IconConfetti, IconCamera, IconFocus, IconGaugeFilled
 } from "@tabler/icons-react";
 import {FaEbay} from "react-icons/fa6";
 
@@ -109,6 +109,25 @@ const pages = {
                             href: "/tables/quantity/rangeView"
                         }
                     }
+                }
+            }
+        },
+        "Skill Assessment":{
+            leftSection: <IconGauge size={size} stroke={stroke}/>,
+            links:{
+                "Enter Assessment" : {
+                    href: "/admin/skillAssessment",
+                    leftSection: <IconGaugeFilled size={size} stroke={stroke}/>,
+                    roles: ["surplus director", "bsa", "warehouse"]
+                },
+                "Entry Viewer" : {
+                    href: "/viewers/skillAssessment",
+                    leftSection: <IconGauge size={size} stroke={stroke}/>,
+                    roles: ["surplus director", "bsa", "warehouse"]
+                },
+                "Assessment Viewer":{
+                    href: "/tables/skillAssessment",
+                    leftSection: <IconGauge size={size} stroke={stroke}/>,
                 }
             }
         },

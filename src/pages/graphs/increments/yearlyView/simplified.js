@@ -165,6 +165,10 @@ function Index() {
     useUsage("Metrics","Increments-yearly-chart")
     const [date,setDate] = useState(dateSet(setMonth(new Date(),0),1));
     let yearData = useUpdates("/api/views/increments",{date,interval:"1 year",increment:"month"});
+
+    let skillAssessmentData = useUpdates("/api/dataEntry/skillAssessment");
+    console.log(skillAssessmentData)
+
     const {colorScheme:theme} = useMantineColorScheme();
 
 

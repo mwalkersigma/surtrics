@@ -2,6 +2,7 @@ import "../styles/style.scss";
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/charts/styles.css';
 import { MantineProvider, createTheme } from '@mantine/core';
 import Layout from "./layout";
 import {SessionProvider} from "next-auth/react";

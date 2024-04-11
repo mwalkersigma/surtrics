@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/charts": "^7.7.2",
     "@supercharge/promise-pool": "^3.0.0",
     "@tabler/icons-react": "^2.40.0",
     "another-random-package": "^1.0.2",
@@ -32,15 +33,16 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.12.0",
+    "recharts": "^2.12.4",
     "sass": "^1.66.1",
     "sigma-logger": "^1.0.3"
   },
   "devDependencies": {
-    "@mantine/core": "^7.2.2",
-    "@mantine/dates": "^7.2.2",
-    "@mantine/form": "^7.2.2",
-    "@mantine/hooks": "^7.2.2",
-    "@mantine/notifications": "^7.2.2",
+    "@mantine/core": "7.7.2",
+    "@mantine/dates": "7.7.2",
+    "@mantine/form": "7.7.2",
+    "@mantine/hooks": "7.7.2",
+    "@mantine/notifications": "7.7.2",
     "dayjs": "^1.11.10",
     "node-env-run": "^4.0.2",
     "postcss": "^8.4.38",

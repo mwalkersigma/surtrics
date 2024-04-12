@@ -23,7 +23,7 @@ const SurplusNotableEvents = () => {
     });
     let isLoggedIn = status !== 'unauthenticated';
 
-    if (!isLoggedIn) return (<>You must be logged in to view this page</>)
+    if (!isLoggedIn || !name) return (<>You must be logged in to view this page</>)
 
 
 

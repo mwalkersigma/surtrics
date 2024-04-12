@@ -2,6 +2,7 @@ import db from "../../../db";
 import router from "../../../modules/serverUtils/requestRouter";
 import {parseBody} from "../../../modules/serverUtils/parseBody";
 import Query from "../../../modules/classes/query";
+import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
 
 
 
@@ -24,6 +25,9 @@ async function getHandler() {
 
 async function postHandler(req) {
     let body = parseBody(req);
+    if(!body.name) {
+        return []
+    }
     return new Query(
         'surtrics.surplus_metrics_data',
         ['*']
@@ -47,7 +51,7 @@ async function postHandler(req) {
             ()=>{}
         )
         .conditional(body.name,
-            (q)=> q.addWhere('user','=',body.name),
+            (q)=> q.addWhere('"user"','=',body.name),
             ()=>{}
         )
         .conditional(body.id,
@@ -66,6 +70,7 @@ export default function handler(req, res) {
         POST: postHandler
     })(req, res)
         .then((response) => {
+            console.log(response)
             res.status(200).json(response)
         })
         .catch((error) => {

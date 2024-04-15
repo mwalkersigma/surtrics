@@ -25,6 +25,7 @@ import useUpdates from "../../../../modules/hooks/useUpdates";
 import formatter from "../../../../modules/utils/numberFormatter";
 import smoothData from "../../../../modules/utils/graphUtils/smoothData";
 import colorizeLine from "../../../../modules/utils/colorizeLine";
+import {storeNames} from "../../../../modules/constants";
 
 
 ChartJS.register(
@@ -39,8 +40,7 @@ ChartJS.register(
 );
 
 const storeNameMap = {
-    "225004": "Big Commerce",
-    "255895": "Ebay",
+    ...storeNames,
     "Total": "Total",
     "total": "Total",
     "64872": "Manual Creation",
@@ -50,8 +50,9 @@ const storeNameMap = {
 const storeDataMap = {
     "Big Commerce": ["225004"],
     "Ebay": ["255895"],
+    "Amazon": ["260637"],
     "Manual Creation": ["64872"],
-    "All": ["225004","255895","64872"],
+    "All": ["225004","255895","64872","260637"],
     "Total": ["total"]
 }
 

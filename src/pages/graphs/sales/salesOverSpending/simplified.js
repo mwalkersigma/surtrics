@@ -6,45 +6,17 @@ import GraphWithStatCard from "../../../../components/mantine/graphWithStatCard"
 import CustomRangeMenu from "../../../../components/mantine/customRangeMenu";
 import {
     NativeSelect,
-    Paper,
-    Progress,
-    ProgressRoot,
-    Slider,
-    Text,
-    Tooltip,
     useMantineColorScheme,
-    useMantineTheme
 } from "@mantine/core";
 import StatCard from "../../../../components/mantine/StatCard";
 import BaseChart from "../../../../components/Chart";
-import {colorScheme} from "../../../_app";
 import useOrders from "../../../../modules/hooks/useOrders";
-import smoothData from "../../../../modules/utils/graphUtils/smoothData";
-import {useDebouncedValue, useLogger} from "@mantine/hooks";
 import useUsage from "../../../../modules/hooks/useUsage";
-import colorizeLine from "../../../../modules/utils/colorizeLine";
 
 
 
 
-const storeNames = {
-    "225004": "Big Commerce",
-    "255895": "Ebay",
-};
 
-const shortNames = {
-    "Big Commerce": "BC",
-    "Ebay": "EBAY",
-}
-
-const targetList = {
-    "day": "daily",
-    "week": "weekly",
-    "month": "monthly",
-    "quarter": "monthly",
-    "year": "yearly",
-
-}
 
 
 

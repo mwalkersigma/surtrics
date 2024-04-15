@@ -13,28 +13,12 @@ import smoothData from "../../../../modules/utils/graphUtils/smoothData";
 import {useDebouncedValue, useLogger} from "@mantine/hooks";
 import useUsage from "../../../../modules/hooks/useUsage";
 import colorizeLine from "../../../../modules/utils/colorizeLine";
+import {shortNames, storeNames, targetList} from "../../../../modules/constants";
 
 
 
 
-const storeNames = {
-    "225004": "Big Commerce",
-    "255895": "Ebay",
-};
 
-const shortNames = {
-    "Big Commerce": "BC",
-    "Ebay": "EBAY",
-}
-
-const targetList = {
-    "day": "daily",
-    "week": "weekly",
-    "month": "monthly",
-    "quarter": "monthly",
-    "year": "yearly",
-
-}
 
 
 

@@ -6,11 +6,9 @@ import useUsage from "../../../modules/hooks/useUsage";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import {TableSort} from "../../../components/mantine/TableSort";
 import useOrders from "../../../modules/hooks/useOrders";
+import {storeNames} from "../../../modules/constants";
 
-const storeNames = {
-    "225004": "Big Commerce",
-    "255895": "Ebay",
-};
+
 
 
 const DailyView = () => {

@@ -16,11 +16,10 @@ import useEvents from "../../../../modules/hooks/useEvents";
 import StatCard from "../../../../components/mantine/StatCard";
 import smoothData from "../../../../modules/utils/graphUtils/smoothData";
 import colorizeLine from "../../../../modules/utils/colorizeLine";
-
+import {storeNames} from "../../../../modules/constants";
 
 const storeNameMap = {
-    "225004": "Big Commerce",
-    "255895": "Ebay",
+    ...storeNames,
     "Total": "Total",
     "64872": "Manual Creation",
     "All": "All"
@@ -32,13 +31,17 @@ const storeDataMap = {
     "Ebay": [
         "255895"
     ],
+    "Amazon": [
+        "260637"
+    ],
     "Manual Creation": [
         "64872"
     ],
     "All": [
         "225004",
         "255895",
-        "64872"
+        "64872",
+        "260637"
     ],
     "Total": [
         "total"

@@ -16,16 +16,20 @@ import formatter from "../../../modules/utils/numberFormatter";
 import {lastDayOfWeek} from "date-fns";
 import useEvents from "../../../modules/hooks/useEvents";
 import StatCard from "../../../components/mantine/StatCard";
+import {storeNames} from "../../../modules/constants";
 
 
 const storeNameMap = {
-    "225004": "Big Commerce", "255895": "Ebay", "Total": "Total", "64872": "Manual Creation", "All": "All"
+    ...storeNames,
+    "Total": "Total",
+    "64872": "Manual Creation",
+    "All": "All"
 }
 const storeDataMap = {
     "Big Commerce": ["225004"],
     "Ebay": ["255895"],
     "Manual Creation": ["64872"],
-    "All": ["225004", "255895", "64872"],
+    "All": ["225004", "255895", "64872","260637"],
     "Total": ["total"]
 }
 
@@ -43,16 +47,16 @@ const WeeklyView = () => {
     let startDate = findStartOfWeek(date);
     let endDate = lastDayOfWeek(new Date(date));
 
-    let { categories , reducedEvents} = useEvents({
+    let {categories, reducedEvents} = useEvents({
         startDate,
         endDate,
-        affected_categories:affectedCategories,
-        timeScale:'week',
-        excludedCategories:['Processing','Warehouse'],
-        combined:false
+        affected_categories: affectedCategories,
+        timeScale: 'week',
+        excludedCategories: ['Processing', 'Warehouse'],
+        combined: false
     });
     useEffect(() => {
-        if(affectedCategories.length > 0) return;
+        if (affectedCategories.length > 0) return;
         setAffectedCategories(categories)
     }, [categories]);
 
@@ -106,7 +110,7 @@ const WeeklyView = () => {
                     .map(day => Math.floor(day[sid] * 100) / 100 ?? 0).map(month => isNaN(month) ? 0 : month),
                 backgroundColor: Object.values(colorScheme)[index],
                 type: 'bar',
-                stack:1,
+                stack: 1,
             }
         })
 
@@ -168,7 +172,6 @@ const WeeklyView = () => {
     }
 
 
-
     return (
         <GraphWithStatCard
             title={"Weekly Sales"}
@@ -199,8 +202,8 @@ const WeeklyView = () => {
                 >
                     {
                         storeIds.map((store, index) => <option
-                        value={`${store}`}
-                        key={index}> {storeNameMap[store]} </option>)
+                            value={`${store}`}
+                            key={index}> {storeNameMap[store]} </option>)
                     }
                 </NativeSelect>
             }

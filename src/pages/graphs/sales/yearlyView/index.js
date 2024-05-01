@@ -15,7 +15,7 @@ import {
 import DataLabels from "chartjs-plugin-datalabels";
 import {MultiSelect, NativeSelect, useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../../_app";
-import { lastDayOfYear, setDate, setMonth, startOfMonth} from "date-fns";
+import {lastDayOfYear, setDate, setMonth, startOfMonth} from "date-fns";
 import StatCard from "../../../../components/mantine/StatCard";
 import useUsage from "../../../../modules/hooks/useUsage";
 import BaseChart from "../../../../components/Chart";
@@ -105,6 +105,7 @@ const Index = () => {
     let orderCount = {total:0};
 
     orders.forEach(order=>{
+        if (new Date(order.paymentDate).getFullYear() !== date.getFullYear()) return;
         let month = startOfMonth(new Date(order.paymentDate)).toLocaleDateString();
 
         if(!yearSales[month]){

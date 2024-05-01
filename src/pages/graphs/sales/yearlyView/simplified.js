@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import GraphWithStatCard from "../../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";
 
@@ -13,9 +13,9 @@ import {
     Tooltip
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
-import { useMantineColorScheme} from "@mantine/core";
+import {useMantineColorScheme} from "@mantine/core";
 import {colorScheme} from "../../../_app";
-import { lastDayOfYear, setDate, setMonth, startOfMonth} from "date-fns";
+import {lastDayOfYear, setDate, setMonth, startOfMonth} from "date-fns";
 
 import useUsage from "../../../../modules/hooks/useUsage";
 
@@ -25,7 +25,6 @@ import formatter from "../../../../modules/utils/numberFormatter";
 import BaseChart from "../../../../components/Chart";
 import StatCard from "../../../../components/mantine/StatCard";
 import compoundArray from "../../../../modules/utils/compoundArray";
-
 
 
 ChartJS.register(
@@ -43,7 +42,7 @@ ChartJS.register(
 
 const dateSet = setDate
 const Index = () => {
-    useUsage("Ecommerce","sales-yearly-chart");
+    useUsage("Ecommerce", "sales-yearly-chart-simplified");
     const [date, setDate] = useState(setMonth(dateSet(new Date(),1),0));
     const theme = useMantineColorScheme();
     const themeColor = theme => theme !== "dark" ? colorScheme.white : colorScheme.dark;
@@ -55,6 +54,7 @@ const Index = () => {
         {
             acceptedConditions: ["1", "2", "3", "4"]
         });
+
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     let yearTotal = 0;
     let orderCountTotal = 0;
@@ -62,6 +62,7 @@ const Index = () => {
     let orderCount = [];
 
     orders.forEach(order=>{
+        if (new Date(order.paymentDate).getFullYear() !== date.getFullYear()) return;
         let month = Number(startOfMonth(new Date(order.paymentDate)).toLocaleDateString().split("/")[0]) - 1;
 
 

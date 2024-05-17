@@ -1,31 +1,33 @@
 import {useEffect, useRef} from "react";
 import {useDisclosure} from '@mantine/hooks';
-import {
-    AppShell, Text, ScrollArea, Space,
-} from '@mantine/core';
+import {AppShell, ScrollArea, Space, Text,} from '@mantine/core';
 import useNav from "../modules/hooks/useNav";
 import SurtricsNavbar from "../components/mantine/layout/navbar";
 import SurtricsHeader from "../components/mantine/layout/header";
 import {SiBigcommerce, SiQuickbooks} from "react-icons/si";
 import {
     IconActivity,
+    IconCamera,
+    IconChartHistogram,
     IconCheck,
     IconCirclePlus,
+    IconClipboardData,
+    IconConfetti,
+    IconDeviceDesktopAnalytics,
+    IconEdit,
+    IconExclamationCircle,
+    IconFocus,
     IconForklift,
     IconForms,
     IconGauge,
+    IconGaugeFilled,
+    IconGitCompare,
     IconReportMoney,
-    IconTallymarks,
-    IconUser,
-    IconEdit,
-    IconChartHistogram,
-    IconTable,
     IconSettings,
-    IconDeviceDesktopAnalytics,
+    IconTable,
+    IconTallymarks,
     IconTimeline,
-    IconExclamationCircle,
-    IconClipboardData,
-    IconGitCompare, IconConfetti, IconCamera, IconFocus, IconGaugeFilled
+    IconUser
 } from "@tabler/icons-react";
 import {FaEbay} from "react-icons/fa6";
 
@@ -286,6 +288,9 @@ const pages = {
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
                     links: {
+                        "Fast Sales": {
+                            href: "/tables/sales/fastSales"
+                        },
                         "Range View": {
                             href: "/tables/sales/dailyView"
                         },

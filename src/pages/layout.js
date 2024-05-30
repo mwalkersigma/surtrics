@@ -283,6 +283,9 @@ const pages = {
                         "Sales Over Spending": {
                             href: "/graphs/sales/salesOverSpending"
                         },
+                        "orders": {
+                            href: "/graphs/sales/orders"
+                        }
                     }
                 },
                 "Tables": {
@@ -315,6 +318,10 @@ const pages = {
                 "Increments Compounding" : {
                     href: "/graphs/increments/yearlyView/simplified",
                     leftSection: <IconCirclePlus size={size} stroke={stroke}/>
+                },
+                "orders": {
+                    href: "/graphs/sales/orders/simplified",
+                    leftSection: <IconReportMoney size={size} stroke={stroke}/>
                 }
             }
         },

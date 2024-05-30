@@ -7,10 +7,12 @@ import {IconCurrencyDollar} from "@tabler/icons-react";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import {setDate, setMonth} from "date-fns";
 import {useQuery} from "@tanstack/react-query";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 const FastSellsGraph = () => {
 
+    useUsage("Ecommerce", "fast-sales-table");
     const [[startDate, endDate], setDateRange] = useState([
         setDate(setMonth(new Date(), 0), 0),
         new Date()

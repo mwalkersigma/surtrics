@@ -59,7 +59,7 @@ export default function useEvents(config) {
         setActiveLabel(null)
     }
 
-    const{ affected_categories } = config;
+    let {affected_categories, excludedCategories} = config;
 
     useEffect(() => {
         if(!events.length > 0) return;
@@ -73,8 +73,13 @@ export default function useEvents(config) {
             .sort((a,b) => new Date(a.event_date) - new Date(b.event_date))
             .reduce((acc,event) => {
                 let date = event.event_date;
-                let isAffected = event.affected_categories.some((category) => affected_categories.includes(category));
-                if(!isAffected) return acc;
+                if ((affected_categories?.length === 0 || !affected_categories) && excludedCategories.length > 0) {
+                    affected_categories = categories.filter((category) => !excludedCategories.includes(category));
+                }
+                let isAffected = event.affected_categories.some((category) => affected_categories?.includes(category));
+                if (!isAffected) {
+                    return acc;
+                }
                 if(!acc[date]){
                     let index = findNearestIndex(dates,date);
                     let xPosition = index < 1 ? 'start' : index > dates.length - Math.round(dates.length * .1) ? 'end' : 'center';

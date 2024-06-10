@@ -36,10 +36,9 @@ const ErrorsByUser = () => {
     dataOrderedByUser["Total"] = errors?.reduce((acc,error)=>{
         const date = new Date(error.transaction_date).toLocaleDateString();
         if(!acc[date]){
-            acc[date] = {Total:0};
+            acc[date] = {};
         }
         acc[date][error.transaction_reason] = acc[date][error.transaction_reason] ? acc[date][error.transaction_reason] + 1 : 1;
-        acc[date]["Total"] +=1;
         return acc;
     },{});
 

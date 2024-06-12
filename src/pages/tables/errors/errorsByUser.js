@@ -78,48 +78,57 @@ const ErrorsByUser = () => {
                     />
                 }
             >
-                {userErrors && <Table.ScrollContainer minWidth={500}>
+                <div
+                    style={{overflowY: "scroll", maxHeight: "65vh"}}
+                >
+                    {userErrors &&
                     <Table
                         striped
                         highlightOnHover
                         withTableBorder
                         withColumnBorders
+                        stickyHeader
                         miw={700}
                     >
                         <Table.Thead>
                             <Table.Tr>
-                                <Table.Th>Reason</Table.Th>
-                                {dates.map((date, index) => (
-                                    <Table.Th key={index}>{date}</Table.Th>
-                                ))}
+                                <Table.Th>Date</Table.Th>
+                                {errorReasons.map((reason, i) => <Table.Td key={i}>{reason}</Table.Td>)}
                                 <Table.Th>Total</Table.Th>
                             </Table.Tr>
 
                         </Table.Thead>
 
                         <Table.Tbody>
-                            {errorReasons.map((reason, index) => (
-                                <Table.Tr key={index}>
-                                    <Table.Td>{reason}</Table.Td>
-                                    {dates.map((date, index) => (
-                                        <Table.Td key={index}>{userErrors[date][reason] || 0}</Table.Td>
-                                    ))}
-                                    <Table.Td>{dates.reduce((acc,date)=>acc + (userErrors[date][reason] || 0),0)}</Table.Td>
-                                </Table.Tr>
-                            ))}
+                            {
+                                dates.map((date, index) => (
+                                    <Table.Tr key={index}>
+                                        <Table.Td>{date}</Table.Td>
+                                        {errorReasons.map((reason, i) => (
+                                            <Table.Td key={i}>{userErrors[date][reason] ?? 0}</Table.Td>
+                                        ))}
+                                        <Table.Td>
+                                            {Object.values(userErrors[date]).reduce((acc, reason) => acc + reason, 0)}
+                                        </Table.Td>
 
+                                        {/*<Table.Th>{Object.values(userErrors).reduce((acc,date)=>acc + Object.values(date).reduce((acc,reason)=>acc + reason,0),0)}</Table.Th>*/}
+                                    </Table.Tr>
+                                ))
+                            }
                         </Table.Tbody>
                         <Table.Tfoot>
                             <Table.Tr>
                                 <Table.Th>Total</Table.Th>
-                                {dates.map((date, index) => (
-                                    <Table.Th key={index}>{Object.values(userErrors[date]).reduce((acc,reason)=>acc + reason,0)}</Table.Th>
+                                {errorReasons.map((reason, i) => (
+                                    <Table.Th
+                                        key={i}>{Object.values(userErrors).reduce((acc, date) => acc + (date[reason] ?? 0), 0)}</Table.Th>
                                 ))}
                                 <Table.Th>{Object.values(userErrors).reduce((acc,date)=>acc + Object.values(date).reduce((acc,reason)=>acc + reason,0),0)}</Table.Th>
                             </Table.Tr>
                         </Table.Tfoot>
                     </Table>
-                </Table.ScrollContainer>}
+                    }
+                </div>
             </GraphWithStatCard>
         </RoleWrapper>
     );

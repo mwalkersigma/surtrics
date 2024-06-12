@@ -105,7 +105,8 @@ const GraphWithStatCard = ({isLoading, dateInput, cards, children, title, slotOn
                     (cards?.length === 0 || !cards) &&
                     <>
                         <Grid.Col span={'auto'}>
-                            <Paper style={{height: "100%", minHeight: `${height}vh`}} radius={"md"} shadow={"md"} p={5} withBorder={!noBorder}>
+                            <Paper style={{height: "100%", minHeight: `${height}vh`, position: "relative"}}
+                                   radius={"md"} shadow={"md"} p={5} withBorder={!noBorder}>
                                 {children}
                             </Paper>
                         </Grid.Col>

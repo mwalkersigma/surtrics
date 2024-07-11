@@ -31,8 +31,7 @@ async function postHandler(req,res){
     )
 
 
-
-    let response = await query.run(db,console).then(({rows})=>rows);
+    let response = await query.run(db, console.log).then(({rows}) => rows);
     res.status(200).json(response);
 }
 

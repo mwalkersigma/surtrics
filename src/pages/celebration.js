@@ -15,10 +15,10 @@ import GraphWithStatCard from "../components/mantine/graphWithStatCard";
 import Confetti from "../components/confetti";
 import {eachWeekOfInterval} from "date-fns";
 import useUsage from "../modules/hooks/useUsage";
-import RoleWrapper from "../components/RoleWrapper";
 import {useLocalStorage} from "@mantine/hooks";
 import Metric from "../modules/classes/metric";
 import {useQuery} from "@tanstack/react-query";
+import Head from 'next/head'
 
 
 const metrics = [
@@ -307,7 +307,12 @@ const Celebration = () => {
     }
 
     return (
-        <RoleWrapper altRoles={"loggedIn"}>
+        <span>
+            <Head>
+                <script type={'application/ld+json'}>
+                    {JSON.stringify({total})}
+                </script>
+            </Head>
             <GraphWithStatCard noBorder title={'🎉 Sursuite Celebration 🎉'}>
                 <Switch
                     label={'Show Confetti'}
@@ -341,7 +346,8 @@ const Celebration = () => {
                     <CelebrationCard metric={shopSavings}/>
                 </SimpleGrid>
             </GraphWithStatCard>
-        </RoleWrapper>
+        </span>
+
     );
 };
 

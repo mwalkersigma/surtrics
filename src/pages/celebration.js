@@ -176,6 +176,7 @@ const metrics = [
 
 let total = new Metric({
     title: "Total Time Saved",
+    id: "total",
     Explanation: `
         This metric is calculated by adding the time saved from each of the other metrics.
     `,
@@ -208,7 +209,7 @@ total.render = function (offset) {
     this.value.formula(offset)
 }
 
-function CelebrationCard({metric}) {
+function CelebrationCard({metric, id}) {
 
     return (
         <Tooltip
@@ -228,7 +229,7 @@ function CelebrationCard({metric}) {
                 </Group>
 
                 <Group mb={'md'} align={'end'}>
-                    <Title c={'teal'}> {metric.timeSavings.raw} </Title>
+                    <Title id={id} c={'teal'}> {metric.timeSavings.raw} </Title>
                     <Text> {metric.timeSavings.unit} </Text>
                 </Group>
 
@@ -337,7 +338,7 @@ const Celebration = () => {
                 />
                 {confetti && <Confetti/>}
                 <SimpleGrid mt={'xl'} cols={1}>
-                    <CelebrationCard metric={total}/>
+                    <CelebrationCard id={'total'} metric={total}/>
                 </SimpleGrid>
                 <SimpleGrid mb={'xl'} mt={'md'} cols={3}>
                     {!shopLoading && !surpriceLoading &&

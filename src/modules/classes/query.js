@@ -7,6 +7,8 @@ export default class Query {
         this.having = [];
         this.joins = [];
         this.where = [];
+        this.nullCols = [];
+        this.notNull = [];
         this.whereChains = [];
         this.adHocWhere = null;
         this.groupBy = [];
@@ -27,6 +29,16 @@ export default class Query {
     }
     addWhere(column,operator,value){
         this.where.push({column,operator,value});
+        return this;
+    }
+
+    isNull(column) {
+        this.nullCols.push({column, operator: 'IS NULL'});
+        return this
+    }
+
+    isNotNull(column) {
+        this.nullCols.push({column, operator: 'IS NOT NULL'});
         return this;
     }
     addHaving(column,operator,value){
@@ -110,6 +122,12 @@ export default class Query {
                         .flat()
                 ];
             }
+        }
+
+        if (this.nullCols.length > 0) {
+            let start = query.includes("WHERE") ? " AND " : " WHERE ";
+            query += `${start} ${this.nullCols.map(({column, operator}) => `${column} ${operator}`).join(" AND ")}`;
+            console.log(query)
         }
 
         if(this.adHocWhere && this.where.length === 0){

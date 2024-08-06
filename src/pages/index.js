@@ -4,7 +4,6 @@ import formatter from "../modules/utils/numberFormatter";
 import {addDays, addHours, format} from "date-fns";
 import {Bar, Line} from "react-chartjs-2";
 import {colorScheme} from "./_app";
-import useUpdates from "../modules/hooks/useUpdates";
 import formatDateWithZeros from "../modules/utils/formatDateWithZeros";
 import findStartOfWeek from "../modules/utils/findSundayFromDate";
 import processWeekData from "../modules/utils/processWeekData";
@@ -17,6 +16,7 @@ import {useViewportSize} from "@mantine/hooks";
 import useUsage from "../modules/hooks/useUsage";
 import normalize from "../modules/utils/normalize";
 import DashboardCard from "../components/mantine/dashboardCard";
+import {useQuery} from "@tanstack/react-query";
 
 
 ChartJS.register(
@@ -159,40 +159,63 @@ export default function ManLayout({}) {
     const hasNav = useNav();
     let date = new Date()
     const {colorScheme: theme} = useMantineColorScheme();
-    const errorUpdates = useUpdates("/api/views/errors");
+    const refetchInterval = 60000;
 
-    let dailyData = useUpdates(
-        "/api/views/increments",
-        {
-            date: date.toLocaleDateString(),
-            interval: "1 day",
-            increment: "hour"
-        }
-    );
-    let processedDailyData = handleDailyData(dailyData);
-
-    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()), 1))
-    let weekData = useUpdates(
-        "/api/views/increments",
-        {
-            date,
-            interval: "1 week",
-            increment: "day"
-        }
-    );
-    let processedWeekData = processWeekData(weekData);
+    const {data: errorUpdates, isPending: errorPending} = useQuery({
+        queryKey: ['errors'],
+        refetchInterval,
+        queryFn: async () => {
+            return await fetch("/api/views/errors")
+                .then(res => res.json())
+        },
+    })
+    const {data: dailyData, isPending: dailyPending} = useQuery({
+        queryKey: ['dailyData'],
+        refetchInterval,
+        queryFn: async () => {
+            return await fetch("/api/views/increments", {
+                method: "POST",
+                body: JSON.stringify({
+                    date: date.toLocaleDateString(),
+                    interval: "1 day",
+                    increment: "hour"
+                })
+            })
+                .then(res => res.json())
+        },
+    })
+    const {data: weekData, isPending: weekPending} = useQuery({
+        queryKey: ['weekData'],
+        refetchInterval,
+        queryFn: async () => {
+            return await fetch("/api/views/increments", {
+                method: "POST",
+                body: JSON.stringify({
+                    date: date.toLocaleDateString(),
+                    interval: "1 week",
+                    increment: "day"
+                })
+            })
+                .then(res => res.json())
+        },
+    })
 
     const {height: viewportHeight} = useViewportSize();
+    const goal = useGoal();
+
+    if (errorPending || dailyPending || weekPending) return <div className={"text-center"}>Loading...</div>
+
+    let processedDailyData = handleDailyData(dailyData);
+    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()), 1))
+
+    let processedWeekData = processWeekData(weekData);
 
     let height = normalized(viewportHeight)
     if (hasNav) height = height - 50;
 
 
-    const goal = useGoal();
     const hourlyGoal = goal / 7;
-
     let weekSeed = makeWeekArray(processedWeekData, new Date(date));
-
 
     let weeklyErrors = errorUpdates
         .map((item) => ({...item, date_of_transaction: item.date_of_transaction.split("T")[0]}))

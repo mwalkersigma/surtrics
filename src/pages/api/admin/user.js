@@ -10,7 +10,7 @@ async function getHandler(){
 }
 function postHandler(req,res,...options){
     return serverAdminWrapper((req)=>{
-        let userList = fs.readFileSync("./src/json/users.json")
+        let userList = fs.readFileSync("./src/json/adminList.json")
         userList = JSON.parse(`${userList}`);
 
         let email = req.body.user.email;
@@ -26,7 +26,7 @@ function postHandler(req,res,...options){
             roles:req.body.user.roles
         });
 
-        fs.writeFileSync("./src/json/users.json",JSON.stringify(userList));
+        fs.writeFileSync("./src/json/adminList.json",JSON.stringify(userList));
 
         return {message:"User added"}
     })(req,res,...options)

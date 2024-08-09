@@ -40,3 +40,4 @@ TransactionHistory-8_24_2023 1_10 PM.csv
 logs
 /src/data/
 src/scripts/*
+*.sh

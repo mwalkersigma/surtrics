@@ -21,6 +21,7 @@ import {useForm} from "@mantine/form";
 import {DatePickerInput} from "@mantine/dates";
 import {useQuery} from "@tanstack/react-query";
 import {notifications} from "@mantine/notifications";
+import useUsage from "../../modules/hooks/useUsage";
 
 const ignoreList = [
     "BSA",
@@ -271,6 +272,7 @@ async function submitQualityAudit(values) {
 }
 
 const QualityAudits = () => {
+    useUsage("Admin", "QualityAudits")
     const [errors, setErrors] = useState([]);
     const auditForm = useForm({
         initialValues: {

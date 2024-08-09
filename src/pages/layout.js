@@ -16,6 +16,7 @@ import {
     IconDeviceDesktopAnalytics,
     IconEdit,
     IconExclamationCircle,
+    IconFileAnalytics,
     IconFocus,
     IconForklift,
     IconForms,
@@ -114,6 +115,15 @@ const pages = {
                 }
             }
         },
+        "Audit": {
+            leftSection: <IconFileAnalytics size={size} stroke={stroke}/>,
+            links: {
+                "Audit Entry": {
+                    href: "/BSA/QualityAudits"
+                },
+
+            }
+        },
         "Skill Assessment":{
             leftSection: <IconGauge size={size} stroke={stroke}/>,
             links:{
@@ -185,10 +195,19 @@ const pages = {
         "Errors": {
             leftSection: <IconExclamationCircle size={size} stroke={stroke}/>,
             links: {
+                "Submit Error": {
+                    href: "/admin/errorReporting",
+                    roles: ["bsa", "surplus director", "warehouse"]
+                },
+                "Error Entries": {
+                    href: "/viewers/error",
+                    roles: ["bsa", "surplus director", "warehouse"]
+                },
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
                     opened: true,
                     links: {
+
                         "My Errors": {
                             href: "/tables/errors/myErrors"
                         },
@@ -233,24 +252,12 @@ const pages = {
             leftSection: <IconForms size={size} stroke={stroke}/>,
             roles: ["bsa", "surplus director", "warehouse"],
             links: {
-                "Submit Error": {
-                    href: "/admin/errorReporting"
-                },
                 "Submit Event": {
                     leftSection: <IconActivity size={size} stroke={stroke}/>,
                     href: "/BSA/eventReporting"
                 },
             }
         },
-        "My Entries": {
-            leftSection: <IconEdit size={size} stroke={stroke}/>,
-            roles: ["bsa", "surplus director", "warehouse"],
-            links: {
-                "Error Entries": {
-                    href: "/viewers/error"
-                },
-            }
-        }
     },
     "E-Commerce": {
         "E-Commerce Dashboard": {

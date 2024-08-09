@@ -9,7 +9,7 @@ import {SessionProvider} from "next-auth/react";
 import {Notifications} from "@mantine/notifications";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 export const colorScheme = {
     blue: '#0d6efd',
     indigo: '#6610f2',

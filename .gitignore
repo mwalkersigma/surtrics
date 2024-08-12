@@ -41,3 +41,7 @@ logs
 /src/data/
 src/scripts/*
 *.sh
+
+src/db/*/*.psql
+src/db/*.psql
+

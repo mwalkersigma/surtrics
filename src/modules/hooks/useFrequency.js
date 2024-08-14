@@ -1,13 +1,12 @@
-import {useEffect, useState} from "react";
+import {useQuery} from "@tanstack/react-query";
 
 
 export default function useFrequency(){
-    const [frequency,setFrequency] = useState(0);
-    useEffect(()=>{
-        fetch("/api/getFrequency")
-            .then(res=>res.json())
-            .then(data=>setFrequency(data.frequency))
-            .catch(err=>console.log(err));
-    },[])
-    return frequency;
+    const {data: frequency} = useQuery({
+        queryKey: ["frequency"],
+        queryFn: async () => {
+            return fetch("/api/getFrequency")
+                .then(res => res.json())
+        },
+    })
 }

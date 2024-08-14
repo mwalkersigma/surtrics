@@ -121,7 +121,12 @@ const pages = {
                 "Audit Entry": {
                     href: "/BSA/QualityAudits"
                 },
-
+                "Audit Viewer": {
+                    href: "/tables/audits"
+                },
+                "Audits By Auditor": {
+                    href: "/tables/audits/byAuditor"
+                }
             }
         },
         "Skill Assessment":{

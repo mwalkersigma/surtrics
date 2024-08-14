@@ -13,6 +13,7 @@
     "@supercharge/promise-pool": "^3.0.0",
     "@tabler/icons-react": "^2.40.0",
     "@tanstack/react-query": "^5.36.2",
+    "@tanstack/react-query-devtools": "^5.51.23",
     "another-random-package": "^1.0.2",
     "bottleneck": "^2.19.5",
     "chart.js": "^4.4.0",

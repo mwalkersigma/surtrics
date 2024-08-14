@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useSession} from "next-auth/react";
 
 import RoleWrapper from "../../components/RoleWrapper";
 
 import {useForm} from "@mantine/form";
-import {Grid, Container, NativeSelect, Title, TextInput, Textarea, Button, Stack, Skeleton} from "@mantine/core";
+import {Button, Container, Grid, NativeSelect, Skeleton, Stack, Textarea, TextInput, Title} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
 import {Notifications} from "@mantine/notifications";
 import useUsage from "../../modules/hooks/useUsage";
+import {useMutation, useQuery} from "@tanstack/react-query";
 
 
 const ignoreList = [
@@ -70,130 +71,136 @@ const ErrorReporting = () => {
             date: (value) => (value ? null : 'Date is required'),
         }
     });
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
     const {data: session} = useSession();
 
+    const {data: users, isPending: loadingUsers} = useQuery({
+        queryKey: ['users'],
+        queryFn: async () => {
+            return await fetch("/api/getUsers")
+                .then(res => res.json())
+        }
+    });
+    const {data: errorTypes, isPending: loadingErrorTypes} = useQuery({
+        queryKey: ['errors'],
+        queryFn: async () => {
+            return await fetch("/api/admin/error")
+                .then(res => res.json())
+        }
+    });
+    console.log(errorTypes)
 
-    useEffect(() => {
-        setLoading(true)
-        fetch(`${window.location.origin}/api/getUsers`)
-            .then((res) => res.json())
-            .then((res) => setUsers(res))
-            .catch((err) => console.log(err))
-            .finally(() => setLoading(false))
-    }, []);
+    const handleErrorMutation = useMutation({
+        mutationFn: (values) => {
+            return fetch('/api/dataEntry/error', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(values),
+            })
+                .then((r) => r.text())
+        },
+        onSuccess: (data) => {
+            Notifications.show({autoClose: 5000, title: "Success", message: data, type: "success"})
+        },
+        onError: (err) => {
+            Notifications.show({autoClose: 5000, title: "Error", message: err, type: "error"})
+        }
+    })
 
-    function handleSubmit({user, reason, notes, date, location}) {
-        const state = JSON.stringify({user, reason, notes, session, date, location});
-        setLoading(true);
-        fetch(`${window.location.origin}/api/dataEntry/error`, {
-            method: "PUT",
-            body: state
-        })
-            .then((res) => res.text())
-            .then((res) => {
-                Notifications.show({autoClose: 5000, title: "Success", message: res, type: "success"})
-            })
-            .catch((err) => {
-                Notifications.show({autoClose: 5000, title: "Error", message: err, type: "error"})
-            })
-            .finally(() => {
-                setLoading(false);
-            })
-    }
+
+    const isLoading = loadingUsers || loadingErrorTypes;
+
 
     return (
         <RoleWrapper LoadingComponent={<SkeletonLoader/>} altRoles={["surplus director", "bsa","warehouse"]}>
-            <Container>
-                <form onSubmit={onSubmit(handleSubmit)}>
-                    <Grid>
-                        <Grid.Col span={12}><Title> Error Reporting </Title></Grid.Col>
-                        <Grid.Col span={3}>
-                            <NativeSelect
-                                required
-                                label={"User"}
-                                placeholder={"Choose a user"}
-                                {...getInputProps("user")}
-                            >
-                                <option value={""}>Choose a user</option>
-                                {users.filter((user) => !ignoreList.includes(user['user_name'])).map((user) => (
-                                    <option key={user["user_name"]} value={user["user_name"]}>{user["user_name"]}</option>
-                                ))}
-                            </NativeSelect>
-                        </Grid.Col>
-                        <Grid.Col span={3}>
-                            <NativeSelect
-                                required
-                                label={"Reason"}
-                                placeholder={"Choose a reason"}
-                                {...getInputProps("reason")}
-                            >
-                                <option value={""}>Choose a reason</option>
-                                <option value={"Banned"}>Banned</option>
-                                <option value={"Breakdown"}>Breakdown</option>
-                                <option value={"Condition"}>Condition</option>
-                                <option value={"Location"}>Location</option>
-                                <option value={"Mixed Bag"}>Mixed Bag</option>
-                                <option value={"Model Classification"}>Model Classification</option>
-                                <option value={"Model ID"}>Model ID</option>
-                                <option value={"Printing"}>Printing</option>
-                                <option value={"Quantity"}>Quantity</option>
-                            </NativeSelect>
-                        </Grid.Col>
-                        <Grid.Col span={3}>
-                            <NativeSelect
-                                label={"location"}
-                                placeholder={"Enter location"}
-                                {...getInputProps("location")}
-                            >
-                                <option value={""}>Choose a location</option>
-                                <option value={"Audit"}>Audit</option>
-                                <option value={"Shipping"}>Shipping</option>
-                                <option value={"Cycle Count"}>Cycle Count</option>
-                            </NativeSelect>
-                        </Grid.Col>
-                        <Grid.Col span={3}>
-                            <DatePickerInput
-                                required
-                                label={"Date"}
-                                placeholder={"Choose a date"}
-                                {...getInputProps("date")}
-                            />
-                        </Grid.Col>
-                        <Grid.Col span={12}>
-                            <Textarea
-                                required
-                                autosize
-                                minRows={3}
-                                label={"Notes"}
-                                placeholder={"Enter notes"}
-                                {...getInputProps("notes")}
-                            />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <TextInput
-                                defaultValue={session?.user?.email}
-                                disabled
-                                label={"User who reported error"}
-                            />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <Stack h={"100%"} justify={"flex-end"}>
-                                <Button
-                                    type={"submit"}
-                                    disabled={loading}
-                                    loading={loading}
-                                    variant="gradient"
-                                    gradient={{from: 'red', to: 'grape', deg: 90}}
+            {isLoading && <SkeletonLoader/>}
+            {!isLoading && (
+                <Container>
+                    <form onSubmit={onSubmit(handleErrorMutation.mutate)}>
+                        <Grid>
+                            <Grid.Col span={12}><Title> Error Reporting </Title></Grid.Col>
+                            <Grid.Col span={3}>
+                                <NativeSelect
+                                    required
+                                    label={"User"}
+                                    placeholder={"Choose a user"}
+                                    {...getInputProps("user")}
                                 >
-                                    Submit
-                                </Button>
-                            </Stack>
-                        </Grid.Col>
-                    </Grid>
-                </form>
-            </Container>
+                                    <option value={""}>Choose a user</option>
+                                    {users.filter((user) => !ignoreList.includes(user['user_name'])).map((user) => (
+                                        <option key={user["user_name"]}
+                                                value={user["user_name"]}>{user["user_name"]}</option>
+                                    ))}
+                                </NativeSelect>
+                            </Grid.Col>
+                            <Grid.Col span={3}>
+                                <NativeSelect
+                                    required
+                                    label={"Reason"}
+                                    placeholder={"Choose a reason"}
+                                    {...getInputProps("reason")}
+                                >
+                                    <option value={""}>Choose a reason</option>
+                                    {...errorTypes.map(error => {
+                                        return <option key={error.name} value={error.name}>{error.name}</option>
+                                    })}
+                                </NativeSelect>
+                            </Grid.Col>
+                            <Grid.Col span={3}>
+                                <NativeSelect
+                                    label={"location"}
+                                    placeholder={"Enter location"}
+                                    {...getInputProps("location")}
+                                >
+                                    <option value={""}>Choose a location</option>
+                                    <option value={"Audit"}>Audit</option>
+                                    <option value={"Shipping"}>Shipping</option>
+                                    <option value={"Cycle Count"}>Cycle Count</option>
+                                </NativeSelect>
+                            </Grid.Col>
+                            <Grid.Col span={3}>
+                                <DatePickerInput
+                                    required
+                                    label={"Date"}
+                                    placeholder={"Choose a date"}
+                                    {...getInputProps("date")}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={12}>
+                                <Textarea
+                                    required
+                                    autosize
+                                    minRows={3}
+                                    label={"Notes"}
+                                    placeholder={"Enter notes"}
+                                    {...getInputProps("notes")}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                                <TextInput
+                                    defaultValue={session?.user?.email}
+                                    disabled
+                                    label={"User who reported error"}
+                                />
+                            </Grid.Col>
+                            <Grid.Col span={6}>
+                                <Stack h={"100%"} justify={"flex-end"}>
+                                    <Button
+                                        type={"submit"}
+                                        disabled={isLoading}
+                                        loading={isLoading}
+                                        variant="gradient"
+                                        gradient={{from: 'red', to: 'grape', deg: 90}}
+                                    >
+                                        Submit
+                                    </Button>
+                                </Stack>
+                            </Grid.Col>
+                        </Grid>
+                    </form>
+                </Container>
+            )}
         </RoleWrapper>
     )
 };

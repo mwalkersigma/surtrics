@@ -18,7 +18,8 @@ export function TableSort({
                               specialFormatting = [],
                               noDisplay = [],
                               withPagination,
-                              autosize
+                              autosize,
+                              ...rest
                           }) {
     const [search, setSearch] = useState('');
     const [sortedData, setSortedData] = useState(data);
@@ -103,7 +104,7 @@ export function TableSort({
 
 
     return (
-        <Wrapper {...dynamicProps} pos={'relative'}>
+        <Wrapper {...rest} {...dynamicProps} pos={'relative'}>
             {withPagination && <Group justify={'space-between'}>
                 <Pagination
                     my={'xs'}

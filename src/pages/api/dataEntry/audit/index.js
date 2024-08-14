@@ -15,15 +15,28 @@ const auditInsertQuery = `
     VALUES ($1, $2, $3, $4, $5, $6)
 `
 
-//todo
-function getHandler(req, res) {
+
+async function getHandler(req, res) {
     const query = new Query('nfs.sursuite.quality_assurance', ['*'])
-    return query.run(db, console.log).then(({rows}) => rows);
+        .isNull('date_deleted');
 
+    const rows = await query.run(db, console.log).then(({rows}) => rows);
 
+    if (req.query.detailed) {
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            for (let j = 0; j < row['tote_errors'].length; j++) {
+                row['tote_errors'][j] = await new Query('nfs.surtrics.surplus_metrics_data', ['*'])
+                    .addWhere('id', '=', row['tote_errors'][j])
+                    .run(db, console.log)
+                    .then(({rows}) => rows[0]);
+            }
+            rows[i] = row;
+        }
+    }
+    console.log("Data is finished")
+    return rows
 }
-
-//todo
 async function postHandler(req, res, {user}) {
     const body = req.body;
     const audit_date = body?.auditDate;
@@ -48,11 +61,34 @@ async function postHandler(req, res, {user}) {
     }
 }
 
+async function deleteHandler(req, res, {user}) {
+    const audit = await new Query('nfs.sursuite.quality_assurance', ['*'])
+        .addWhere('id', '=', req.body.id)
+        .isNull('date_deleted')
+        .run(db, console.log);
+
+    // Delete the errors
+    const rowErrors = audit.rows[0].tote_errors;
+    for (let i = 0; i < rowErrors.length; i++) {
+        await db.query(`DELETE FROM nfs.surtrics.surplus_metrics_data WHERE id = $1`, [rowErrors[i]]);
+    }
+
+    // Delete the audit
+    await db.query(`UPDATE nfs.sursuite.quality_assurance SET date_deleted = NOW() WHERE id = $1`, [req.body.id]);
+
+    return {
+        message: "Audit has been successfully deleted."
+    }
+
+}
+
+
 export default function handler(req, res) {
     return serverAdminWrapper(async (req, res, user) => {
         return router({
             GET: getHandler,
             POST: postHandler,
+            DELETE: deleteHandler
         })(req, res, user)
     }, "surplus director")(req, res)
         .then((response) => res.status(200).json(response))

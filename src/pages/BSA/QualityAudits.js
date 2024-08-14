@@ -19,7 +19,7 @@ import {
 import {useSetState} from "@mantine/hooks";
 import {useForm} from "@mantine/form";
 import {DatePickerInput} from "@mantine/dates";
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {notifications} from "@mantine/notifications";
 import useUsage from "../../modules/hooks/useUsage";
 
@@ -268,6 +268,7 @@ async function submitQualityAudit(values) {
     }
 
     notifications.show({title: 'Success', message: 'Audit submitted successfully', color: 'green'})
+    return response.json();
 
 }
 
@@ -281,14 +282,20 @@ const QualityAudits = () => {
             toteQuantity: null,
             quantityIncorrect: null
         }
+    });
+
+    const addAuditMutation = useMutation({
+        mutationFn: (values) => submitQualityAudit(...values, errors),
+        onSuccess: () => auditForm.reset(),
     })
+
 
     return (
         <Container size={'responsive'}>
             <Title order={1} ta={'center'} mb={'xl'}>
                 Tote Audit Entry
             </Title>
-            <form onSubmit={auditForm.onSubmit((values) => submitQualityAudit({...values, errors}))}>
+            <form onSubmit={auditForm.onSubmit(addAuditMutation.mutate)}>
                 <Grid>
                     <AuditForm auditFormState={auditForm}/>
                     <Grid.Col h={550} span={12}>

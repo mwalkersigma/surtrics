@@ -20,9 +20,8 @@ export default function useUpdates(route, routeOptions) {
                     'Content-Type': 'application/json'
                 }
             }
-            let response = await fetch(route, callOptions).then(res => res.json())
-            console.log(response)
-            return response
+            return await fetch(route, callOptions).then(res => res.json())
+
         },
         refetchInterval: routeOptions?.interval ?? 1000 * 60
     });

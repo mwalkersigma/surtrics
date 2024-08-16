@@ -53,7 +53,7 @@ function ErrorCard({id, user, location, reason, notes, handleRemove}) {
     )
 }
 
-function AuditForm({auditFormState}) {
+function AuditFormHeader({auditFormState}) {
     const {toteQuantity, quantityIncorrect} = auditFormState.values;
     const percentCorrect = Math.trunc((toteQuantity > 0 ? ((toteQuantity - quantityIncorrect) / toteQuantity) * 100 : 0) * 100) / 100;
     return (
@@ -215,7 +215,7 @@ function ErrorEntryForm({handleSave}) {
     )
 }
 
-function ErrorCardHolder({errors}) {
+function ErrorCardHolder({errors, setErrors}) {
     return (
         <Paper mah={560} withBorder p={'1rem'}>
             <Title order={2} mb={'xl'} ta={'center'}>Errors</Title>
@@ -249,6 +249,8 @@ async function submitQualityAudit(values) {
         notifications.show({title: 'Cancelled', message: 'Audit submission cancelled', color: 'red'})
         return;
     }
+    console.log("All preflight checks passed")
+    console.log("Submitting audit")
     const response = await fetch('/api/dataEntry/audit', {
         method: "POST",
         headers: {
@@ -272,6 +274,29 @@ async function submitQualityAudit(values) {
 
 }
 
+export function AuditForm({formControl, errors, mutationHandler, setErrors}) {
+    return <form onSubmit={formControl.onSubmit(value => mutationHandler.mutate(value))}>
+        <Grid>
+            <AuditFormHeader auditFormState={formControl}/>
+            <Grid.Col h={550} span={12}>
+                <Grid h={'100%'}>
+                    <Grid.Col span={6}>
+                        <ErrorCardHolder errors={errors} setErrors={setErrors}/>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                        <Flex h={'100%'} direction={'column'} justify={'space-between'}>
+                            <ErrorEntryForm handleSave={(value) => setErrors([...errors, value])}/>
+                            <Button type={'submit'} fullWidth mt={'1rem'}>Submit Audit</Button>
+                        </Flex>
+                    </Grid.Col>
+                </Grid>
+            </Grid.Col>
+
+        </Grid>
+
+    </form>
+}
+
 const QualityAudits = () => {
     useUsage("Admin", "QualityAudits")
     const [errors, setErrors] = useState([]);
@@ -285,8 +310,14 @@ const QualityAudits = () => {
     });
 
     const addAuditMutation = useMutation({
-        mutationFn: (values) => submitQualityAudit(...values, errors),
-        onSuccess: () => auditForm.reset(),
+        mutationFn: async (values) => await submitQualityAudit({...values, errors}),
+        onSuccess: () => {
+            setErrors([])
+            auditForm.reset()
+        },
+        onError: (error) => {
+            console.log(error)
+        }
     })
 
 
@@ -295,26 +326,12 @@ const QualityAudits = () => {
             <Title order={1} ta={'center'} mb={'xl'}>
                 Tote Audit Entry
             </Title>
-            <form onSubmit={auditForm.onSubmit(addAuditMutation.mutate)}>
-                <Grid>
-                    <AuditForm auditFormState={auditForm}/>
-                    <Grid.Col h={550} span={12}>
-                        <Grid h={'100%'}>
-                            <Grid.Col span={6}>
-                                <ErrorCardHolder errors={errors}/>
-                            </Grid.Col>
-                            <Grid.Col span={6}>
-                                <Flex h={'100%'} direction={'column'} justify={'space-between'}>
-                                    <ErrorEntryForm handleSave={(value) => setErrors([...errors, value])}/>
-                                    <Button type={'submit'} fullWidth mt={'1rem'}>Submit Audit</Button>
-                                </Flex>
-                            </Grid.Col>
-                        </Grid>
-                    </Grid.Col>
-
-                </Grid>
-
-            </form>
+            <AuditForm
+                mutationHandler={addAuditMutation}
+                formControl={auditForm}
+                errors={errors}
+                setErrors={setErrors}
+            />
         </Container>
     );
 };

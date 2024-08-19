@@ -23,6 +23,7 @@ import {
     IconGauge,
     IconGaugeFilled,
     IconGitCompare,
+    IconPencil,
     IconReportMoney,
     IconSettings,
     IconTable,
@@ -119,14 +120,23 @@ const pages = {
             leftSection: <IconFileAnalytics size={size} stroke={stroke}/>,
             links: {
                 "Audit Entry": {
-                    href: "/BSA/QualityAudits"
+                    href: "/BSA/QualityAudits",
+                    leftSection: <IconPencil size={size} stroke={stroke}/>,
+                    roles: ["bsa", "surplus director", "warehouse"]
                 },
-                "Audit Viewer": {
-                    href: "/tables/audits"
+                "Tables": {
+                    leftSection: <IconTable size={size} stroke={stroke}/>,
+                    links: {
+                        "Audit Viewer": {
+                            href: "/tables/audits",
+                            roles: ["bsa", "surplus director", "warehouse"]
+                        },
+                        "Audits By Auditor": {
+                            href: "/tables/audits/byAuditor",
+                            roles: ["bsa", "surplus director", "warehouse"]
+                        }
+                    }
                 },
-                "Audits By Auditor": {
-                    href: "/tables/audits/byAuditor"
-                }
             }
         },
         "Skill Assessment":{
@@ -207,6 +217,10 @@ const pages = {
                 "Error Entries": {
                     href: "/viewers/error",
                     roles: ["bsa", "surplus director", "warehouse"]
+                },
+                "Error Type Creator": {
+                    href: "/BSA/createErrorType",
+                    roles: ["surplus director"]
                 },
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,

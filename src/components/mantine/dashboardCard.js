@@ -1,4 +1,4 @@
-import {Badge, Group, Paper, Progress, Space, Text, Title} from "@mantine/core";
+import {Badge, Group, NumberFormatter, Paper, Progress, Space, Text, Title} from "@mantine/core";
 import formatter from "../../modules/utils/numberFormatter";
 import React from "react";
 
@@ -20,8 +20,14 @@ export default function DashboardCard({title, category, value , goal, errors,thr
                 </Title>
                 { errors && errors > 0 && <Text fz="xs" c="dimmed">
                     Error Rate :
-                    <span style={{color: `${errorRate < threshold ? 'teal' : 'red'}`}}> {errorRate}</span>
-                    %
+                    <NumberFormatter
+                        c={errorRate < threshold ? 'teal' : 'red'}
+                        thousandSeparator="."
+                        decimalSeparator=","
+                        decimalScale={2}
+                        value={errorRate}
+                        suffix={'%'}
+                    />
                 </Text>}
             </Group>
             <Space h={'lg'}/>
@@ -30,7 +36,14 @@ export default function DashboardCard({title, category, value , goal, errors,thr
                     Progress
                 </Text>
                 <Text size="md" c="dimmed">
-                    {formatter((value / goal) * 100)} %
+                    <NumberFormatter
+                        c={errorRate < threshold ? 'teal' : 'red'}
+                        thousandSeparator=","
+                        decimalSeparator="."
+                        decimalScale={2}
+                        value={(value / goal) * 100}
+                        suffix={'%'}
+                    />
                 </Text>
             </Group>
             <Progress size={20} value={(value / goal) * 100} mt={'sm'} mb={'lg'}/>

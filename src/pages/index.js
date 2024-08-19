@@ -157,10 +157,10 @@ function handleDailyData(dailyData) {
 export default function ManLayout({}) {
     useUsage("Metrics", "Dashboard")
     const hasNav = useNav();
-    let date = new Date()
-    const {colorScheme: theme} = useMantineColorScheme();
     const refetchInterval = 60000;
+    let date = new Date()
 
+    const {colorScheme: theme} = useMantineColorScheme();
     const {data: errorUpdates, isPending: errorPending} = useQuery({
         queryKey: ['errors'],
         refetchInterval,
@@ -199,15 +199,22 @@ export default function ManLayout({}) {
                 .then(res => res.json())
         },
     })
+    const {data: auditData, isPending: auditPending} = useQuery({
+        queryKey: ['audits'],
+        queryFn: async () => {
+            return await fetch('/api/dataEntry/audit/search?detailed=true&startDate=' + formatDateWithZeros(findStartOfWeek(new Date())) + '&endDate=' + formatDateWithZeros(addDays(findStartOfWeek(new Date()), 7)))
+                .then(res => res.json())
+        }
+    });
 
     const {height: viewportHeight} = useViewportSize();
     const goal = useGoal();
 
-    if (errorPending || dailyPending || weekPending) return <div className={"text-center"}>Loading...</div>
+    if (errorPending || dailyPending || weekPending || auditPending) return <div
+        className={"text-center"}>Loading...</div>
+    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()), 1));
 
     let processedDailyData = handleDailyData(dailyData);
-    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()), 1))
-
     let processedWeekData = processWeekData(weekData);
 
     let height = normalized(viewportHeight)
@@ -227,7 +234,7 @@ export default function ManLayout({}) {
         .filter(({date_of_transaction}) => date_of_transaction === new Date().toISOString().split("T")[0])
         .reduce((acc, {count}) => acc + +count, 0);
 
-    if (processedWeekData.length === 0) return <div className={"text-center"}>Loading...</div>
+
 
     const totalIncrements = weekSeed.map(({count}) => +count).reduce((a, b) => a + b, 0);
     const totalForToday = dailyData.reduce((a, b) => a + +b.count, 0);
@@ -236,6 +243,11 @@ export default function ManLayout({}) {
 
     const bestDay = Math.max(...processedWeekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
+    console.log(auditData)
+    const itemsAudited = auditData.reduce((acc, {tote_qty}) => acc + tote_qty, 0);
+    console.log(itemsAudited)
+    const incorrectItemsFound = auditData.reduce((acc, {tote_qty_incorrect}) => acc + tote_qty_incorrect, 0);
+    console.log(incorrectItemsFound)
 
     let cards = [
         {
@@ -291,20 +303,20 @@ export default function ManLayout({}) {
                         <Grid.Col span={3}>
                             <Paper ta={"center"} withBorder p="md" radius="md">
                                 <Text fz="lg" c="dimmed">
-                                    Best Day
+                                    Items Audited
                                 </Text>
                                 <Title fz={'56px'}>
-                                    {formatter(bestDay)}
+                                    {formatter(itemsAudited)}
                                 </Title>
                             </Paper>
                         </Grid.Col>
                         <Grid.Col span={3}>
                             <Paper ta={"center"} withBorder p="md" radius="md">
                                 <Text fz="lg" c="dimmed">
-                                    Best Hour
+                                    Incorrect Items
                                 </Text>
                                 <Title fz={'56px'}>
-                                    {formatter(bestHour)}
+                                    {formatter(incorrectItemsFound)}
                                 </Title>
                             </Paper>
                         </Grid.Col>

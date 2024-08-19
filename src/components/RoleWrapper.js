@@ -30,8 +30,8 @@ function RoleWrapper({children,altRoles,invisible,LoadingComponent = <Loading/>}
     const {data:session, status} = useSession();
     const {adminList, isAdmin,isRole} = useAdminList();
     if(altRoles && altRoles.includes("loggedIn")){
+        if (invisible && (status === "unauthenticated" || status === 'loading')) return null;
         if(status === "loading") return<>{LoadingComponent}</>  ;
-        if(invisible && status === "unauthenticated")return null;
         if(status === "unauthenticated")return <Container><Title>Not logged in</Title></Container>;
         return children;
     }

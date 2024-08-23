@@ -171,7 +171,7 @@ export default function ManLayout({}) {
                 .then(res => res.json())
         },
     })
-    const {data: dailyData, isPending: dailyPending} = useQuery({
+    let {data: dailyData, isPending: dailyPending} = useQuery({
         queryKey: ['dailyData'],
         refetchInterval,
         queryFn: async () => {
@@ -186,14 +186,14 @@ export default function ManLayout({}) {
                 .then(res => res.json())
         },
     })
-    const {data: weekData, isPending: weekPending} = useQuery({
+    let {data: weekData, isPending: weekPending} = useQuery({
         queryKey: ['weekData'],
         refetchInterval,
         queryFn: async () => {
             return await fetch("/api/views/increments", {
                 method: "POST",
                 body: JSON.stringify({
-                    date: date.toLocaleDateString(),
+                    date: formatDateWithZeros(addDays(findStartOfWeek(new Date()), 1)),
                     interval: "1 week",
                     increment: "day"
                 })
@@ -201,7 +201,8 @@ export default function ManLayout({}) {
                 .then(res => res.json())
         },
     })
-    const {data: auditData, isPending: auditPending} = useQuery({
+
+    let {data: auditData, isPending: auditPending} = useQuery({
         queryKey: ['audits'],
         queryFn: async () => {
             return await fetch('/api/dataEntry/audit/search?detailed=true&startDate=' + formatDateWithZeros(findStartOfWeek(new Date())) + '&endDate=' + formatDateWithZeros(addDays(findStartOfWeek(new Date()), 7)))
@@ -212,11 +213,22 @@ export default function ManLayout({}) {
     const {height: viewportHeight} = useViewportSize();
     const goal = useGoal();
 
-    if (errorPending || dailyPending || weekPending || auditPending) return <div
-        className={"text-center"}>Loading...</div>
-    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()), 1));
+    if (errorPending || dailyPending || weekPending || auditPending) {
+        return <div className={"text-center"}>Loading...</div>
+    }
+    console.log("Daily Data", dailyData)
+    console.log("Week Data", weekData)
+    console.log("Audit Data", auditData)
+
+    dailyData = Array.isArray(dailyData) ? dailyData : [];
+    weekData = Array.isArray(weekData) ? weekData : [];
+    auditData = Array.isArray(auditData) ? auditData : [];
+
+
+
 
     let processedDailyData = handleDailyData(dailyData);
+    date = formatDateWithZeros(addDays(findStartOfWeek(new Date()), 1));
     let processedWeekData = processWeekData(weekData);
 
     let height = normalized(viewportHeight)
@@ -237,16 +249,14 @@ export default function ManLayout({}) {
         .reduce((acc, {count}) => acc + +count, 0);
 
 
-
     const totalIncrements = weekSeed.map(({count}) => +count).reduce((a, b) => a + b, 0);
-    const totalForToday = dailyData.reduce((a, b) => a + +b.count, 0);
+    const totalForToday = dailyData?.reduce((a, b) => a + +b.count, 0) ?? 0;
     const dailyAverage = Math.round(totalIncrements / (processedWeekData.length || 1));
     const hourlyAverage = Math.round(dailyAverage / 7 || 1);
 
-    const bestDay = Math.max(...processedWeekData.map(({count}) => +count));
-    const bestHour = Math.max(...dailyData.map(({count}) => +count));
-    const itemsAudited = auditData?.reduce((acc, {tote_qty}) => acc + tote_qty, 0);
-    const incorrectItemsFound = auditData?.reduce((acc, {tote_qty_incorrect}) => acc + tote_qty_incorrect, 0);
+    console.log(auditData)
+    const itemsAudited = auditData?.reduce((acc, {tote_qty}) => acc + tote_qty, 0) ?? 0;
+    const incorrectItemsFound = auditData?.reduce((acc, {tote_qty_incorrect}) => acc + tote_qty_incorrect, 0) ?? 0;
 
     let cards = [
         {

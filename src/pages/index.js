@@ -1,3 +1,4 @@
+"useclient";
 import React from "react";
 import {Center, Grid, Paper, Text, Title, useMantineColorScheme} from '@mantine/core';
 import formatter from "../modules/utils/numberFormatter";
@@ -143,6 +144,7 @@ function DailyGraph({dailyData, theme, height}) {
 }
 
 function handleDailyData(dailyData) {
+    if (!dailyData || !Array.isArray(dailyData)) return [];
     let temp = dailyData
         .reduce((acc, curr) => {
             let date = new Date(curr.date_of_transaction).toLocaleString();
@@ -243,11 +245,8 @@ export default function ManLayout({}) {
 
     const bestDay = Math.max(...processedWeekData.map(({count}) => +count));
     const bestHour = Math.max(...dailyData.map(({count}) => +count));
-    console.log(auditData)
-    const itemsAudited = auditData.reduce((acc, {tote_qty}) => acc + tote_qty, 0);
-    console.log(itemsAudited)
-    const incorrectItemsFound = auditData.reduce((acc, {tote_qty_incorrect}) => acc + tote_qty_incorrect, 0);
-    console.log(incorrectItemsFound)
+    const itemsAudited = auditData?.reduce((acc, {tote_qty}) => acc + tote_qty, 0);
+    const incorrectItemsFound = auditData?.reduce((acc, {tote_qty_incorrect}) => acc + tote_qty_incorrect, 0);
 
     let cards = [
         {

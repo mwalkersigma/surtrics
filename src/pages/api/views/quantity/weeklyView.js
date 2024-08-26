@@ -1,9 +1,7 @@
-
 import db from "../../../../db/index"
 import getStartAndEndWeekString from "../../../../modules/utils/getStartAndEndWeekString";
 import Query from "../../../../modules/classes/query";
 import {parseBody} from "../../../../modules/serverUtils/parseBody";
-
 
 
 async function getIncrements(startWeek,endWeek,interval){
@@ -22,8 +20,8 @@ async function getIncrements(startWeek,endWeek,interval){
         (q)=>q.addColumn(`DATE_TRUNC('day',transaction_date) as date`
         ))
         .addWhere('"user"', "!=", "BSA")
-        .addWhere("DATE(transaction_date)", ">", startWeek)
-        .addWhere("DATE(transaction_date)", "<", endWeek)
+        .addWhere("DATE(transaction_date)", ">=", startWeek)
+        .addWhere("DATE(transaction_date)", "<=", endWeek)
         .addWhere("transaction_type", "=", "Add")
         .addWhereWithOr([
             {column:"transaction_reason", operator:"=", value:"Relisting"},

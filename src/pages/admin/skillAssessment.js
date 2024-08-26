@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useSession} from "next-auth/react";
 
 import RoleWrapper from "../../components/RoleWrapper";
 
 import {useForm} from "@mantine/form";
-import {Grid, Container, NativeSelect, Title, TextInput, Textarea, Button, Stack, Skeleton} from "@mantine/core";
+import {Button, Container, Grid, NativeSelect, Skeleton, Stack, Textarea, TextInput, Title} from "@mantine/core";
 import {DatePickerInput} from "@mantine/dates";
 import {Notifications} from "@mantine/notifications";
 import useUsage from "../../modules/hooks/useUsage";
+import {useMutation, useQuery} from "@tanstack/react-query";
 
 
 const ignoreList = [
@@ -27,7 +28,7 @@ function SkeletonLoader() {
     return (
         <Container>
             <Grid>
-                <Grid.Col span={12}><Title> Error Reporting </Title></Grid.Col>
+                <Grid.Col span={12}><Title> User Skill Assessment </Title></Grid.Col>
                 <Grid.Col span={4}>
                     <Skeleton height={40}/>
                 </Grid.Col>
@@ -71,45 +72,43 @@ const ErrorReporting = () => {
             notes: (value) => value === "" ? "Notes are required" : null
         }
     });
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
+
     const {data: session} = useSession();
 
+    const {data: users, isPending: loading} = useQuery({
+        queryKey: ["users"],
+        queryFn: async () => {
+            const res = await fetch(`/api/getUsers`);
+            return res.json();
+        }
+    });
 
-    useEffect(() => {
-        setLoading(true)
-        fetch(`${window.location.origin}/api/getUsers`)
-            .then((res) => res.json())
-            .then((res) => setUsers(res))
-            .catch((err) => console.log(err))
-            .finally(() => setLoading(false))
-    }, []);
+    const handleSubmitMutation = useMutation({
+        mutationFn: handleSubmit,
+        onError: (error) => {
+            Notifications.show({autoClose: 5000, title: "Error", message: error, type: "error"})
+        },
+        onSuccess: (data) => {
+            Notifications.show({autoClose: 5000, title: "Success", message: data, type: "success"})
+        }
+    })
 
-    function handleSubmit({user, reason, notes, date, score}) {
+    async function handleSubmit({user, reason, notes, date, score}) {
         const state = JSON.stringify({user, reason, notes, session, date, score});
         console.log("Starting submit");
         console.log("State : ", state);
-        setLoading(true);
-        fetch(`${window.location.origin}/api/dataEntry/skillAssessment`, {
+        return fetch(`${window.location.origin}/api/dataEntry/skillAssessment`, {
             method: "PUT",
             body: state
         })
             .then((res) => res.text())
-            .then((res) => {
-                Notifications.show({autoClose: 5000, title: "Success", message: res, type: "success"})
-            })
-            .catch((err) => {
-                Notifications.show({autoClose: 5000, title: "Error", message: err, type: "error"})
-            })
-            .finally(() => {
-                setLoading(false);
-            })
+
     }
 
     return (
         <RoleWrapper LoadingComponent={<SkeletonLoader/>} altRoles={["surplus director", "bsa","warehouse"]}>
             <Container>
-                <form>
+                <form onSubmit={onSubmit(handleSubmitMutation.mutate)}>
                     <Grid>
                         <Grid.Col span={12}>
                             <Title>
@@ -164,7 +163,7 @@ const ErrorReporting = () => {
                         <Grid.Col span={6}>
                             <Stack h={"100%"} justify={"flex-end"}>
                                 <Button
-                                    onClick={() => onSubmit(handleSubmit)()}
+                                    type={'submit'}
                                     loading={loading}
                                     variant="gradient"
                                     gradient={{from: 'red', to: 'grape', deg: 90}}

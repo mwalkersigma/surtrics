@@ -7,8 +7,8 @@ export default function getStartAndEndWeekString(date){
     let endOfWeek = new Date(startOfWeek);
     endOfWeek = nextSaturday(endOfWeek);
 
-    let endOfWeekString = endOfWeek.toISOString().split("T")[0];
-    let startWeekString = startOfWeek.toISOString().split("T")[0];
+    let endOfWeekString = endOfWeek.toDateString().split("T")[0];
+    let startWeekString = startOfWeek.toDateString().split("T")[0];
 
     return [startWeekString, endOfWeekString];
 }

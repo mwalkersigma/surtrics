@@ -1,13 +1,11 @@
 import React, {useState} from "react";
 
 import useUpdates from "../../../modules/hooks/useUpdates";
-import makeDateArray from "../../../modules/utils/makeDateArray";
 import formatDatabaseRows from "../../../modules/utils/formatDatabaseRows";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
-import {DatePickerInput} from "@mantine/dates";
 import {Group, NativeSelect, Radio, RadioGroup, Table} from "@mantine/core";
 import useUsage from "../../../modules/hooks/useUsage";
-import {subDays} from "date-fns";
+import {subDays, subHours} from "date-fns";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 
 
@@ -23,7 +21,10 @@ const conversionTable = {
 export default function WeeklyView() {
     useUsage("Metrics","quantity-Daily-table")
     const [field, setField] = useState("Total");
-    const [[startDate, endDate], setDate] = useState([subDays(new Date(),7), new Date()]);
+    let baseDate = new Date().toDateString();
+    baseDate = new Date(baseDate)
+    console.log(baseDate)
+    const [[startDate, endDate], setDate] = useState([subHours(subDays(baseDate, 7), 1), baseDate]);
     const [interval, setInterval] = useState("day");
     const databaseRows = useUpdates("/api/views/quantity/weeklyView", {startDate, endDate, interval});
 

@@ -159,23 +159,17 @@ function handleDailyData(dailyData) {
 export default function ManLayout({}) {
     useUsage("Metrics", "Dashboard")
     const hasNav = useNav();
-    const refetchInterval = 60000;
+    const oneMinute = 60000
     let date = new Date()
 
     const {colorScheme: theme} = useMantineColorScheme();
-    const {data: errorUpdates, isPending: errorPending} = useQuery({
-        queryKey: ['errors'],
-        refetchInterval,
-        queryFn: async () => {
-            return await fetch("/api/views/errors")
-                .then(res => res.json())
-        },
-    })
+
     let {data: dailyData, isPending: dailyPending} = useQuery({
         queryKey: ['dailyData'],
-        refetchInterval,
+        refetchInterval: oneMinute,
         queryFn: async () => {
-            return await fetch("/api/views/increments", {
+            console.log("Fetching Daily Data")
+            const response = await fetch("/api/views/increments", {
                 method: "POST",
                 body: JSON.stringify({
                     date: date.toLocaleDateString(),
@@ -183,14 +177,16 @@ export default function ManLayout({}) {
                     increment: "hour"
                 })
             })
-                .then(res => res.json())
+                .catch((e) => console.error(e))
+            return await response.json();
         },
-    })
+    });
     let {data: weekData, isPending: weekPending} = useQuery({
         queryKey: ['weekData'],
-        refetchInterval,
+        refetchInterval: oneMinute,
         queryFn: async () => {
-            return await fetch("/api/views/increments", {
+            console.log("Fetching Week Data")
+            const response = await fetch("/api/views/increments", {
                 method: "POST",
                 body: JSON.stringify({
                     date: formatDateWithZeros(addDays(findStartOfWeek(new Date()), 1)),
@@ -198,13 +194,23 @@ export default function ManLayout({}) {
                     increment: "day"
                 })
             })
+            return await response.json();
+        },
+    });
+
+    let {data: errorUpdates, isPending: errorPending} = useQuery({
+        queryKey: ['errors'],
+        refetchInterval: oneMinute * 5,
+        queryFn: async () => {
+            return await fetch("/api/views/errors")
                 .then(res => res.json())
         },
-    })
-
+    });
     let {data: auditData, isPending: auditPending} = useQuery({
         queryKey: ['audits'],
+        refetchInterval: oneMinute * 5,
         queryFn: async () => {
+            console.log("Fetching Audit Data")
             return await fetch('/api/dataEntry/audit/search?detailed=true&startDate=' + formatDateWithZeros(findStartOfWeek(new Date())) + '&endDate=' + formatDateWithZeros(addDays(findStartOfWeek(new Date()), 7)))
                 .then(res => res.json())
         }
@@ -212,6 +218,8 @@ export default function ManLayout({}) {
 
     const {height: viewportHeight} = useViewportSize();
     const goal = useGoal();
+
+    console.log("Update!")
 
     if (errorPending || dailyPending || weekPending || auditPending) {
         return <div className={"text-center"}>Loading...</div>
@@ -254,7 +262,6 @@ export default function ManLayout({}) {
     const dailyAverage = Math.round(totalIncrements / (processedWeekData.length || 1));
     const hourlyAverage = Math.round(dailyAverage / 7 || 1);
 
-    console.log(auditData)
     const itemsAudited = auditData?.reduce((acc, {tote_qty}) => acc + tote_qty, 0) ?? 0;
     const incorrectItemsFound = auditData?.reduce((acc, {tote_qty_incorrect}) => acc + tote_qty_incorrect, 0) ?? 0;
 

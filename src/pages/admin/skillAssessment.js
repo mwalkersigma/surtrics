@@ -105,6 +105,8 @@ const ErrorReporting = () => {
 
     }
 
+    if (!users || !Array.isArray(users)) return <SkeletonLoader/>
+
     return (
         <RoleWrapper LoadingComponent={<SkeletonLoader/>} altRoles={["surplus director", "bsa","warehouse"]}>
             <Container>

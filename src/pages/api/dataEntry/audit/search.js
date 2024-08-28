@@ -1,4 +1,3 @@
-import serverAdminWrapper from "../../../../modules/auth/serverAdminWrapper";
 import router from "../../../../modules/serverUtils/requestRouter"
 import Query from "../../../../modules/classes/query";
 import db from "../../../../db/index";
@@ -22,11 +21,9 @@ async function getHandler(req, res) {
 }
 
 export default function handler(req, res) {
-    return serverAdminWrapper(async (req, res, user) => {
-        return router({
+    return router({
             GET: getHandler,
-        })(req, res, user)
-    }, "surplus director")(req, res)
+    })(req, res)
         .then((response) => res.status(200).json(response))
         .catch((error) => res.status(500).json({error}));
 }

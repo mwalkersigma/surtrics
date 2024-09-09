@@ -177,6 +177,7 @@ export default function ManLayout({}) {
                     increment: "hour"
                 })
             });
+            console.log(response)
             return await response.json();
         },
     });
@@ -223,6 +224,7 @@ export default function ManLayout({}) {
 
     let processedDailyData = handleDailyData(Array.isArray(dailyData) ? dailyData : []);
     date = formatDateWithZeros(addDays(findStartOfWeek(new Date()), 1));
+
     let processedWeekData = processWeekData(Array.isArray(weekData) ? weekData : []);
 
     let height = normalized(viewportHeight)
@@ -280,7 +282,6 @@ export default function ManLayout({}) {
             badgeText: `${dailyAverage} /day`
         },
     ]
-
     return (
         <Center h={`${!hasNav && "100vh"}`}>
             <Grid py={`${!hasNav && "xl"}`}>

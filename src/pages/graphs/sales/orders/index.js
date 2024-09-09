@@ -88,7 +88,6 @@ const Index = () => {
         ],
     });
 
-    // let reducedEvents = () => [];
 
     if (!data.length > 0) return (
         <GraphWithStatCard

@@ -19,7 +19,7 @@ import normalize from "../modules/utils/normalize";
 import DashboardCard from "../components/mantine/dashboardCard";
 import {useQuery} from "@tanstack/react-query";
 
-
+// version 5
 ChartJS.register(
     CategoryScale,
     LinearScale,

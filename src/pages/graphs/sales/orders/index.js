@@ -69,7 +69,7 @@ const options = {
 
 const Index = () => {
     const [timeScale, setTimeScale] = useState("week");
-    const [[startDate, endDate], setDateRange] = React.useState([subDays(new Date(), 30), new Date()])
+    const [[startDate, endDate], setDateRange] = useState([subDays(new Date(), 30), new Date()])
     const [resolution, setResolution] = useState(4);
     const [debounced] = useDebouncedValue(resolution, 500);
 
@@ -87,6 +87,8 @@ const Index = () => {
             'Warehouse'
         ],
     });
+
+    // let reducedEvents = () => [];
 
     if (!data.length > 0) return (
         <GraphWithStatCard

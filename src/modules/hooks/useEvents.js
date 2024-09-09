@@ -67,7 +67,7 @@ export default function useEvents(config) {
         let temp = events.map((event) => event.affected_categories).flat();
         temp = [...new Set(temp)];
         setCategories(temp);
-    },[events,categories])
+    }, [JSON.stringify(events), JSON.stringify(categories)])
 
     let reducedEvents = (dates) =>Object.values(events
             .sort((a,b) => new Date(a.event_date) - new Date(b.event_date))

@@ -186,7 +186,7 @@ let total = new Metric({
         unit: "Hrs saved",
         formula(offset) {
             let filteredList = metrics.filter(metric => metric.title !== "Total Time Saved");
-            let sum = filteredList.reduce((acc, metric) => acc + +metric.timeSavings.raw, 0);
+            let sum = filteredList.reduce((acc, metric) => acc + +metric.timeSavings.raw.replace(/,/g, ''), 0);
             if (offset) sum += offset
             this.raw = formatter(sum)
         }
@@ -197,8 +197,11 @@ let total = new Metric({
         collectionDateStart: "07/01/2023",
         formula(offset) {
             let filteredList = metrics.filter(metric => metric.title !== "Total Time Saved");
-            let sum = filteredList.reduce((acc, metric) => acc + +metric.timeSavings.raw, 0)
+            let sum = filteredList.reduce((acc, metric) => acc + +metric.timeSavings.raw.replace(/,/g, ''), 0)
+            console.log(sum)
+            console.log(offset)
             if (offset) sum += offset
+            console.log(sum)
             this.raw = formatter(sum / 8)
         }
     }

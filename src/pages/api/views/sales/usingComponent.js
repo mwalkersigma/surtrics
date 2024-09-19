@@ -39,9 +39,6 @@ async function getComponents(req,res) {
 
 }
 
-async function postHandler(req,res) {}
-
-
 
 export default router({
     GET: getComponents,

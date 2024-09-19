@@ -148,7 +148,6 @@ function useEcommerceRangeData(config) {
     }
 }
 
-const DiffIcon = (stat) => stat?.diff ? stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight : null;
 
 function ProgressCard({stat, timeframe, percent, value, prefix}) {
     if (value === 0) {

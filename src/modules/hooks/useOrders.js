@@ -1,23 +1,6 @@
 import useUpdates from "./useUpdates";
 import Order from "../classes/Order";
 
-
-async function getComponents(orders) {
-    // fetch the component details from /api/components/[[sku]]
-    for (let order of orders) {
-        console.log(order)
-        for (let sku of order.skus) {
-            if (sku === "" || !sku.includes("-")) {
-                continue;
-            }
-            console.log(`fetching component ${sku}`);
-            let response = await fetch(`/api/components/${sku}`);
-            console.log(await response.json());
-        }
-    }
-}
-
-
 export default function useOrders (config,options) {
     const sales = useUpdates("/api/views/sales",config);
 

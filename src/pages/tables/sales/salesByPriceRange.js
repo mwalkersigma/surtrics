@@ -166,7 +166,7 @@ const SalesBuckets = () => {
     );
 
     let count = 0;
-    macroBucketsMap.forEach( (value, key) => {
+    macroBucketsMap.forEach((value) => {
         count += value.reduce( (acc, bucket) => acc + bucket.sales.length, 0)
     });
 

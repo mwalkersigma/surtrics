@@ -34,6 +34,7 @@ import {FaEbay} from "react-icons/fa6";
 import {SiBigcommerce, SiQuickbooks} from "react-icons/si";
 import {DatePickerInput} from "@mantine/dates";
 import findStartOfWeek from "../../modules/utils/findSundayFromDate";
+import useUsage from "../../modules/hooks/useUsage";
 
 const customPresets = [
     {
@@ -757,6 +758,7 @@ function ListingMetricsCard({values, isLoading, Icon = IconEye, IconSize = '1.5r
 }
 
 const EcomDashboard = () => {
+    useUsage("Ecommerce", "ecommerce-comparison-dashboard")
     // page state
     const [dateRange, setDateRange] = useState([startOfMonth(new Date('2024/02/01')), new Date('2024/02/28')])
     const [[startDate, endDate], setValue] = useDebouncedState(dateRange, 500);

@@ -760,7 +760,7 @@ function ListingMetricsCard({values, isLoading, Icon = IconEye, IconSize = '1.5r
 const EcomDashboard = () => {
     useUsage("Ecommerce", "ecommerce-comparison-dashboard")
     // page state
-    const [dateRange, setDateRange] = useState([startOfMonth(new Date('2024/02/01')), new Date('2024/02/28')])
+    const [dateRange, setDateRange] = useState([startOfMonth(new Date()), new Date()])
     const [[startDate, endDate], setValue] = useDebouncedState(dateRange, 500);
 
     const currentRangeData = useEcommerceRangeData({startDate, endDate});

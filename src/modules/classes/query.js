@@ -130,9 +130,13 @@ export default class Query {
             console.log(query)
         }
 
-        if(this.adHocWhere && this.where.length === 0){
-            query += ` ${this.adHocWhere}`;
+        if (this.adHocWhere) {
+            if (this.where.length === 0) {
+                query += ` ${this.adHocWhere}`;
+            }
+            query += ` AND ${this.adHocWhere}`;
         }
+
         if(this.groupBy.length > 0){
             query += ` GROUP BY ${this.groupBy.join(", ")}`;
         }

@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import useUpdates from "../../../modules/hooks/useUpdates";
 import {Container, Skeleton, Table, Tabs, Text, Title} from "@mantine/core";
 import formatter from "../../../modules/utils/numberFormatter";
 import useUsage from "../../../modules/hooks/useUsage";
+import {startOfYear} from "date-fns";
+import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 
 
 const buckets = [
@@ -12,67 +14,67 @@ const buckets = [
         label: "$25.00 and under"
     },
     {
-        min: 25.01,
+        min: 25,
         max: 50,
         label: "$25.01 - $50.00"
     },
     {
-        min: 50.01,
+        min: 50,
         max: 75,
         label: "$50.01 - $75.00"
     },
     {
-        min: 75.01,
+        min: 75,
         max: 100,
         label: "$75.01 - $100.00"
     },
     {
-        min: 100.01,
+        min: 100,
         max: 200,
         label: "$100.01 - $200.00"
     },
     {
-        min: 200.01,
+        min: 200,
         max: 300,
         label: "$200.01 - $300.00"
     },
     {
-        min: 300.01,
+        min: 300,
         max: 400,
         label: "$300.01 - $400.00"
     },
     {
-        min: 400.01,
+        min: 400,
         max: 500,
         label: "$400.01 - $500.00"
     },
     {
-        min: 500.01,
+        min: 500,
         max: 1000,
         label: "$500.01 - $1000.00"
     },
     {
-        min: 1000.01,
+        min: 1000,
         max: 2000,
         label: "$1000.01 - $2000.00"
     },
     {
-        min: 2000.01,
+        min: 2000,
         max: 3000,
         label: "$2000.01 - $3000.00"
     },
     {
-        min: 3000.01,
+        min: 3000,
         max: 4000,
         label: "$3000.01 - $4000.00"
     },
     {
-        min: 4000.01,
+        min: 4000,
         max: 5000,
         label: "$4000.01 - $5000.00"
     },
     {
-        min: 5000.01,
+        min: 5000,
         max: Infinity,
         label: "$5000.01 and above"
     }
@@ -85,25 +87,40 @@ const macroBuckets = [
         label: "$100 and under"
     },
     {
-        min: 100.01,
+        min: 100,
         max: 500,
         label: "$100.01 - $500.00"
     },
     {
-        min: 500.01,
+        min: 500,
         max: 3000,
         label: "$500.01 - $3000.00"
     },
     {
-        min: 3000.01,
+        min: 3000,
         max: Infinity,
         label: "$3000.01 and above"
     },
 ];
 
+const limitLog = (limit) => {
+    let counter = 0;
+    return (...val) => {
+        if (counter === limit) return;
+        counter++;
+        console.log(...val)
+    }
+}
+let log = limitLog(100);
 const SalesBuckets = () => {
     useUsage("Ecommerce", "sales-priceBuckets-table")
-    const sales = useUpdates("/api/views/sales/usingComponent");
+    const [[startDate, endDate], setDateRange] = useState([startOfYear(new Date()), new Date()]);
+    let sales = useUpdates(`/api/views/sales/usingComponent?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`);
+    const regex = /^\d+(-[1-4])?$/
+    let beforeLength = sales.length;
+    sales = sales.filter(sale => regex.test(sale['sku']))
+    let afterLength = sales.length;
+    console.log("Difference in length", beforeLength - afterLength)
 
     const isLoading = sales.length === 0;
 
@@ -111,9 +128,11 @@ const SalesBuckets = () => {
     const macroBucketsMap = new Map( macroBuckets.map( range => [range.min, [] ] ));
 
     sales.forEach( sale => {
-        let priceRange = buckets.find( range => sale['retail_price'] >= range.min && sale['retail_price'] <= range.max )
+        let priceRange = buckets.find(range => (sale['retail_price'] > range.min || (range.min === 0 && Number(sale['retail_price']) === 0)) && sale['retail_price'] <= range.max)
         if(priceRange){
             priceRangeBuckets.get(priceRange.label).push(sale)
+        } else {
+            log("No range found for ", sale)
         }
     });
 
@@ -124,13 +143,13 @@ const SalesBuckets = () => {
         }
     });
 
+
     const totalSales = sales.reduce( (acc, sale) => {
         if( sale['quantity'] < 0 ) return acc;
         return acc + Number(Number(sale['sold_price']) * Number(sale['quantity_sold']))
     }, 0);
 
     const totalQuantitySold = sales.reduce( (acc, sale) => {
-        if( sale['quantity'] < 0 ) return acc;
         return acc + Number(sale['quantity_sold'])
     }, 0);
 
@@ -154,6 +173,12 @@ const SalesBuckets = () => {
     return (
         <Container fluid>
             <Title order={1} mb={'xl'} >Sales by Price Range</Title>
+            <CustomRangeMenu
+                label={"Select Date Range"}
+                defaultValue={[startDate, endDate]}
+                subscribe={setDateRange}
+                mb={'lg'}
+            />
             {isLoading && <Text> This page can take a while to load ( 20 - 30 seconds ) </Text>}
             <Skeleton visible={isLoading} >
                 <Tabs defaultValue={`${macroBuckets[0].min}`}>
@@ -244,7 +269,7 @@ const SalesBuckets = () => {
                                     label: "Total Sales",
                                     values: [
                                         ...totalOfSales,
-                                        formatter(totalOfSales.map( val => Number(`${val}`.replace(/[^0-9.-]+/g,""))).reduce( (a,b) => a + b, 0)),
+                                        formatter(totalOfSales.map(val => Number(`${val}`.replace(/[^0-9.-]+/g, ""))).reduce((a, b) => a + b, 0), "currency"),
                                         formatter(totalSales,'currency')
                                     ]
                                 },

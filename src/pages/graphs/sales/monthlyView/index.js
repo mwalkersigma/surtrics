@@ -67,6 +67,7 @@ const Index = () => {
         excludedCategories:['Processing','Warehouse'],
         combined:false
     });
+    console.log(categories)
 
 
 
@@ -216,7 +217,7 @@ const Index = () => {
             dateInput={
                 <MonthPickerInput
                     mb={'md'}
-                    label={"Year"}
+                    label={"Select Month: "}
                     value={date}
                     onChange={(e) => setDate(e)}
                 />

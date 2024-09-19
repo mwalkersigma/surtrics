@@ -28,6 +28,7 @@ const storeNameMap = {
 const storeDataMap = {
     "Big Commerce": ["225004"],
     "Ebay": ["255895"],
+    "Amazon": ["260637"],
     "Manual Creation": ["64872"],
     "All": ["225004", "255895", "64872","260637"],
     "Total": ["total"]
@@ -178,7 +179,7 @@ const WeeklyView = () => {
             dateInput={
                 <DatePickerInput
                     mb={'md'}
-                    label={"Year"}
+                    label={"Select Week: "}
                     value={date}
                     onChange={(e) => setDate(e)}
                 />

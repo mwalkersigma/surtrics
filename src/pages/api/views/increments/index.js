@@ -1,10 +1,8 @@
-import db from "../../../db";
-import {parseBody} from "../../../modules/serverUtils/parseBody";
-import router from "../../../modules/serverUtils/requestRouter";
+import {parseBody} from "../../../../modules/serverUtils/parseBody";
+import router from "../../../../modules/serverUtils/requestRouter";
+import db from "../../../../db";
 
-
-
-async function getIncrements(req,res,date,interval,increment){
+async function getIncrements(req, res, date, interval, increment) {
     let query = await db.query(`
         SELECT
             COUNT(*),
@@ -28,17 +26,17 @@ async function getIncrements(req,res,date,interval,increment){
         GROUP BY
             date_of_transaction,
             transaction_reason
-    `, [date.toLocaleDateString(), interval,increment])
+    `, [date.toLocaleDateString(), interval, increment])
     return query.rows;
 }
 
 
-export default function handler (req,res) {
-    let date,body,interval,increment;
+export default function handler(req, res) {
+    let date, body, interval, increment;
     body = parseBody(req);
 
     date = body?.date ? new Date(body.date) : new Date();
-    if(!body?.interval){
+    if (!body?.interval) {
         return res.status(400).json({error: "No interval provided"})
     }
 
@@ -46,8 +44,8 @@ export default function handler (req,res) {
     increment = body.increment || interval
 
     return router({
-        POST:getIncrements
-    })(req,res,date,interval,increment)
+        POST: getIncrements
+    })(req, res, date, interval, increment)
         .then((response) => {
             res.status(200).json(response)
         })

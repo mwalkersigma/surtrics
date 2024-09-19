@@ -56,7 +56,7 @@ export default function useTable ({route,idField,options}) {
 
     useEffect(() => {
         handlers.setState(updates);
-    }, [updates]);
+    }, [JSON.stringify(updates)]);
 
     const status = tableData.length === 0 ? "loading" : "Ready";
 

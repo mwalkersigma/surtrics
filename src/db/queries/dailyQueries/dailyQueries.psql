@@ -1,8 +1,22 @@
 SELECT
-    *
+    COUNT(*),
+    date_trunc('day',transaction_date) as date_of_transaction,
+    transaction_reason
 FROM
     surtrics.surplus_metrics_data
 WHERE
-    transaction_date = '2023-08-29 13:08:09.976337'
-
-
+    transaction_date >= '2024-08-23'
+  AND transaction_date <= DATE('2024-08-23') + interval '1 day'
+  AND (
+    transaction_type = 'Add'
+        OR transaction_type = 'Remove'
+        AND transaction_reason = 'Relisting'
+    )
+  AND (
+    transaction_reason = 'Add'
+        OR transaction_reason = 'Add on Receiving'
+        OR transaction_reason = 'Relisting'
+    )
+GROUP BY
+    date_of_transaction,
+    transaction_reason;

@@ -8,11 +8,6 @@ import formatter from "../../modules/utils/numberFormatter";
 import useUsage from "../../modules/hooks/useUsage";
 
 
-
-
-
-
-
 const BigCommerce = () => {
     useUsage("Ecommerce","bigCommerce-UserEntries-viewer")
     const {tableData,removeHandler,status} = useTable({route:"/api/dataEntry/bigCommerce",idField:"entry_id"})
@@ -20,6 +15,24 @@ const BigCommerce = () => {
     return (
         <ViewerLayout title={"Big Commerce"} isLoading={status === "loading"}>
             <TableSort
+                specialFormatting={[
+                    {
+                        column: "visits",
+                        fn: (v) => v
+                    },
+                    {
+                        column: "shopped",
+                        fn: (v) => v
+                    },
+                    {
+                        column: "add_to_cart",
+                        fn: (v) => v
+                    },
+                    {
+                        column: "web_leads",
+                        fn: (v) => v
+                    },
+                ]}
                 data={tableData.map((row) => ({
                     id: row['entry_id'],
                     visits: formatter(row.visits),

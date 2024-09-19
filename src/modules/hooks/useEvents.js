@@ -44,6 +44,7 @@ function yValue(ctx, label,combined = true) {
 
 function xValue(ctx, index) {
     const chart = ctx.chart;
+    if (index === -1) return;
     return chart.data.labels[index];
 }
 
@@ -60,7 +61,6 @@ export default function useEvents(config) {
     }
 
     let {affected_categories, excludedCategories} = config;
-
     useEffect(() => {
         if(!events.length > 0) return;
         if(categories.length > 0) return;

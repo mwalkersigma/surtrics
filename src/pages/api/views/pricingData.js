@@ -4,7 +4,6 @@ import {parseBody} from "../../../modules/serverUtils/parseBody";
 import Query from "../../../modules/classes/query";
 
 
-
 async function getHandler(req,res){
     const query = new Query('surtrics.surplus_pricing_data',['*']);
     return query
@@ -37,7 +36,7 @@ async function postHandler(req,res){
     )
 
     return await baseQuery
-        .run(db,console)
+        .run(db, console.log)
         .then(({rows})=>res.status(200).json(rows))
 }
 

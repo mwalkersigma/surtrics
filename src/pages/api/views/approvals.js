@@ -13,6 +13,8 @@ async function getIncrements(req,res){
         .addWhere(`final_approval_by`, `!=`, 'undefined')
         .addWhere('final_approval_date_utc', '>=', startDate)
         .addWhere('final_approval_date_utc', '<=', endDate)
+        // remove all skus that have - in them
+        .addWhere('sku', 'NOT LIKE', '%-%')
         .addGroupBy("name")
         .addGroupBy("final_approval_date_utc")
         .addOrderBy("final_approval_date_utc", 'ASC')

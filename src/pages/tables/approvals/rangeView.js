@@ -4,7 +4,7 @@ import findStartOfWeek from "../../../modules/utils/findSundayFromDate";
 import {NativeSelect, Table} from "@mantine/core";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import useUsage from "../../../modules/hooks/useUsage";
-import {addDays} from "date-fns";
+import {addDays, eachDayOfInterval, eachMonthOfInterval, eachWeekOfInterval, eachYearOfInterval} from "date-fns";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 
 const RangeView = () => {
@@ -23,14 +23,22 @@ const RangeView = () => {
     let mappedUpdates = {};
     updates?.forEach((update) => {
         let name = update.name;
-        let date = update["date_of_final_approval"].split("T")[0];
+        let date = new Date(update["date_of_final_approval"]).toDateString();
         if(!mappedUpdates[name]) mappedUpdates[name] = {};
         if(!mappedUpdates[name][date]) mappedUpdates[name][date] = 0;
         mappedUpdates[name][date] += parseInt(update.count);
     })
-    let dateArray = updates
-        .map((update) => update["date_of_final_approval"].split("T")[0])
-        .reduce((a,b) => a.includes(b) ? a : [...a,b],[])
+
+    let intervalHelper = {
+        day: eachDayOfInterval,
+        week: (config) => eachWeekOfInterval(config, {weekStartsOn: 0}),
+        month: eachMonthOfInterval,
+        year: eachYearOfInterval,
+    }
+    console.log(mappedUpdates)
+
+    let dateArray = intervalHelper[increment]({start: startDate, end: endDate})
+        .map((date) => date.toDateString())
         .sort((a,b) => new Date(a) - new Date(b))
 
 
@@ -67,25 +75,26 @@ const RangeView = () => {
                 <Table.Thead>
                     <Table.Tr>
                         <Table.Th>Name</Table.Th>
-                        {dateArray.map((date) => <Table.Th key={`${date}`}>{date}</Table.Th>)}
+                        {dateArray.map((date) => <Table.Th w={350} key={`${date}`}>{date}</Table.Th>)}
                         <Table.Th>Total</Table.Th>
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                     {Object.keys(mappedUpdates).map((name) => {
-                        return (
-                            <Table.Tr key={name}>
-                                <Table.Td>{name}</Table.Td>
-                                {dateArray.map((date) => {
-                                    return (
-                                        <Table.Td key={date}>
-                                            {mappedUpdates[name][date] ? mappedUpdates[name][date] : 0}
-                                        </Table.Td>
-                                    )
-                                })}
-                                <Table.Td>{Object.values(mappedUpdates[name]).reduce((a,b) => a+b,0)}</Table.Td>
-                            </Table.Tr>
-                        )}
+                            return (
+                                <Table.Tr key={name}>
+                                    <Table.Td>{name}</Table.Td>
+                                    {dateArray.map((date) => {
+                                        return (
+                                            <Table.Td width={350} key={date}>
+                                                {mappedUpdates[name][date] ? mappedUpdates[name][date] : 0}
+                                            </Table.Td>
+                                        )
+                                    })}
+                                    <Table.Td>{Object.values(mappedUpdates[name]).reduce((a, b) => a + b, 0)}</Table.Td>
+                                </Table.Tr>
+                            )
+                        }
                     )}
                 </Table.Tbody>
                 <Table.Tfoot>
@@ -94,7 +103,7 @@ const RangeView = () => {
                         {dateArray.map((date) => {
                             let total = 0;
                             Object.keys(mappedUpdates).forEach((name) => {
-                                if(mappedUpdates[name][date]) total += mappedUpdates[name][date]
+                                if (mappedUpdates[name][date]) total += mappedUpdates[name][date]
                             })
                             return (
                                 <Table.Th key={date}>
@@ -102,9 +111,9 @@ const RangeView = () => {
                                 </Table.Th>
                             )
                         })}
-                        <Table.Th>{Object.values(mappedUpdates).reduce((a,b) => {
-                            return a + Object.values(b).reduce((c,d) => c+d,0)
-                        },0)}</Table.Th>
+                        <Table.Th>{Object.values(mappedUpdates).reduce((a, b) => {
+                            return a + Object.values(b).reduce((c, d) => c + d, 0)
+                        }, 0)}</Table.Th>
                     </Table.Tr>
                 </Table.Tfoot>
             </Table>

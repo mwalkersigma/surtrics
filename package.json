@@ -9,10 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/charts": "^7.12.1",
+    "@mantine/core": "7.12.1",
+    "@mantine/dates": "7.12.1",
+    "@mantine/form": "7.12.1",
+    "@mantine/hooks": "7.12.1",
+    "@mantine/notifications": "7.12.1",
     "@supercharge/promise-pool": "^3.2.0",
     "@tabler/icons-react": "^3.13.0",
     "@tanstack/react-query": "^5.52.2",
     "@tanstack/react-query-devtools": "^5.52.2",
+    "ag-charts-enterprise": "^10.2.0",
+    "ag-grid-charts-enterprise": "^32.2.1",
+    "ag-grid-react": "^32.2.1",
     "another-random-package": "^1.0.2",
     "bottleneck": "^2.19.5",
     "chart.js": "^4.4.4",
@@ -21,6 +30,7 @@
     "clsx": "^2.1.1",
     "csv-parse": "^5.5.6",
     "date-fns": "^3.6.0",
+    "dayjs": "^1.11.13",
     "decompress": "^4.2.1",
     "js-convert-case": "^4.2.0",
     "next": "14.2.6",
@@ -28,27 +38,19 @@
     "nodejs-file-downloader": "^4.13.0",
     "object-merge-advanced": "^14.0.18",
     "pg": "^8.12.0",
+    "postcss": "^8.4.41",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1",
     "react": "18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.3.1",
     "react-icons": "^5.3.0",
     "recharts": "^2.12.7",
     "sass": "^1.77.8",
-    "sigma-logger": "^1.0.3",
-    "@mantine/core": "7.12.1",
-    "@mantine/charts": "^7.12.1",
-    "@mantine/dates": "7.12.1",
-    "@mantine/form": "7.12.1",
-    "@mantine/hooks": "7.12.1",
-    "@mantine/notifications": "7.12.1",
-    "dayjs": "^1.11.13",
-    "postcss": "^8.4.41",
-    "postcss-preset-mantine": "^1.17.0",
-    "postcss-simple-vars": "^7.0.1"
-
+    "sigma-logger": "^1.0.3"
   },
   "devDependencies": {
-    "vitest": "^2.0.5",
-    "node-env-run": "^4.0.2"
+    "node-env-run": "^4.0.2",
+    "vitest": "^2.0.5"
   }
 }

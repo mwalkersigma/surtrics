@@ -247,8 +247,6 @@ const Stats = () => {
                 },
             ]
         },
-
-
     ]);
     const dataTypeDefinitions = useMemo(() => {
         return {

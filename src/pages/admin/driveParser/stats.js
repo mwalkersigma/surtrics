@@ -142,6 +142,7 @@ const Stats = () => {
                     cellRenderer: DurationRenderer,
                     sortable: true,
                     filter: true,
+                    valueFormatter: (params) => params,
                     comparator: durationComparator,
                 },
                 {
@@ -150,6 +151,7 @@ const Stats = () => {
                     sortable: true,
                     filter: true,
                     columnGroupShow: 'open',
+                    valueFormatter: (params) => params,
                     comparator: durationComparator,
                 },
                 {
@@ -158,6 +160,7 @@ const Stats = () => {
                     sortable: true,
                     filter: true,
                     columnGroupShow: 'open',
+                    valueFormatter: (params) => params,
                     comparator: durationComparator,
                 },
                 {
@@ -166,6 +169,7 @@ const Stats = () => {
                     sortable: true,
                     filter: true,
                     columnGroupShow: 'open',
+                    valueFormatter: (params) => params,
                     comparator: durationComparator,
                 },
                 {
@@ -174,6 +178,7 @@ const Stats = () => {
                     sortable: true,
                     filter: true,
                     columnGroupShow: 'open',
+                    valueFormatter: (params) => params,
                     comparator: durationComparator,
                 },
             ]

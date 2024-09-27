@@ -29,7 +29,10 @@ function DateRenderer({value}) {
 
 function serverDateRenderer({value}) {
     try {
-        return <Center h={'100%'}>{format(subHours(new Date(value), 5), "Pp")}</Center>;
+        if (process.env.NODE_ENV === "development") {
+            return <Center h={'100%'}>{format(subHours(new Date(value), 5), "Pp")}</Center>;
+        }
+        return <Center h={'100%'}>{format(subHours(new Date(value), 0), "Pp")}</Center>;
     } catch (e) {
         console.error(e);
         console.error(value);
@@ -247,7 +250,7 @@ const Stats = () => {
                 <Group>
                     <Title mt={'md'} mb={'xl'}> Drive Parser Health </Title>
                     <Text fz={'sm'} c={'dimmed'}> Most Recent
-                        Run: {format(subHours(new Date(mostRecentRun['start_date']), 5), "Pp")}</Text>
+                        Run: {format(new Date(mostRecentRun['start_date']), "Pp")}</Text>
                 </Group>
                 <Box px={'1rem'} mb={'xl'}>
                     <StatsGroup data={[

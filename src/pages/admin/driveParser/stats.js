@@ -183,7 +183,6 @@ const Stats = () => {
                 },
             ]
         },
-        {field: 'completed', cellRenderer: BooleanRenderer, sortable: true, filter: true, width: 150},
         {
             headerName: "File Processing",
             openByDefault: false,
@@ -204,6 +203,7 @@ const Stats = () => {
                 {field: 'files_processed', sortable: true, filter: true},
             ]
         },
+        {field: 'completed', cellRenderer: BooleanRenderer, sortable: true, filter: true, width: 150},
         {field: 'pos_generated', sortable: true, filter: true},
         {field: 'calls_to_drive_parser_api', sortable: true, filter: true},
         {
@@ -261,6 +261,10 @@ const Stats = () => {
     }, []);
     if (isPending) return <Loader/>
     const mostRecentRun = runs.sort((a, b) => new Date(b['start_date']) - new Date(a['start_date']))[0];
+    let mostRecentRunDate = new Date(mostRecentRun['start_date']);
+    if (process.env.NODE_ENV === "development") {
+        mostRecentRunDate = subHours(mostRecentRunDate, 5);
+    }
     const averageDurationSeconds = Math.trunc(averageDuration(runs.map(run => run['execution_time'])) * 100) / 100 * 1000;
     const averageProcessingTime = Math.trunc(averageDuration(runs.map(run => run['time_processing_local_files'])) * 100) / 100 * 1000;
 
@@ -269,8 +273,9 @@ const Stats = () => {
             <Container size={'responsive'} h={'80vh'}>
                 <Group>
                     <Title mt={'md'} mb={'xl'}> Drive Parser Health </Title>
-                    <Text fz={'sm'} c={'dimmed'}> Most Recent
-                        Run: {format(new Date(mostRecentRun['start_date']), "Pp")}</Text>
+                    <Text fz={'sm'} c={'dimmed'}>
+                        Most Recent Run: {format(mostRecentRunDate, "Pp")}
+                    </Text>
                 </Group>
                 <Box px={'1rem'} mb={'xl'}>
                     <StatsGroup data={[

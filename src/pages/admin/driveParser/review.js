@@ -17,6 +17,7 @@ import {AgGridReact} from "ag-grid-react";
 import {IconCircleCheck, IconCircleLetterI, IconCircleX, IconExternalLink} from "@tabler/icons-react";
 import RoleWrapper from "../../../components/RoleWrapper";
 import {queryClient} from "../../_app";
+import {format, subHours} from "date-fns";
 
 
 function ButtonRenderer({value, clickHandler, data, color}) {
@@ -35,6 +36,18 @@ function BooleanRenderer({value}) {
         <IconCircleX color={'var(--mantine-color-red-5)'}/>}</Center>;
 }
 
+function serverDateRenderer({value}) {
+    try {
+        if (process.env.NODE_ENV === "development") {
+            return <Center h={'100%'}>{format(subHours(new Date(value), 5), "Pp")}</Center>;
+        }
+        return <Center h={'100%'}>{format(subHours(new Date(value), 0), "Pp")}</Center>;
+    } catch (e) {
+        console.error(e);
+        console.error(value);
+        return <Center h={'100%'}>Invalid Date</Center>
+    }
+}
 const Review = () => {
 
     const SheetStates = {
@@ -79,39 +92,55 @@ const Review = () => {
     })
 
     const [columnDefs, setColumnDefs] = useState([
-        {field: 'id', sortable: true, filter: true, width: 125},
-        {field: 'sheet_name', sortable: true, filter: true, width: 350},
-        {field: 'sheet_failure_reason', sortable: true, filter: true, width: 350},
+        {field: 'id', sortable: true, filter: true, width: 125, hide: true},
+        {field: 'update_date', sortable: true, filter: true, cellRenderer: serverDateRenderer, width: 180},
+        {field: 'sheet_name', sortable: true, filter: true, width: 200},
+        {field: 'sheet_failure_reason', sortable: true, filter: true, flex: 1},
         {
-            field: 'is_reviewed',
-            headerName: "Reviewed",
-            width: 150,
-            sortable: true,
-            filter: true,
-            cellRenderer: BooleanRenderer
+            headerName: "Review Data",
+            openByDefault: false,
+            children: [
+                {
+                    field: 'is_reviewed',
+                    headerName: "Reviewed",
+                    width: 150,
+                    sortable: true,
+                    filter: true,
+                    cellRenderer: BooleanRenderer
+                },
+                {field: 'who_reviewed', sortable: true, filter: true, columnGroupShow: 'open',}
+            ]
         },
-        {field: 'who_reviewed', sortable: true, filter: true},
-        {field: 'update_date', sortable: true, filter: true},
+
         {field: 'sheet_id', hide: true},
         {
-            headerName: 'Link',
-            cellRenderer: ExternalLinkRenderer,
-            cellRendererParams: {
-                link: true,
-                href: (id) => `https://docs.google.com/spreadsheets/d/${id}/edit?gid=0#gid=0`
-            }
-        },
-        {
-            headerName: 'Actions', cellRenderer: ButtonRenderer, cellRendererParams: {
-                clickHandler: async (data, setLoading, e) => {
-                    if (!confirm("Are you sure you want to mark this ready to parse?")) return;
-                    setLoading(true);
-                    reviewMutation.mutate({data, e});
-                    setLoading(false);
+            headerName: 'Actions',
+            openByDefault: true,
+            children: [
+                {
+                    headerName: 'Link',
+                    cellRenderer: ExternalLinkRenderer,
+                    cellRendererParams: {
+                        link: true,
+                        href: (id) => `https://docs.google.com/spreadsheets/d/${id}/edit?gid=0#gid=0`
+                    }
                 },
-                value: 'Mark as Reviewed',
-            }
-        }
+                {
+                    headerName: 'Review',
+                    cellRenderer: ButtonRenderer,
+                    cellRendererParams: {
+                        clickHandler: async (data, setLoading, e) => {
+                            if (!confirm("Are you sure you want to mark this ready to parse?")) return;
+                            setLoading(true);
+                            reviewMutation.mutate({data, e});
+                            setLoading(false);
+                        },
+                        value: 'Mark as Reviewed',
+                    }
+                }
+            ]
+        },
+
     ]);
     if (isPending) return <Loader/>
 

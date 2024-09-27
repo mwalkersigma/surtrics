@@ -1,15 +1,6 @@
 import React from 'react';
-import {Group, Paper, rem, SimpleGrid, Switch, Text, Title, Tooltip} from "@mantine/core";
-import {
-    IconClipboardData,
-    IconConfetti,
-    IconConfettiOff,
-    IconCurrencyDollar,
-    IconFilePlus,
-    IconReceipt,
-    IconSearch,
-    IconTable
-} from "@tabler/icons-react";
+import {Badge, Group, Paper, rem, SimpleGrid, Switch, Text, Title, Tooltip} from "@mantine/core";
+import {IconConfetti, IconConfettiOff} from "@tabler/icons-react";
 import formatter from "../modules/utils/numberFormatter";
 import GraphWithStatCard from "../components/mantine/graphWithStatCard";
 import Confetti from "../components/confetti";
@@ -20,6 +11,10 @@ import Metric from "../modules/classes/metric";
 import {useQuery} from "@tanstack/react-query";
 import Head from 'next/head'
 
+function directRender(val) {
+    this.value.formula(val)
+    this.timeSavings.formula(val)
+}
 
 const metrics = [
     new Metric({
@@ -30,7 +25,7 @@ const metrics = [
             Consecutive runs of the sheet are not counted as time saved since the data must 
             be researched for the sheet each time. Each model number is counted only once.
         `,
-        icon: <IconTable size={'1.5rem'}/>,
+        icon: <Badge>Surprice</Badge>,
         timeSavings: {
             raw: null,
             unit: "Hrs saved",
@@ -60,7 +55,7 @@ const metrics = [
             The time saved is calculated by multiplying the number of
             model numbers found by 12.149 seconds and converting the result to hours.
         `,
-        icon: <IconSearch size={'1.5rem'}/>,
+        icon: <Badge>Surprice</Badge>,
         timeSavings: {
             raw: null,
             unit: "Hrs saved",
@@ -90,7 +85,7 @@ const metrics = [
             
             The time saved is calculated by multiplying the number of prices divided by 4 times 3.5 minutes each and converting the result to hours.
         `,
-        icon: <IconCurrencyDollar size={'1.5rem'}/>,
+        icon: <Badge>Drive Parser</Badge>,
         timeSavings: {
             raw: null,
             unit: "Hrs saved",
@@ -118,7 +113,7 @@ const metrics = [
             saved by multiplying the number of weeks since surtrics was implemented by
             times 5 work days, time 3 updates per day, and then converting the result to hours.
         `,
-        icon: <IconClipboardData size={'1.5rem'}/>,
+        icon: <Badge>Surtrics</Badge>,
         timeSavings: {
             raw: null,
             unit: "Hrs saved",
@@ -146,33 +141,61 @@ const metrics = [
             }
         },
     }),
-    new Metric({
-        title: "Po Line Item Creation",
-        Explanation: `
+];
+
+const poLineItemsMetric = new Metric({
+    title: "Po Line Item Creation",
+    Explanation: `
             Based on a time study conducted by Libby, it takes on average 63 seconds to add an item into inventory from 
             from manual PO creation. so we take the number of items added and multiply by 63 seconds and convert to hours.
         `,
-        icon: <IconFilePlus size={'1.5rem'}/>,
-        timeSavings: {
-            raw: null,
-            unit: "Hrs saved",
-            formula(value) {
-                this.raw = formatter(((value) * 63) / 60 / 60)
-            }
-        },
-        value: {
-            raw: null,
-            unit: "Lines generated on POs",
-            collectionDateStart: "12/13/2023",
-            formula(value) {
-                this.raw = formatter(value)
-            }
-        },
-        values: [
-            "API.PO Line Item Created",
-        ]
-    })
-]
+    icon: <Badge>Drive Parser</Badge>,
+    timeSavings: {
+        raw: null,
+        unit: "Hrs saved",
+        formula(value) {
+            this.raw = formatter(((value) * 63) / 60 / 60)
+        }
+    },
+    value: {
+        raw: null,
+        unit: "Lines generated on POs",
+        collectionDateStart: "05/31/2024",
+        formula(value) {
+            this.raw = formatter(value)
+        }
+    },
+})
+const poCreationCountMetric = new Metric({
+    title: "PO Creation",
+    Explanation: `
+            Each Po that is created with the Drive Parser is a huge victory.
+            It allows : 
+                Costs to be assigned to each PO line item so in the future every item in Sku Vault has a cost.
+                Pricing to be sent to Channel Advisor for every item on the PO.
+                No one in BSA has to manually create a cost sheet and submit manual costs at the sku level.
+                This can sometimes take up to 8 hours to complete.
+    `,
+    icon: <Badge color={'red'}> pending time study </Badge>,
+    timeSavings: {
+        raw: null,
+        unit: "POs generated",
+        formula(value) {
+            this.raw = formatter((value))
+        }
+    },
+    value: {
+        raw: null,
+        unit: "hrs Saved",
+        collectionDateStart: "05/31/2024",
+        formula(value) {
+            let minValue = value * 15 / 60;
+            let maxValue = value * 8;
+            this.raw = `Between ${formatter(minValue)} - ${formatter(maxValue)}`
+        }
+    },
+
+})
 
 let total = new Metric({
     title: "Total Time Saved",
@@ -180,7 +203,7 @@ let total = new Metric({
     Explanation: `
         This metric is calculated by adding the time saved from each of the other metrics.
     `,
-    icon: <IconClipboardData size={'1.5rem'}/>,
+    icon: <Badge>All Systems</Badge>,
     timeSavings: {
         raw: null,
         unit: "Hrs saved",
@@ -198,15 +221,11 @@ let total = new Metric({
         formula(offset) {
             let filteredList = metrics.filter(metric => metric.title !== "Total Time Saved");
             let sum = filteredList.reduce((acc, metric) => acc + +metric.timeSavings.raw.replace(/,/g, ''), 0)
-            console.log(sum)
-            console.log(offset)
             if (offset) sum += offset
-            console.log(sum)
             this.raw = formatter(sum / 8)
         }
     }
 });
-
 total.render = function (offset) {
     this.timeSavings.formula(offset)
     this.value.formula(offset)
@@ -253,7 +272,7 @@ let shopSavings = new Metric({
         This metric counts the number of orders sent to Insightly.
         Each order After being placed took around 15 minutes in the past to be manually entered into Insightly.
         `,
-    icon: <IconReceipt size={'1.5rem'}/>,
+    icon: <Badge>Shop Order Processor</Badge>,
     timeSavings: {
         raw: null,
         unit: "Hrs saved",
@@ -271,43 +290,63 @@ let shopSavings = new Metric({
     },
 });
 
-shopSavings.render = function (val) {
-    this.value.formula(val)
-    this.timeSavings.formula(val)
-}
+shopSavings.render = directRender;
+poLineItemsMetric.render = directRender;
+poCreationCountMetric.render = directRender;
 
 const Celebration = () => {
-    const {data: shopUpdates, isLoading: shopLoading} = useQuery({
+    useUsage("Metrics", "celebration")
+    const {data: shopUpdates, isPending: shopLoading} = useQuery({
         queryKey: ['shopUsage'],
         queryFn: async () => {
             const response = await fetch(`/api/logShopUsage`)
             return response.json()
         }
     });
-    const {data: surpriceUsageData, isLoading: surpriceLoading} = useQuery({
+    const {data: surpriceUsageData, isPending: surpriceLoading} = useQuery({
         queryKey: ['surpriceUsage'],
         queryFn: async () => {
             const response = await fetch("http://surprice.forsigma.com/api/getUsageData")
             return response.json()
         }
     });
+    const {data: poData, isPending: poLoading} = useQuery({
+        queryKey: ['costSheets'],
+        queryFn: async () => {
+            return await fetch("/api/costSheet?createdBy=Drive%20Parser")
+                .then(res => res.json())
+        }
+    });
+
+
 
     const [confetti, setConfetti] = useLocalStorage({
         key: "confetti",
         defaultValue: true
     });
 
-    useUsage("Metrics", "celebration")
-
-
-    if (surpriceLoading || shopLoading) {
-        return <div>loading</div>
+    if (!poLoading) {
+        const PoCount = poData.rows.length;
+        const PoItemTotal = poData.rows.reduce((acc, row) => acc + row['sheet_item_count'], 0);
+        poLineItemsMetric.render(PoItemTotal);
+        poCreationCountMetric.render(PoCount);
     }
 
-    if (!surpriceLoading && !shopLoading) {
+    if (!shopLoading) {
         shopSavings.render(shopUpdates[0] || 0)
+    }
+
+    if (!surpriceLoading) {
         metrics.forEach(metric => metric.render(surpriceUsageData))
-        total.render(+shopSavings.timeSavings.raw);
+    }
+
+    if (!surpriceLoading && !shopLoading && !poLoading) {
+        let shopOffset = +shopSavings.timeSavings.raw
+        //let poCreationOffset = +poCreationCountMetric.timeSavings.raw
+        let poLineItemOffset = +poLineItemsMetric.timeSavings.raw
+        let totalOffset = shopOffset + poLineItemOffset //+ poCreationOffset
+
+        total.render(totalOffset);
     }
 
     return (
@@ -323,8 +362,6 @@ const Celebration = () => {
                     checked={confetti}
                     onChange={() => setConfetti(!confetti)}
                     size={'md'}
-                    // onLabel={<IconConfetti style={{width: rem(14), height: rem(14)}} color={'white'} stroke={2}/>}
-                    // offLabel={<IconConfettiOff style={{width: rem(14), height: rem(14)}} color={'gray'} stroke={2}/>}
                     thumbIcon={
                         confetti
                             ? <IconConfetti
@@ -341,13 +378,19 @@ const Celebration = () => {
                 />
                 {confetti && <Confetti/>}
                 <SimpleGrid mt={'xl'} cols={1}>
-                    <CelebrationCard id={'total'} metric={total}/>
+                    {!poLoading && !shopLoading && !surpriceLoading && <CelebrationCard id={'total'} metric={total}/>}
+                    {poLoading || shopLoading || surpriceLoading &&
+                        <CelebrationCard metric={new Metric({title: "Loading"})}/>}
                 </SimpleGrid>
                 <SimpleGrid mb={'xl'} mt={'md'} cols={3}>
-                    {!shopLoading && !surpriceLoading &&
+                    {!surpriceLoading &&
                         metrics.map((metric, i) => <CelebrationCard key={i} metric={metric}/>)
                     }
-                    <CelebrationCard metric={shopSavings}/>
+                    {!shopLoading && <CelebrationCard metric={shopSavings}/>}
+                    {!poLoading && <>
+                        <CelebrationCard metric={poLineItemsMetric}/>
+                        <CelebrationCard metric={poCreationCountMetric}/>
+                    </>}
                 </SimpleGrid>
             </GraphWithStatCard>
         </span>

@@ -10,7 +10,6 @@ import {
     IconCamera,
     IconChartHistogram,
     IconCheck,
-    IconChecklist,
     IconCirclePlus,
     IconClipboardData,
     IconConfetti,
@@ -24,7 +23,6 @@ import {
     IconGauge,
     IconGaugeFilled,
     IconGitCompare,
-    IconHealthRecognition,
     IconReportMoney,
     IconSettings,
     IconTable,
@@ -117,22 +115,22 @@ const pages = {
                 }
             }
         },
-        "Drive Parser": {
-            leftSection: <IconFileAnalytics size={size} stroke={stroke}/>,
-            links: {
-                "Review": {
-                    href: "/admin/driveParser/review",
-                    leftSection: <IconChecklist size={size} stroke={stroke}/>,
-                    roles: ["surplus director", "bsa"]
-                },
-                "Stats": {
-                    href: "/admin/driveParser/stats",
-                    leftSection: <IconHealthRecognition size={size} stroke={stroke}/>,
-                    roles: ["surplus director", "bsa"]
-                }
-            },
-            roles: ["surplus director", "bsa"]
-        },
+        // "Drive Parser": {
+        //     leftSection: <IconFileAnalytics size={size} stroke={stroke}/>,
+        //     links: {
+        //         "Review": {
+        //             href: "/admin/driveParser/review",
+        //             leftSection: <IconChecklist size={size} stroke={stroke}/>,
+        //             roles: ["surplus director", "bsa"]
+        //         },
+        //         "Stats": {
+        //             href: "/admin/driveParser/stats",
+        //             leftSection: <IconHealthRecognition size={size} stroke={stroke}/>,
+        //             roles: ["surplus director", "bsa"]
+        //         }
+        //     },
+        //     roles: ["surplus director", "bsa"]
+        // },
         "Quality Audits": {
             leftSection: <IconFileAnalytics size={size} stroke={stroke}/>,
             roles: ["bsa", "surplus director", "warehouse"],

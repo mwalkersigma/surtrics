@@ -6,6 +6,7 @@ import {format, formatDuration, intervalToDuration, subHours} from "date-fns";
 import RoleWrapper from "../../../components/RoleWrapper";
 import {AgGridReact} from "ag-grid-react";
 import {StatsGroup} from "../../../components/StatsGroup/StatsGroup";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 function DurationRenderer({value}) {
@@ -99,6 +100,7 @@ function durationComparator(a, b) {
 
 
 const Stats = () => {
+    useUsage("admin", "drive-parser-health")
     const [searchText, setSearchText] = useState('');
     const {data: runs, isPending} = useQuery({
         queryKey: ["runs"],

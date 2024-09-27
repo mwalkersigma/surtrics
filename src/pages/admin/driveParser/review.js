@@ -18,6 +18,7 @@ import {IconCircleCheck, IconCircleLetterI, IconCircleX, IconExternalLink} from 
 import RoleWrapper from "../../../components/RoleWrapper";
 import {queryClient} from "../../_app";
 import {format, subHours} from "date-fns";
+import useUsage from "../../../modules/hooks/useUsage";
 
 
 function ButtonRenderer({value, clickHandler, data, color}) {
@@ -49,7 +50,7 @@ function serverDateRenderer({value}) {
     }
 }
 const Review = () => {
-
+    useUsage("admin", "drive-parser-review")
     const SheetStates = {
         "Pricing Sheets": [
             "Sheet is currently in OPEN status and has not been updated in 60 or more days",

@@ -7,6 +7,7 @@
     );
     padding: calc(var(--mantine-spacing-xl) * 1.5);
     border-radius: var(--mantine-radius-md);
+    max-width: 100%;
 
     @media (max-width: $ mantine-breakpoint-sm) {
         flex-direction: column;

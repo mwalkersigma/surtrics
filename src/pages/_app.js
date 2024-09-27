@@ -3,18 +3,21 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/charts/styles.css';
+import '@mantine/carousel/styles.css';
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-charts-enterprise";
 import 'ag-grid-charts-enterprise'
 import "../styles/ag-grid-theme-builder.css";
-import {createTheme, MantineProvider} from '@mantine/core';
+import {Container, createTheme, MantineProvider} from '@mantine/core';
 import Layout from "./layout";
 import {SessionProvider} from "next-auth/react";
 import {Notifications} from "@mantine/notifications";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 import {StrictMode} from "react";
+import classes from "../styles/container.module.css";
+import cx from "clsx";
 
 
 export const queryClient = new QueryClient()
@@ -71,8 +74,16 @@ function Base({Component, pageProps}) {
     return getLayout(<Component {...pageProps} />)
 }
 
+
 const theme = createTheme({
     /** Put your mantine theme override here */
+    components: {
+        Container: Container.extend({
+            classNames: (_, {size}) => ({
+                root: cx({[classes.responsiveContainer]: size === 'responsive'}),
+            }),
+        }),
+    },
 });
 
 export default function App({Component, pageProps: {session, ...pageProps}}) {

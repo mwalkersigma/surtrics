@@ -1,0 +1,14 @@
+.responsiveContainer {
+    max-width: 100px;
+
+    @media (min-width: 480px) {
+        max-width: calc(100vw - var(--mantine-spacing-md) - var(--app-shell-navbar-offset));
+    }
+
+    @media (min-width: em(600px)) {
+        max-width: calc(100vw - var(--mantine-spacing-lg) - var(--app-shell-navbar-offset));
+    }
+    @media (min-width: em(800px)) {
+        max-width: calc((100vw - var(--mantine-spacing-xl) * 2) - var(--app-shell-navbar-offset));
+    }
+}

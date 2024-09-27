@@ -3,6 +3,7 @@ import classes from './StatsGroup.module.css';
 
 
 export function StatsGroup({data}) {
+
     const stats = data.map((stat) => (
         <div key={stat.title} className={classes.stat}>
             <Text className={classes.count}>{stat.stats}</Text>
@@ -10,5 +11,11 @@ export function StatsGroup({data}) {
             <Text className={classes.description}>{stat.description}</Text>
         </div>
     ));
-    return <div className={classes.root}>{stats}</div>;
+    return <>
+
+        <div className={classes.root}>
+            {stats}
+        </div>
+    </>
+
 }

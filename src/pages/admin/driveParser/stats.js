@@ -90,6 +90,13 @@ function minDuration(data) {
         .reduce((acc, curr) => Math.min(acc, curr), Infinity);
 }
 
+function durationComparator(a, b) {
+    let aSeconds = durationToSeconds(a);
+    let bSeconds = durationToSeconds(b);
+    if (aSeconds === bSeconds) return 0;
+    return aSeconds - bSeconds;
+}
+
 
 const Stats = () => {
     const [searchText, setSearchText] = useState('');
@@ -130,13 +137,20 @@ const Stats = () => {
             headerName: 'Execution Time',
             openByDefault: false,
             children: [
-                {field: 'execution_time', cellRenderer: DurationRenderer, sortable: true, filter: true},
+                {
+                    field: 'execution_time',
+                    cellRenderer: DurationRenderer,
+                    sortable: true,
+                    filter: true,
+                    comparator: durationComparator,
+                },
                 {
                     field: 'time_sleeping',
                     cellRenderer: DurationRenderer,
                     sortable: true,
                     filter: true,
                     columnGroupShow: 'open',
+                    comparator: durationComparator,
                 },
                 {
                     field: 'time_waiting_for_drive_parser_api',
@@ -144,6 +158,7 @@ const Stats = () => {
                     sortable: true,
                     filter: true,
                     columnGroupShow: 'open',
+                    comparator: durationComparator,
                 },
                 {
                     field: 'time_processing_local_files',
@@ -151,6 +166,7 @@ const Stats = () => {
                     sortable: true,
                     filter: true,
                     columnGroupShow: 'open',
+                    comparator: durationComparator,
                 },
                 {
                     field: 'time_per_call_to_drive_parser_api',
@@ -158,6 +174,7 @@ const Stats = () => {
                     sortable: true,
                     filter: true,
                     columnGroupShow: 'open',
+                    comparator: durationComparator,
                 },
             ]
         },

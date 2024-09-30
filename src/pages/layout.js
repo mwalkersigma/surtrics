@@ -123,19 +123,19 @@ const pages = {
                 "Review": {
                     href: "/admin/driveParser/review",
                     leftSection: <IconChecklist size={size} stroke={stroke}/>,
-                    roles: ["surplus director", "bsa"]
+                    roles: ["surplus director", "bsa", "buying group"]
                 },
                 "Stats": {
                     href: "/admin/driveParser/stats",
                     leftSection: <IconHealthRecognition size={size} stroke={stroke}/>,
                     roles: [
-                        "admin"
-                        // "surplus director",
-                        // "bsa"
+                        "surplus director",
+                        "bsa",
+                        "buying group"
                     ]
                 }
             },
-            roles: ["surplus director", "bsa"]
+            roles: ["surplus director", "bsa", "buying group"]
         },
         "Quality Audits": {
             leftSection: <IconFileAnalytics size={size} stroke={stroke}/>,

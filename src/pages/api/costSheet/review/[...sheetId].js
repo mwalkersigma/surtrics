@@ -24,5 +24,5 @@ export default router({
             console.error(e)
             return res.status(500).json({message: "Internal Server Error: " + e.message})
         }
-    }, "bsa", "surplus director")
+    }, "bsa", "surplus director", "buying group")
 })

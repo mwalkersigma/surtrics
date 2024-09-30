@@ -150,7 +150,7 @@ const Review = () => {
     })
 
     return (
-        <RoleWrapper altRoles={['bsa', 'surplus director']}>
+        <RoleWrapper altRoles={['bsa', 'surplus director', 'buying group']}>
             <Container size={'responsive'} h={'80vh'}>
                 <Title mt={'md'} mb={'xl'}> Drive Parser Review </Title>
                 <Group align={'flex-start'} mb={'lg'}>

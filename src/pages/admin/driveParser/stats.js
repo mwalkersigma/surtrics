@@ -408,7 +408,7 @@ const Stats = () => {
     ]
 
     return (
-        <RoleWrapper altRoles={['bsa', 'surplus director']}>
+        <RoleWrapper altRoles={['bsa', 'surplus director', 'buying group']}>
             <Container size={'responsive'}>
                 <Group>
                     <Title mt={'md'} mb={'xl'}> Drive Parser Health </Title>

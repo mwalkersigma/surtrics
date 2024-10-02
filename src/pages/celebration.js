@@ -10,6 +10,7 @@ import {useLocalStorage} from "@mantine/hooks";
 import Metric from "../modules/classes/metric";
 import {useQuery} from "@tanstack/react-query";
 import Head from 'next/head'
+import useUpdates from "../modules/hooks/useUpdates";
 
 function trunc(value) {
     if (!value) return null;
@@ -28,12 +29,16 @@ const pallette = {
 }
 const metrics = [
     new Metric({
-        title:       "Surprice Pricing Sheet Auto Complete", Explanation: `
+        title: "Surprice Pricing Sheet Auto Complete",
+        Explanation: `
             This metric is calculated by estimating that 
             it takes approximately 3 minutes to research each model number in a pricing sheet. 
             Consecutive runs of the sheet are not counted as time saved since the data must 
             be researched for the sheet each time. Each model number is counted only once.
-        `, icon: <Badge color={pallette['Surplus']}>Surprice</Badge>,
+        `,
+        system: "Surprice",
+        systemBadgeName: "Surprice",
+        icon: <Badge color={pallette['Surplus']}>Surprice</Badge>,
         timeSavings: {
             raw: null,
             unit: "Hrs saved",
@@ -41,63 +46,57 @@ const metrics = [
                 this.raw = (value * 3 / 60)
             }
         },
-        value:       {
-            raw:  null,
+        value: {
+            raw: null,
             unit: "Rows found first run",
             collectionDateStart: "07/01/2023",
             formula(value) {
                 this.raw = formatter(value)
             }
-        }, values:   [
+        }, values: [
             "updateSheet.FoundFirstRun"
         ]
     }),
     new Metric({
-        title:     "Surplus listing Duplicate Checker", Explanation: `
+        title: "Surplus listing Duplicate Checker",
+        Explanation: `
             This metric uses the results of a time study preformed by Libby 
             that concluded it takes roughly 12.149 seconds to research each 
             model number in a surplus listing.
             
             The time saved is calculated by multiplying the number of
             model numbers found by 12.149 seconds and converting the result to hours.
-        `, icon: <Badge color={pallette['Surplus']}>Surprice</Badge>, timeSavings: {
-            raw: null, unit: "Hrs saved", formula(value) {
+        `,
+        systemBadgeName: "Surprice",
+        system: "Surprice",
+        icon: <Badge color={pallette['Surplus']}>Surprice</Badge>,
+        timeSavings: {
+            raw: null,
+            unit: "Hrs saved",
+            formula(value) {
                 this.raw = ((value + 16430 * 12.149) / 3600)
             }
-        }, value:  {
+        },
+        value: {
             raw: null, unit: "Model numbers checked", collectionDateStart: "12/13/2023", formula(value) {
                 this.raw = formatter(value + 16430)
             }
-        }, values: [
+        },
+        values: [
             "API.findDuplicate", "API.find duplicates"
         ]
     }),
     new Metric({
-        title:     "Channel Advisor Auto Pricing ", Explanation: `
-            This metric increments each time a price is sent to channel advisor by the drive parser.
-            This process takes around 6 hours to complete 100 parents Skus ( 400 child skus ).
-            This works out to 3.5 minutes per parent sku.
-            
-            The time saved is calculated by multiplying the number of prices divided by 4 times 3.5 minutes each and converting the result to hours.
-        `, icon: <Badge color={pallette['Surplus']}>Drive Parser</Badge>, timeSavings: {
-            raw: null, unit: "Hrs saved", formula(value) {
-                this.raw = (((value / 4) * 3.5) / 60)
-            }
-        }, value:  {
-            raw: null, unit: "Prices Sent", collectionDateStart: "12/13/2023", formula(value) {
-                this.raw = formatter(value)
-            }
-        }, values: [
-            "API.priceUpdated",
-        ]
-    }),
-    new Metric({
-        title:       "Surplus Metrics Tracking", Explanation: `
+        title: "Surplus Metrics Tracking",
+        Explanation: `
             When manually tracking surplus metrics, it takes on average 10 minutes ( between 5 and 15 ) to
             update the surplus metrics tracking sheet. This metric calculates the time
             saved by multiplying the number of weeks since surtrics was implemented by
             times 5 work days, time 3 updates per day, and then converting the result to hours.
-        `, icon: <Badge color={pallette['Surplus']}>Surtrics</Badge>,
+        `,
+        system: "Surtrics",
+        systemBadgeName: "Surtrics",
+        icon: <Badge color={pallette['Surplus']}>Surtrics</Badge>,
         timeSavings: {
             raw: null,
             unit: "Hrs saved",
@@ -120,14 +119,42 @@ const metrics = [
             }
         },
     }),
+    new Metric({
+        title: "Channel Advisor Auto Pricing ",
+        Explanation: `
+            This metric increments each time a price is sent to channel advisor by the drive parser.
+            This process takes around 6 hours to complete 100 parents Skus ( 400 child skus ).
+            This works out to 3.5 minutes per parent sku.
+            
+            The time saved is calculated by multiplying the number of prices divided by 4 times 3.5 minutes each and converting the result to hours.
+        `,
+        systemBadgeName: "Drive Parser",
+        system: "Drive Parser",
+        icon: <Badge color={pallette['Surplus']}>Drive Parser</Badge>,
+        timeSavings: {
+            raw: null, unit: "Hrs saved", formula(value) {
+                this.raw = (((value / 4) * 3.5) / 60)
+            }
+        }, value: {
+            raw: null, unit: "Prices Sent", collectionDateStart: "12/13/2023", formula(value) {
+                this.raw = formatter(value)
+            }
+        }, values: [
+            "API.priceUpdated",
+        ]
+    }),
 ];
 
+
 const poLineItemsMetric = new Metric({
-    title:       "Po Line Item Creation",
+    title: "Po Line Item Creation",
     Explanation: `
             Based on a time study conducted by Libby, it takes on average 63 seconds to add an item into inventory from 
             from manual PO creation. so we take the number of items added and multiply by 63 seconds and convert to hours.
-        `, icon: <Badge color={pallette['Surplus']}>Drive Parser</Badge>,
+        `,
+    systemBadgeName: "Drive Parser",
+    system: "Drive Parser",
+    icon: <Badge color={pallette['Surplus']}>Drive Parser</Badge>,
     timeSavings: {
         raw: null,
         unit: "Hrs saved",
@@ -142,7 +169,7 @@ const poLineItemsMetric = new Metric({
     },
 })
 const poCreationCountMetric = new Metric({
-    title:       "PO Creation",
+    title: "PO Creation",
     Explanation: `
             Each Po that is created with the Drive Parser is a huge victory.
             It allows : 
@@ -151,7 +178,9 @@ const poCreationCountMetric = new Metric({
                 No one in BSA has to manually create a cost sheet and submit manual costs at the sku level.
                 This can sometimes take up to 8 hours to complete.
     `,
-    icon:        <Badge color={pallette['Surplus']}> Drive Parser </Badge>,
+    systemBadgeName: "Drive Parser",
+    system: "Drive Parser",
+    icon: <Badge color={pallette['Surplus']}> Drive Parser </Badge>,
     timeSavings: {
         raw: null,
         unit: "hrs Saved",
@@ -171,14 +200,46 @@ const poCreationCountMetric = new Metric({
 
 })
 
+const photoUploadMetric = new Metric({
+    title: "Photos Uploaded",
+    Explanation: `
+        This metric is calculated by counting the number of image_last_updated_by tags in channel advisor. 
+        The various photo scripts update this number and then we can then use the average number of photos ( 3 )
+        to get the number of photos uploaded. This is an estimate not an exact number.
+        
+        The time savings are calculated by taking the number of photo credits and multiplying by 45 seconds and converting to hours.
+       
+    `,
+    systemBadgeName: "Photo Script",
+    system: "Photo Script",
+    timeSavings: {
+        raw: null,
+        unit: "hrs Saved",
+        formula(value) {
+            this.raw = trunc((value * 45) / 60 / 60)
+        }
+    },
+    value: {
+        raw: null,
+        unit: "photos uploaded",
+        collectionDateStart: "12/08/2023",
+        formula(value) {
+            this.raw = formatter(value)
+        }
+    },
+
+})
+
 let shopSavings = new Metric({
-    title:       "Shop Orders Sent To Insightly",
+    title: "Shop Orders Sent To Insightly",
     Explanation: `
         When an order is placed on the surplus website by the SHOP it is automatically sent to Insightly. 
         This metric counts the number of orders sent to Insightly.
         Each order After being placed took around 15 minutes in the past to be manually entered into Insightly.
         `,
-    icon:        <Badge color={pallette['Shop']}>Shop Order Finder</Badge>,
+    systemBadgeName: "SOIC",
+    system: "Shop Order Insightly Connector",
+    icon: <Badge color={pallette['Shop']}>Shop Order Finder</Badge>,
     timeSavings: {
         raw:  null,
         unit: "Hrs saved",
@@ -186,7 +247,7 @@ let shopSavings = new Metric({
             this.raw = (val * 15 / 60)
         }
     },
-    value:       {
+    value: {
         raw:                 null,
         unit:                "Orders sent",
         collectionDateStart: "02/20/2024",
@@ -241,7 +302,30 @@ const importerMetric = new Metric({
         }
     }
 })
+// this can be used to generate sum tooltips on the swatches and can be used to automate the icon
 
+const allMetrics = {
+    "Surplus": [
+        ...metrics,
+        poLineItemsMetric,
+        poCreationCountMetric,
+        importerMetric,
+        photoUploadMetric,
+    ],
+    "Shop": [
+        shopSavings
+    ],
+    "Equipment": [
+        quoteBuilderMetrics
+    ]
+}
+for (let [key, value] of Object.entries(allMetrics)) {
+    let color = pallette[key];
+    value.forEach(metric => {
+        if (!metric.systemBadgeName && !metric.system) return;
+        metric.icon = <Tooltip label={metric.system}><Badge color={color}>{metric.systemBadgeName}</Badge></Tooltip>
+    })
+}
 let total = new Metric({
     title:       "Total Time Saved", id: "total", Explanation: `
         This metric is calculated by adding the time saved from each of the other metrics.
@@ -256,7 +340,10 @@ let total = new Metric({
             this.raw = Math.trunc(sum * 100) / 100
         }
     }, value:    {
-        raw: null, unit: "Shifts saved ", collectionDateStart: "07/01/2023", formula(offset) {
+        raw: null,
+        unit: "Shifts saved ",
+        collectionDateStart: "07/01/2023",
+        formula(offset) {
             let filteredList = metrics.filter(metric => metric.title !== "Total Time Saved");
             let sum = filteredList.reduce((acc, metric) => acc + +metric.timeSavings.raw, 0)
             if (offset) sum += offset
@@ -269,7 +356,7 @@ total.render = function (offset) {
     this.value.formula(offset)
 }
 
-function CelebrationCard({metric, id}) {
+function CelebrationCard({metric, id, extraTagLine}) {
 
     return (<Tooltip
         multiline
@@ -293,7 +380,10 @@ function CelebrationCard({metric, id}) {
             </Group>
 
             <Group c={'dimmed'} justify={'space-between'}>
-                <Text fz={'xs'}> {metric.value.raw} {metric.value?.unit ?? ""}  </Text>
+                <Group>
+                    <Text fz={'xs'}> {metric.value.raw} {metric.value?.unit ?? ""}  </Text>
+                    {extraTagLine && <Text fz={'xs'}> {extraTagLine} </Text>}
+                </Group>
                 <Text fz={'xs'}> Start Date {metric.value?.collectionDateStart ?? ""} </Text>
             </Group>
 
@@ -307,9 +397,11 @@ poLineItemsMetric.render = directRender;
 poCreationCountMetric.render = directRender;
 quoteBuilderMetrics.render = directRender;
 importerMetric.render = directRender;
+photoUploadMetric.render = directRender;
 
 
 const Celebration = () => {
+    let catTotal = {}
     useUsage("Metrics", "celebration")
     const {data: shopUpdates, isPending: shopLoading} = useQuery({
         queryKey: ['shopUsage'], queryFn: async () => {
@@ -332,7 +424,7 @@ const Celebration = () => {
     const {data: quoteData, isPending: quoteLoading} = useQuery({
         queryKey: ['quotes'],
         queryFn:  async () => {
-            return await fetch('http://localhost:3007/api/usage')
+            return await fetch('http://10.100.100.33:3007/api/usage')
                 .then(res => res.json())
         }
     })
@@ -344,13 +436,18 @@ const Celebration = () => {
                 .then(data => data?.count ?? "")
         }
     });
+    const updates = useUpdates("/api/views/photos", {total: true, parentOnly: true});
 
     const [confetti, setConfetti] = useLocalStorage({
         key: "confetti", defaultValue: true
     });
 
-    if (!quoteLoading) {
+    if (!quoteLoading && quoteData?.length) {
         quoteBuilderMetrics.render(quoteData.length)
+    }
+
+    if (updates?.length !== 0) {
+        photoUploadMetric.render(updates[0].count)
     }
 
     if (!importerLoading) {
@@ -376,9 +473,23 @@ const Celebration = () => {
     let poCreationOffset = poLoading ? 0 : +poCreationCountMetric.timeSavings.raw;
     let quotesOffset = quoteLoading ? 0 : +quoteBuilderMetrics.timeSavings.raw;
     let importerOffset = importerLoading ? 0 : +importerMetric.timeSavings.raw;
+    let photoOffset = updates?.length === 0 ? 0 : +photoUploadMetric.timeSavings.raw;
     let totalOffset = shopOffset + poLineItemOffset + poCreationOffset + quotesOffset + importerOffset;
     if (!surpriceLoading) {
         total.render(totalOffset);
+    }
+    let allLoaded = !surpriceLoading && !shopLoading && !poLoading && !quoteLoading && !importerLoading;
+    if (allLoaded) {
+        Object
+            .entries(allMetrics)
+            .forEach(([key, value]) => {
+                if (!Array.isArray(value)) return
+                value
+                    .forEach(metric => {
+                        if (!catTotal[key]) catTotal[key] = 0;
+                        catTotal[key] += metric.timeSavings.raw
+                    })
+            })
     }
 
     console.log("Render")
@@ -407,24 +518,30 @@ const Celebration = () => {
                     />
                     <Group>
                         {Object.keys(pallette).map((key, i) => {
-                            return <Group key={i}> <ColorSwatch color={pallette[key]}/> <Text>{key}</Text> </Group>
+                            return <Tooltip key={i}
+                                            label={formatter(trunc(catTotal?.[key])) + " hrs saved" ?? "Loading"}><Group>
+                                <ColorSwatch
+                                    color={pallette[key]}/> <Text>{key}</Text> </Group></Tooltip>
                         })}
                     </Group>
                 </SimpleGrid>
-
                 {confetti && <Confetti/>}
                 <SimpleGrid mt={'xl'} cols={1}>
-                    {!surpriceLoading && <CelebrationCard id={'total'} metric={total}/>}
+                    {!surpriceLoading && <CelebrationCard id={'total'}
+                                                          extraTagLine={`${trunc(+total.value.raw / 250)} Years of work saved.`}
+                                                          metric={total}/>}
                 </SimpleGrid>
                 <SimpleGrid mb={'xl'} mt={'md'} cols={3}>
+                    {updates?.length && updates.length !== 0 && <CelebrationCard metric={photoUploadMetric}/>}
                     {!surpriceLoading && metrics.map((metric, i) => <CelebrationCard key={i} metric={metric}/>)}
-                    {!shopLoading && <CelebrationCard metric={shopSavings}/>}
                     {!poLoading && <>
                         <CelebrationCard metric={poLineItemsMetric}/>
                         <CelebrationCard metric={poCreationCountMetric}/>
                     </>}
-                    {!quoteLoading && <CelebrationCard metric={quoteBuilderMetrics}/>}
                     {!importerLoading && <CelebrationCard metric={importerMetric}/>}
+                    {!shopLoading && <CelebrationCard metric={shopSavings}/>}
+                    {!quoteLoading && <CelebrationCard metric={quoteBuilderMetrics}/>}
+
                 </SimpleGrid>
             </GraphWithStatCard>
         </span>

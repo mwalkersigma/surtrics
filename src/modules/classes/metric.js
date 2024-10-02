@@ -1,6 +1,8 @@
 export default class Metric {
-    constructor({title, Explanation, icon, timeSavings, value, values}) {
+    constructor({title, Explanation, icon, timeSavings, value, values, system, systemBadgeName}) {
         this.title = title;
+        this.system = system;
+        this.systemBadgeName = systemBadgeName;
         this.Explanation = Explanation;
         this.icon = icon;
         this.timeSavings = timeSavings;

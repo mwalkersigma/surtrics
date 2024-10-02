@@ -47,34 +47,6 @@ const pages = {
             leftSection: <IconTimeline size={size} stroke={stroke}/>,
             href: "/timelines/listingNotableEvents"
         },
-        "Celebration": {
-            leftSection: <IconConfetti size={size} stroke={stroke}/>,
-            href: "/celebration",
-            roles: ["loggedIn"]
-        },
-        "Increments": {
-            leftSection: <IconCirclePlus size={size} stroke={stroke}/>,
-            links: {
-                "Graphs": {
-                    leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
-                    opened: true,
-                    links: {
-                        "Daily View": {
-                            href: "/graphs/increments/dailyView"
-                        },
-                        "Weekly View": {
-                            href: "/graphs/increments/weeklyView"
-                        },
-                        "Monthly View": {
-                            href: "/graphs/increments/monthlyView"
-                        },
-                        "Yearly View": {
-                            href: "/graphs/increments/yearlyView"
-                        }
-                    }
-                }
-            }
-        },
         "Approvals": {
             leftSection: <IconCheck size={size} stroke={stroke}/>,
             links: {
@@ -96,79 +68,67 @@ const pages = {
                 }
             }
         },
-        "Quantity": {
-            leftSection: <IconTallymarks size={size} stroke={stroke}/>,
+        "Data Entry": {
+            leftSection: <IconForms size={size} stroke={stroke}/>,
+            roles: ["bsa", "surplus director", "warehouse"],
             links: {
-                "Graphs": {
-                    leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
-                    links: {
-                        "Range View": {
-                            href: "/graphs/quantity/rangeView"
-                        }
-                    }
+                "Submit Event": {
+                    leftSection: <IconActivity size={size} stroke={stroke}/>,
+                    href: "/BSA/eventReporting"
+                },
+            }
+        },
+        "Errors": {
+            leftSection: <IconExclamationCircle size={size} stroke={stroke}/>,
+            links: {
+                "Submit Error": {
+                    href: "/admin/errorReporting",
+                    roles: ["bsa", "surplus director", "warehouse"]
+                },
+                "Error Entries": {
+                    href: "/viewers/error",
+                    roles: ["bsa", "surplus director", "warehouse"]
+                },
+                "Error Type Creator": {
+                    href: "/BSA/createErrorType",
+                    roles: ["surplus director"]
                 },
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
+                    opened: true,
                     links: {
-                        "Range View": {
-                            href: "/tables/quantity/rangeView"
-                        }
+
+                        "My Errors": {
+                            href: "/tables/errors/myErrors"
+                        },
+                        "Errors by User": {
+                            roles: ["surplus director"],
+                            href: "/tables/errors/errorsByUser"
+                        },
                     }
                 }
             }
         },
-        "Drive Parser": {
-            leftSection: <IconFileAnalytics size={size} stroke={stroke}/>,
+        "Increments": {
+            leftSection: <IconCirclePlus size={size} stroke={stroke}/>,
             links: {
-                "Review": {
-                    href: "/admin/driveParser/review",
-                    leftSection: <IconChecklist size={size} stroke={stroke}/>,
-                    roles: ["surplus director", "bsa", "buying group"]
-                },
-                "Stats": {
-                    href: "/admin/driveParser/stats",
-                    leftSection: <IconHealthRecognition size={size} stroke={stroke}/>,
-                    roles: [
-                        "surplus director",
-                        "bsa",
-                        "buying group"
-                    ]
-                }
-            },
-            roles: ["surplus director", "bsa", "buying group"]
-        },
-        "Quality Audits": {
-            leftSection: <IconFileAnalytics size={size} stroke={stroke}/>,
-            roles: ["bsa", "surplus director", "warehouse"],
-            links: {
-                "Audit Entry": {
-                    href: "/BSA/QualityAudits",
-                },
-                "Audit Viewer": {
-                    href: "/tables/audits",
-                },
-                "Audits By Auditor": {
-                    href: "/tables/audits/byAuditor",
-                },
-
-            }
-        },
-        "Skill Assessment":{
-            leftSection: <IconGauge size={size} stroke={stroke}/>,
-            links:{
-                "Enter Assessment" : {
-                    href: "/admin/skillAssessment",
-                    leftSection: <IconGaugeFilled size={size} stroke={stroke}/>,
-                    roles: ["surplus director", "bsa", "warehouse"]
-                },
-                "Entry Viewer" : {
-                    href: "/viewers/skillAssessment",
-                    leftSection: <IconGauge size={size} stroke={stroke}/>,
-                    roles: ["surplus director", "bsa", "warehouse"]
-                },
-                "Assessment Viewer":{
-                    href: "/tables/skillAssessment",
-                    leftSection: <IconGauge size={size} stroke={stroke}/>,
+                "Graphs": {
+                    leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
+                    opened: true,
+                    links: {
+                        "Daily View": {
+                            href: "/graphs/increments/dailyView"
+                        },
+                        "Weekly View": {
+                            href: "/graphs/increments/weeklyView"
+                        },
+                        "Monthly View": {
+                            href: "/graphs/increments/monthlyView"
+                        },
+                        "Yearly View": {
+                            href: "/graphs/increments/yearlyView"
+                        }
+                    }
                 }
             }
         },
@@ -221,34 +181,59 @@ const pages = {
                 },
             }
         },
-        "Errors": {
-            leftSection: <IconExclamationCircle size={size} stroke={stroke}/>,
+        "Quantity": {
+            leftSection: <IconTallymarks size={size} stroke={stroke}/>,
             links: {
-                "Submit Error": {
-                    href: "/admin/errorReporting",
-                    roles: ["bsa", "surplus director", "warehouse"]
-                },
-                "Error Entries": {
-                    href: "/viewers/error",
-                    roles: ["bsa", "surplus director", "warehouse"]
-                },
-                "Error Type Creator": {
-                    href: "/BSA/createErrorType",
-                    roles: ["surplus director"]
+                "Graphs": {
+                    leftSection: <IconChartHistogram size={size} stroke={stroke}/>,
+                    links: {
+                        "Range View": {
+                            href: "/graphs/quantity/rangeView"
+                        }
+                    }
                 },
                 "Tables": {
                     leftSection: <IconTable size={size} stroke={stroke}/>,
-                    opened: true,
                     links: {
-
-                        "My Errors": {
-                            href: "/tables/errors/myErrors"
-                        },
-                        "Errors by User": {
-                            roles: ["surplus director"],
-                            href: "/tables/errors/errorsByUser"
-                        },
+                        "Range View": {
+                            href: "/tables/quantity/rangeView"
+                        }
                     }
+                }
+            }
+        },
+        "Quality Audits": {
+            leftSection: <IconFileAnalytics size={size} stroke={stroke}/>,
+            roles: ["bsa", "surplus director", "warehouse"],
+            links: {
+                "Audit Entry": {
+                    href: "/BSA/QualityAudits",
+                },
+                "Audit Viewer": {
+                    href: "/tables/audits",
+                },
+                "Audits By Auditor": {
+                    href: "/tables/audits/byAuditor",
+                },
+
+            }
+        },
+        "Skill Assessment": {
+            leftSection: <IconGauge size={size} stroke={stroke}/>,
+            links: {
+                "Enter Assessment": {
+                    href: "/admin/skillAssessment",
+                    leftSection: <IconGaugeFilled size={size} stroke={stroke}/>,
+                    roles: ["surplus director", "bsa", "warehouse"]
+                },
+                "Entry Viewer": {
+                    href: "/viewers/skillAssessment",
+                    leftSection: <IconGauge size={size} stroke={stroke}/>,
+                    roles: ["surplus director", "bsa", "warehouse"]
+                },
+                "Assessment Viewer": {
+                    href: "/tables/skillAssessment",
+                    leftSection: <IconGauge size={size} stroke={stroke}/>,
                 }
             }
         },
@@ -270,25 +255,6 @@ const pages = {
                         }
                     }
                 }
-            }
-        },
-        "Surprice": {
-            leftSection: <IconTallymarks size={size} stroke={stroke}/>,
-            roles: ["buying group", "surplus director"],
-            links: {
-                "Research Entries": {
-                    href: "/graphs/surprice/researchEntries"
-                },
-            }
-        },
-        "Data Entry": {
-            leftSection: <IconForms size={size} stroke={stroke}/>,
-            roles: ["bsa", "surplus director", "warehouse"],
-            links: {
-                "Submit Event": {
-                    leftSection: <IconActivity size={size} stroke={stroke}/>,
-                    href: "/BSA/eventReporting"
-                },
             }
         },
     },
@@ -355,7 +321,7 @@ const pages = {
                     href: "/graphs/sales/yearlyView/simplified",
                     leftSection: <IconReportMoney size={size} stroke={stroke}/>
                 },
-                "Increments Compounding" : {
+                "Increments Compounding": {
                     href: "/graphs/increments/yearlyView/simplified",
                     leftSection: <IconCirclePlus size={size} stroke={stroke}/>
                 },
@@ -459,6 +425,52 @@ const pages = {
             }
         }
     },
+    "Automation": {
+        "Celebration": {
+            leftSection: <IconConfetti size={size} stroke={stroke}/>,
+            href: "/celebration",
+            roles: ["loggedIn"]
+        },
+        "Drive Parser": {
+            leftSection: <IconFileAnalytics size={size} stroke={stroke}/>,
+            links: {
+                "Review": {
+                    href: "/admin/driveParser/review",
+                    leftSection: <IconChecklist size={size} stroke={stroke}/>,
+                    roles: ["surplus director", "bsa", "buying group"]
+                },
+                "Stats": {
+                    href: "/admin/driveParser/stats",
+                    leftSection: <IconHealthRecognition size={size} stroke={stroke}/>,
+                    roles: [
+                        "surplus director",
+                        "bsa",
+                        "buying group"
+                    ]
+                }
+            },
+            roles: ["surplus director", "bsa", "buying group"]
+        },
+        "Surprice": {
+            leftSection: <IconTallymarks size={size} stroke={stroke}/>,
+            roles: ["buying group", "surplus director"],
+            links: {
+                "Research Entries": {
+                    href: "/graphs/surprice/researchEntries"
+                },
+            }
+        },
+        "QuoteBuilder": {
+            leftSection: <IconTable size={size} stroke={stroke}/>,
+            links: {
+                "Quotes Generated": {
+                    href: "/tables/quotes/rangeViewer",
+
+                },
+            },
+            roles: ["bsa"]
+        }
+    }
 }
 
 
@@ -470,7 +482,7 @@ export default function Layout({children}) {
 
     const appShellProps = {
         header: {height: 60}, padding: "md", navbar: {
-            width: 300, breakpoint: 'sm', collapsed: {
+            width: 320, breakpoint: 'sm', collapsed: {
                 mobile: !mobileOpened, desktop: !desktopOpened
             },
         }

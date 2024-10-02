@@ -23,7 +23,7 @@ function directRender(val) {
 }
 
 const pallette = {
-    "Surplus":   "#7e1416",
+    "Surplus": "#311e72",
     "Shop":      "#0ea40e",
     "Equipment": "#be6828",
 }
@@ -290,7 +290,7 @@ const importerMetric = new Metric({
         raw:  null,
         unit: "Hrs saved",
         formula(val) {
-            this.raw = Math.trunc(val * 2 / 60 * 100) / 100
+            this.raw = trunc(val * 2 / 60)
         }
     },
     value:       {

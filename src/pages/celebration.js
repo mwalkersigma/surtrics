@@ -1,5 +1,18 @@
 import React from 'react';
-import {Badge, ColorSwatch, Group, Paper, rem, SimpleGrid, Switch, Text, Title, Tooltip} from "@mantine/core";
+import {
+    Badge,
+    ColorSwatch,
+    Flex,
+    Grid,
+    Group,
+    Paper,
+    rem,
+    SimpleGrid,
+    Switch,
+    Text,
+    Title,
+    Tooltip
+} from "@mantine/core";
 import {IconConfetti, IconConfettiOff} from "@tabler/icons-react";
 import formatter from "../modules/utils/numberFormatter";
 import GraphWithStatCard from "../components/mantine/graphWithStatCard";
@@ -23,9 +36,10 @@ function directRender(val) {
 }
 
 const pallette = {
-    "Surplus": "#311e72",
-    "Shop":      "#0ea40e",
-    "Equipment": "#be6828",
+    "Surplus": "#660606",
+    "Shop": "#09287a",
+    "Equipment": "#366f08",
+    "Procurement": "#cd4920",
 }
 const metrics = [
     new Metric({
@@ -38,7 +52,6 @@ const metrics = [
         `,
         system: "Surprice",
         systemBadgeName: "Surprice",
-        icon: <Badge color={pallette['Surplus']}>Surprice</Badge>,
         timeSavings: {
             raw: null,
             unit: "Hrs saved",
@@ -69,7 +82,6 @@ const metrics = [
         `,
         systemBadgeName: "Surprice",
         system: "Surprice",
-        icon: <Badge color={pallette['Surplus']}>Surprice</Badge>,
         timeSavings: {
             raw: null,
             unit: "Hrs saved",
@@ -96,7 +108,6 @@ const metrics = [
         `,
         system: "Surtrics",
         systemBadgeName: "Surtrics",
-        icon: <Badge color={pallette['Surplus']}>Surtrics</Badge>,
         timeSavings: {
             raw: null,
             unit: "Hrs saved",
@@ -130,7 +141,6 @@ const metrics = [
         `,
         systemBadgeName: "Drive Parser",
         system: "Drive Parser",
-        icon: <Badge color={pallette['Surplus']}>Drive Parser</Badge>,
         timeSavings: {
             raw: null, unit: "Hrs saved", formula(value) {
                 this.raw = (((value / 4) * 3.5) / 60)
@@ -154,7 +164,6 @@ const poLineItemsMetric = new Metric({
         `,
     systemBadgeName: "Drive Parser",
     system: "Drive Parser",
-    icon: <Badge color={pallette['Surplus']}>Drive Parser</Badge>,
     timeSavings: {
         raw: null,
         unit: "Hrs saved",
@@ -180,7 +189,6 @@ const poCreationCountMetric = new Metric({
     `,
     systemBadgeName: "Drive Parser",
     system: "Drive Parser",
-    icon: <Badge color={pallette['Surplus']}> Drive Parser </Badge>,
     timeSavings: {
         raw: null,
         unit: "hrs Saved",
@@ -239,17 +247,16 @@ let shopSavings = new Metric({
         `,
     systemBadgeName: "SOIC",
     system: "Shop Order Insightly Connector",
-    icon: <Badge color={pallette['Shop']}>Shop Order Finder</Badge>,
     timeSavings: {
-        raw:  null,
+        raw: null,
         unit: "Hrs saved",
         formula(val) {
             this.raw = (val * 15 / 60)
         }
     },
     value: {
-        raw:                 null,
-        unit:                "Orders sent",
+        raw: null,
+        unit: "Orders sent",
         collectionDateStart: "02/20/2024",
         formula(val) {
             this.raw = formatter(val)
@@ -257,22 +264,23 @@ let shopSavings = new Metric({
     },
 });
 const quoteBuilderMetrics = new Metric({
-    title:       "Quote Builder Automation",
-    explanation: `
+    title: "Quote Builder Automation",
+    Explanation: `
         The quote builder generates quotes based on insightly opportunities.
         This allows us to quickly generate quotes that follow a consistent format.
     `,
-    icon:        <Badge color={pallette['Equipment']}>Quote Builder</Badge>,
+    systemBadgeName: "Quote Builder",
+    system: "Quote Builder",
     timeSavings: {
-        raw:  null,
+        raw: null,
         unit: "Hrs saved",
         formula(val) {
             this.raw = (val * 120 / 60 / 60)
         }
     },
-    value:       {
-        raw:                 null,
-        unit:                "Quotes generated",
+    value: {
+        raw: null,
+        unit: "Quotes generated",
         collectionDateStart: "02/20/2024",
         formula(val) {
             this.raw = formatter(val)
@@ -281,22 +289,53 @@ const quoteBuilderMetrics = new Metric({
 });
 
 const importerMetric = new Metric({
-    title:       "Importer Template Approvals",
-    explanation: `
-        The importer allows us to quickly approve templates that have been submitted by vendors.
+    title: "Importer Template Approvals",
+    Explanation: `
+        The importer takes data entered by surplus listers. It then process that data to include all the needed data
+        for Sku Vault and Channel Advisor. It then uploads them to both platforms. This process was previously manual and 
+        was calculated to take around 2 minutes per sku to preform. 
     `,
-    icon:        <Badge color={pallette['Surplus']}>Importer</Badge>,
+    systemBadgeName: "Importer",
+    system: "Importer",
     timeSavings: {
-        raw:  null,
+        raw: null,
         unit: "Hrs saved",
         formula(val) {
             this.raw = trunc(val * 2 / 60)
         }
     },
-    value:       {
-        raw:                 null,
-        unit:                "Templates approved",
+    value: {
+        raw: null,
+        unit: "Templates approved",
         collectionDateStart: "02/20/2024",
+        formula(val) {
+            this.raw = formatter(val)
+        }
+    }
+});
+const pricingSheetFoldersCreated = new Metric({
+    title: "Pricing Sheet Folders Created",
+    Explanation: `
+        Pricing Folders are generated when an insightly Parts opportunity is moved to stage 3.
+        When preformed manually this process takes 1 min 56.33 secs on average to complete. 
+        This includes finding the document sequence number, finding the insightly opp id, creating a folder
+        with a properly formatted title and cloning the pricing sheet template and creating a photos folder.
+        and putting all of that into the procurements folder so that it can be processed by the drive parser. 
+        and adding a link to the folder in insightly.
+    `,
+    system: "Price Sheet Maker",
+    systemBadgeName: "Sheet Maker",
+    timeSavings: {
+        raw: null,
+        unit: "Hrs saved",
+        formula(val) {
+            this.raw = trunc(val * 116 / 60 / 60)
+        }
+    },
+    value: {
+        raw: null,
+        unit: "Folders created",
+        collectionDateStart: "02/26/2024",
         formula(val) {
             this.raw = formatter(val)
         }
@@ -317,6 +356,9 @@ const allMetrics = {
     ],
     "Equipment": [
         quoteBuilderMetrics
+    ],
+    "Procurement": [
+        pricingSheetFoldersCreated
     ]
 }
 for (let [key, value] of Object.entries(allMetrics)) {
@@ -327,7 +369,7 @@ for (let [key, value] of Object.entries(allMetrics)) {
     })
 }
 let total = new Metric({
-    title:       "Total Time Saved", id: "total", Explanation: `
+    title: "Total Time Saved", id: "total", Explanation: `
         This metric is calculated by adding the time saved from each of the other metrics.
     `, icon: <Badge>All Systems</Badge>,
     timeSavings: {
@@ -339,7 +381,7 @@ let total = new Metric({
             if (offset) sum += offset
             this.raw = Math.trunc(sum * 100) / 100
         }
-    }, value:    {
+    }, value: {
         raw: null,
         unit: "Shifts saved ",
         collectionDateStart: "07/01/2023",
@@ -358,27 +400,42 @@ total.render = function (offset) {
 
 function CelebrationCard({metric, id, extraTagLine}) {
 
-    return (<Tooltip
-        multiline
-        withArrow
-        label={metric.Explanation}
-        w={220}
-        transitionProps={{
-            duration: 200
-        }}
-    >
+    return (
         <Paper p={"1rem 1.5rem"} withBorder>
 
-            <Group mb={'md'} justify={'space-between'} align={'center'}>
-                <Text> {metric.title} </Text>
-                {metric.icon}
-            </Group>
 
-            <Group mb={'md'} align={'end'}>
-                <Title id={id} c={'teal'}> {formatter(trunc(metric.timeSavings?.raw) ?? '0')} </Title>
-                <Text> {metric.timeSavings?.unit ?? ""} </Text>
-            </Group>
+            {/*<Group mb={'md'} justify={'space-between'} align={'center'}>*/}
+            <Grid justify="space-between">
+                <Grid.Col span={8}>
+                    <Tooltip label={metric?.title ?? ""}>
+                        <Text truncate="end"> {metric.title} </Text>
+                    </Tooltip>
+                </Grid.Col>
+                <Grid.Col justify={'flex-end'} span={4}>
+                    <Flex justify={'flex-end'}>
+                        {metric.icon}
+                    </Flex>
+                </Grid.Col>
+            </Grid>
 
+
+            {/*</Group>*/}
+
+
+            <Tooltip
+                multiline
+                withArrow
+                label={metric.Explanation}
+                w={220}
+                transitionProps={{
+                    duration: 200
+                }}
+            >
+                <Group mb={'md'} align={'end'}>
+                    <Title id={id} c={'teal'}> {formatter(trunc(metric.timeSavings?.raw) ?? '0')} </Title>
+                    <Text> {metric.timeSavings?.unit ?? ""} </Text>
+                </Group>
+            </Tooltip>
             <Group c={'dimmed'} justify={'space-between'}>
                 <Group>
                     <Text fz={'xs'}> {metric.value.raw} {metric.value?.unit ?? ""}  </Text>
@@ -388,7 +445,7 @@ function CelebrationCard({metric, id, extraTagLine}) {
             </Group>
 
         </Paper>
-    </Tooltip>)
+    )
 }
 
 
@@ -398,6 +455,7 @@ poCreationCountMetric.render = directRender;
 quoteBuilderMetrics.render = directRender;
 importerMetric.render = directRender;
 photoUploadMetric.render = directRender;
+pricingSheetFoldersCreated.render = directRender;
 
 
 const Celebration = () => {
@@ -423,25 +481,36 @@ const Celebration = () => {
     });
     const {data: quoteData, isPending: quoteLoading} = useQuery({
         queryKey: ['quotes'],
-        queryFn:  async () => {
+        queryFn: async () => {
             return await fetch('http://10.100.100.33:3007/api/usage')
                 .then(res => res.json())
         }
     })
     const {data: importerData, isPending: importerLoading} = useQuery({
         queryKey: ['importer'],
-        queryFn:  async () => {
+        queryFn: async () => {
             return await fetch('/api/views/importer/approved_templates/count')
                 .then(res => res.json())
                 .then(data => data?.count ?? "")
         }
     });
+    const {data: sheetCreationData, isPending: sheetCreationLoading} = useQuery({
+        queryKey: ['pricingSheetFolders'],
+        queryFn: async () => {
+            return await fetch('/api/views/pricingSheets?successes=true')
+                .then(res => res.json())
+        }
+    });
+
     const updates = useUpdates("/api/views/photos", {total: true, parentOnly: true});
 
     const [confetti, setConfetti] = useLocalStorage({
         key: "confetti", defaultValue: true
     });
 
+    if (!sheetCreationLoading) {
+        pricingSheetFoldersCreated.render(sheetCreationData.length)
+    }
     if (!quoteLoading && quoteData?.length) {
         quoteBuilderMetrics.render(quoteData.length)
     }
@@ -474,7 +543,8 @@ const Celebration = () => {
     let quotesOffset = quoteLoading ? 0 : +quoteBuilderMetrics.timeSavings.raw;
     let importerOffset = importerLoading ? 0 : +importerMetric.timeSavings.raw;
     let photoOffset = updates?.length === 0 ? 0 : +photoUploadMetric.timeSavings.raw;
-    let totalOffset = shopOffset + poLineItemOffset + poCreationOffset + quotesOffset + importerOffset;
+    let sheetOffset = sheetCreationLoading ? 0 : +pricingSheetFoldersCreated.timeSavings.raw;
+    let totalOffset = shopOffset + poLineItemOffset + poCreationOffset + quotesOffset + importerOffset + photoOffset + sheetOffset;
     if (!surpriceLoading) {
         total.render(totalOffset);
     }
@@ -531,13 +601,14 @@ const Celebration = () => {
                                                           extraTagLine={`${trunc(+total.value.raw / 250)} Years of work saved.`}
                                                           metric={total}/>}
                 </SimpleGrid>
-                <SimpleGrid mb={'xl'} mt={'md'} cols={3}>
-                    {updates?.length && updates.length !== 0 && <CelebrationCard metric={photoUploadMetric}/>}
+                <SimpleGrid mb={'xl'} mt={'md'} cols={{base: 1, lg: 2, xl: 3}}>
+                    {(updates?.length && updates.length !== 0) && <CelebrationCard metric={photoUploadMetric}/>}
                     {!surpriceLoading && metrics.map((metric, i) => <CelebrationCard key={i} metric={metric}/>)}
                     {!poLoading && <>
                         <CelebrationCard metric={poLineItemsMetric}/>
                         <CelebrationCard metric={poCreationCountMetric}/>
                     </>}
+                    {!sheetCreationLoading && <CelebrationCard metric={pricingSheetFoldersCreated}/>}
                     {!importerLoading && <CelebrationCard metric={importerMetric}/>}
                     {!shopLoading && <CelebrationCard metric={shopSavings}/>}
                     {!quoteLoading && <CelebrationCard metric={quoteBuilderMetrics}/>}

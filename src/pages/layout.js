@@ -451,6 +451,26 @@ const pages = {
             },
             roles: ["surplus director", "bsa", "buying group"]
         },
+        "PricingSheetMaker": {
+            leftSection: <IconFileAnalytics size={size} stroke={stroke}/>,
+            links: {
+                "Review": {
+                    href: "/admin/sheetMaker/review",
+                    leftSection: <IconChecklist size={size} stroke={stroke}/>,
+                    roles: ["surplus director", "bsa", "buying group"]
+                },
+                "Stats": {
+                    href: "/admin/sheetMaker/stats",
+                    leftSection: <IconHealthRecognition size={size} stroke={stroke}/>,
+                    roles: [
+                        "surplus director",
+                        "bsa",
+                        "buying group"
+                    ]
+                }
+            },
+            roles: ["surplus director", "bsa", "buying group"]
+        },
         "Surprice": {
             leftSection: <IconTallymarks size={size} stroke={stroke}/>,
             roles: ["buying group", "surplus director"],

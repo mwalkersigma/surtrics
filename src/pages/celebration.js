@@ -497,7 +497,7 @@ const Celebration = () => {
     const {data: sheetCreationData, isPending: sheetCreationLoading} = useQuery({
         queryKey: ['pricingSheetFolders'],
         queryFn: async () => {
-            return await fetch('/api/views/pricingSheets?successes=true')
+            return await fetch('/api/views/pricingSheets?success=true')
                 .then(res => res.json())
         }
     });
@@ -602,7 +602,7 @@ const Celebration = () => {
                                                           metric={total}/>}
                 </SimpleGrid>
                 <SimpleGrid mb={'xl'} mt={'md'} cols={{base: 1, lg: 2, xl: 3}}>
-                    {(updates?.length && updates.length !== 0) && <CelebrationCard metric={photoUploadMetric}/>}
+                    {updates.length !== 0 && <CelebrationCard metric={photoUploadMetric}/>}
                     {!surpriceLoading && metrics.map((metric, i) => <CelebrationCard key={i} metric={metric}/>)}
                     {!poLoading && <>
                         <CelebrationCard metric={poLineItemsMetric}/>

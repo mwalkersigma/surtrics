@@ -167,7 +167,7 @@ const Review = () => {
                 <div style={{height: "55vh"}} className="ag-theme-custom">
                     <AgGridReact
                         quickFilterText={searchText}
-                        columnDefs={columnDefs}
+                        columnDefs={reviewColDefs}
                         rowData={dataForGrid}
                         ref={gridRef}
                     />

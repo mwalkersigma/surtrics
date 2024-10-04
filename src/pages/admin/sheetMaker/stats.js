@@ -503,7 +503,7 @@ const Stats = () => {
         <RoleWrapper altRoles={['bsa', 'surplus director', 'buying group']}>
             <Container size={'responsive'}>
                 <Group>
-                    <Title mt={'md'} mb={'xl'}> Sheet Creation Health </Title>
+                    <Title mt={'md'} mb={'xl'}> Sheet Maker Health </Title>
                     <Text fz={'sm'} c={'dimmed'}>
                         Most Recent Run: {format(mostRecentRunDate, "Pp")}
                     </Text>

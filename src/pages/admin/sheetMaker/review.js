@@ -129,7 +129,7 @@ const Review = () => {
     return (
         <RoleWrapper altRoles={['bsa', 'surplus director', 'buying group']}>
             <Container size={'responsive'} h={'80vh'}>
-                <Title mt={'md'} mb={'xl'}> Drive Parser Review </Title>
+                <Title mt={'md'} mb={'xl'}> Sheet Maker Review </Title>
                 <Group align={'flex-start'} mb={'lg'}>
                     <Box>
                         <InputLabel style={{display: "block"}}>Sheet Types</InputLabel>

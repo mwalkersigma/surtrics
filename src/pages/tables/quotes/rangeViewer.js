@@ -43,10 +43,10 @@ export default function UsageViewer() {
     }, {});
     if (!usage) return <div>Loading...</div>;
 
-    return (<Container>
+    return (<Container size={'responsive'}>
             <Title my={'xl'} order={1}>Usage</Title>
             <CustomRangeMenu my={'xl'} label={'Date Range'} subscribe={setDates} defaultValue={[null, null]}/>
-            <div className="ag-theme-custom" style={{height: "41vh"}}>
+            <div className="ag-theme-custom" style={{height: "61vh"}}>
                 <AgGridReact
                     masterDetail={true}
                     columnDefs={[

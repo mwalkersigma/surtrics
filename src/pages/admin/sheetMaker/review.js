@@ -56,7 +56,7 @@ const Review = () => {
     useUsage("admin", "drive-parser-review")
 
     const gridRef = useRef(null);
-    const [sheetType, setSheetType] = useState('success');
+    const [sheetType, setSheetType] = useState('failure');
     const [searchText, setSearchText] = useState('');
     const {data: opps, isPending} = useQuery({
         queryKey: ["pricingFolders"],

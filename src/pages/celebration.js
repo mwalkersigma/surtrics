@@ -19,7 +19,7 @@ import GraphWithStatCard from "../components/mantine/graphWithStatCard";
 import Confetti from "../components/confetti";
 import {eachWeekOfInterval} from "date-fns";
 import useUsage from "../modules/hooks/useUsage";
-import {useLocalStorage} from "@mantine/hooks";
+import {useLocalStorage, useSetState} from "@mantine/hooks";
 import Metric from "../modules/classes/metric";
 import {useQuery} from "@tanstack/react-query";
 import Head from 'next/head'
@@ -364,6 +364,7 @@ const allMetrics = {
 for (let [key, value] of Object.entries(allMetrics)) {
     let color = pallette[key];
     value.forEach(metric => {
+        metric.group = key;
         if (!metric.systemBadgeName && !metric.system) return;
         metric.icon = <Tooltip label={metric.system}><Badge color={color}>{metric.systemBadgeName}</Badge></Tooltip>
     })
@@ -399,11 +400,9 @@ total.render = function (offset) {
 }
 
 function CelebrationCard({metric, id, extraTagLine}) {
-
+    if (!metric.shown) return null;
     return (
         <Paper p={"1rem 1.5rem"} withBorder>
-
-
             {/*<Group mb={'md'} justify={'space-between'} align={'center'}>*/}
             <Grid justify="space-between">
                 <Grid.Col span={8}>
@@ -461,6 +460,15 @@ pricingSheetFoldersCreated.render = directRender;
 const Celebration = () => {
     let catTotal = {}
     useUsage("Metrics", "celebration")
+
+    const [shownCategories, setShownCategories] = useSetState(
+        Object
+            .keys(allMetrics)
+            .reduce((acc, key) => {
+                acc[key] = true;
+                return acc
+            }, {})
+    )
     const {data: shopUpdates, isPending: shopLoading} = useQuery({
         queryKey: ['shopUsage'], queryFn: async () => {
             const response = await fetch(`/api/logShopUsage`)
@@ -507,6 +515,13 @@ const Celebration = () => {
     const [confetti, setConfetti] = useLocalStorage({
         key: "confetti", defaultValue: true
     });
+
+    for (let [key, value] of Object.entries(allMetrics)) {
+        value.forEach(metric => {
+            metric.shown = shownCategories[key]
+        })
+    }
+
 
     if (!sheetCreationLoading) {
         pricingSheetFoldersCreated.render(sheetCreationData.length)
@@ -570,7 +585,7 @@ const Celebration = () => {
                 </script>
             </Head>
             <GraphWithStatCard noBorder title={'🎉 Automation Celebration 🎉'}>
-                <SimpleGrid cols={3}>
+                <SimpleGrid mb={'md'} cols={3}>
                     <Switch
                         label={'Show Confetti'}
                         checked={confetti}
@@ -586,15 +601,25 @@ const Celebration = () => {
                             stroke={2}
                         />}
                     />
-                    <Group>
-                        {Object.keys(pallette).map((key, i) => {
-                            return <Tooltip key={i}
-                                            label={formatter(trunc(catTotal?.[key])) + " hrs saved" ?? "Loading"}><Group>
-                                <ColorSwatch
-                                    color={pallette[key]}/> <Text>{key}</Text> </Group></Tooltip>
-                        })}
-                    </Group>
                 </SimpleGrid>
+                <Group align={'center'} justify={'center'}>
+                        {Object.keys(pallette).map((key, i) => {
+                                let baseColor = pallette[key];
+                                return (
+                                    <Tooltip
+                                        key={i}
+                                        label={formatter(trunc(catTotal?.[key])) + " hrs saved" ?? "Loading"}
+                                    >
+                                        <Group onClick={() => setShownCategories({[key]: !shownCategories[key]})}>
+                                            <ColorSwatch color={shownCategories[key] ? baseColor : "grey"}/>
+                                            <Text>{key}</Text>
+                                        </Group>
+                                    </Tooltip>
+                                )
+                            }
+                        )}
+                </Group>
+
                 {confetti && <Confetti/>}
                 <SimpleGrid mt={'xl'} cols={1}>
                     {!surpriceLoading && <CelebrationCard id={'total'}

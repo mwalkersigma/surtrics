@@ -1,5 +1,5 @@
 export default class Metric {
-    constructor({title, Explanation, icon, timeSavings, value, values, system, systemBadgeName}) {
+    constructor({title, Explanation, icon, timeSavings, value, values, system, systemBadgeName, group = undefined}) {
         this.title = title;
         this.system = system;
         this.systemBadgeName = systemBadgeName;
@@ -8,6 +8,8 @@ export default class Metric {
         this.timeSavings = timeSavings;
         this.value = value;
         this.values = values;
+        this.shown = true;
+        this.group = group;
     }
 
     render(data) {

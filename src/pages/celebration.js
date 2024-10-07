@@ -563,6 +563,7 @@ const Celebration = () => {
     if (!surpriceLoading) {
         total.render(totalOffset);
     }
+
     let allLoaded = !surpriceLoading && !shopLoading && !poLoading && !quoteLoading && !importerLoading;
     if (allLoaded) {
         Object

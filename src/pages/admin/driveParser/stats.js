@@ -8,6 +8,7 @@ import {AgGridReact} from "ag-grid-react";
 import {StatsGroup} from "../../../components/StatsGroup/StatsGroup";
 import useUsage from "../../../modules/hooks/useUsage";
 import {Carousel} from "@mantine/carousel";
+import {colorScheme} from "../../_app";
 
 
 function DurationRenderer({value}) {
@@ -49,28 +50,20 @@ function serverDateRenderer({value}) {
     }
 }
 
-function BreakdownRender({value}) {
-    const {
-        percent_time_sleeping,
-        percent_time_waiting_for_drive_parser_api,
-        percent_time_processing_local_files
-    } = value;
+function BreakdownRender({value, fields = [], emptyMessage = 'No Failures'}) {
+    let totalValue = fields.map(field => value[field.name]).reduce((acc, curr) => acc + Number(curr), 0);
     return (<Progress.Root size={40}>
-        <Tooltip label="Time Sleeping">
-            <Progress.Section value={Number(percent_time_sleeping)} color={'blue'}>
-                <Progress.Label> Time Sleeping </Progress.Label>
-            </Progress.Section>
-        </Tooltip>
-        <Tooltip label={'Waiting for Drive Parser API'}>
-            <Progress.Section value={Number(percent_time_waiting_for_drive_parser_api)} color={'red'}>
-                <Progress.Label> Waiting for Drive Parser API </Progress.Label>
-            </Progress.Section>
-        </Tooltip>
-        <Tooltip label={'Processing local files'}>
-            <Progress.Section value={Number(percent_time_processing_local_files)} color={'green'}>
-                <Progress.Label> Processing local files </Progress.Label>
-            </Progress.Section>
-        </Tooltip>
+        {totalValue !== 0 && fields.map((field, i) => {
+            const percentOfTotal = value[field.name] / totalValue * 100;
+            return (<Tooltip label={field.label}>
+                <Progress.Section value={percentOfTotal} color={colorScheme.byIndex(i * 4)}>
+                    <Progress.Label> {field.label} </Progress.Label>
+                </Progress.Section>
+            </Tooltip>)
+        })}
+        {totalValue === 0 && <Progress.Section value={100} color={'gray'}>
+            <Progress.Label> {emptyMessage} </Progress.Label>
+        </Progress.Section>}
     </Progress.Root>)
 }
 
@@ -190,8 +183,8 @@ const Stats = () => {
                     comparator: durationComparator,
                 },
                 {
-                    headerName: "Time Per Call to Drive Parser API",
-                    field: 'time_per_call_to_drive_parser_api',
+                    headerName: "Time Getting Cost From Sheet",
+                    field: 'time_getting_cost_from_sheet',
                     cellRenderer: DurationRenderer,
                     sortable: true,
                     filter: true,
@@ -243,10 +236,25 @@ const Stats = () => {
                     columnGroupShow: 'closed',
                     cellRenderer: BreakdownRender,
                     valueGetter: (params) => params.data,
+                    cellRendererParams: {
+                        fields: [
+                            {name: 'percent_time_processing_local_files', label: 'Processing'},
+                            {name: 'percent_time_waiting_for_drive_parser_api', label: 'Drive Parser'},
+                            {name: 'percent_time_getting_cost_from_sheet', label: 'Cost Sheet'},
+                            {name: 'percent_time_sleeping', label: 'Sleeping'},
+                        ]
+                    },
                     width: 500
                 },
                 {
                     field: 'percent_time_sleeping',
+                    sortable: true,
+                    filter: true,
+                    cellDataType: 'percentage',
+                    columnGroupShow: 'open'
+                },
+                {
+                    field: 'percent_time_getting_cost_from_sheet',
                     sortable: true,
                     filter: true,
                     cellDataType: 'percentage',
@@ -266,13 +274,6 @@ const Stats = () => {
                     cellDataType: 'percentage',
                     columnGroupShow: 'open'
                 },
-                {
-                    field: 'percent_time_per_call_to_drive_parser_api',
-                    sortable: true,
-                    filter: true,
-                    cellDataType: 'percentage',
-                    columnGroupShow: 'open'
-                },
             ]
         },
     ]);
@@ -287,6 +288,7 @@ const Stats = () => {
             }
         };
     }, []);
+
     if (isPending) return <Loader/>
     const mostRecentRun = runs.sort((a, b) => new Date(b['start_date']) - new Date(a['start_date']))[0];
     const lastRunToGeneratePO = runs.filter(run => run['pos_generated'] > 0).sort((a, b) => new Date(b['start_date']) - new Date(a['start_date']))[0];
@@ -312,8 +314,18 @@ const Stats = () => {
 
     const daysSinceLastPO = lastRunToGeneratePO ? getDurationString(lastRunToGeneratePO['start_date'], new Date()) : null;
     console.log("Days Since Last PO", daysSinceLastPO)
+    const bestTimeGettingCost = formatDuration(
+        secondsToDuration(
+            minDuration(
+                runs
+                    .map(run => run['time_getting_cost_from_sheet'])
+                    .filter(time => durationToSeconds(time) !== 0)
+            )
+        )
+    ).replace("minutes", "min").replace("seconds", "sec");
 
     const statGroups = [
+        // common stats
         [
             {
                 title: "Last Run Execution Time",
@@ -331,6 +343,7 @@ const Stats = () => {
                 description: lastRunToGeneratePO ? ` A PO was last generated on ${format(serverDateFix(new Date(lastRunToGeneratePO['start_date'])), "Pp")}` : "No POs generated"
             }
         ],
+        // execution time
         [
             {
                 title: "Best Execution Time",
@@ -351,6 +364,7 @@ const Stats = () => {
                 description: "Best time per run"
             },
         ],
+        // file processing
         [
             {
                 title: "Current File Total",
@@ -368,6 +382,7 @@ const Stats = () => {
                 description: "Sheets skipped due to being in the paused state"
             }
         ],
+        // processing time
         [
             {
                 title: "Best Processing Time",
@@ -388,6 +403,7 @@ const Stats = () => {
                 description: "Time not waiting for Drive Parser API or Sleeping"
             },
         ],
+        // runs
         [
             {
                 title: "Total Runs",
@@ -404,7 +420,28 @@ const Stats = () => {
                 stats: daysSinceLastPO ? daysSinceLastPO : "N/A",
                 description: lastRunToGeneratePO ? ` A PO was last generated on ${format(serverDateFix(new Date(lastRunToGeneratePO['start_date'])), "Pp")}` : "No POs generated"
             }
-        ]
+        ],
+        // getting costs
+        [
+            {
+                title: "Best Cost Time",
+                stats: bestTimeGettingCost,
+                description: "Time taken to get cost from sheet"
+            },
+            {
+                title: "Average Cost Time",
+                stats: formatDuration(intervalToDuration({
+                    start: 0,
+                    end: averageDurationSeconds
+                })).replace("minutes", "min").replace("seconds", "sec"),
+                description: "Time taken to get cost from sheet"
+            },
+            {
+                title: "Worst Cost Time",
+                stats: formatDuration(secondsToDuration(maxDuration(runs.map(run => run['time_getting_cost_from_sheet'])))).replace("minutes", "min").replace("seconds", "sec"),
+                description: "Time taken to get cost from sheet"
+            },
+        ],
     ]
 
     return (

@@ -5,6 +5,7 @@ import {
     Flex,
     Grid,
     Group,
+    NumberFormatter,
     Paper,
     rem,
     SimpleGrid,
@@ -24,6 +25,7 @@ import Metric from "../modules/classes/metric";
 import {useQuery} from "@tanstack/react-query";
 import Head from 'next/head'
 import useUpdates from "../modules/hooks/useUpdates";
+import {SplitButton} from "../components/splitButton/SplitButton";
 
 function trunc(value) {
     if (!value) return null;
@@ -376,28 +378,20 @@ let total = new Metric({
     timeSavings: {
         raw: null,
         unit: "Hrs saved",
-        formula(offset) {
-            let filteredList = metrics.filter(metric => metric.title !== "Total Time Saved");
-            let sum = filteredList.reduce((acc, metric) => acc + +metric.timeSavings.raw, 0);
-            if (offset) sum += offset
-            this.raw = Math.trunc(sum * 100) / 100
+        formula(value) {
+            this.raw = Math.trunc(value * 100) / 100
         }
-    }, value: {
+    },
+    value: {
         raw: null,
         unit: "Shifts saved ",
         collectionDateStart: "07/01/2023",
-        formula(offset) {
-            let filteredList = metrics.filter(metric => metric.title !== "Total Time Saved");
-            let sum = filteredList.reduce((acc, metric) => acc + +metric.timeSavings.raw, 0)
-            if (offset) sum += offset
-            this.raw = Math.trunc((sum / 8) * 100) / 100
+        formula(value) {
+            this.raw = Math.trunc((value / 8) * 100) / 100
         }
     }
 });
-total.render = function (offset) {
-    this.timeSavings.formula(offset)
-    this.value.formula(offset)
-}
+
 
 function CelebrationCard({metric, id, extraTagLine}) {
     if (!metric.shown) return null;
@@ -455,6 +449,30 @@ quoteBuilderMetrics.render = directRender;
 importerMetric.render = directRender;
 photoUploadMetric.render = directRender;
 pricingSheetFoldersCreated.render = directRender;
+total.render = directRender;
+
+
+function SwatchMenu({metricKey, color, clickHandler, label, menuItems}) {
+    console.log("Label", label)
+    return (
+        <SplitButton
+            tooltip={label}
+            variant={'subtle'}
+            color={'gray'}
+            buttonProps={{
+                leftSection: <ColorSwatch color={color}/>,
+                onClick: clickHandler,
+            }}
+            menuProps={{
+                trigger: 'click-hover',
+                closeOnItemClick: false,
+            }}
+            menuItems={menuItems}
+        >
+            <Text> {metricKey} </Text>
+        </SplitButton>
+    )
+}
 
 
 const Celebration = () => {
@@ -469,6 +487,21 @@ const Celebration = () => {
                 return acc
             }, {})
     )
+    const [shownSystems, setShownSystems] = useSetState(
+        Object
+            .keys(allMetrics)
+            .reduce((acc, key) => {
+                let category = key;
+                let metrics = allMetrics[key];
+                acc[category] = {}
+                metrics.forEach(metric => {
+                    let system = metric.system;
+                    acc[category][system] = true
+                })
+                return acc
+            }, {})
+    );
+    console.log("Shown Systems", shownSystems)
     const {data: shopUpdates, isPending: shopLoading} = useQuery({
         queryKey: ['shopUsage'], queryFn: async () => {
             const response = await fetch(`/api/logShopUsage`)
@@ -518,7 +551,9 @@ const Celebration = () => {
 
     for (let [key, value] of Object.entries(allMetrics)) {
         value.forEach(metric => {
-            metric.shown = shownCategories[key]
+            let shownCategory = shownCategories[key];
+            let shownCategorySystem = shownSystems[key][metric.system];
+            metric.shown = shownCategory && shownCategorySystem;
         })
     }
 
@@ -552,32 +587,36 @@ const Celebration = () => {
     if (!surpriceLoading) {
         metrics.forEach(metric => metric.render(surpriceUsageData))
     }
-    let shopOffset = shopLoading ? 0 : +shopSavings.timeSavings.raw;
-    let poLineItemOffset = poLoading ? 0 : +poLineItemsMetric.timeSavings.raw;
-    let poCreationOffset = poLoading ? 0 : +poCreationCountMetric.timeSavings.raw;
-    let quotesOffset = quoteLoading ? 0 : +quoteBuilderMetrics.timeSavings.raw;
-    let importerOffset = importerLoading ? 0 : +importerMetric.timeSavings.raw;
-    let photoOffset = updates?.length === 0 ? 0 : +photoUploadMetric.timeSavings.raw;
-    let sheetOffset = sheetCreationLoading ? 0 : +pricingSheetFoldersCreated.timeSavings.raw;
-    let totalOffset = shopOffset + poLineItemOffset + poCreationOffset + quotesOffset + importerOffset + photoOffset + sheetOffset;
-    if (!surpriceLoading) {
-        total.render(totalOffset);
-    }
-
     let allLoaded = !surpriceLoading && !shopLoading && !poLoading && !quoteLoading && !importerLoading;
+    let systemsTotals = {};
+    let totalSaved = 0;
     if (allLoaded) {
-        Object
-            .entries(allMetrics)
-            .forEach(([key, value]) => {
+        let metricList = Object.values(allMetrics).flat();
+        let entries = Object.entries(allMetrics);
+        entries.forEach(([key, value]) => {
                 if (!Array.isArray(value)) return
                 value
                     .forEach(metric => {
                         if (!catTotal[key]) catTotal[key] = 0;
+                        if (!metric.shown) return;
                         catTotal[key] += metric.timeSavings.raw
                     })
+            let systems = Object.keys(shownSystems[key]);
+            systems.forEach((systemName) => {
+                let metrics = metricList.filter(metric => metric.system === systemName);
+                if (!systemsTotals[key]) {
+                    systemsTotals[key] = {}
+                }
+                systemsTotals[key][systemName] = metrics.reduce((acc, metric) => acc + metric.timeSavings.raw, 0)
             })
+            })
+        totalSaved = metricList
+            .filter(metric => metric.shown)
+            .reduce((acc, metric) => acc + metric.timeSavings.raw, 0);
+        total.render(totalSaved);
     }
-
+    console.log(totalSaved)
+    console.log(catTotal)
     console.log("Render")
     return (<span>
             <Head>
@@ -607,15 +646,39 @@ const Celebration = () => {
                         {Object.keys(pallette).map((key, i) => {
                                 let baseColor = pallette[key];
                                 return (
-                                    <Tooltip
+                                    <SwatchMenu
                                         key={i}
-                                        label={formatter(trunc(catTotal?.[key])) + " hrs saved" ?? "Loading"}
-                                    >
-                                        <Group onClick={() => setShownCategories({[key]: !shownCategories[key]})}>
-                                            <ColorSwatch color={shownCategories[key] ? baseColor : "grey"}/>
-                                            <Text>{key}</Text>
-                                        </Group>
-                                    </Tooltip>
+                                        label={`${formatter(trunc(catTotal?.[key]))} hrs saved ${catTotal?.[key] === 0 ? 0 : trunc(catTotal?.[key] / Number(totalSaved) * 100)}% of total` ?? "Loading"}
+                                        clickHandler={() => setShownCategories({[key]: !shownCategories[key]})}
+                                        menuItems={Object.keys(shownSystems[key]).map((system, i) => {
+                                            let shown = shownSystems[key][system];
+                                            let systemSavings = systemsTotals?.[key]?.[system] ?? 0;
+                                            let color = shown ? "green" : "red";
+                                            return {
+                                                itemProps: {
+                                                    leftSection: <ColorSwatch color={color}/>,
+                                                    rightSection: <Text fz={'sm'} c={'dimmed'}>
+                                                        {
+                                                            shown && <>
+                                                                <NumberFormatter decimalScale={2} value={systemSavings}
+                                                                                 suffix={' hrs saved'}/>
+                                                                <Text span fz={'xs'} c={'dimmed'}>{" "} ( <NumberFormatter
+                                                                    decimalScale={2}
+                                                                    value={systemSavings / catTotal[key] * 100}
+                                                                    suffix={'%'}/> )</Text>
+                                                            </>
+                                                        }
+                                                    </Text>,
+                                                    onClick: () => {
+                                                        setShownSystems((prev) => ({[key]: {...prev[key], ...{[system]: !shown}}}))
+                                                    }
+                                                },
+                                                text: <Text fw={700} tt="capitalize" fz={'md'}>{system}</Text>
+                                            }
+                                        })}
+                                        color={shownCategories[key] ? baseColor : "grey"}
+                                        metricKey={key}
+                                    />
                                 )
                             }
                         )}

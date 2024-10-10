@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     Badge,
     ColorSwatch,
@@ -9,14 +9,14 @@ import {
     Paper,
     rem,
     SimpleGrid,
+    Space,
     Switch,
     Text,
     Title,
     Tooltip
 } from "@mantine/core";
-import {IconConfetti, IconConfettiOff} from "@tabler/icons-react";
+import {IconClock, IconConfetti, IconConfettiOff, IconCurrencyDollar} from "@tabler/icons-react";
 import formatter from "../modules/utils/numberFormatter";
-import GraphWithStatCard from "../components/mantine/graphWithStatCard";
 import Confetti from "../components/confetti";
 import {eachWeekOfInterval} from "date-fns";
 import useUsage from "../modules/hooks/useUsage";
@@ -26,6 +26,8 @@ import {useQuery} from "@tanstack/react-query";
 import Head from 'next/head'
 import useUpdates from "../modules/hooks/useUpdates";
 import {SplitButton} from "../components/splitButton/SplitButton";
+
+const defaultBillableHour = 33;
 
 function trunc(value) {
     if (!value) return null;
@@ -372,13 +374,18 @@ for (let [key, value] of Object.entries(allMetrics)) {
     })
 }
 let total = new Metric({
-    title: "Total Time Saved", id: "total", Explanation: `
+    title: "Total Time Saved",
+    id: "total",
+    Explanation: `
         This metric is calculated by adding the time saved from each of the other metrics.
-    `, icon: <Badge>All Systems</Badge>,
+    `,
+    icon: <Badge>All Systems</Badge>,
     timeSavings: {
         raw: null,
         unit: "Hrs saved",
+        costSavings: null,
         formula(value) {
+            this.costSavings = value * defaultBillableHour
             this.raw = Math.trunc(value * 100) / 100
         }
     },
@@ -393,8 +400,9 @@ let total = new Metric({
 });
 
 
-function CelebrationCard({metric, id, extraTagLine}) {
+function CelebrationCard({metric, id, extraTagLine, showCostSavings}) {
     if (!metric.shown) return null;
+    const hasCostSavings = !!metric.timeSavings?.costSavings;
     return (
         <Paper p={"1rem 1.5rem"} withBorder>
             {/*<Group mb={'md'} justify={'space-between'} align={'center'}>*/}
@@ -410,11 +418,6 @@ function CelebrationCard({metric, id, extraTagLine}) {
                     </Flex>
                 </Grid.Col>
             </Grid>
-
-
-            {/*</Group>*/}
-
-
             <Tooltip
                 multiline
                 withArrow
@@ -424,10 +427,23 @@ function CelebrationCard({metric, id, extraTagLine}) {
                     duration: 200
                 }}
             >
-                <Group mb={'md'} align={'end'}>
-                    <Title id={id} c={'teal'}> {formatter(trunc(metric.timeSavings?.raw) ?? '0')} </Title>
-                    <Text> {metric.timeSavings?.unit ?? ""} </Text>
-                </Group>
+                <Flex justify={'space-between'}>
+                    {!showCostSavings && (
+                        <Group mb={'md'} align={'end'}>
+                            <Title id={id} c={'teal'}> {formatter(trunc(metric.timeSavings?.raw) ?? '0')} </Title>
+                            <Text> {metric.timeSavings?.unit ?? ""} </Text>
+                        </Group>
+                    )}
+                    {hasCostSavings && showCostSavings && (
+                        <Group mb={'md'} align={'end'}>
+                            <Title id={id} c={'teal'}><NumberFormatter thousandSeparator
+                                                                       value={metric.timeSavings.costSavings}
+                                                                       decimalScale={2} prefix={'$'}/></Title>
+                            <Text> Dollars Saved </Text>
+                        </Group>
+                    )}
+                    <Group></Group>
+                </Flex>
             </Tooltip>
             <Group c={'dimmed'} justify={'space-between'}>
                 <Group>
@@ -453,7 +469,6 @@ total.render = directRender;
 
 
 function SwatchMenu({metricKey, color, clickHandler, label, menuItems}) {
-    console.log("Label", label)
     return (
         <SplitButton
             tooltip={label}
@@ -501,7 +516,9 @@ const Celebration = () => {
                 return acc
             }, {})
     );
-    console.log("Shown Systems", shownSystems)
+    const [showTimeSavings, setShowTimeSavings] = useState(true)
+
+
     const {data: shopUpdates, isPending: shopLoading} = useQuery({
         queryKey: ['shopUsage'], queryFn: async () => {
             const response = await fetch(`/api/logShopUsage`)
@@ -594,13 +611,13 @@ const Celebration = () => {
         let metricList = Object.values(allMetrics).flat();
         let entries = Object.entries(allMetrics);
         entries.forEach(([key, value]) => {
-                if (!Array.isArray(value)) return
-                value
-                    .forEach(metric => {
-                        if (!catTotal[key]) catTotal[key] = 0;
-                        if (!metric.shown) return;
-                        catTotal[key] += metric.timeSavings.raw
-                    })
+            if (!Array.isArray(value)) return
+            value
+                .forEach(metric => {
+                    if (!catTotal[key]) catTotal[key] = 0;
+                    if (!metric.shown) return;
+                    catTotal[key] += metric.timeSavings.raw
+                })
             let systems = Object.keys(shownSystems[key]);
             systems.forEach((systemName) => {
                 let metrics = metricList.filter(metric => metric.system === systemName);
@@ -609,14 +626,13 @@ const Celebration = () => {
                 }
                 systemsTotals[key][systemName] = metrics.reduce((acc, metric) => acc + metric.timeSavings.raw, 0)
             })
-            })
+        })
         totalSaved = metricList
             .filter(metric => metric.shown)
             .reduce((acc, metric) => acc + metric.timeSavings.raw, 0);
+        metricList.forEach(metric => metric.timeSavings.costSavings = metric.timeSavings.raw * defaultBillableHour);
         total.render(totalSaved);
     }
-    console.log(totalSaved)
-    console.log(catTotal)
     console.log("Render")
     return (<span>
             <Head>
@@ -624,35 +640,65 @@ const Celebration = () => {
                     {JSON.stringify({total})}
                 </script>
             </Head>
-            <GraphWithStatCard noBorder title={'🎉 Automation Celebration 🎉'}>
-                <SimpleGrid mb={'md'} cols={3}>
-                    <Switch
-                        label={'Show Confetti'}
-                        checked={confetti}
-                        onChange={() => setConfetti(!confetti)}
-                        size={'md'}
-                        thumbIcon={confetti ? <IconConfetti
-                            style={{width: rem(12), height: rem(12)}}
-                            color={'teal'}
-                            stroke={2}
-                        /> : <IconConfettiOff
-                            style={{width: rem(12), height: rem(12)}}
-                            color={'gray'}
-                            stroke={2}
-                        />}
-                    />
-                </SimpleGrid>
-                <Group align={'center'} justify={'center'}>
+            {/*<GraphWithStatCard noBorder title={'🎉 Automation Celebration 🎉'}>*/}
+            <Grid justify={"flex-start"} my={'xl'}>
+                <Grid.Col span={3}>
+                    <Flex direction={'column'} justify={'flex-start'} gap={'.5rem'}>
+                        <Switch
+                            label={'Show Confetti'}
+                            checked={confetti}
+                            onChange={() => setConfetti(!confetti)}
+                            size={'md'}
+                            thumbIcon={confetti ? <IconConfetti
+                                style={{width: rem(12), height: rem(12)}}
+                                color={'teal'}
+                                stroke={2}
+                            /> : <IconConfettiOff
+                                style={{width: rem(12), height: rem(12)}}
+                                color={'gray'}
+                                stroke={2}
+                            />}
+                        />
+                        <Switch
+                            label={showTimeSavings ? 'Show Cost Savings' : "Show Time Savings"}
+                            checked={!showTimeSavings}
+                            onChange={() => setShowTimeSavings(!showTimeSavings)}
+                            size={'md'}
+                            thumbIcon={showTimeSavings ? <IconClock
+                                style={{width: rem(12), height: rem(12)}}
+                                color={'teal'}
+                                stroke={2}
+                            /> : <IconCurrencyDollar
+                                style={{width: rem(12), height: rem(12)}}
+                                color={'gray'}
+                                stroke={2}
+                            />}
+                        />
+                    </Flex>
+                </Grid.Col>
+                <Grid.Col py={0} span={6}><Title my={0} py={0}
+                                                 ta={'center'}>🎉 Automation Celebration 🎉</Title></Grid.Col>
+                <Grid.Col span={3}></Grid.Col>
+            </Grid>
+            <Space h={'2rem'}/>
+            <Group align={'center'} justify={'center'}>
                         {Object.keys(pallette).map((key, i) => {
                                 let baseColor = pallette[key];
+                            let percentTotal = `${catTotal?.[key] === 0 ? 0 : trunc(catTotal?.[key] / Number(totalSaved) * 100)}% of total`
+                            let timeSavedLabel = `${formatter(trunc(catTotal?.[key]))} hrs saved ${percentTotal}` ?? "Loading";
+                            let costSavedLabel = `${formatter(trunc(catTotal?.[key] * defaultBillableHour), 'currency')} dollars saved ${percentTotal}` ?? "Loading";
+                            let label = showTimeSavings ? timeSavedLabel : costSavedLabel;
                                 return (
                                     <SwatchMenu
                                         key={i}
-                                        label={`${formatter(trunc(catTotal?.[key]))} hrs saved ${catTotal?.[key] === 0 ? 0 : trunc(catTotal?.[key] / Number(totalSaved) * 100)}% of total` ?? "Loading"}
+                                        label={label}
                                         clickHandler={() => setShownCategories({[key]: !shownCategories[key]})}
                                         menuItems={Object.keys(shownSystems[key]).map((system, i) => {
                                             let shown = shownSystems[key][system];
                                             let systemSavings = systemsTotals?.[key]?.[system] ?? 0;
+                                            let displaySavings = showTimeSavings ? systemSavings : systemSavings * defaultBillableHour;
+                                            let suffix = showTimeSavings ? ' hrs saved' : ' dollars saved';
+                                            let prefix = showTimeSavings ? '' : '$';
                                             let color = shown ? "green" : "red";
                                             return {
                                                 itemProps: {
@@ -660,12 +706,23 @@ const Celebration = () => {
                                                     rightSection: <Text fz={'sm'} c={'dimmed'}>
                                                         {
                                                             shown && <>
-                                                                <NumberFormatter decimalScale={2} value={systemSavings}
-                                                                                 suffix={' hrs saved'}/>
-                                                                <Text span fz={'xs'} c={'dimmed'}>{" "} ( <NumberFormatter
+                                                                <NumberFormatter
                                                                     decimalScale={2}
-                                                                    value={systemSavings / catTotal[key] * 100}
-                                                                    suffix={'%'}/> )</Text>
+                                                                    thousandSeparator
+                                                                    value={displaySavings}
+                                                                    prefix={prefix}
+                                                                    suffix={suffix}
+                                                                />
+                                                                <Text span fz={'xs'} c={'dimmed'}>
+                                                                    {" "}
+                                                                    (
+                                                                    <NumberFormatter
+                                                                        decimalScale={2}
+                                                                        value={systemSavings / catTotal[key] * 100}
+                                                                        suffix={'%'}
+                                                                    />
+                                                                    )
+                                                                </Text>
                                                             </>
                                                         }
                                                     </Text>,
@@ -683,27 +740,43 @@ const Celebration = () => {
                             }
                         )}
                 </Group>
-
-                {confetti && <Confetti/>}
-                <SimpleGrid mt={'xl'} cols={1}>
-                    {!surpriceLoading && <CelebrationCard id={'total'}
-                                                          extraTagLine={`${trunc(+total.value.raw / 250)} Years of work saved.`}
-                                                          metric={total}/>}
+            {confetti && <Confetti/>}
+            <SimpleGrid mt={'xl'} cols={2}>
+                    {!surpriceLoading &&
+                        <CelebrationCard
+                            id={'total'}
+                            extraTagLine={`${trunc(+total.value.raw / 250)} Years of work saved.`}
+                            metric={total}
+                        />
+                    }
+                {!surpriceLoading &&
+                    <CelebrationCard
+                        id={'total'}
+                        showCostSavings
+                        extraTagLine={`${formatter(trunc(+total.timeSavings.costSavings / 250), 'currency')} Saved Every day.`}
+                        metric={total}
+                    />
+                }
                 </SimpleGrid>
-                <SimpleGrid mb={'xl'} mt={'md'} cols={{base: 1, lg: 2, xl: 3}}>
-                    {updates.length !== 0 && <CelebrationCard metric={photoUploadMetric}/>}
-                    {!surpriceLoading && metrics.map((metric, i) => <CelebrationCard key={i} metric={metric}/>)}
+            <SimpleGrid mb={'xl'} mt={'md'} cols={{base: 1, lg: 2, xl: 3}}>
+                    {updates.length !== 0 &&
+                        <CelebrationCard showCostSavings={!showTimeSavings} metric={photoUploadMetric}/>}
+                {!surpriceLoading && metrics.map((metric, i) => <CelebrationCard
+                    showCostSavings={!showTimeSavings} key={i} metric={metric}/>)}
                     {!poLoading && <>
-                        <CelebrationCard metric={poLineItemsMetric}/>
-                        <CelebrationCard metric={poCreationCountMetric}/>
+                        <CelebrationCard showCostSavings={!showTimeSavings} metric={poLineItemsMetric}/>
+                        <CelebrationCard showCostSavings={!showTimeSavings} metric={poCreationCountMetric}/>
                     </>}
-                    {!sheetCreationLoading && <CelebrationCard metric={pricingSheetFoldersCreated}/>}
-                    {!importerLoading && <CelebrationCard metric={importerMetric}/>}
-                    {!shopLoading && <CelebrationCard metric={shopSavings}/>}
-                    {!quoteLoading && <CelebrationCard metric={quoteBuilderMetrics}/>}
+                {!sheetCreationLoading &&
+                    <CelebrationCard showCostSavings={!showTimeSavings} metric={pricingSheetFoldersCreated}/>}
+                {!importerLoading &&
+                    <CelebrationCard showCostSavings={!showTimeSavings} metric={importerMetric}/>}
+                {!shopLoading && <CelebrationCard showCostSavings={!showTimeSavings} metric={shopSavings}/>}
+                {!quoteLoading &&
+                    <CelebrationCard showCostSavings={!showTimeSavings} metric={quoteBuilderMetrics}/>}
 
                 </SimpleGrid>
-            </GraphWithStatCard>
+            {/*</GraphWithStatCard>*/}
         </span>
 
     );

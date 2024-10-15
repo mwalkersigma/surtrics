@@ -2,11 +2,11 @@ import React, {useState} from 'react';
 import {
     Badge,
     ColorSwatch,
+    Container,
     Flex,
     Grid,
     Group,
     NumberFormatter,
-    Paper,
     rem,
     SimpleGrid,
     Space,
@@ -21,22 +21,17 @@ import Confetti from "../components/confetti";
 import {eachWeekOfInterval} from "date-fns";
 import useUsage from "../modules/hooks/useUsage";
 import {useLocalStorage, useSetState} from "@mantine/hooks";
-import Metric from "../modules/classes/metric";
+import Metric, {DirectRenderMetric} from "../modules/classes/metric";
 import {useQuery} from "@tanstack/react-query";
-import Head from 'next/head'
 import useUpdates from "../modules/hooks/useUpdates";
-import {SplitButton} from "../components/splitButton/SplitButton";
+import SwatchMenu from "../components/swatchMenu";
+import CelebrationCard from "../components/celebrationCard";
 
 const defaultBillableHour = 33;
 
 function trunc(value) {
     if (!value) return null;
     return Math.trunc(value * 100) / 100
-}
-
-function directRender(val) {
-    this.value.formula(val)
-    this.timeSavings.formula(val)
 }
 
 const pallette = {
@@ -159,8 +154,7 @@ const metrics = [
     }),
 ];
 
-
-const poLineItemsMetric = new Metric({
+const poLineItemsMetric = new DirectRenderMetric({
     title: "Po Line Item Creation",
     Explanation: `
             Based on a time study conducted by Libby, it takes on average 63 seconds to add an item into inventory from 
@@ -181,7 +175,7 @@ const poLineItemsMetric = new Metric({
         }
     },
 })
-const poCreationCountMetric = new Metric({
+const poCreationCountMetric = new DirectRenderMetric({
     title: "PO Creation",
     Explanation: `
             Each Po that is created with the Drive Parser is a huge victory.
@@ -211,8 +205,7 @@ const poCreationCountMetric = new Metric({
     },
 
 })
-
-const photoUploadMetric = new Metric({
+const photoUploadMetric = new DirectRenderMetric({
     title: "Photos Uploaded",
     Explanation: `
         This metric is calculated by counting the number of image_last_updated_by tags in channel advisor. 
@@ -241,8 +234,7 @@ const photoUploadMetric = new Metric({
     },
 
 })
-
-let shopSavings = new Metric({
+let shopSavings = new DirectRenderMetric({
     title: "Shop Orders Sent To Insightly",
     Explanation: `
         When an order is placed on the surplus website by the SHOP it is automatically sent to Insightly. 
@@ -261,13 +253,13 @@ let shopSavings = new Metric({
     value: {
         raw: null,
         unit: "Orders sent",
-        collectionDateStart: "02/20/2024",
+        collectionDateStart: "02/19/2024",
         formula(val) {
             this.raw = formatter(val)
         }
     },
 });
-const quoteBuilderMetrics = new Metric({
+const quoteBuilderMetrics = new DirectRenderMetric({
     title: "Quote Builder Automation",
     Explanation: `
         The quote builder generates quotes based on insightly opportunities.
@@ -285,14 +277,13 @@ const quoteBuilderMetrics = new Metric({
     value: {
         raw: null,
         unit: "Quotes generated",
-        collectionDateStart: "02/20/2024",
+        collectionDateStart: "08/12/2024",
         formula(val) {
             this.raw = formatter(val)
         }
     }
 });
-
-const importerMetric = new Metric({
+const importerMetric = new DirectRenderMetric({
     title: "Importer Template Approvals",
     Explanation: `
         The importer takes data entered by surplus listers. It then process that data to include all the needed data
@@ -311,13 +302,13 @@ const importerMetric = new Metric({
     value: {
         raw: null,
         unit: "Templates approved",
-        collectionDateStart: "02/20/2024",
+        collectionDateStart: "12/12/2022",
         formula(val) {
             this.raw = formatter(val)
         }
     }
 });
-const pricingSheetFoldersCreated = new Metric({
+const pricingSheetFoldersCreated = new DirectRenderMetric({
     title: "Pricing Sheet Folders Created",
     Explanation: `
         Pricing Folders are generated when an insightly Parts opportunity is moved to stage 3.
@@ -345,7 +336,31 @@ const pricingSheetFoldersCreated = new Metric({
         }
     }
 })
-// this can be used to generate sum tooltips on the swatches and can be used to automate the icon
+let total = new DirectRenderMetric({
+    title: "Total Savings",
+    id: "total",
+    Explanation: `
+        This metric is calculated by adding the time saved from each of the other metrics.
+    `,
+    icon: <Badge>All Systems</Badge>,
+    timeSavings: {
+        raw: null,
+        unit: "Hrs saved",
+        costSavings: null,
+        formula(value) {
+            this.costSavings = value * defaultBillableHour
+            this.raw = Math.trunc(value * 100) / 100
+        }
+    },
+    value: {
+        raw: null,
+        unit: "Shifts saved ",
+        collectionDateStart: "07/01/2023",
+        formula(value) {
+            this.raw = Math.trunc((value / 8) * 100) / 100
+        }
+    }
+});
 
 const allMetrics = {
     "Surplus": [
@@ -373,152 +388,28 @@ for (let [key, value] of Object.entries(allMetrics)) {
         metric.icon = <Tooltip label={metric.system}><Badge color={color}>{metric.systemBadgeName}</Badge></Tooltip>
     })
 }
-let total = new Metric({
-    title: "Total Time Saved",
-    id: "total",
-    Explanation: `
-        This metric is calculated by adding the time saved from each of the other metrics.
-    `,
-    icon: <Badge>All Systems</Badge>,
-    timeSavings: {
-        raw: null,
-        unit: "Hrs saved",
-        costSavings: null,
-        formula(value) {
-            this.costSavings = value * defaultBillableHour
-            this.raw = Math.trunc(value * 100) / 100
-        }
-    },
-    value: {
-        raw: null,
-        unit: "Shifts saved ",
-        collectionDateStart: "07/01/2023",
-        formula(value) {
-            this.raw = Math.trunc((value / 8) * 100) / 100
-        }
-    }
-});
+
+let allCategories = Object
+    .keys(allMetrics)
+    .reduce((acc, key) => {
+        acc[key] = true;
+        return acc
+    }, {});
+let allSystems = Object
+    .keys(allMetrics)
+    .reduce((acc, key) => {
+        let category = key;
+        let metrics = allMetrics[key];
+        acc[category] = {}
+        metrics.forEach(metric => {
+            let system = metric.system;
+            acc[category][system] = true
+        })
+        return acc
+    }, {})
 
 
-function CelebrationCard({metric, id, extraTagLine, showCostSavings}) {
-    if (!metric.shown) return null;
-    const hasCostSavings = !!metric.timeSavings?.costSavings;
-    return (
-        <Paper p={"1rem 1.5rem"} withBorder>
-            {/*<Group mb={'md'} justify={'space-between'} align={'center'}>*/}
-            <Grid justify="space-between">
-                <Grid.Col span={8}>
-                    <Tooltip label={metric?.title ?? ""}>
-                        <Text truncate="end"> {metric.title} </Text>
-                    </Tooltip>
-                </Grid.Col>
-                <Grid.Col justify={'flex-end'} span={4}>
-                    <Flex justify={'flex-end'}>
-                        {metric.icon}
-                    </Flex>
-                </Grid.Col>
-            </Grid>
-            <Tooltip
-                multiline
-                withArrow
-                label={metric.Explanation}
-                w={220}
-                transitionProps={{
-                    duration: 200
-                }}
-            >
-                <Flex justify={'space-between'}>
-                    {!showCostSavings && (
-                        <Group mb={'md'} align={'end'}>
-                            <Title id={id} c={'teal'}> {formatter(trunc(metric.timeSavings?.raw) ?? '0')} </Title>
-                            <Text> {metric.timeSavings?.unit ?? ""} </Text>
-                        </Group>
-                    )}
-                    {hasCostSavings && showCostSavings && (
-                        <Group mb={'md'} align={'end'}>
-                            <Title id={id} c={'teal'}><NumberFormatter thousandSeparator
-                                                                       value={metric.timeSavings.costSavings}
-                                                                       decimalScale={2} prefix={'$'}/></Title>
-                            <Text> Dollars Saved </Text>
-                        </Group>
-                    )}
-                    <Group></Group>
-                </Flex>
-            </Tooltip>
-            <Group c={'dimmed'} justify={'space-between'}>
-                <Group>
-                    <Text fz={'xs'}> {metric.value.raw} {metric.value?.unit ?? ""}  </Text>
-                    {extraTagLine && <Text fz={'xs'}> {extraTagLine} </Text>}
-                </Group>
-                <Text fz={'xs'}> Start Date {metric.value?.collectionDateStart ?? ""} </Text>
-            </Group>
-
-        </Paper>
-    )
-}
-
-
-shopSavings.render = directRender;
-poLineItemsMetric.render = directRender;
-poCreationCountMetric.render = directRender;
-quoteBuilderMetrics.render = directRender;
-importerMetric.render = directRender;
-photoUploadMetric.render = directRender;
-pricingSheetFoldersCreated.render = directRender;
-total.render = directRender;
-
-
-function SwatchMenu({metricKey, color, clickHandler, label, menuItems}) {
-    return (
-        <SplitButton
-            tooltip={label}
-            variant={'subtle'}
-            color={'gray'}
-            buttonProps={{
-                leftSection: <ColorSwatch color={color}/>,
-                onClick: clickHandler,
-            }}
-            menuProps={{
-                trigger: 'click-hover',
-                closeOnItemClick: false,
-            }}
-            menuItems={menuItems}
-        >
-            <Text> {metricKey} </Text>
-        </SplitButton>
-    )
-}
-
-
-const Celebration = () => {
-    let catTotal = {}
-    useUsage("Metrics", "celebration")
-
-    const [shownCategories, setShownCategories] = useSetState(
-        Object
-            .keys(allMetrics)
-            .reduce((acc, key) => {
-                acc[key] = true;
-                return acc
-            }, {})
-    )
-    const [shownSystems, setShownSystems] = useSetState(
-        Object
-            .keys(allMetrics)
-            .reduce((acc, key) => {
-                let category = key;
-                let metrics = allMetrics[key];
-                acc[category] = {}
-                metrics.forEach(metric => {
-                    let system = metric.system;
-                    acc[category][system] = true
-                })
-                return acc
-            }, {})
-    );
-    const [showTimeSavings, setShowTimeSavings] = useState(true)
-
-
+function useMetricsData(config) {
     const {data: shopUpdates, isPending: shopLoading} = useQuery({
         queryKey: ['shopUsage'], queryFn: async () => {
             const response = await fetch(`/api/logShopUsage`)
@@ -559,12 +450,63 @@ const Celebration = () => {
                 .then(res => res.json())
         }
     });
-
     const updates = useUpdates("/api/views/photos", {total: true, parentOnly: true});
+    let photosLoading = updates.length === 0;
+    let photoData = photosLoading ? undefined : updates[0];
+    let allLoaded = !surpriceLoading && !shopLoading && !poLoading && !quoteLoading && !importerLoading && !sheetCreationLoading && !photosLoading;
+    let loadingStates = {
+        shopLoading,
+        surpriceLoading,
+        poLoading,
+        quoteLoading,
+        importerLoading,
+        sheetCreationLoading,
+        photosLoading,
+    };
+    let data = {
+        shopOrderProcessor: shopUpdates,
+        surpriceUsageData,
+        poData,
+        quoteData,
+        importerData,
+        sheetCreationData,
+        photoData
+    }
+    return {
+        ...data,
+        ...loadingStates,
+        allLoaded
+    }
+}
 
+
+const Celebration = () => {
+    let catTotal = {}
+    useUsage("Metrics", "celebration")
+    const [shownCategories, setShownCategories] = useSetState(allCategories);
+    const [shownSystems, setShownSystems] = useSetState(allSystems);
+    const [showTimeSavings, setShowTimeSavings] = useState(true)
     const [confetti, setConfetti] = useLocalStorage({
         key: "confetti", defaultValue: true
     });
+    const metricsData = useMetricsData()
+    const {
+        shopOrderProcessor: shopUpdates,
+        surpriceUsageData,
+        poData,
+        quoteData,
+        importerData,
+        sheetCreationData,
+        photoData,
+        shopLoading,
+        surpriceLoading,
+        poLoading,
+        quoteLoading,
+        importerLoading,
+        sheetCreationLoading,
+        photosLoading,
+        allLoaded
+    } = metricsData;
 
     for (let [key, value] of Object.entries(allMetrics)) {
         value.forEach(metric => {
@@ -574,20 +516,25 @@ const Celebration = () => {
         })
     }
 
-
     if (!sheetCreationLoading) {
         pricingSheetFoldersCreated.render(sheetCreationData.length)
     }
-    if (!quoteLoading && quoteData?.length) {
+
+    if (!quoteLoading) {
         quoteBuilderMetrics.render(quoteData.length)
     }
 
-    if (updates?.length !== 0) {
-        photoUploadMetric.render(updates[0].count)
+    if (!photosLoading) {
+        console.log(photoData)
+        photoUploadMetric.render(photoData.count)
     }
 
     if (!importerLoading) {
         importerMetric.render(importerData)
+    }
+
+    if (!shopLoading) {
+        shopSavings.render(shopUpdates[0] || 0)
     }
 
     if (!poLoading) {
@@ -597,50 +544,46 @@ const Celebration = () => {
         poCreationCountMetric.render(PoCount);
     }
 
-    if (!shopLoading) {
-        shopSavings.render(shopUpdates[0] || 0)
-    }
-
     if (!surpriceLoading) {
         metrics.forEach(metric => metric.render(surpriceUsageData))
     }
-    let allLoaded = !surpriceLoading && !shopLoading && !poLoading && !quoteLoading && !importerLoading;
+
+
     let systemsTotals = {};
     let totalSaved = 0;
-    if (allLoaded) {
-        let metricList = Object.values(allMetrics).flat();
-        let entries = Object.entries(allMetrics);
-        entries.forEach(([key, value]) => {
-            if (!Array.isArray(value)) return
-            value
-                .forEach(metric => {
-                    if (!catTotal[key]) catTotal[key] = 0;
-                    if (!metric.shown) return;
-                    catTotal[key] += metric.timeSavings.raw
-                })
-            let systems = Object.keys(shownSystems[key]);
-            systems.forEach((systemName) => {
-                let metrics = metricList.filter(metric => metric.system === systemName);
-                if (!systemsTotals[key]) {
-                    systemsTotals[key] = {}
-                }
-                systemsTotals[key][systemName] = metrics.reduce((acc, metric) => acc + metric.timeSavings.raw, 0)
-            })
-        })
-        totalSaved = metricList
-            .filter(metric => metric.shown)
-            .reduce((acc, metric) => acc + metric.timeSavings.raw, 0);
-        metricList.forEach(metric => metric.timeSavings.costSavings = metric.timeSavings.raw * defaultBillableHour);
-        total.render(totalSaved);
-    }
-    console.log("Render")
-    return (<span>
-            <Head>
-                <script type={'application/ld+json'}>
-                    {JSON.stringify({total})}
-                </script>
-            </Head>
-            {/*<GraphWithStatCard noBorder title={'🎉 Automation Celebration 🎉'}>*/}
+    let metricList = Object.values(allMetrics).flat();
+    let entries = Object.entries(allMetrics);
+
+    entries.forEach(([key, value]) => {
+        if (!Array.isArray(value)) return
+
+        function sumCatSavings(metric) {
+            if (!catTotal[key]) catTotal[key] = 0;
+            if (!metric.shown) return;
+            catTotal[key] += metric.timeSavings.raw
+        }
+
+        function sumSysSavings(systemName) {
+            let metrics = metricList.filter(metric => metric.system === systemName);
+            if (!systemsTotals[key]) {
+                systemsTotals[key] = {}
+            }
+            systemsTotals[key][systemName] = metrics.reduce((acc, metric) => acc + metric.timeSavings.raw, 0)
+        }
+
+        value.forEach(sumCatSavings)
+        Object.keys(shownSystems[key]).forEach(sumSysSavings)
+    });
+
+    totalSaved = metricList
+        .filter(metric => metric.shown)
+        .reduce((acc, metric) => acc + metric.timeSavings.raw, 0);
+
+    metricList.forEach(metric => metric.timeSavings.costSavings = metric.timeSavings.raw * defaultBillableHour);
+    total.render(totalSaved);
+
+    return (
+        <Container size={'responsive'}>
             <Grid justify={"flex-start"} my={'xl'}>
                 <Grid.Col span={3}>
                     <Flex direction={'column'} justify={'flex-start'} gap={'.5rem'}>
@@ -676,8 +619,15 @@ const Celebration = () => {
                         />
                     </Flex>
                 </Grid.Col>
-                <Grid.Col py={0} span={6}><Title my={0} py={0}
-                                                 ta={'center'}>🎉 Automation Celebration 🎉</Title></Grid.Col>
+                <Grid.Col py={0} span={6}>
+                    <Title
+                        my={0}
+                        py={0}
+                        ta={'center'}
+                    >
+                        🎉 Automation Celebration 🎉
+                    </Title>
+                </Grid.Col>
                 <Grid.Col span={3}></Grid.Col>
             </Grid>
             <Space h={'2rem'}/>
@@ -700,9 +650,12 @@ const Celebration = () => {
                                             let suffix = showTimeSavings ? ' hrs saved' : ' dollars saved';
                                             let prefix = showTimeSavings ? '' : '$';
                                             let color = shown ? "green" : "red";
+                                            const menuItemClickHandler = () => {
+                                                setShownSystems((prev) => ({[key]: {...prev[key], ...{[system]: !shown}}}))
+                                            }
                                             return {
                                                 itemProps: {
-                                                    leftSection: <ColorSwatch color={color}/>,
+                                                    leftSection: <ColorSwatch size={10} color={color}/>,
                                                     rightSection: <Text fz={'sm'} c={'dimmed'}>
                                                         {
                                                             shown && <>
@@ -726,9 +679,7 @@ const Celebration = () => {
                                                             </>
                                                         }
                                                     </Text>,
-                                                    onClick: () => {
-                                                        setShownSystems((prev) => ({[key]: {...prev[key], ...{[system]: !shown}}}))
-                                                    }
+                                                    onClick: menuItemClickHandler
                                                 },
                                                 text: <Text fw={700} tt="capitalize" fz={'md'}>{system}</Text>
                                             }
@@ -741,44 +692,33 @@ const Celebration = () => {
                         )}
                 </Group>
             {confetti && <Confetti/>}
-            <SimpleGrid mt={'xl'} cols={2}>
-                    {!surpriceLoading &&
-                        <CelebrationCard
-                            id={'total'}
-                            extraTagLine={`${trunc(+total.value.raw / 250)} Years of work saved.`}
-                            metric={total}
-                        />
-                    }
-                {!surpriceLoading &&
-                    <CelebrationCard
-                        id={'total'}
-                        showCostSavings
-                        extraTagLine={`${formatter(trunc(+total.timeSavings.costSavings / 250), 'currency')} Saved Every day.`}
-                        metric={total}
-                    />
-                }
+            <SimpleGrid mt={'xl'} cols={1}>
+                <CelebrationCard
+                    id={'total'}
+                    loading={!allLoaded}
+                    showCostSavings={!showTimeSavings}
+                    extraTagLine={`${trunc(+total?.value?.raw / 250)} Years of work saved.`}
+                    metric={total}
+                />
                 </SimpleGrid>
             <SimpleGrid mb={'xl'} mt={'md'} cols={{base: 1, lg: 2, xl: 3}}>
-                    {updates.length !== 0 &&
-                        <CelebrationCard showCostSavings={!showTimeSavings} metric={photoUploadMetric}/>}
-                {!surpriceLoading && metrics.map((metric, i) => <CelebrationCard
-                    showCostSavings={!showTimeSavings} key={i} metric={metric}/>)}
-                    {!poLoading && <>
-                        <CelebrationCard showCostSavings={!showTimeSavings} metric={poLineItemsMetric}/>
-                        <CelebrationCard showCostSavings={!showTimeSavings} metric={poCreationCountMetric}/>
-                    </>}
-                {!sheetCreationLoading &&
-                    <CelebrationCard showCostSavings={!showTimeSavings} metric={pricingSheetFoldersCreated}/>}
-                {!importerLoading &&
-                    <CelebrationCard showCostSavings={!showTimeSavings} metric={importerMetric}/>}
-                {!shopLoading && <CelebrationCard showCostSavings={!showTimeSavings} metric={shopSavings}/>}
-                {!quoteLoading &&
-                    <CelebrationCard showCostSavings={!showTimeSavings} metric={quoteBuilderMetrics}/>}
-
-                </SimpleGrid>
-            {/*</GraphWithStatCard>*/}
-        </span>
-
+                <CelebrationCard loading={photosLoading} showCostSavings={!showTimeSavings} metric={photoUploadMetric}/>
+                {metrics.map((metric, i) =>
+                    (
+                        <CelebrationCard key={i} loading={surpriceLoading} showCostSavings={!showTimeSavings}
+                                         metric={metric}/>
+                    ))
+                }
+                <CelebrationCard loading={poLoading} showCostSavings={!showTimeSavings} metric={poLineItemsMetric}/>
+                <CelebrationCard loading={poLoading} showCostSavings={!showTimeSavings} metric={poCreationCountMetric}/>
+                <CelebrationCard loading={sheetCreationLoading} showCostSavings={!showTimeSavings}
+                                 metric={pricingSheetFoldersCreated}/>
+                <CelebrationCard loading={importerLoading} showCostSavings={!showTimeSavings} metric={importerMetric}/>
+                <CelebrationCard loading={shopLoading} showCostSavings={!showTimeSavings} metric={shopSavings}/>
+                <CelebrationCard loading={quoteLoading} showCostSavings={!showTimeSavings}
+                                 metric={quoteBuilderMetrics}/>
+            </SimpleGrid>
+        </Container>
     );
 };
 

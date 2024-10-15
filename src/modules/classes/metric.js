@@ -38,3 +38,14 @@ export default class Metric {
         return this;
     }
 }
+
+export class DirectRenderMetric extends Metric {
+    constructor(args) {
+        super(args);
+    }
+
+    render(val) {
+        this.value.formula(val)
+        this.timeSavings.formula(val)
+    }
+}

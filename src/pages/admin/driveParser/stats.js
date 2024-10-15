@@ -55,7 +55,7 @@ function BreakdownRender({value, fields = [], emptyMessage = 'No Failures'}) {
     return (<Progress.Root size={40}>
         {totalValue !== 0 && fields.map((field, i) => {
             const percentOfTotal = value[field.name] / totalValue * 100;
-            return (<Tooltip label={field.label}>
+            return (<Tooltip key={i} label={field.label}>
                 <Progress.Section value={percentOfTotal} color={colorScheme.byIndex(i * 4)}>
                     <Progress.Label> {field.label} </Progress.Label>
                 </Progress.Section>

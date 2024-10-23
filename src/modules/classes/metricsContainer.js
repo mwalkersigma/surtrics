@@ -1,6 +1,6 @@
 import {Badge, Tooltip} from "@mantine/core";
 import React from "react";
-import {defaultBillableHour} from "../../pages/celebration/metrics";
+import {defaultBillableHour} from "../metrics";
 
 
 export default class MetricsContainer {

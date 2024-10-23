@@ -1,11 +1,11 @@
-import MetricsContainer from "../../modules/classes/metricsContainer";
-import Metric, {DirectRenderMetric} from "../../modules/classes/metric";
-import formatter from "../../modules/utils/numberFormatter";
+import MetricsContainer from "./classes/metricsContainer";
+import Metric, {DirectRenderMetric} from "./classes/metric";
+import formatter from "./utils/numberFormatter";
 import {eachWeekOfInterval} from "date-fns";
 import {Badge} from "@mantine/core";
 import React from "react";
-import trunc from "../../modules/utils/trunc";
-import {totalSavedSymbol} from "./index";
+import trunc from "./utils/trunc";
+import {totalSavedSymbol} from "../pages/celebration";
 
 
 export const defaultBillableHour = 33;

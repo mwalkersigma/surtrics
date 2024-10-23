@@ -21,7 +21,7 @@ import SwatchMenu from "../../components/swatchMenu";
 import CelebrationCard from "../../components/celebrationCard";
 import useMetricsData from "../../modules/hooks/useMetricsData";
 import useLoadObserver from "../../modules/hooks/useLoadObserver";
-import metricsContainer, {defaultBillableHour, palette, total} from "./metrics";
+import metricsContainer, {defaultBillableHour, palette, total} from "../../modules/metrics";
 
 
 function trunc(value) {

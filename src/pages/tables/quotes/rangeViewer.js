@@ -1,8 +1,8 @@
 import {Container, Title} from "@mantine/core";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
-import {AgGridReact} from "ag-grid-react";
 import {useQuery} from "@tanstack/react-query";
 import {useState} from "react";
+import DataGrid from "../../../components/agGrid";
 
 export default function UsageViewer() {
     const {data: quoteData, isPending: quoteLoading} = useQuery({
@@ -47,7 +47,7 @@ export default function UsageViewer() {
             <Title my={'xl'} order={1}>Usage</Title>
             <CustomRangeMenu my={'xl'} label={'Date Range'} subscribe={setDates} defaultValue={[null, null]}/>
             <div className="ag-theme-custom" style={{height: "61vh"}}>
-                <AgGridReact
+                <DataGrid
                     masterDetail={true}
                     columnDefs={[
                         {field: 'firstName', sortable: true, filter: true, cellRenderer: 'agGroupCellRenderer'},

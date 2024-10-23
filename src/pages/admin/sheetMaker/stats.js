@@ -4,11 +4,12 @@ import {Box, Center, Container, Group, Loader, Progress, Space, Text, TextInput,
 import {IconCircleCheck, IconCircleLetterI, IconCircleX} from "@tabler/icons-react";
 import {format, formatDuration, intervalToDuration, isSameDay, subHours} from "date-fns";
 import RoleWrapper from "../../../components/RoleWrapper";
-import {AgGridReact} from "ag-grid-react";
 import {StatsGroup} from "../../../components/StatsGroup/StatsGroup";
 import useUsage from "../../../modules/hooks/useUsage";
 import {Carousel} from "@mantine/carousel";
 import {colorScheme} from "../../_app";
+import trunc from "../../../modules/utils/trunc";
+import DataGrid from "../../../components/agGrid";
 
 
 function DurationRenderer({value}) {
@@ -16,10 +17,7 @@ function DurationRenderer({value}) {
         h={'100%'}>{formatDuration(value, {format: ["seconds"]}).replace("seconds", "sec")} {value.milliseconds} ms </Center>;
 }
 
-function trunc(value) {
-    if (!value) return null;
-    return Math.trunc(value * 100) / 100
-}
+
 
 function BooleanRenderer({value}) {
     return <Center h={'100%'}>{value ? <IconCircleCheck color={'var(--mantine-color-green-5)'}/> :
@@ -69,14 +67,6 @@ function durationToSeconds(duration) {
 
 function durationToMilliseconds(duration) {
     return durationToSeconds(duration) * 1000 + (duration?.milliseconds ?? 0);
-}
-
-function secondsToDuration(seconds) {
-    return {
-        hours: Math.floor(seconds / 3600),
-        minutes: Math.floor(seconds / 60) % 60,
-        seconds: Math.floor(seconds * 100) / 100 % 60
-    }
 }
 
 function millisecondsToDurationString(m) {
@@ -535,7 +525,7 @@ const Stats = () => {
                 </Group>
 
                 <div style={{height: "55vh"}} className="ag-theme-custom">
-                    <AgGridReact
+                    <DataGrid
                         pagination={true}
                         quickFilterText={searchText}
                         columnDefs={columnDefs}

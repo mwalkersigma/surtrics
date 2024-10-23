@@ -4,11 +4,11 @@ import {Box, Center, Container, Group, Loader, Progress, Space, Text, TextInput,
 import {IconCircleCheck, IconCircleLetterI, IconCircleX} from "@tabler/icons-react";
 import {format, formatDuration, intervalToDuration, isSameDay, subHours} from "date-fns";
 import RoleWrapper from "../../../components/RoleWrapper";
-import {AgGridReact} from "ag-grid-react";
 import {StatsGroup} from "../../../components/StatsGroup/StatsGroup";
 import useUsage from "../../../modules/hooks/useUsage";
 import {Carousel} from "@mantine/carousel";
 import {colorScheme} from "../../_app";
+import DataGrid from "../../../components/agGrid";
 
 
 function DurationRenderer({value}) {
@@ -481,7 +481,7 @@ const Stats = () => {
                 </Group>
 
                 <div style={{height: "55vh"}} className="ag-theme-custom">
-                    <AgGridReact
+                    <DataGrid
                         quickFilterText={searchText}
                         columnDefs={columnDefs}
                         rowData={runs}

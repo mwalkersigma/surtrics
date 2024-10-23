@@ -1,7 +1,7 @@
-import router from "../../../modules/serverUtils/requestRouter";
-import Query from "../../../modules/classes/query";
-import db from "../../../db/index"
-import {parseBody} from "../../../modules/serverUtils/parseBody";
+import router from "../../../../modules/serverUtils/requestRouter";
+import Query from "../../../../modules/classes/query";
+import db from "../../../../db"
+import {parseBody} from "../../../../modules/serverUtils/parseBody";
 
 async function postHandler(req, res) {
     const {startDate, endDate, total, parentOnly} = parseBody(req);

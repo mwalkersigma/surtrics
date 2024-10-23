@@ -13,12 +13,12 @@ import {
     Tooltip
 } from "@mantine/core";
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {AgGridReact} from "ag-grid-react";
 import {IconCircleCheck, IconCircleLetterI, IconCircleX, IconExternalLink} from "@tabler/icons-react";
 import RoleWrapper from "../../../components/RoleWrapper";
 import {queryClient} from "../../_app";
 import {format, subHours} from "date-fns";
 import useUsage from "../../../modules/hooks/useUsage";
+import DataGrid from "../../../components/agGrid";
 
 
 function ButtonRenderer({value, clickHandler, data, color}) {
@@ -185,7 +185,7 @@ const Review = () => {
                 </Group>
 
                 <div style={{height: "55vh"}} className="ag-theme-custom">
-                    <AgGridReact
+                    <DataGrid
                         quickFilterText={searchText}
                         columnDefs={columnDefs}
                         rowData={dataForGrid}

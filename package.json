@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ag-grid-community/theming": "^32.3.0",
     "@mantine/carousel": "^7.12.1",
     "@mantine/charts": "^7.12.1",
     "@mantine/core": "7.12.1",

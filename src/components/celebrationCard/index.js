@@ -1,17 +1,18 @@
 import {Flex, Grid, Group, NumberFormatter, Paper, Skeleton, Text, Title, Tooltip} from "@mantine/core";
-import formatter from "../../modules/utils/numberFormatter";
 import React from "react";
 
-function trunc(value) {
-    if (!value) return null;
-    return Math.trunc(value * 100) / 100
-}
 
 export default function CelebrationCard({metric, loading, id, extraTagLine, showCostSavings}) {
     if (!metric.shown) return null;
+    let isLoading = loading || !metric.isRendered;
     const hasCostSavings = !!metric.timeSavings?.costSavings;
+    let isShowingCost = (hasCostSavings && showCostSavings);
+    let displayValue = isShowingCost ? metric.timeSavings?.costSavings : metric.timeSavings?.raw ?? 0;
+    let displayUnit = isShowingCost ? "Dollars Saved" : metric.timeSavings?.unit ?? "";
+    let displayPrefix = isShowingCost ? "$" : "";
+
     return (
-        <Skeleton visible={!!loading}>
+        <Skeleton visible={!!isLoading}>
             <Paper p={"1rem 1.5rem"} withBorder>
                 <Grid justify="space-between">
                     <Grid.Col span={8}>
@@ -35,20 +36,17 @@ export default function CelebrationCard({metric, loading, id, extraTagLine, show
                     }}
                 >
                     <Flex justify={'space-between'}>
-                        {!showCostSavings && (
-                            <Group mb={'md'} align={'end'}>
-                                <Title id={id} c={'teal'}> {formatter(trunc(metric.timeSavings?.raw) ?? '0')} </Title>
-                                <Text> {metric.timeSavings?.unit ?? ""} </Text>
-                            </Group>
-                        )}
-                        {hasCostSavings && showCostSavings && (
-                            <Group mb={'md'} align={'end'}>
-                                <Title id={id} c={'teal'}><NumberFormatter thousandSeparator
-                                                                           value={metric.timeSavings.costSavings}
-                                                                           decimalScale={2} prefix={'$'}/></Title>
-                                <Text> Dollars Saved </Text>
-                            </Group>
-                        )}
+                        <Group mb={'md'} align={'end'}>
+                            <Title id={id} c={'teal'}>
+                                <NumberFormatter
+                                    thousandSeparator
+                                    value={displayValue}
+                                    decimalScale={2}
+                                    prefix={displayPrefix}
+                                />
+                            </Title>
+                            <Text> {displayUnit} </Text>
+                        </Group>
                         <Group></Group>
                     </Flex>
                 </Tooltip>

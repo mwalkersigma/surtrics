@@ -53,7 +53,7 @@ function ServerDateRenderer({value}) {
 }
 
 const Review = () => {
-    useUsage("admin", "drive-parser-review")
+    useUsage("admin", "sheet-maker-review")
 
     const gridRef = useRef(null);
     const [sheetType, setSheetType] = useState('failure');
@@ -107,6 +107,7 @@ const Review = () => {
         }
     ])
     const successButtonColumnChange = useCallback(() => {
+        console.log(gridRef)
         if (sheetType === 'success') {
             gridRef.current.api.setGridOption("columnDefs", reviewColDefs);
         } else {

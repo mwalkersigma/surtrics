@@ -4,11 +4,6 @@ import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/charts/styles.css';
 import '@mantine/carousel/styles.css';
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import "ag-charts-enterprise";
-import 'ag-grid-charts-enterprise'
-import "../styles/ag-grid-theme-builder.css";
 import {Container, createTheme, MantineProvider} from '@mantine/core';
 import Layout from "./layout";
 import {SessionProvider} from "next-auth/react";

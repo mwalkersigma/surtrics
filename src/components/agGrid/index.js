@@ -1,10 +1,10 @@
 import {AgGridReact} from 'ag-grid-react'; // React Data Grid Component
 import "ag-grid-enterprise";
-import {colorSchemeDark, themeQuartz} from '@ag-grid-community/theming';
 import {LicenseManager} from "ag-grid-enterprise";
+import {colorSchemeDark, themeQuartz} from '@ag-grid-community/theming';
 import {Center, NumberFormatter} from "@mantine/core";
 import {IconCircleCheck, IconCircleX} from "@tabler/icons-react";
-import React, {useMemo} from "react";
+import React, {forwardRef, useMemo} from "react";
 import {format} from "date-fns";
 
 LicenseManager.setLicenseKey(process.env.NEXT_PUBLIC_AG_GRID_LICENSE)
@@ -51,7 +51,7 @@ function PercentageRenderer({value}) {
     />
 }
 
-export default function DataGrid(props) {
+function BaseGrid(props, ref) {
     const components = useMemo(() => ({
         MoneyRenderer,
         BooleanRenderer,
@@ -67,5 +67,8 @@ export default function DataGrid(props) {
             headerFontSize: 14,
             oddRowBackgroundColor: "#242424"
         });
-    return <AgGridReact components={components} theme={customTheme} loadThemeGoogleFonts {...props}/>
+    return <AgGridReact ref={ref} components={components} theme={customTheme} loadThemeGoogleFonts {...props}/>
 }
+
+const DataGrid = forwardRef(BaseGrid)
+export default DataGrid

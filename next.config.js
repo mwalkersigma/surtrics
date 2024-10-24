@@ -15,6 +15,9 @@ module.exports = (phase) => {
     else if (phase === PHASE_PRODUCTION_SERVER) {
         distDir = ".next";
     }
+    else {
+        distDir = ".next";
+    }
     baseConfig.distDir = distDir;
     return baseConfig;
 };

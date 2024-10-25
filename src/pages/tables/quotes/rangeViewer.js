@@ -10,25 +10,12 @@ export default function UsageViewer() {
             return await fetch('http://10.100.100.33:3007/api/usage')
                 .then(res => res.json())
         }
-    })
-    let data = quoteData;
-
-    const [[startDate, endDate], setDates] = useState([null, null]);
-
-    if (startDate || endDate) {
-        data = data.filter((row) => {
-            return new Date(row.timestamp) >= startDate && new Date(row.timestamp) <= endDate;
-        });
-    }
+    });
     const autoGroupColumnDef = useMemo(() => ({
-        headerValueGetter: () => {
-            return "Grouped Values";
-        },
         minWidth: 220,
-        sortable: false,
         cellRendererParams: {
             cellRenderer: 'agTextCellRenderer',
-            suppressCount: false,
+            suppressCount: true,
             icons: {
                 sortAscending: "",
                 sortDescending: "",
@@ -39,6 +26,7 @@ export default function UsageViewer() {
         sideBar: true,
         pagination: true,
         paginationPageSize: 500,
+        suppressAggFuncInHeader: true,
         columnDefs: [
             {
                 headerName: 'Name',
@@ -48,38 +36,53 @@ export default function UsageViewer() {
                 field: 'salesRep',
             },
             {
-                headerName: 'Customer',
-                field: 'contact',
-                sortable: true,
-                enableRowGroup: true,
-                aggFunc: 'count',
+                headerName: 'Quote Information',
+                openByDefault: false,
+                children: [
+                    {
+                        headerName: 'Customer',
+                        field: 'contact',
+                        enableRowGroup: true,
+                        enableValue: true,
+                    },
+                    {
+                        headerName: 'Opportunity ID',
+                        field: 'oppId',
+                        columnGroupShow: 'open',
+                        enableValue: true,
+                    },
+                    {
+                        headerName: 'E-Number',
+                        field: 'enumber',
+                        columnGroupShow: 'open'
+                    },
+                ]
             },
-            {
-                headerName: 'Opportunity ID',
-                field: 'oppId',
-                sortable: true,
-            },
-            {
-                headerName: 'E-Number',
-                field: 'enumber',
-                sortable: true,
-
-            },
-
             {
                 headerName: 'Date',
                 field: 'timestamp',
                 enableRowGroup: true,
-                cellRenderer: 'DateRenderer',
+                cellRenderer: 'DateStampRenderer',
+                chartDataType: "time",
                 valueGetter: (params) => {
                     if (params?.data?.timestamp) {
-                        return new Date(params.data.timestamp)
+                        return new Date(params.data.timestamp.split(" ")[0])
                     }
                 },
-                sortable: true,
             },
+            {
+                headerName: 'Count',
+                aggFunc: 'count',
 
+                cellRenderer: (params) => {
+                    if (params.node.group) {
+                        return params.node.allChildrenCount
+                    }
+                }
+            },
         ],
+        autoGroupColumnDef,
+        groupDisplayType: 'multipleColumns',
         paginationPageSizeSelector: [25, 50, 100, 200, 500, 1000, 5000],
         enableCharts: true,
         cellSelection: {
@@ -96,18 +99,15 @@ export default function UsageViewer() {
         },
         rowGroupPanelShow: 'always',
     });
-    console.log(data)
-
 
     if (quoteLoading) return <div>Loading...</div>;
 
     return (<Container size={'responsive'}>
-            <Title my={'xl'} order={1}>Usage</Title>
-            <div className="ag-theme-custom" style={{height: "61vh"}}>
+            <Title mb={'lg'} order={1}>Usage</Title>
+            <div className="ag-theme-custom" style={{height: "75vh"}}>
                 <DataGrid
                     {...immutableGridState}
-                    autoGroupColumnDef={autoGroupColumnDef}
-                    rowData={data}
+                    rowData={quoteData}
                 />
             </div>
         </Container>

@@ -20,6 +20,18 @@ function DateRenderer({value}) {
     }
 }
 
+function DateStampRenderer({value}) {
+    try {
+        if (value === undefined) return ""
+        return <Center h={'100%'}>{format(new Date(value), "P")}</Center>;
+    }
+    catch (e) {
+        console.error(e);
+        console.error(value);
+        return <Center h={'100%'}>Invalid Date</Center>
+    }
+}
+
 function MoneyRenderer({value}) {
     if (value === null) return "Not Provided"
     return <NumberFormatter
@@ -53,11 +65,12 @@ function PercentageRenderer({value}) {
 
 function BaseGrid(props, ref) {
     const components = useMemo(() => ({
+        DateRenderer,
         MoneyRenderer,
         BooleanRenderer,
-        DateRenderer,
+        DateStampRenderer,
         PercentageRenderer,
-        CenteredBooleanRenderer
+        CenteredBooleanRenderer,
     }), []);
     const customTheme = themeQuartz
         .withPart(colorSchemeDark)

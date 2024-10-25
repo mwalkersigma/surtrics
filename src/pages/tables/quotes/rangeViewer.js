@@ -63,6 +63,7 @@ export default function UsageViewer() {
                 field: 'timestamp',
                 enableRowGroup: true,
                 cellRenderer: 'DateStampRenderer',
+                filter: 'agDateColumnFilter',
                 chartDataType: "time",
                 valueGetter: (params) => {
                     if (params?.data?.timestamp) {

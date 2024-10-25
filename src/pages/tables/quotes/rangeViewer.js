@@ -69,6 +69,7 @@ export default function UsageViewer() {
             {
                 headerName: 'Date',
                 field: 'timestamp',
+                enableRowGroup: true,
                 cellRenderer: 'DateRenderer',
                 valueGetter: (params) => {
                     if (params?.data?.timestamp) {

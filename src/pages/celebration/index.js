@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Badge, Container, Flex, Grid, rem, Space, Switch, Tabs, Text, Title} from "@mantine/core";
+import {Badge, Container, Flex, Grid, HoverCard, rem, Space, Switch, Tabs, Text, Title} from "@mantine/core";
 import {IconClock, IconConfetti, IconConfettiOff, IconCurrencyDollar} from "@tabler/icons-react";
 import Confetti from "../../components/confetti";
 import {useLocalStorage} from "@mantine/hooks";
@@ -157,10 +157,35 @@ const Celebration = () => {
                     <Title my={0} py={0} ta={'center'}>
                         🎉 Automation Celebration 🎉
                     </Title>
-                    <Text ta={'center'} fz={'xs'} c={'dimmed'}>Metrics that have calculated time savings have <Text span
-                                                                                                                    fz={'xs'}
-                                                                                                                    c={"#ec8500"}>orange
-                        borders</Text></Text>
+                    <HoverCard width={280} shadow={'md'}>
+                        <HoverCard.Target>
+                            <Text ta={'center'} fz={'xs'} c={'dimmed'}>
+                                Metrics with time savings based on financial impact have
+                                <Text span fz={'xs'} c={"#ec8500"}>
+                                    {" "} orange borders
+                                </Text>
+                            </Text>
+                        </HoverCard.Target>
+                        <HoverCard.Dropdown>
+                            <Text mb={'sm'} fz={'sm'} fw={'bold'}>Time Savings Metrics </Text>
+                            <Text mb={'md'} fz={'xs'} c={'dimmed'}>
+                                This metric starts with the estimated hours saved.
+                                Using a standard rate of $33/hour, it then calculates the cost savings or revenue
+                                generated.
+                                Used for automations where time-savings are the primary focus.
+                            </Text>
+                            <Text mb={'sm'} fz={'sm'} fw={'bold'}>Cost-Based Savings Calculation</Text>
+                            <Text fz={'xs'} c={'dimmed'}>
+                                The cost-based metric, highlighted with an orange border, begins with the overall cost
+                                savings,
+                                then divides by the default hourly rate to estimate equivalent billable time.
+                                Used for automations where money is the primary focus.
+
+
+                            </Text>
+                        </HoverCard.Dropdown>
+                    </HoverCard>
+
                 </Grid.Col>
                 <Grid.Col span={3}></Grid.Col>
             </Grid>

@@ -11,7 +11,7 @@ export default function CelebrationCard({metric, loading, id, extraTagLine, show
     let inlineExtraTagline = metric.value?.extraTagValue ? `${metric.value.extraTagValue} ${metric.value.extraTagUnit}` : "";
     let isShowingCost = (hasCostSavings && showCostSavings);
     let displayValue = isShowingCost ? metric.timeSavings?.costSavings : metric.timeSavings?.raw ?? 0;
-    let displayUnit = isShowingCost ? "Dollars Saved" : metric.timeSavings?.unit ?? "";
+    let displayUnit = isShowingCost ? metric.costLabel : metric.timeSavings?.unit ?? "";
     let displayPrefix = isShowingCost ? "$" : "";
     if (metric.overrides) {
         displayValue = metric.overrides?.value ?? displayValue;

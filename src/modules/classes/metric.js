@@ -21,6 +21,7 @@ export default class Metric {
         this.dataUrl = config?.dataUrl;
         this.overrides = config?.overrides ?? null;
         this.costSavingsOffset = defaultBillableHour
+        this.costLabel = "Dollars Saved"
     }
 
     render = (data) => {
@@ -68,6 +69,20 @@ export class CostMetrics extends Metric {
     constructor(args) {
         super(args);
         this.costSavingsOffset = 1;
+    }
+
+    render = (val) => {
+        this.value.formula(val)
+        this.timeSavings.formula(val)
+        this.isRendered = true;
+    }
+}
+
+export class RevenueMetrics extends Metric {
+    constructor(args) {
+        super(args);
+        this.costSavingsOffset = 1;
+        this.costLabel = "Revenue Generated"
     }
 
     render = (val) => {

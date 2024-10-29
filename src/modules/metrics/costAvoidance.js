@@ -1,5 +1,5 @@
 import MetricsContainer from "../classes/metricsContainer";
-import {CostMetrics, DirectRenderMetric} from "../classes/metric";
+import {CostMetrics} from "../classes/metric";
 import {Badge} from "@mantine/core";
 import React from "react";
 import {defaultBillableHour, localMetric, palette, totalSavedSymbol} from "./consts";
@@ -42,7 +42,7 @@ costAvoidanceMetrics.addMetric("HR", new CostMetrics({
         }
     }
 }))
-export let costAvoidedTotal = new DirectRenderMetric({
+export let costAvoidedTotal = new CostMetrics({
     title: "Total Costs Avoided",
     id: "total",
     Explanation: `

@@ -1,5 +1,5 @@
 import MetricsContainer from "../classes/metricsContainer";
-import {CostMetrics, DirectRenderMetric} from "../classes/metric";
+import {RevenueMetrics} from "../classes/metric";
 import {Badge} from "@mantine/core";
 import React from "react";
 import {defaultBillableHour, palette, totalSavedSymbol} from "./consts";
@@ -9,7 +9,7 @@ function backwardsTimeSave(dollarsSaved) {
 }
 
 const revenueGeneratedMetrics = new MetricsContainer(palette, false);
-revenueGeneratedMetrics.addMetric("Surplus", new CostMetrics({
+revenueGeneratedMetrics.addMetric("Surplus", new RevenueMetrics({
     title: "Restock Notifications Script",
     Explanation: `
         This script runs every morning at 5am and finds every transaction that sold the last piece in refurbished condition.
@@ -43,7 +43,7 @@ revenueGeneratedMetrics.addMetric("Surplus", new CostMetrics({
     }
 
 }))
-revenueGeneratedMetrics.addMetric("Equipment", new CostMetrics({
+revenueGeneratedMetrics.addMetric("Equipment", new RevenueMetrics({
     title: "Quote Builder Sold Quotes",
     valueGetter: (quoteData) => quoteData,
     dataUrl: "/api/views/quotes/withSales",
@@ -79,7 +79,7 @@ revenueGeneratedMetrics.addMetric("Equipment", new CostMetrics({
 }))
 
 
-export let revenueGenereatedTotal = new DirectRenderMetric({
+export let revenueGenereatedTotal = new RevenueMetrics({
     title: "Total Revenue Generated",
     id: "total",
     Explanation: `

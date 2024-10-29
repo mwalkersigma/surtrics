@@ -35,7 +35,7 @@ const RangeView = () => {
         month: eachMonthOfInterval,
         year: eachYearOfInterval,
     }
-    console.log(mappedUpdates)
+
 
     let dateArray = intervalHelper[increment]({start: startDate, end: endDate})
         .map((date) => date.toDateString())

@@ -4,27 +4,17 @@ import useUpdates from "../../../../modules/hooks/useUpdates";
 import formatter from "../../../../modules/utils/numberFormatter";
 import GraphWithStatCard from "../../../../components/mantine/graphWithStatCard";
 import CustomRangeMenu from "../../../../components/mantine/customRangeMenu";
-import {
-    NativeSelect,
-    useMantineColorScheme,
-} from "@mantine/core";
+import {NativeSelect, useMantineColorScheme,} from "@mantine/core";
 import StatCard from "../../../../components/mantine/StatCard";
 import BaseChart from "../../../../components/Chart";
 import useOrders from "../../../../modules/hooks/useOrders";
 import useUsage from "../../../../modules/hooks/useUsage";
 
 
-
-
-
-
-
-
-
 const Simplified = () => {
     useUsage("Ecommerce","sales-Range-Index-simple")
     const {colorScheme} = useMantineColorScheme();
-    console.log(colorScheme)
+
     const [timeScale,setTimeScale] = useState("week");
     const [[startDate,endDate],setDateRange] = useState([subMonths(new Date(),1),new Date()]);
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Title, Text, Paper, Group, Progress, Tooltip, SimpleGrid, Space, Divider} from "@mantine/core";
+import {Divider, Group, Paper, Progress, SimpleGrid, Space, Text, Title, Tooltip} from "@mantine/core";
 import formatter from "../../../modules/utils/numberFormatter";
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
@@ -62,7 +62,7 @@ function SectionBar({sectionTitle, size = 30, temp, field, format, subtitle}) {
 
 const InventoryCondition = () => {
     const inventory = useUpdates("/api/views/inventory/inventory");
-    console.log(inventory)
+
 
     const conditions = {}
 
@@ -101,8 +101,6 @@ const InventoryCondition = () => {
         value.costPercent = +(value.cost / totals.cost);
         value.valuePercent = +(value.value / totals.value);
     });
-
-    console.log(conditions)
 
 
     return (

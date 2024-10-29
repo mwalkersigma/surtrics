@@ -1,24 +1,15 @@
-import MetricsContainer from "./classes/metricsContainer";
-import Metric, {DirectRenderMetric} from "./classes/metric";
-import formatter from "./utils/numberFormatter";
+import MetricsContainer from "../classes/metricsContainer";
+import Metric, {DirectRenderMetric} from "../classes/metric";
+import formatter from "../utils/numberFormatter";
 import {eachWeekOfInterval} from "date-fns";
 import {Badge} from "@mantine/core";
 import React from "react";
-import trunc from "./utils/trunc";
-import {totalSavedSymbol} from "../pages/celebration";
+import trunc from "../utils/trunc";
+import {defaultBillableHour, localMetric, palette, totalSavedSymbol} from "./consts";
 
 
-export const defaultBillableHour = 33;
-
-export const palette = {
-    "Surplus": "#660606",
-    "Shop": "#09287a",
-    "Equipment": "#366f08",
-    "Procurement": "#cd4920",
-}
-
-const metricsContainer = new MetricsContainer(palette);
-metricsContainer.addMetric("Surplus", new DirectRenderMetric({
+const timeSavingsMetrics = new MetricsContainer(palette);
+timeSavingsMetrics.addMetric("Surplus", new DirectRenderMetric({
     title: "Photos Uploaded",
     loadingGroup: "photosLoading",
     valueGetter: (photoData) => photoData[0]?.count ?? 0,
@@ -51,7 +42,7 @@ metricsContainer.addMetric("Surplus", new DirectRenderMetric({
 
 }))
 
-metricsContainer.addMetric("Surplus", new Metric({
+timeSavingsMetrics.addMetric("Surplus", new Metric({
     title: "Surprice Pricing Sheet Auto Complete",
     loadingGroup: "surpriceLoading",
     dataUrl: "http://surprice.forsigma.com/api/getUsageData",
@@ -82,7 +73,7 @@ metricsContainer.addMetric("Surplus", new Metric({
         "updateSheet.FoundFirstRun"
     ]
 }))
-metricsContainer.addMetric("Surplus", new Metric({
+timeSavingsMetrics.addMetric("Surplus", new Metric({
     title: "Surplus listing Duplicate Checker",
     loadingGroup: "surpriceLoading",
     dataUrl: "http://surprice.forsigma.com/api/getUsageData",
@@ -112,10 +103,9 @@ metricsContainer.addMetric("Surplus", new Metric({
         "API.findDuplicate", "API.find duplicates"
     ]
 }))
-metricsContainer.addMetric("Surplus", new Metric({
+timeSavingsMetrics.addMetric("Surplus", new Metric({
     title: "Surplus Metrics Tracking",
-    loadingGroup: "surpriceLoading",
-    dataUrl: "http://surprice.forsigma.com/api/getUsageData",
+    loadingGroup: localMetric,
     Explanation: `
             When manually tracking surplus metrics, it takes on average 10 minutes ( between 5 and 15 ) to
             update the surplus metrics tracking sheet. This metric calculates the time
@@ -146,7 +136,7 @@ metricsContainer.addMetric("Surplus", new Metric({
         }
     },
 }))
-metricsContainer.addMetric("Surplus", new Metric({
+timeSavingsMetrics.addMetric("Surplus", new Metric({
     title: "Channel Advisor Auto Pricing ",
     loadingGroup: "surpriceLoading",
     dataUrl: "http://surprice.forsigma.com/api/getUsageData",
@@ -174,7 +164,7 @@ metricsContainer.addMetric("Surplus", new Metric({
     ]
 }))
 
-metricsContainer.addMetric("Surplus", new DirectRenderMetric({
+timeSavingsMetrics.addMetric("Surplus", new DirectRenderMetric({
     title: "Po Line Item Creation",
     loadingGroup: "poLoading",
     valueGetter: (data) => data?.rows?.reduce((acc, row) => acc + row['sheet_item_count'], 0),
@@ -198,7 +188,7 @@ metricsContainer.addMetric("Surplus", new DirectRenderMetric({
         }
     },
 }))
-metricsContainer.addMetric("Surplus", new DirectRenderMetric({
+timeSavingsMetrics.addMetric("Surplus", new DirectRenderMetric({
     title: "PO Creation",
     loadingGroup: "poLoading",
     valueGetter: (poData) => poData.rows.length,
@@ -230,7 +220,7 @@ metricsContainer.addMetric("Surplus", new DirectRenderMetric({
         }
     },
 }))
-metricsContainer.addMetric("Surplus", new DirectRenderMetric({
+timeSavingsMetrics.addMetric("Surplus", new DirectRenderMetric({
     title: "Importer Template Approvals",
     loadingGroup: "importerLoading",
     valueGetter: (importerData) => importerData?.count ?? 0,
@@ -259,7 +249,7 @@ metricsContainer.addMetric("Surplus", new DirectRenderMetric({
     }
 }))
 
-metricsContainer.addMetric("Shop", new DirectRenderMetric({
+timeSavingsMetrics.addMetric("Shop", new DirectRenderMetric({
     title: "Shop Orders Sent To Insightly",
     loadingGroup: "shopLoading",
     valueGetter: (shopUpdates) => shopUpdates[0] ?? 0,
@@ -288,10 +278,10 @@ metricsContainer.addMetric("Shop", new DirectRenderMetric({
     },
 }))
 
-metricsContainer.addMetric("Equipment", new DirectRenderMetric({
+timeSavingsMetrics.addMetric("Equipment", new DirectRenderMetric({
     title: "Quote Builder Automation",
     valueGetter: (quoteData) => quoteData.length,
-    dataUrl: "http://10.100.100.33:3007/api/usage",
+    dataUrl: "/api/views/quotes",
     loadingGroup: "quoteLoading",
     Explanation: `
         The quote builder generates quotes based on insightly opportunities.
@@ -316,7 +306,7 @@ metricsContainer.addMetric("Equipment", new DirectRenderMetric({
     }
 }))
 
-metricsContainer.addMetric("Procurement", new DirectRenderMetric({
+timeSavingsMetrics.addMetric("Procurement", new DirectRenderMetric({
     title: "Pricing Sheet Folders Created",
     Explanation: `
         Pricing Folders are generated when an insightly Parts opportunity is moved to stage 3.
@@ -347,7 +337,7 @@ metricsContainer.addMetric("Procurement", new DirectRenderMetric({
     }
 }))
 export let total = new DirectRenderMetric({
-    title: "Total Savings",
+    title: "Total Time Savings",
     id: "total",
     Explanation: `
         This metric is calculated by adding the time saved from each of the other metrics.
@@ -368,10 +358,14 @@ export let total = new DirectRenderMetric({
         raw: null,
         unit: "Shifts saved ",
         collectionDateStart: "07/01/2023",
+        extraTagValue: null,
+        extraTagUnit: "Years of work saved.",
         formula(value) {
-            this.raw = Math.trunc((value / 8) * 100) / 100
+            let shiftsSaved = trunc(value / 8)
+            this.raw = shiftsSaved
+            this.extraTagValue = trunc(shiftsSaved / 250)
         }
     }
 });
 
-export default metricsContainer;
+export default timeSavingsMetrics;

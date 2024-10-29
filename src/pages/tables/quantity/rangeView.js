@@ -23,7 +23,7 @@ export default function WeeklyView() {
     const [field, setField] = useState("Total");
     let baseDate = new Date().toDateString();
     baseDate = new Date(baseDate)
-    console.log(baseDate)
+
     const [[startDate, endDate], setDate] = useState([subHours(subDays(baseDate, 7), 1), baseDate]);
     const [interval, setInterval] = useState("day");
     const databaseRows = useUpdates("/api/views/quantity/weeklyView", {startDate, endDate, interval});
@@ -31,7 +31,6 @@ export default function WeeklyView() {
     let rows = formatDatabaseRows(databaseRows);
     let users = Object.keys(rows);
 
-    console.log(rows)
 
     let dates = [...new Set(users.map(user => Object.keys(rows[user])).flat())].sort()
 

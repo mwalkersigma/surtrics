@@ -9,7 +9,6 @@ export default router({
         perf_hooks.performance.mark("start")
         // get route params
         const params = req.query;
-        console.log("Query Start")
         let sales = await new Query(
             "sursuite.orders o",
             ["*"]

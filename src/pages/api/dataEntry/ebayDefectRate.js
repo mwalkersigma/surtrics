@@ -42,9 +42,7 @@ function putHandler(req, res) {
 }
 
 function deleteHandler(req, res) {
-    return serverAdminWrapper((req,res)=> {
-        const body = parseBody(req);
-        console.log(body)
+    return serverAdminWrapper((req) => {
         return db.query(`
             DELETE
             FROM surtrics.ebay_defect_rate

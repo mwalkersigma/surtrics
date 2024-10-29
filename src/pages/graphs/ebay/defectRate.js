@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import useUpdates from "../../../modules/hooks/useUpdates";
 import {subMonths} from "date-fns";
-import {useMantineColorScheme, NativeSelect, MultiSelect} from "@mantine/core";
+import {NativeSelect, useMantineColorScheme} from "@mantine/core";
 
 import GraphWithStatCard from "../../../components/mantine/graphWithStatCard";
 import {colorScheme} from "../../_app";
@@ -9,7 +9,6 @@ import {colorScheme} from "../../_app";
 import CustomRangeMenu from "../../../components/mantine/customRangeMenu";
 import useUsage from "../../../modules/hooks/useUsage";
 import BaseChart from "../../../components/Chart";
-import useEvents from "../../../modules/hooks/useEvents";
 import formatter from "../../../modules/utils/numberFormatter";
 import StatCard from "../../../components/mantine/StatCard";
 
@@ -24,7 +23,7 @@ const EbayRangeView = () => {
     const [startDate,endDate] = dateRange;
 
     let updates = useUpdates("/api/views/defectRate",{startDate,endDate,timeScale});
-    console.log(updates)
+
 
     let {colorScheme:theme} = useMantineColorScheme();
     theme = theme === "dark" ? colorScheme.white : colorScheme.dark;

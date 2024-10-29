@@ -87,7 +87,7 @@ const ErrorReporting = () => {
                 .then(res => res.json())
         }
     });
-    console.log(errorTypes)
+
 
     const handleErrorMutation = useMutation({
         mutationFn: (values) => {

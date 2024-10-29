@@ -228,7 +228,6 @@ function ErrorCardHolder({errors, setErrors}) {
 }
 
 async function submitQualityAudit(values) {
-    console.log(values)
     if (!confirm("Are you ready to submit ?")) {
         notifications.show({title: 'Cancelled', message: 'Audit submission cancelled', color: 'red'})
         return;

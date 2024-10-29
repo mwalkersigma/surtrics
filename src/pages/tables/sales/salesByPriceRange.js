@@ -108,7 +108,7 @@ const limitLog = (limit) => {
     return (...val) => {
         if (counter === limit) return;
         counter++;
-        console.log(...val)
+
     }
 }
 let log = limitLog(100);
@@ -120,7 +120,7 @@ const SalesBuckets = () => {
     let beforeLength = sales.length;
     sales = sales.filter(sale => regex.test(sale['sku']))
     let afterLength = sales.length;
-    console.log("Difference in length", beforeLength - afterLength)
+
 
     const isLoading = sales.length === 0;
 

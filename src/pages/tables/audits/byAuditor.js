@@ -102,15 +102,12 @@ const ByAuditor = () => {
                 .then(res => res.json())
         }
     });
-    console.log(data)
+
     let tableData = parseData(data);
     let users = Object.keys(tableData);
 
     let graphLabels = getDates(data);
     let graphDataSets = buildGraphData(data, graphLabels, users);
-
-    console.log(graphLabels)
-    console.log(graphDataSets)
 
 
     return (

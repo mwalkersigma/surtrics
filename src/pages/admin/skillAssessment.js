@@ -95,8 +95,6 @@ const ErrorReporting = () => {
 
     async function handleSubmit({user, reason, notes, date, score}) {
         const state = JSON.stringify({user, reason, notes, session, date, score});
-        console.log("Starting submit");
-        console.log("State : ", state);
         return fetch(`${window.location.origin}/api/dataEntry/skillAssessment`, {
             method: "PUT",
             body: state

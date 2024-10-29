@@ -67,9 +67,6 @@ const Index = () => {
         excludedCategories:['Processing','Warehouse'],
         combined:false
     });
-    console.log(categories)
-
-
 
 
     useEffect(() => {

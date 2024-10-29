@@ -1,14 +1,14 @@
 import {Badge, Tooltip} from "@mantine/core";
 import React from "react";
-import {defaultBillableHour} from "../metrics";
 
 
 export default class MetricsContainer {
-    constructor(palette) {
+    constructor(palette, hasCostSavings = true) {
         this.metrics = {}
         this.systemTotals = {}
         this.catTotal = {}
         this.palette = palette;
+        this.hasCostSavings = hasCostSavings
     }
 
     addMetric(department, metric) {
@@ -72,8 +72,10 @@ export default class MetricsContainer {
 
     updateTotals(shownCategories, shownSystems) {
         let metricList = this.metricList;
+        this.catTotal = {}
+        this.systemTotals = {}
         let that = this;
-        this.entries.forEach(([key, value]) => {
+        that.entries.forEach(([key, value]) => {
             if (!Array.isArray(value)) return
 
             function sumCatSavings(metric) {
@@ -96,6 +98,6 @@ export default class MetricsContainer {
     }
 
     updateCostSavings() {
-        this.metricList.forEach(metric => metric.timeSavings.costSavings = metric.timeSavings.raw * defaultBillableHour);
+        this.metricList.forEach(metric => metric.timeSavings.costSavings = metric.timeSavings.raw * metric.costSavingsOffset);
     }
 }

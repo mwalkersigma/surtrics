@@ -1,4 +1,6 @@
 import {useQueries} from "@tanstack/react-query";
+import {localMetric} from "../metrics/consts";
+
 
 export default function useMetricsData(config) {
     let baseStates = {
@@ -9,6 +11,10 @@ export default function useMetricsData(config) {
     for (let metric of config) {
         let loadingGroup = metric?.loadingGroup;
         let dataUrl = metric?.dataUrl;
+        if (loadingGroup === localMetric) {
+            baseStates.loadingStates[localMetric] = false;
+            continue;
+        }
         if (!loadingGroup || !dataUrl) {
             console.log("Invalid Metric Config: ", metric)
             continue;
@@ -18,6 +24,7 @@ export default function useMetricsData(config) {
         baseStates.loadingStates[loadingGroup] = true;
         baseStates.data[loadingGroup] = null;
     }
+
 
     return useQueries({
         queries: Array
@@ -31,6 +38,19 @@ export default function useMetricsData(config) {
                 }
             })),
         combine: (results) => {
+            if (results.length === 0 && baseStates?.loadingStates?.[localMetric] !== undefined) {
+                return {
+                    loadingStates: {
+                        allLoaded: false,
+                        anyLoaded: false,
+                        ...baseStates.loadingStates
+                    },
+                    data: {
+                        ...baseStates.data
+                    }
+                }
+            }
+
             let result = {
                 loadingStates: {
                     allLoaded: !results.every(({isPending}) => !isPending),
@@ -41,6 +61,7 @@ export default function useMetricsData(config) {
                     ...baseStates.data
                 }
             };
+
 
             for (let entry of results) {
                 if (!entry?.data) continue;

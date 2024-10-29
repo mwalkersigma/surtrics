@@ -36,7 +36,7 @@ const View = ({id}) => {
             </Center>
         </Container>
     }
-    console.log(data)
+
     const statsData = [
         {
             title: 'Item Count',

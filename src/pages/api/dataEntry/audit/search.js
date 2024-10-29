@@ -3,9 +3,9 @@ import Query from "../../../../modules/classes/query";
 import db from "../../../../db/index";
 
 
-async function getHandler(req, res) {
+async function getHandler(req) {
     const params = req.query;
-    console.log(params)
+
     return await new Query('nfs.sursuite.quality_assurance', ['*'])
         .isNull('date_deleted')
         .conditional(params?.startDate,

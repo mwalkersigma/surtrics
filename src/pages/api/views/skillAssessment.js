@@ -2,9 +2,6 @@ import db from "../../../db";
 import router from "../../../modules/serverUtils/requestRouter";
 import {parseBody} from "../../../modules/serverUtils/parseBody";
 import Query from "../../../modules/classes/query";
-import serverAdminWrapper from "../../../modules/auth/serverAdminWrapper";
-
-
 
 
 async function getHandler() {
@@ -70,7 +67,6 @@ export default function handler(req, res) {
         POST: postHandler
     })(req, res)
         .then((response) => {
-            console.log(response)
             res.status(200).json(response)
         })
         .catch((error) => {

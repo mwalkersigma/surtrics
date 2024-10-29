@@ -34,7 +34,7 @@ async function getHandler(req, res) {
             rows[i] = row;
         }
     }
-    console.log("Data is finished")
+
     return rows
 }
 async function postHandler(req, res, {user}) {

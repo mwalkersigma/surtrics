@@ -1,3 +1,5 @@
+import {defaultBillableHour} from "../metrics/consts";
+
 function getValue(input, key) {
     return input[key]
 }
@@ -17,14 +19,12 @@ export default class Metric {
         this.loadingGroup = config?.loadingGroup;
         this.valueGetter = config?.valueGetter ?? undefined;
         this.dataUrl = config?.dataUrl;
+        this.overrides = config?.overrides ?? null;
+        this.costSavingsOffset = defaultBillableHour
     }
 
     render = (data) => {
-
         if (!data) {
-            console.log("Rendering Metric: ", this.title)
-            console.log("Data: ", data)
-            console.log("Values: ", this.values)
             this.value.formula(0)
             this.timeSavings.formula(0)
             this.isRendered = true;
@@ -55,6 +55,19 @@ export default class Metric {
 export class DirectRenderMetric extends Metric {
     constructor(args) {
         super(args);
+    }
+
+    render = (val) => {
+        this.value.formula(val)
+        this.timeSavings.formula(val)
+        this.isRendered = true;
+    }
+}
+
+export class CostMetrics extends Metric {
+    constructor(args) {
+        super(args);
+        this.costSavingsOffset = 1;
     }
 
     render = (val) => {

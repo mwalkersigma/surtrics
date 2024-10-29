@@ -764,7 +764,7 @@ const EcomDashboard = () => {
     const [[startDate, endDate], setValue] = useDebouncedState(dateRange, 500);
 
     const currentRangeData = useEcommerceRangeData({startDate, endDate});
-    console.log("Current :  ", currentRangeData)
+
 
     const previousMonthRangeData = useEcommerceRangeData({
         startDate: subMonths(startDate, 1),
@@ -776,7 +776,7 @@ const EcomDashboard = () => {
     });
 
     let daysInRange = differenceInCalendarDays(endDate, startDate);
-    console.log("Days in range : ", daysInRange)
+
 
     return (
         <Container size={'responsive'}>

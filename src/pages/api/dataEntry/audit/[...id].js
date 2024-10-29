@@ -67,14 +67,9 @@ async function putHandler(req, res, {user}) {
     let updatedErrors = body.tote_errors;
     let updatedErrorsIds = body.tote_errors.map(error => +error.id);
 
-    console.log("Original Errors", originalErrors);
-    console.log("Updated Errors", updatedErrors);
 
     let errorsToDelete = originalErrors.filter(error => !updatedErrorsIds.includes(error));
     let errorsToAdd = updatedErrorsIds.filter(error => !originalErrors.includes(error));
-
-    console.log("Errors to delete", errorsToDelete);
-    console.log("Errors to add", errorsToAdd);
 
 
     if (errorsToAdd.length > 0) {
@@ -95,7 +90,6 @@ async function putHandler(req, res, {user}) {
 
     updatedInformation.tote_errors = [...originalErrors, ...errorsToAdd];
 
-    console.log("Updated Information", updatedInformation);
 
     await db.query(
         `UPDATE nfs.sursuite.quality_assurance
@@ -121,9 +115,8 @@ function deleteHandler(req, res, {user}) {
 //database table: sursuite.quality_assurance
 
 export default function handler(req, res) {
-    console.log("HANDLER")
+
     return serverAdminWrapper(async (req, res, user) => {
-        console.log("In Wrapper")
         return router({
             GET: getHandler,
             PUT: putHandler,

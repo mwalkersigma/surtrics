@@ -7,23 +7,19 @@ import {
     Chart as ChartJS,
     Legend,
     LinearScale,
-    LineElement, PointElement,
+    LineElement,
+    PointElement,
     Tooltip as tt
 } from "chart.js";
 import DataLabels from "chartjs-plugin-datalabels";
 import {colorScheme} from "../../../_app";
-import {eachMonthOfInterval, lastDayOfYear, setDate, setMonth} from "date-fns";
-import {Slider, Text, Tooltip, useMantineColorScheme} from "@mantine/core";
+import {setDate, setMonth} from "date-fns";
+import {useMantineColorScheme} from "@mantine/core";
 import GraphWithStatCard from "../../../../components/mantine/graphWithStatCard";
 import {YearPickerInput} from "@mantine/dates";
 import StatCard from "../../../../components/mantine/StatCard";
 import useUsage from "../../../../modules/hooks/useUsage";
 import BaseChart from "../../../../components/Chart";
-import useEvents from "../../../../modules/hooks/useEvents";
-import useGoal from "../../../../modules/hooks/useGoal";
-import {useDebouncedValue, useLogger} from "@mantine/hooks";
-import smoothData from "../../../../modules/utils/graphUtils/smoothData";
-import colorizeLine from "../../../../modules/utils/colorizeLine";
 import formatter from "../../../../modules/utils/numberFormatter";
 import compoundArray from "../../../../modules/utils/compoundArray";
 
@@ -167,7 +163,7 @@ function Index() {
     let yearData = useUpdates("/api/views/increments",{date,interval:"1 year",increment:"month"});
 
     let skillAssessmentData = useUpdates("/api/dataEntry/skillAssessment");
-    console.log(skillAssessmentData)
+
 
     const {colorScheme:theme} = useMantineColorScheme();
 

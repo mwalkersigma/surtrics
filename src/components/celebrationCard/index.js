@@ -1,19 +1,27 @@
 import {Flex, Grid, Group, NumberFormatter, Paper, Skeleton, Text, Title, Tooltip} from "@mantine/core";
 import React from "react";
+import {defaultBillableHour} from "../../modules/metrics/consts";
 
 
 export default function CelebrationCard({metric, loading, id, extraTagLine, showCostSavings}) {
     if (!metric.shown) return null;
+    let isCostMetric = metric?.costSavingsOffset !== defaultBillableHour;
     let isLoading = loading || !metric.isRendered;
     const hasCostSavings = !!metric.timeSavings?.costSavings;
+    let inlineExtraTagline = metric.value?.extraTagValue ? `${metric.value.extraTagValue} ${metric.value.extraTagUnit}` : "";
     let isShowingCost = (hasCostSavings && showCostSavings);
     let displayValue = isShowingCost ? metric.timeSavings?.costSavings : metric.timeSavings?.raw ?? 0;
     let displayUnit = isShowingCost ? "Dollars Saved" : metric.timeSavings?.unit ?? "";
     let displayPrefix = isShowingCost ? "$" : "";
+    if (metric.overrides) {
+        displayValue = metric.overrides?.value ?? displayValue;
+        displayUnit = metric.overrides?.unit ?? displayUnit;
+        displayPrefix = metric.overrides?.prefix ?? displayPrefix;
+    }
 
     return (
         <Skeleton visible={!!isLoading}>
-            <Paper p={"1rem 1.5rem"} withBorder>
+            <Paper p={"1rem 1.5rem"} bd={isCostMetric ? '1px solid #ec8500' : undefined} withBorder>
                 <Grid justify="space-between">
                     <Grid.Col span={8}>
                         <Tooltip label={metric?.title ?? ""}>
@@ -53,7 +61,8 @@ export default function CelebrationCard({metric, loading, id, extraTagLine, show
                 <Group c={'dimmed'} justify={'space-between'}>
                     <Group>
                         <Text fz={'xs'}> {metric.value.raw} {metric.value?.unit ?? ""}  </Text>
-                        {extraTagLine && <Text fz={'xs'}> {extraTagLine} </Text>}
+                        {(extraTagLine && !inlineExtraTagline) && <Text fz={'xs'}> {extraTagLine} </Text>}
+                        {inlineExtraTagline && <Text fz={'xs'}> {inlineExtraTagline} </Text>}
                     </Group>
                     <Text fz={'xs'}> Start Date {metric.value?.collectionDateStart ?? ""} </Text>
                 </Group>

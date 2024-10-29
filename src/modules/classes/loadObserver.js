@@ -1,11 +1,14 @@
 import Metric, {DirectRenderMetric} from "./metric";
+import {localMetric} from "../metrics/consts";
 
 export default class LoadObserver {
     constructor() {
         this.ids = [];
         this.state = new Map();
+        this.state.set(localMetric, {listeners: []});
         this.previousState = null;
         this.dataState = null;
+        this[localMetric] = [];
     }
 
     registerState = (key, loadingState) => {
@@ -33,7 +36,7 @@ export default class LoadObserver {
         if (metric instanceof Metric || metric instanceof DirectRenderMetric) {
             let defaultGetter = (data) => data;
             let getter = metric?.valueGetter ?? defaultGetter;
-            this.state.get(metric.loadingGroup).listeners.push([metric.render, getter]);
+            this.state.get(metric.loadingGroup)?.listeners.push([metric.render, getter]);
         } else {
             throw new Error("Invalid Metric Type")
         }

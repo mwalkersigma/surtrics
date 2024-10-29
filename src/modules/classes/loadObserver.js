@@ -38,6 +38,7 @@ export default class LoadObserver {
             let getter = metric?.valueGetter ?? defaultGetter;
             this.state.get(metric.loadingGroup)?.listeners.push([metric.render, getter]);
         } else {
+            console.log(metric);
             throw new Error("Invalid Metric Type")
         }
     }

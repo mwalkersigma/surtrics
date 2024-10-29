@@ -230,6 +230,7 @@ timeSavingsMetrics.addMetric("Surplus", new DirectRenderMetric({
         for Sku Vault and Channel Advisor. It then uploads them to both platforms. This process was previously manual and 
         was calculated to take around 2 minutes per sku to preform. 
     `,
+    developers: ["Michael Walker", "Brandon Weisman"],
     systemBadgeName: "Importer",
     system: "Importer",
     timeSavings: {

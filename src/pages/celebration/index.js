@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Badge, Container, Flex, Grid, rem, Space, Switch, Tabs, Title} from "@mantine/core";
+import {Badge, Container, Flex, Grid, rem, Space, Switch, Tabs, Text, Title} from "@mantine/core";
 import {IconClock, IconConfetti, IconConfettiOff, IconCurrencyDollar} from "@tabler/icons-react";
 import Confetti from "../../components/confetti";
 import {useLocalStorage} from "@mantine/hooks";
@@ -115,7 +115,6 @@ const Celebration = () => {
     ];
 
 
-
     return (
         <Container size={'responsive'}>
             <Grid justify={"flex-start"} mt={'xl'}>
@@ -155,13 +154,13 @@ const Celebration = () => {
                     </Flex>
                 </Grid.Col>
                 <Grid.Col py={0} span={6}>
-                    <Title
-                        my={0}
-                        py={0}
-                        ta={'center'}
-                    >
+                    <Title my={0} py={0} ta={'center'}>
                         🎉 Automation Celebration 🎉
                     </Title>
+                    <Text ta={'center'} fz={'xs'} c={'dimmed'}>Metrics that have calculated time savings have <Text span
+                                                                                                                    fz={'xs'}
+                                                                                                                    c={"#ec8500"}>orange
+                        borders</Text></Text>
                 </Grid.Col>
                 <Grid.Col span={3}></Grid.Col>
             </Grid>

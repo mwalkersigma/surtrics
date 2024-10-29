@@ -37,7 +37,6 @@ function getHandler(req, res) {
 }
 
 
-//todo
 async function putHandler(req, res, {user}) {
     let id = req.query.id[0];
     let originalAudit = await getAudit(id);

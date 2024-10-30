@@ -1,5 +1,35 @@
-import Metric, {DirectRenderMetric} from "./metric";
+import Metric, {CostMetrics, DirectRenderMetric, RevenueMetrics} from "./metric";
 import {localMetric} from "../metrics/consts";
+
+function isClass(classToCheck) {
+    return (item) => {
+        let isInstance = item instanceof classToCheck;
+        let hasCorrectName = item.constructor.name === classToCheck.name;
+        let hasCorrectPrototype = item.prototype === classToCheck.prototype;
+        let hasCorrectConstructor = String(item.constructor) === classToCheck.name;
+        return isInstance || hasCorrectName || hasCorrectPrototype || hasCorrectConstructor;
+    }
+}
+
+function isBaseMetric(item) {
+    return isClass(Metric)(item);
+}
+
+function isDirectRenderMetric(item) {
+    return isClass(DirectRenderMetric)(item);
+}
+
+function isCostMetric(item) {
+    return isClass(CostMetrics)(item);
+}
+
+function isRevenueMetric(item) {
+    return isClass(RevenueMetrics)(item);
+}
+
+function isMetric(item) {
+    return isBaseMetric(item) || isDirectRenderMetric(item) || isCostMetric(item) || isRevenueMetric(item);
+}
 
 export default class LoadObserver {
     constructor() {
@@ -33,7 +63,7 @@ export default class LoadObserver {
         this.state.get(key).listeners.push([listener, valueFn]);
     }
     registerMetric = (metric) => {
-        if (metric instanceof Metric || metric instanceof DirectRenderMetric) {
+        if (isMetric(metric)) {
             let defaultGetter = (data) => data;
             let getter = metric?.valueGetter ?? defaultGetter;
             this.state.get(metric.loadingGroup)?.listeners.push([metric.render, getter]);

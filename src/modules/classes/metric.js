@@ -66,6 +66,7 @@ export class DirectRenderMetric extends Metric {
     }
 }
 
+
 export class CostMetrics extends Metric {
     constructor(args) {
         super(args);

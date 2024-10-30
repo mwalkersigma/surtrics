@@ -167,19 +167,19 @@ const Celebration = () => {
                             </Text>
                         </HoverCard.Target>
                         <HoverCard.Dropdown>
-                            <Text mb={'sm'} fz={'sm'} fw={'bold'}>Time Savings Metrics </Text>
+                            <Text mb={'sm'} fz={'sm'} fw={'bold'}> Time Savings Metrics </Text>
                             <Text mb={'md'} fz={'xs'} c={'dimmed'}>
                                 This metric starts with the estimated hours saved.
-                                Using a standard rate of $33/hour, it then calculates the cost savings or revenue
-                                generated.
+                                Using a standard rate of $33/hour,
+                                it then calculates the cost savings or revenue generated.
                                 Used for automations where time-savings are the primary focus.
                             </Text>
-                            <Text mb={'sm'} fz={'sm'} fw={'bold'}>Cost-Based Savings Calculation</Text>
+                            <Text mb={'sm'} fz={'sm'} fw={'bold'}> Financial Impact Metrics </Text>
                             <Text fz={'xs'} c={'dimmed'}>
-                                The cost-based metric, highlighted with an orange border, begins with the overall cost
-                                savings,
-                                then divides by the default hourly rate to estimate equivalent billable time.
-                                Used for automations where money is the primary focus.
+                                Highlighted with an orange border,
+                                this metric starts by calculating the overall financial impact
+                                and then divides it by the default hourly rate to estimate the equivalent billable time.
+                                Ideal for automations where financial outcomes are the primary focus.
 
 
                             </Text>

@@ -84,7 +84,8 @@ export class RevenueMetrics extends Metric {
     constructor(args) {
         super(args);
         this.costSavingsOffset = 1;
-        //this.costLabel = "Revenue Generated"
+        this.costLabel = args?.costLabel ?? undefined;
+
     }
 
     render = (val) => {

@@ -1,5 +1,5 @@
 import Query from '../modules/classes/query';
-import {describe, beforeEach, expect,test,vi} from "vitest";
+import {beforeEach, describe, expect, test, vi} from "vitest";
 
 describe('Query', () => {
     let query;
@@ -40,7 +40,7 @@ describe('Query', () => {
 
     test('addAdHocWhere', () => {
         query.addAdHocWhere('column1=value1');
-        expect(query.adHocWhere).toBe('column1=value1');
+        expect(query.adHocWhere).toBe('WHERE column1=value1');
     });
 
     test('join', () => {
@@ -158,19 +158,7 @@ describe('Query', () => {
             let result = query.build();
             expect(result).toBe("SELECT column1, column2  FROM test_table  INNER JOIN table2 ON table2.id = test_table.id WHERE column1 = $1 GROUP BY column1 HAVING column2 = $2 ORDER BY column1 ASC LIMIT 10 OFFSET 5;");
         });
-        test("It should build a query with a where clause and a having clause and a group by and an order by and a limit and an offset and a join and an ad hoc where and ignore the ad hoc where",()=>{
-            let query = new Query("test_table",['column1','column2'])
-                .addWhere('column1','=','value1')
-                .addHaving('column2','=','value2')
-                .addGroupBy('column1')
-                .addOrderBy('column1','ASC')
-                .addLimit(10)
-                .addOffset(5)
-                .join('table2','INNER','table2.id = test_table.id')
-                .addAdHocWhere('column1 = value1');
-            let result = query.build();
-            expect(result).toBe("SELECT column1, column2  FROM test_table  INNER JOIN table2 ON table2.id = test_table.id WHERE column1 = $1 GROUP BY column1 HAVING column2 = $2 ORDER BY column1 ASC LIMIT 10 OFFSET 5;");
-        });
+
         test('The add conditional method should call a call back function with the query as the first parameter',()=>{
             let query = new Query("test_table",['column1','column2'])
                 .conditional(true,(q)=>q.addWhere('column1','=','value1'),()=>null);

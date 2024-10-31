@@ -1,6 +1,7 @@
 export default class Query {
     constructor(table,columns) {
         this.table = table;
+        this.distinct = undefined;
         this.columns = columns;
         this.offset = null;
         this.aggregateColumns = [];
@@ -25,6 +26,11 @@ export default class Query {
 
     addColumn(column){
         this.columns.push(column);
+        return this;
+    }
+
+    addDistinctColumn(column) {
+        this.distinct = column;
         return this;
     }
     addWhere(column,operator,value){
@@ -84,8 +90,8 @@ export default class Query {
     build(){
         if(this._query) return this._query;
         let count = 1;
-
-        let query = `SELECT ${this.columns.join(", ")} `;
+        let distinct = this.distinct ? `DISTINCT ON (${this.distinct})` : '';
+        let query = `SELECT ${distinct} ${this.columns.join(", ")} `;
 
         if(this.aggregateColumns.length > 0){
             query += `, ${this.aggregateColumns.map(([,column])=>`${column.replace("'@'",`$${count++}`)}`).join(", ")}`;
@@ -132,9 +138,11 @@ export default class Query {
 
         if (this.adHocWhere) {
             if (this.where.length === 0) {
-                query += ` ${this.adHocWhere}`;
+                query += `WHERE ${this.adHocWhere}`;
             }
-            query += ` AND ${this.adHocWhere}`;
+            else {
+                query += ` AND ${this.adHocWhere}`;
+            }
         }
 
         if(this.groupBy.length > 0){

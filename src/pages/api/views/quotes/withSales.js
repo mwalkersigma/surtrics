@@ -16,15 +16,19 @@ export default router({
                 "quote_id",
                 "customer",
                 "enumber",
+                "equipment_db_id",
                 "qs.sales_opp_id",
+                "ird.sales_opp_id as incentive_sale_opp_id",
                 "sales_rep",
                 "sale_price",
                 "qs.created_at",
-                "ird.entry_id"
+                "ird.entry_id",
+                "ird.sales_opp_user_resp_name"
             ]
         )
+            .addDistinctColumn('entry_id')
             .conditional(success,
-                (q) => q.join('nfs.incentive_app.incentive_raw_data ird', 'INNER', 'qs.sales_opp_id = ird.sales_opp_id'),
+                (q) => q.join('nfs.incentive_app.incentive_raw_data ird', 'INNER', 'qs.sales_opp_id = ird.sales_opp_id AND qs.created_at < ird.created_at '),
                 (q) => q.join('nfs.incentive_app.incentive_raw_data ird', 'LEFT', 'qs.sales_opp_id = ird.sales_opp_id')
             )
             .conditional(startDate && endDate,
@@ -38,6 +42,7 @@ export default router({
                 (query) => query.addWhere('qs.created_at', '>=', startDate),
                 () => null
             )
+            .addAdHocWhere(`enumber SIMILAR TO '_+' || equipment_db_id`)
 
         const result = await query.run(db, console.log).then(({rows}) => rows);
 

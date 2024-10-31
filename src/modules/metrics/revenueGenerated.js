@@ -46,7 +46,8 @@ revenueGeneratedMetrics.addMetric("Surplus", new RevenueMetrics({
 revenueGeneratedMetrics.addMetric("Equipment", new RevenueMetrics({
     title: "Quote Builder Sold Quotes",
     valueGetter: (quoteData) => quoteData,
-    dataUrl: "/api/views/quotes/withSales",
+    costLabel: "Dollars",
+    dataUrl: "/api/views/quotes/withSales?success=true",
     loadingGroup: "quoteWithSalesLoading",
     Explanation: `
         The quote builder generates quotes based on insightly opportunities.

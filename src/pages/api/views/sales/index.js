@@ -1,6 +1,6 @@
 import router from "../../../../modules/serverUtils/requestRouter";
 import db from "../../../../db";
-import {parseBody} from "../../../../modules/serverUtils/parseBody";
+import { parseBody } from "../../../../modules/serverUtils/parseBody";
 import Query from "../../../../modules/classes/query";
 
 
@@ -27,7 +27,7 @@ async function getSalesWithOptions(req,res) {
         ]
     )
         .addAggregate("DATE_TRUNC('@',orders.payment_date_utc) as payment_date_utc",body.timeScale || 'day')
-        .join('sursuite.sales s', 'INNER', 's.order_id = orders.order_id')
+        .join('sursuite.sales s', 'INNER', 's.order_uid = orders.order_uid')
         .addGroupBy('orders.order_id')
         .addGroupBy('orders.payment_date_utc')
         .addGroupBy('orders.order_status')

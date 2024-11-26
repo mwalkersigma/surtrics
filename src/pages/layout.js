@@ -1,10 +1,10 @@
-import {useEffect, useRef} from "react";
-import {useDisclosure} from '@mantine/hooks';
-import {AppShell, ScrollArea, Space, Text,} from '@mantine/core';
+import { useEffect, useRef } from "react";
+import { useDisclosure } from '@mantine/hooks';
+import { AppShell, ScrollArea, Space, Text, } from '@mantine/core';
 import useNav from "../modules/hooks/useNav";
 import SurtricsNavbar from "../components/mantine/layout/navbar";
 import SurtricsHeader from "../components/mantine/layout/header";
-import {SiBigcommerce, SiQuickbooks} from "react-icons/si";
+import { SiBigcommerce, SiQuickbooks } from "react-icons/si";
 import {
     IconActivity,
     IconCamera,
@@ -32,7 +32,7 @@ import {
     IconTimeline,
     IconUser
 } from "@tabler/icons-react";
-import {FaEbay} from "react-icons/fa6";
+import { FaEbay } from "react-icons/fa6";
 
 const size = "1.5rem";
 const stroke = 2;
@@ -307,6 +307,14 @@ const pages = {
                             href: "/tables/sales/salesByPriceRange"
                         },
                     }
+                }
+            }
+        },
+        "Purchasing": {
+            leftSection: <IconChecklist size={size} stroke={stroke}/>,
+            links: {
+                "Auction Po Effectiveness": {
+                    href: "/graphs/purchasing/index"
                 }
             }
         },

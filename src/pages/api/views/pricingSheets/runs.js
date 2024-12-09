@@ -13,6 +13,7 @@ export default router({
         let query = new Query("nfs.logs.sheet_creation_runs", [
             "*",
         ])
+            .addLimit(1000)
             .conditional(
                 startDate && endDate,
                 (query) =>

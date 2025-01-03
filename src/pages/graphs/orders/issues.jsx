@@ -32,6 +32,7 @@ import {toHeaderCase} from "js-convert-case";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {notifications} from "@mantine/notifications";
 import {queryClient} from "../../_app.js";
+import useUsage from "../../../modules/hooks/useUsage.js";
 
 
 const ISSUES = [
@@ -784,6 +785,7 @@ function IssuesTable({issues, orders}) {
 }
 
 const Index = () => {
+    useUsage("Ecommerce", "QA-Orders")
     let date = new Date('01-01-2024');
     let startDate = date;
     let endDate = lastDayOfYear(date);

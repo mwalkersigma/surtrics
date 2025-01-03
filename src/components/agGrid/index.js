@@ -1,15 +1,19 @@
-import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
+import {AgGridReact} from 'ag-grid-react'; // React Data Grid Component
 import "ag-grid-enterprise";
-import { colorSchemeDark, themeQuartz } from '@ag-grid-community/theming';
+import {colorSchemeDark, themeQuartz} from '@ag-grid-community/theming';
 
-import { LicenseManager } from "ag-grid-enterprise";
-import { Center, NumberFormatter } from "@mantine/core";
-import { IconCircleCheck, IconCircleX, IconTrash } from "@tabler/icons-react";
-import React, { forwardRef, useCallback, useMemo, useRef } from "react";
-import { format, startOfMonth } from "date-fns";
-import { mergeRefs } from "../../modules/utils/helpers";
+import {LicenseManager} from "ag-grid-enterprise";
+import {Button, Center, NumberFormatter} from "@mantine/core";
+import {IconCircleCheck, IconCircleX, IconTrash} from "@tabler/icons-react";
+import React, {forwardRef, useCallback, useMemo, useRef} from "react";
+import {format, startOfMonth} from "date-fns";
+import {mergeRefs} from "../../modules/utils/helpers";
 
 LicenseManager.setLicenseKey(process.env.NEXT_PUBLIC_AG_GRID_LICENSE)
+
+function ButtonRenderer({label, onClick, data}) {
+    return <Center h={'100%'}><Button size={'xs'} onClick={() => onClick(data)}>{label}</Button></Center>
+}
 
 function DateRenderer(props) {
     const { value, grouped } = props;
@@ -152,6 +156,7 @@ function BaseGrid(allProps, ref) {
         DateRenderer,
         PercentageRenderer,
         CenteredBooleanRenderer,
+        ButtonRenderer,
         RemoveRenderer
     }), []);
     const localRef = useRef(null);

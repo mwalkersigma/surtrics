@@ -1,13 +1,11 @@
 import {AppShell, Box, Divider, NavLink, ScrollArea, SegmentedControl, Space} from "@mantine/core";
 import RoleWrapper from "../../RoleWrapper";
-import { useSessionStorage } from "@mantine/hooks";
-
-
-
-
+import {useSessionStorage} from "@mantine/hooks";
+import {useEffect} from "react";
 
 
 function GeneratedNavBar({page,count,keyName="",state,handleToggle}) {
+    if (page === undefined) return;
     return Object
         .entries(page)
         .map(([key, value],i) => {
@@ -66,10 +64,25 @@ function GeneratedNavBar({page,count,keyName="",state,handleToggle}) {
 
 }
 
+function depthFirstKeySearch(original, objectToCompare) {
+    if (typeof original !== "object" || typeof objectToCompare !== "object") return false;
+    let keys = Object.keys(original);
+    let compareKeys = Object.keys(objectToCompare);
+    if (keys.length !== compareKeys.length) return false;
+    for (let i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        if (objectToCompare[key] === undefined) return false;
+        if (typeof original[key] === "object") {
+            if (!depthFirstKeySearch(original[key], objectToCompare[key])) return false;
+        }
+    }
+    return true;
+}
 
 function stateInit(page) {
     let temp = {}
    function createStateForPage(page,count=0,keyName="") {
+       if (page === undefined) return;
         return Object
             .entries(page)
             .forEach(([key, value]) => {
@@ -90,9 +103,11 @@ function stateInit(page) {
 export default function SurtricsNavbar ({links,footer}) {
     let count = 0
     let adminCount = 0
+    let sections = Object.keys(links)
+
     const [section, setSection] = useSessionStorage({
         key: "navbar-section",
-        defaultValue: "Metrics"
+        defaultValue: sections[0]
     })
     const [state, setState] = useSessionStorage({
         key: "navbar",
@@ -104,6 +119,24 @@ export default function SurtricsNavbar ({links,footer}) {
         defaultValue: stateInit(footer["Admin"])
     })
 
+    useEffect(() => {
+        // this is useful as multiple application use the same session storage names,
+        // this prevents the navbar from messing with other applications
+        let newState = stateInit(links[section])
+        let hasSameKeys = depthFirstKeySearch(newState, state)
+        if (!hasSameKeys) {
+            setState(newState)
+        }
+        let newAdminState = stateInit(footer["Admin"])
+        let hasSameAdminKeys = depthFirstKeySearch(newAdminState, adminState)
+        if (!hasSameAdminKeys) {
+            setAdminState(newAdminState)
+        }
+        if (!sections.includes(section)) {
+            setSection(sections[0])
+        }
+    }, [section, links, state, setState, footer, adminState, sections, setAdminState, setSection])
+
 
 
 
@@ -113,7 +146,7 @@ export default function SurtricsNavbar ({links,footer}) {
     const handleAdminToggle = (key) => {
         setAdminState((current) => ({...current, [key]: !current[key]}))
     }
-    let sections = Object.keys(links)
+
 
     return (
         <AppShell.Navbar p="md">

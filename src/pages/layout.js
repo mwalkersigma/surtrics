@@ -267,6 +267,16 @@ const pages = {
             leftSection: <IconTimeline size={size} stroke={stroke}/>,
             href: "/timelines/surplusEcommerce"
         },
+        "Orders": {
+            roles: ['surplus director', 'bsa', 'warehouse'],
+            leftSection: <IconActivity size={size} stroke={stroke}/>,
+            links: {
+                'QA': {
+                    href: '/graphs/orders/issues',
+                    roles: ['surplus director', 'bsa', 'warehouse'],
+                }
+            }
+        },
         "Sales": {
             leftSection: <IconReportMoney size={size} stroke={stroke}/>,
             links: {

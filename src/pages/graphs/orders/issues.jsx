@@ -22,7 +22,6 @@ import {
     Title
 } from "@mantine/core";
 import useOrders from "../../../modules/hooks/useOrders.js";
-import {lastDayOfYear} from "date-fns";
 import {storeNames} from "../../../modules/constants.js";
 import {IconCircleCheck} from "@tabler/icons-react";
 import {useDebouncedState, useDisclosure} from "@mantine/hooks";
@@ -33,6 +32,7 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {notifications} from "@mantine/notifications";
 import {queryClient} from "../../_app.js";
 import useUsage from "../../../modules/hooks/useUsage.js";
+import {subMonths} from "date-fns";
 
 
 const ISSUES = [
@@ -786,9 +786,8 @@ function IssuesTable({issues, orders}) {
 
 const Index = () => {
     useUsage("Ecommerce", "QA-Orders")
-    let date = new Date('01-01-2024');
-    let startDate = date;
-    let endDate = lastDayOfYear(date);
+    let endDate = new Date();
+    let startDate = subMonths(endDate, 6)
     const orders = useOrders(
         {
             startDate,

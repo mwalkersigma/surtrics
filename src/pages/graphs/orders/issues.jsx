@@ -786,7 +786,7 @@ function IssuesTable({issues, orders}) {
 
 const Index = () => {
     useUsage("Ecommerce", "QA-Orders")
-    let endDate = new Date();
+    let endDate = new Date(new Date().toDateString());
     let startDate = subMonths(endDate, 6)
     const orders = useOrders(
         {

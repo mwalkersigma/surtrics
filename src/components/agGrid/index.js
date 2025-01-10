@@ -3,7 +3,7 @@ import "ag-grid-enterprise";
 import {colorSchemeDark, themeQuartz} from '@ag-grid-community/theming';
 
 import {LicenseManager} from "ag-grid-enterprise";
-import {Button, Center, NumberFormatter} from "@mantine/core";
+import {Box, Button, Center, NumberFormatter} from "@mantine/core";
 import {IconCircleCheck, IconCircleX, IconTrash} from "@tabler/icons-react";
 import React, {forwardRef, useCallback, useMemo, useRef} from "react";
 import {format, startOfMonth} from "date-fns";
@@ -16,19 +16,21 @@ function ButtonRenderer({label, onClick, data}) {
 }
 
 function DateRenderer(props) {
-    const { value, grouped } = props;
+    const {value, grouped, notCentered} = props;
     try {
         if (value === undefined) return ""
         if( value === null ) return ""
+        let Wrapper = notCentered ? Box : Center;
         if( grouped ) {
-            return <Center h={'100%'}>{format(startOfMonth(new Date(value)), "P")}</Center>;
+            return <Wrapper h={'100%'}>{format(startOfMonth(new Date(value)), "P")}</Wrapper>;
         }
-        return <Center h={'100%'}>{format(new Date(value), "P")}</Center>;
+
+        return <Wrapper h={'100%'}>{format(new Date(value), "P")}</Wrapper>;
     }
     catch (e) {
         console.error(e);
         console.error(value);
-        return <Center h={'100%'}>Invalid Date</Center>
+        return <Wrapper h={'100%'}>Invalid Date</Wrapper>
     }
 }
 

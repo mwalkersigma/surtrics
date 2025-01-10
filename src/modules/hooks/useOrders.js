@@ -15,6 +15,7 @@ export default function useOrders (config,options) {
         acceptedConditions = options.acceptedConditions;
     }
 
+
     return orders
         .filter(order => {
             let filteredItems = order.items.filter(item =>{

@@ -274,6 +274,10 @@ const pages = {
                 'QA': {
                     href: '/graphs/orders/issues',
                     roles: ['surplus director', 'bsa', 'warehouse'],
+                },
+                "Consignment Auction Sales": {
+                    href: "/graphs/orders/consignmentAuctionOrders",
+                    roles: ['surplus director', 'bsa', 'warehouse'],
                 }
             }
         },

@@ -1,5 +1,5 @@
 import router from "../../../../modules/serverUtils/requestRouter";
-import {startOfYear} from "date-fns";
+import {subDays} from "date-fns";
 import Query from "../../../../modules/classes/query";
 import db from "../../../../db";
 
@@ -8,7 +8,7 @@ export default router({
     GET: async (req, res) => {
         const queryParams = req.query;
 
-        const startDate = queryParams?.startDate ?? startOfYear(new Date());
+        const startDate = queryParams?.startDate ?? subDays(new Date(), 365);
         const endDate = queryParams?.endDate;
 
         let query = new Query(

@@ -49,10 +49,12 @@ function serverDateRenderer({value}) {
         return <Center h={'100%'}>Invalid Date</Center>
     }
 }
+
 const Review = () => {
     useUsage("admin", "drive-parser-review")
     const SheetStates = {
         "Pricing Sheets": [
+            "Sheet is currently in OPEN status and has not been updated in 60 or more days",
             "Sheet is currently in OPEN status and has not been updated in 60 or more days",
             "Sheet has not had cost put in for 60 or more days and is suspended in Insightly"
         ],
@@ -148,6 +150,20 @@ const Review = () => {
     let dataForGrid = costSheets.filter((sheet) => {
         return SheetStates[sheetType].includes(sheet?.['sheet_failure_reason']);
     })
+    console.log(
+        "Cost Sheets",
+        costSheets
+    )
+    console.log(
+        "Data for Grid",
+        dataForGrid
+    )
+    console.log(
+        "Filtered Cost Sheets",
+        costSheets.filter((sheet) => {
+            return !SheetStates[sheetType].includes(sheet?.['sheet_failure_reason']);
+        })
+    )
 
     return (
         <RoleWrapper altRoles={['bsa', 'surplus director', 'buying group']}>

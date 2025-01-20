@@ -23,13 +23,8 @@ export default router({
                     .addWhere('created_at', '<=', endDate),
                 () => null
             )
-            .conditional(
-                startDate && !endDate,
-                (query) => query.addWhere('created_at', '>=', startDate),
-                () => null
-            )
 
-        const result = await query.run(db).then(({rows}) => rows);
+        const result = await query.run(db, console.log).then(({rows}) => rows);
         return res.status(200).json(result);
     }
 })

@@ -7,7 +7,7 @@ export default function UsageViewer() {
     const {data: quoteData, isPending: quoteLoading} = useQuery({
         queryKey: ['quotes'],
         queryFn: async () => {
-            return await fetch('http://10.100.100.33:3007/api/usage')
+            return await fetch('http://10.100.100.33:4007/api/usage')
                 .then(res => res.json())
         }
     });

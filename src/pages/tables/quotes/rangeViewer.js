@@ -49,12 +49,14 @@ export default function UsageViewer() {
                         headerName: 'Opportunity ID',
                         field: 'oppId',
                         columnGroupShow: 'open',
+                        enableRowGroup: true,
                         enableValue: true,
                     },
                     {
                         headerName: 'E-Number',
                         field: 'enumber',
-                        columnGroupShow: 'open'
+                        columnGroupShow: 'open',
+                        enableRowGroup: true,
                     },
                 ]
             },
